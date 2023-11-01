@@ -76,13 +76,18 @@ jobs:
         run: helm repo add anvil https://github.com/cloudve/helm-charts/raw/anvil
       - name: Deploy GalaxyKubeMan
         continue-on-error: true
-        run: >
+        run: |
+          pwd
+          if [[ -e .github/templates ]] ; then
+            ls -al .github/templates
+          else
+            echo ".github/templates not found"
+          fi
           (time sh -c "helm install --create-namespace -n ${{needs.deploygke.outputs.prefix}}-1 ${{needs.deploygke.outputs.prefix}}-1 anvil/galaxykubeman\
               --wait\
               --wait-for-jobs\
               --timeout 720s\
               --version $GKM_VERSION\
-              --values .github/templates/job_metrics.conf.yml\
               --set galaxy.service.type=LoadBalancer\
               --set galaxy.configs.\"galaxy\.yml\".galaxy.admin_users=\"tests@fake.org\"\
               --set galaxy.configs.\"galaxy\.yml\".galaxy.master_api_key=galaxypassword\
