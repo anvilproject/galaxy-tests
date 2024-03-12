@@ -28,7 +28,7 @@ jobs:
     steps:
       - name: Set prefix with date
         id: prefix
-        run: echo "prefix=$(echo $PREFIX-$(date +'%Y-%m-%d-%H-%M'))" >> $GITHUB_OUTPUT
+        run: echo "prefix=$(echo $PREFIX-$(date +'%y-%m-%d-%H-%M'))" >> $GITHUB_OUTPUT
       - uses: 'actions/checkout@v3'
       - id: 'Auth'
         uses: 'google-github-actions/auth@v0'
@@ -44,8 +44,6 @@ jobs:
 
   testgalaxy1:
     needs: deploygke
-    env:
-      USE_GKE_GCLOUD_AUTH_PLUGIN: True
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -73,11 +71,13 @@ jobs:
         run: curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
       - name: Add anvil repository
         run: helm repo add anvil https://github.com/cloudve/helm-charts/raw/anvil
-      - name: Deploy GalaxyKubeMan 1
+      - name: Deploy GalaxyKubeMan
+        continue-on-error: true
         run: >
           (time sh -c "helm install --create-namespace -n ${{needs.deploygke.outputs.prefix}}-1 ${{needs.deploygke.outputs.prefix}}-1 anvil/galaxykubeman\
               --wait\
-              --timeout 1000s\
+              --wait-for-jobs\
+              --timeout 720s\
               --version $GKM_VERSION\
               --set galaxy.service.type=LoadBalancer\
               --set galaxy.configs.\"galaxy\.yml\".galaxy.admin_users=\"tests@fake.org\"\
@@ -122,7 +122,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Add report from this run
-        run: bash ./.github/scripts/report_deployment.sh "$GXY_TMP" anvil-production ${{ secrets.GIT_TOKEN }}
+        run: bash ./.github/scripts/report_deployment.sh "$GXY_TMP" anvil-edge ${{ secrets.GIT_TOKEN }}
       - name: Get Galaxy IP and port
         id: galaxy
         run: echo "url=$(echo \"http://$(kubectl get svc -n ${{needs.deploygke.outputs.prefix}}-1 ${{needs.deploygke.outputs.prefix}}-1-galaxy-nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}' | sed -e 's/\"//g'):$(kubectl get svc -n ${{needs.deploygke.outputs.prefix}}-1 ${{needs.deploygke.outputs.prefix}}-1-galaxy-nginx -o jsonpath='{.spec.ports[0].port}')$(kubectl get ingress -n ${{needs.deploygke.outputs.prefix}}-1 ${{needs.deploygke.outputs.prefix}}-1-galaxy -o jsonpath='{.spec.rules[0].http.paths[0].path}')/\")" >> $GITHUB_OUTPUT
@@ -131,11 +131,11 @@ jobs:
       - name: Create reports dir for this date
         id: reports
         run: |
-          DIR=reports/anvil-production/tool-tests/${{needs.deploygke.outputs.prefix}}-1
+          DIR=reports/anvil-edge/tool-tests/${{needs.deploygke.outputs.prefix}}-1
           mkdir -p $DIR
           echo "dir=$DIR" >> $GITHUB_OUTPUT
       # - name: Get tool list
-      #   run: cp production/anvil/tools.yaml reports/anvil-production/tools.yaml
+      #   run: cp production/anvil/tools.yaml reports/anvil-edge/tools.yaml
       - name: Create and get API key
         run: echo "key=$(python .github/scripts/create_api_key.py ${{steps.galaxy.outputs.url}} galaxypassword)" >> $GITHUB_OUTPUT
         id: api
@@ -151,23 +151,54 @@ jobs:
           echo "key=$key" >> $GITHUB_OUTPUT
       - name: Split tool tests (workflow_dispatch)
         if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: python .github/scripts/get_chunk.py --chunk ${{ github.event.inputs.chunk }} -o ${{ steps.reports.outputs.dir }} reports/anvil-production/tools.yaml
+        run: python .github/scripts/get_chunk.py --chunk ${{ github.event.inputs.chunk }} -o ${{ steps.reports.outputs.dir }} reports/anvil-edge/tools.yaml
       - name: Split tool tests (cron job)
         if: ${{ github.event_name != 'workflow_dispatch' }}
-        run: python .github/scripts/get_chunk.py reports/anvil-production/tools.yaml -o ${{ steps.reports.outputs.dir }}
+        run: python .github/scripts/get_chunk.py reports/anvil-edge/tools.yaml -o ${{ steps.reports.outputs.dir }}
       - name: Generate a history name
         id: history
         run: echo "history_name=anvil-test-$(date '+%F-%H-%M')" >> $GITHUB_OUTPUT
       - name: Run tool tests
+        continue-on-error: true
         run: sleep 30 && .github/scripts/run-galaxy-tests.sh ${{ steps.history.outputs.history_name }} ${{ steps.reports.outputs.dir }}
-      - name: Write job results
-        run: abm galaxy jobs list --history ${{ steps.history.outputs.history_name }} > ${{ steps.reports.outputs.dir }}/jobs.txt
+#      - name: Write job results
+#        run: abm galaxy jobs list --history ${{ steps.history.outputs.history_name }} > ${{ steps.reports.outputs.dir }}/jobs.txt
+      - name: Generate Jobs reports
+        continue-on-error: true
+        shell: bash
+        run: |
+          abm galaxy jobs list --history ${{ steps.history.outputs.history_name }} > ${{ steps.reports.outputs.dir }}/jobs.txt
+          echo "Saving jobs that had errors."
+          abm galaxy jobs list --state error 
+          for job in $(abm galaxy jobs list --state error | awk '{print $1}') ; do
+            if [[ ! -e ${{ steps.reports.outputs.dir }}/errors ]] ; then
+              mkdir -p ${{ steps.reports.outputs.dir }}/errors
+            fi
+            abm galaxy jobs show $job > ${{ steps.reports.outputs.dir }}/errors/$job.json
+          done
+          echo "Looking for paused jobs"
+          abm galaxy jobs list --state paused
+          for job in $(abm galaxy jobs list --state paused | awk '{print $1}') ; do
+            echo "Job $job was paused"
+            if [[ ! -e ${{ steps.reports.outputs.dir }}/paused ]] ; then
+              mkdir -p ${{ steps.reports.outputs.dir }}/paused
+            fi
+            abm galaxy jobs show $job > ${{ steps.reports.outputs.dir }}/paused/$job.json
+          done
+          abm galaxy history summarize ${{ steps.history.outputs.history_name }} > ${{ steps.reports.outputs.dir }}/job-metrics.csv
+      - name: Save job handler logs and node information
+        continue-on-error: true
+        shell: bash
+        run: |
+          pod=$(kubectl get pods -n ${{needs.deploygke.outputs.prefix}}-1 | grep galaxy-job | awk '{print $1}')
+          kubectl logs -n ${{needs.deploygke.outputs.prefix}}-1 $pod > ${{ steps.reports.outputs.dir }}/job.log
+          kubectl describe nodes > ${{ steps.reports.outputs.dir }}/node-info.txt
       - name: Create HTML report
         run: planemo test_reports ${{ steps.reports.outputs.dir }}/results.json --test_output_xunit ${{ steps.reports.outputs.dir }}/results.xunit --test_output ${{ steps.reports.outputs.dir }}/results.html
       - name: Update Readme
-        run: python .github/scripts/update_readme.py ${{ steps.reports.outputs.dir }}/chunk.json reports/anvil-production/tool-tests/chunks.json reports/anvil-production/README.md
+        run: python .github/scripts/update_readme.py ${{ steps.reports.outputs.dir }}/chunk.json reports/anvil-edge/tool-tests/chunks.json reports/anvil-edge/README.md
       - name: Add updated README from this run
-        run: bash ./.github/scripts/report_tests.sh ${{ secrets.GIT_TOKEN }} "Updating anvil-production README for ${{needs.deploygke.outputs.prefix}}-1" reports/anvil-production
+        run: bash ./.github/scripts/report_tests.sh ${{ secrets.GIT_TOKEN }} "Updating anvil-edge README for ${{needs.deploygke.outputs.prefix}}-1" reports/anvil-edge
 
   cleanup:
     if: always()
