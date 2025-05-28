@@ -74,6 +74,10 @@ jobs:
         run: curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
       - name: Add anvil repository
         run: helm repo add anvil https://github.com/cloudve/helm-charts/raw/anvil
+      - name: Generate the values file
+        run: cat .github/templates/edge-values-template.yaml | sed "s/{{prefix}}/${{needs.deploygke.outputs.prefix}}/g" | sed "s/{{password}}/${{secrets.COMMON_PASSWORD}}/g" > edge-values.yaml
+      - name: Print values file
+        run: cat edge-values.yaml
       - name: Deploy GalaxyKubeMan
         continue-on-error: true
         run: >
@@ -82,27 +86,7 @@ jobs:
               --wait-for-jobs\
               --timeout 720s\
               --version $GKM_VERSION\
-              --set galaxy.service.type=LoadBalancer\
-              --set galaxy.configs.\"galaxy\.yml\".galaxy.admin_users=\"tests@fake.org\"\
-              --set galaxy.configs.\"galaxy\.yml\".galaxy.master_api_key=galaxypassword\
-              --set galaxy.configs.\"galaxy\.yml\".galaxy.single_user=\"tests@fake.org\"\
-              --set galaxy.configs.\"job_conf\.yml\".runners.k8s.k8s_node_selector=\"cloud.google.com/gke-nodepool: default-pool\"\
-              --set 'galaxy.configs.job_conf\.yml.execution.environments.tpv_dispatcher.tpv_config_files={https://raw.githubusercontent.com/galaxyproject/tpv-shared-database/main/tools.yml,lib/galaxy/jobs/rules/tpv_rules_local.yml,https://gist.githubusercontent.com/afgane/68d1dbbe0af2468ba347dc74b6d3f7fa/raw/20edda50161bdcb74ff38935e7f76d79bfdaf303/tvp_rules_tests.yml}'\
-              --set galaxy.nodeSelector.\"cloud\.google\.com\/gke-nodepool\"=\"default-pool\"\
-              --set galaxy.persistence.storageClass=\"nfs-${{needs.deploygke.outputs.prefix}}-1\"\
-              --set galaxy.postgresql.galaxyDatabasePassword=${{secrets.COMMON_PASSWORD}}\
-              --set galaxy.postgresql.operator.operatorSpecExtra.affinity.nodeSelector.\"cloud\.google\.com\/gke-nodepool\"=\"default-pool\"\
-              --set galaxy.postgresql.persistence.storageClass=\"nfs-${{needs.deploygke.outputs.prefix}}-1\"\
-              --set galaxy.rabbitmq.nodeSelector.\"cloud\.google\.com\/gke-nodepool\"=\"default-pool\"\
-              --set galaxy.rabbitmq.persistence.storageClassName=\"nfs-${{needs.deploygke.outputs.prefix}}-1\"\
-              --set galaxy.ingress.ingressClassName=\"\"\
-              --set galaxy.tusd.ingress.ingressClassName=\"\"\
-              --set cvmfs.cvmfscsi.cache.alien.pvc.storageClass=\"nfs-${{needs.deploygke.outputs.prefix}}-1\"\
-              --set nfs.nodeSelector.\"cloud\.google\.com\/gke-nodepool\"=\"default-pool\"\
-              --set nfs.persistence.existingClaim=\"${{needs.deploygke.outputs.prefix}}-1-nfs-disk-pvc\"\
-              --set nfs.storageClass.name=\"nfs-${{needs.deploygke.outputs.prefix}}-1\"\
-              --set persistence.nfs.name=\"${{needs.deploygke.outputs.prefix}}-1-nfs-disk\"\
-              --set persistence.nfs.persistentVolume.extraSpec.gcePersistentDisk.pdName=\"${{needs.deploygke.outputs.prefix}}-1-nfs-pd\"") 1> "$GXY_TMP" 2>> "$GXY_TMP"
+              --values edge-values.yaml") > "$GXY_TMP" 2>&1
 
       - name: Print output
         run: cat "$GXY_TMP"
