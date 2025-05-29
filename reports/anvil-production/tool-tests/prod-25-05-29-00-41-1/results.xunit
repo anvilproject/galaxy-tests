@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Results (powered by Planemo)"
+           tests="44"
+           errors="2"
+           failures="3"
+           skip="0">
+    
+    <testcase classname="bcftools_norm (Test #1)" name="0" time="45.84582781791687">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:21/0/13/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #2)" name="1" time="">
+        
+            <error type="error" message=""><![CDATA[
+                { "status": "skip", "test_index": 1, "tool_id": "bcftools_norm", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #3)" name="2" time="38.51731204986572">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:19/7/0/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #4)" name="3" time="39.76263928413391">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:19/7/19/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #5)" name="4" time="29.41667890548706">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "input_file": {   "id": "30c14b0b13ed41af",   "src": "hda"  },  "multiallelics|mode": "+",  "output_type": "v",  "reference_source|fasta_ref": {   "id": "fe5f803345760f12",   "src": "hda"  },  "reference_source|reference_source_selector": "history" }, "job": {  "command_line": "export BCFTOOLS_PLUGINS=`which bcftools | sed \u0027s,bin/bcftools,libexec/bcftools,\u0027`;     bgzip -c \u0027/galaxy/server/database/objects/b/2/1/dataset_b21801f6-c9cb-451f-ac0a-840114bd2979.dat\u0027 \u003e input.vcf.gz \u0026\u0026 bcftools index input.vcf.gz \u0026\u0026     ln -s \u0027/galaxy/server/database/objects/9/4/9/dataset_949815cf-ff3e-4b4a-aa73-423cdef90b03.dat\u0027 ref.fa \u0026\u0026 samtools faidx ref.fa \u0026\u0026    awk \u0027{ if ($0 !~ /\u003e/) {print toupper($0)} else {print $0} }\u0027 \u0027ref.fa\u0027 \u003e ref_upper.fa \u0026\u0026           bcftools norm   --fasta-ref ref_upper.fa  --check-ref w --do-not-normalize  --multiallelics \u0027+both\u0027   --site-win 1000             --output-type \u0027v\u0027   --threads ${GALAXY_SLOTS:-4}    input.vcf.gz  \u003e \u0027/galaxy/server/database/objects/6/d/c/dataset_6dc87daf-6ef0-4646-9358-075844b587af.dat\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-05-29T01:15:50.076365",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-28zsf",  "galaxy_version": "24.1",  "handler": null,  "history_id": "0a5e5cef6c7de951",  "id": "2532da47a6887910",  "inputs": {   "input_file": {    "id": "30c14b0b13ed41af",    "src": "hda",    "uuid": "b21801f6-c9cb-451f-ac0a-840114bd2979"   },   "reference_source|fasta_ref": {    "id": "fe5f803345760f12",    "src": "hda",    "uuid": "949815cf-ff3e-4b4a-aa73-423cdef90b03"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output_file": {    "id": "16e8bd0596d9127c",    "src": "hda",    "uuid": "6dc87daf-6ef0-4646-9358-075844b587af"   }  },  "params": {   "__input_ext": "\"input\"",   "atomize": "false",   "check_ref": "\"w\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "multiallelics": "{\"__current_case__\": 2, \"mode\": \"+\", \"multiallelic_types\": \"both\", \"strict_filter\": false}",   "normalize_indels": "false",   "old_rec_tag": "\"\"",   "output_type": "\"v\"",   "reference_source": "{\"__current_case__\": 1, \"fasta_ref\": {\"values\": [{\"id\": 88, \"src\": \"hda\"}]}, \"reference_source_selector\": \"history\"}",   "rm_dup": "\"\"",   "sec_default": "{\"site_win\": \"1000\"}",   "sec_restrict": "{\"regions\": {\"__current_case__\": 0, \"regions_src\": \"__none__\"}, \"regions_overlap\": null, \"targets\": {\"__current_case__\": 0, \"targets_src\": \"__none__\"}, \"targets_overlap\": null}"  },  "state": "error",  "stderr": "Lines   total/split/realigned/skipped:\t26/0/0/0\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/bcftools_norm/bcftools_norm/1.15.1+galaxy4",  "tool_stderr": "Lines   total/split/realigned/skipped:\t26/0/0/0\n",  "tool_stdout": "",  "update_time": "2025-05-29T01:15:55.746235",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_norm/bcftools_norm/1.15.1+galaxy4, exit_code: None, stderr: Lines   total/split/realigned/skipped:\t26/0/0/0\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_norm/bcftools_norm/1.15.1+galaxy4, exit_code: None, stderr: Lines   total/split/realigned/skipped:\t26/0/0/0\n." ], "status": "failure", "test_index": 4, "time_seconds": 29.41667890548706, "tool_id": "bcftools_norm", "tool_version": "1.15.1+galaxy4"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:26/0/0/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #6)" name="5" time="39.27924680709839">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:26/0/0/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #7)" name="6" time="38.46902370452881">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:8/0/0/0REF/ALT total/modified/added:  8/5/3
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #8)" name="7" time="39.730307817459106">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:39/20/3/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #9)" name="8" time="">
+        
+            <error type="error" message=""><![CDATA[
+                { "status": "skip", "test_index": 8, "tool_id": "bcftools_norm", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_plugin_fill_tags (Test #1)" name="0" time="45.29458451271057">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_plugin_fill_tags (Test #2)" name="1" time="37.101234912872314">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="circos (Test #1)" name="0" time="78.40460801124573">
+        
+            
+            <system-out><![CDATA[
+            debuggroup summary 0.17s welcome to circos v0.69-8 15 Jun 2019 on Perl 5.026002debuggroup summary 0.18s current working directory /galaxy/server/database/jobs_directory/000/110/workingdebuggroup summary 0.18s command /usr/local/bin/circos -conf circos/conf/circos.conf -noparanoiddebuggroup summary 0.18s loading configuration from file circos/conf/circos.confdebuggroup summary 0.18s found conf file circos/conf/circos.confdebuggroup summary 0.32s debug will appear for these features: output,summarydebuggroup summary 0.32s bitmap output image ./circos.pngdebuggroup summary 0.32s SVG output image ./circos.svgdebuggroup summary 0.32s parsing karyotype and organizing ideogramsdebuggroup summary 0.32s karyotype has 2 chromosomes of total size 56,082debuggroup summary 0.32s applying global and local scalingdebuggroup summary 0.33s allocating image, colors and brushesdebuggroup summary 6.92s drawing 2 ideograms of total size 56,082debuggroup summary 6.92s drawing highlights and ideogramsdebuggroup output 6.93s generating outputdebuggroup output 7.37s created PNG image ./circos.png (40 kb)debuggroup output 7.37s created SVG image ./circos.svg (2 kb)
+            ]]></system-out>
+            <system-err><![CDATA[
+            Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="circos (Test #2)" name="1" time="61.56102204322815">
+        
+            
+            <system-out><![CDATA[
+            debuggroup summary 0.18s welcome to circos v0.69-8 15 Jun 2019 on Perl 5.026002debuggroup summary 0.18s current working directory /galaxy/server/database/jobs_directory/000/115/workingdebuggroup summary 0.18s command /usr/local/bin/circos -conf circos/conf/circos.conf -noparanoiddebuggroup summary 0.18s loading configuration from file circos/conf/circos.confdebuggroup summary 0.18s found conf file circos/conf/circos.confdebuggroup summary 0.33s debug will appear for these features: output,summarydebuggroup summary 0.33s bitmap output image ./circos.pngdebuggroup summary 0.33s SVG output image ./circos.svgdebuggroup summary 0.33s parsing karyotype and organizing ideogramsdebuggroup summary 0.33s karyotype has 2 chromosomes of total size 56,082debuggroup summary 0.34s applying global and local scalingdebuggroup summary 0.34s allocating image, colors and brushesdebuggroup summary 7.12s drawing 2 ideograms of total size 56,082debuggroup summary 7.12s drawing highlights and ideogramsdebuggroup summary 7.18s found conf file /usr/local/bin/../etc/tracks/link.confdebuggroup summary 7.18s process track_0 link circos/conf/../data/links-0.txtdebuggroup summary 7.19s drawing link track_0 z 0debuggroup !circoswarning 7.24s  Data point of type [link] [50000-50500] extended past end of ideogram [ctgA 0-50001]. This data point will be [trimmed].debuggroup !circoswarning 7.24s  Data point of type [link] [51000-51500] extended past end of ideogram [ctgA 0-50001]. This data point will be [hidden].debuggroup summary 7.24s found conf file /usr/local/bin/../etc/tracks/histogram.confdebuggroup summary 7.24s found conf file /usr/local/bin/../etc/tracks/scatter.confdebuggroup summary 7.24s found conf file /usr/local/bin/../etc/tracks/tile.confdebuggroup summary 7.25s processing track_0 histogram circos/conf/../data/data-0.txtdebuggroup summary 7.33s processing track_1 scatter circos/conf/../data/data-1.txtdebuggroup summary 7.49s processing track_2 tile circos/conf/../data/data-2.txtdebuggroup summary 7.51s drawing track_0 histogram z 0 data-0.txt orient outdebuggroup summary 7.53s found conf file /usr/local/bin/../etc/tracks/axis.confdebuggroup summary 8.34s drawing track_1 scatter z 0 data-1.txt orient outdebuggroup summary 8.35s found conf file /usr/local/bin/../etc/tracks/axis.confdebuggroup summary 8.57s drawing track_2 tile z 0 data-2.txt orient outdebuggroup summary 8.57s found conf file /usr/local/bin/../etc/tracks/axis.confdebuggroup !circoswarning 8.79s  Data point of type [tile] [3013-6130] extended past end of ideogram [ctgB 0-6079]. This data point will be [trimmed].debuggroup output 8.79s generating outputdebuggroup output 9.31s created PNG image ./circos.png (539 kb)debuggroup output 9.32s created SVG image ./circos.svg (414 kb)
+            ]]></system-out>
+            <system-err><![CDATA[
+            Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value within %Circos::Error::GROUPERROR in uc at /usr/local/bin/../lib/Circos/Error.pm line 354, <F> line 21.Use of uninitialized value within %Circos::Error::GROUPERROR in uc at /usr/local/bin/../lib/Circos/Error.pm line 354, <F> line 21.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781, <F> line 21.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781, <F> line 1214.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value within %Circos::Error::GROUPERROR in uc at /usr/local/bin/../lib/Circos/Error.pm line 354.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="deeptools_plot_enrichment (Test #1)" name="0" time="61.57714581489563">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #1)" name="0" time="17.575931787490845">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1434, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 747, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 839, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1434, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 747, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 839, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 0, "time_seconds": 17.575931787490845, "tool_id": "filter_tabular", "tool_version": "3.3.1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #2)" name="1" time="77.11478781700134">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #3)" name="2" time="37.55428218841553">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #4)" name="3" time="38.3801691532135">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #5)" name="4" time="37.14524579048157">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #1)" name="0" time="46.95483589172363">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #2)" name="1" time="48.854647159576416">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #3)" name="2" time="31.35623788833618">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "generate_histogram": false,  "layout|reads": {   "id": "0a5e5cef6c7de951",   "src": "hdca"  },  "layout|select_layout": "collection" }, "job": {  "command_line": "flash --threads=${GALAXY_SLOTS:-1} -m 10 -M 65 -x 0.25  \u0027/galaxy/server/database/objects/5/7/1/dataset_5716bfd3-db2f-4703-97d9-debe3f4ca5fa.dat\u0027 \u0027/galaxy/server/database/objects/4/5/2/dataset_4525d2db-213c-4c77-8481-b6a396322232.dat\u0027 -p 64 --output-suffix=\u0027\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-05-29T01:04:05.312268",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-m7wsv",  "galaxy_version": "24.1",  "handler": null,  "history_id": "0a5e5cef6c7de951",  "id": "5de490a2d3a01165",  "inputs": {   "layout|reads1": {    "id": "396aa1d25c162f1f",    "src": "hda",    "uuid": "5716bfd3-db2f-4703-97d9-debe3f4ca5fa"   },   "layout|reads2": {    "id": "5c72297dc649fd74",    "src": "hda",    "uuid": "4525d2db-213c-4c77-8481-b6a396322232"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "hist": {    "id": "b18b4fe71e8f723d",    "src": "hda",    "uuid": "e1bed9b1-4987-4de6-b91d-82335ed6054e"   },   "log": {    "id": "fd9005f6b4b93c46",    "src": "hda",    "uuid": "ac84cd0f-4b22-4ccc-b455-d93d8b0a9638"   },   "merged_reads": {    "id": "c5c7e8944b5c5ea4",    "src": "hda",    "uuid": "68853ef3-306d-4810-88d0-9d5c1d80ba46"   },   "unmerged_reads_f": {    "id": "8f42f553b842b5f6",    "src": "hda",    "uuid": "ae646ebe-93ef-4e78-95b5-149870425860"   },   "unmerged_reads_r": {    "id": "9b2e1e052d550be0",    "src": "hda",    "uuid": "a8c35051-5412-4627-88c0-52c9542ce933"   }  },  "params": {   "__input_ext": "\"input\"",   "allow_outies": "false",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "generate_histogram": "false",   "layout": "{\"__current_case__\": 1, \"reads\": {\"values\": [{\"id\": 1, \"src\": \"hdca\"}]}, \"select_layout\": \"collection\"}",   "max_mismatch_density": "\"0.25\"",   "max_overlap": "\"65\"",   "min_overlap": "\"10\"",   "save_log": "false"  },  "state": "error",  "stderr": "",  "stdout": "[FLASH] Starting FLASH v1.2.11\n[FLASH] Fast Length Adjustment of SHort reads\n[FLASH]  \n[FLASH] Input files:\n[FLASH]     /galaxy/server/database/objects/5/7/1/dataset_5716bfd3-db2f-4703-97d9-debe3f4ca5fa.dat\n[FLASH]     /galaxy/server/database/objects/4/5/2/dataset_4525d2db-213c-4c77-8481-b6a396322232.dat\n[FLASH]  \n[FLASH] Output files:\n[FLASH]     ./out.extendedFrags.fastq\n[FLASH]     ./out.notCombined_1.fastq\n[FLASH]     ./out.notCombined_2.fastq\n[FLASH]     ./out.hist\n[FLASH]     ./out.histogram\n[FLASH]  \n[FLASH] Parameters:\n[FLASH]     Min overlap:           10\n[FLASH]     Max overlap:           65\n[FLASH]     Max mismatch density:  0.250000\n[FLASH]     Allow \"outie\" pairs:   false\n[FLASH]     Cap mismatch quals:    false\n[FLASH]     Combiner threads:      1\n[FLASH]     Input format:          FASTQ, phred_offset=64\n[FLASH]     Output format:         FASTQ, phred_offset=64\n[FLASH]  \n[FLASH] Starting reader and writer threads\n[FLASH] Starting 1 combiner threads\n[FLASH] Processed 200 read pairs\n[FLASH]  \n[FLASH] Read combination statistics:\n[FLASH]     Total pairs:      200\n[FLASH]     Combined pairs:   5\n[FLASH]     Uncombined pairs: 195\n[FLASH]     Percent combined: 2.50%\n[FLASH]  \n[FLASH] Writing histogram files.\n[FLASH]  \n[FLASH] FLASH v1.2.11 complete!\n[FLASH] 0.019 seconds elapsed\n",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/flash/flash/1.2.11.4",  "tool_stderr": "",  "tool_stdout": "[FLASH] Starting FLASH v1.2.11\n[FLASH] Fast Length Adjustment of SHort reads\n[FLASH]  \n[FLASH] Input files:\n[FLASH]     /galaxy/server/database/objects/5/7/1/dataset_5716bfd3-db2f-4703-97d9-debe3f4ca5fa.dat\n[FLASH]     /galaxy/server/database/objects/4/5/2/dataset_4525d2db-213c-4c77-8481-b6a396322232.dat\n[FLASH]  \n[FLASH] Output files:\n[FLASH]     ./out.extendedFrags.fastq\n[FLASH]     ./out.notCombined_1.fastq\n[FLASH]     ./out.notCombined_2.fastq\n[FLASH]     ./out.hist\n[FLASH]     ./out.histogram\n[FLASH]  \n[FLASH] Parameters:\n[FLASH]     Min overlap:           10\n[FLASH]     Max overlap:           65\n[FLASH]     Max mismatch density:  0.250000\n[FLASH]     Allow \"outie\" pairs:   false\n[FLASH]     Cap mismatch quals:    false\n[FLASH]     Combiner threads:      1\n[FLASH]     Input format:          FASTQ, phred_offset=64\n[FLASH]     Output format:         FASTQ, phred_offset=64\n[FLASH]  \n[FLASH] Starting reader and writer threads\n[FLASH] Starting 1 combiner threads\n[FLASH] Processed 200 read pairs\n[FLASH]  \n[FLASH] Read combination statistics:\n[FLASH]     Total pairs:      200\n[FLASH]     Combined pairs:   5\n[FLASH]     Uncombined pairs: 195\n[FLASH]     Percent combined: 2.50%\n[FLASH]  \n[FLASH] Writing histogram files.\n[FLASH]  \n[FLASH] FLASH v1.2.11 complete!\n[FLASH] 0.019 seconds elapsed\n",  "update_time": "2025-05-29T01:04:10.528105",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/flash/flash/1.2.11.4, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/flash/flash/1.2.11.4, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/flash/flash/1.2.11.4, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/flash/flash/1.2.11.4, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/flash/flash/1.2.11.4, exit_code: None, stderr: ." ], "status": "failure", "test_index": 2, "time_seconds": 31.35623788833618, "tool_id": "flash", "tool_version": "1.2.11.4"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            [FLASH] Starting FLASH v1.2.11[FLASH] Fast Length Adjustment of SHort reads[FLASH]  [FLASH] Input files:[FLASH]     /galaxy/server/database/objects/5/7/1/dataset_5716bfd3-db2f-4703-97d9-debe3f4ca5fa.dat[FLASH]     /galaxy/server/database/objects/4/5/2/dataset_4525d2db-213c-4c77-8481-b6a396322232.dat[FLASH]  [FLASH] Output files:[FLASH]     ./out.extendedFrags.fastq[FLASH]     ./out.notCombined_1.fastq[FLASH]     ./out.notCombined_2.fastq[FLASH]     ./out.hist[FLASH]     ./out.histogram[FLASH]  [FLASH] Parameters:[FLASH]     Min overlap:           10[FLASH]     Max overlap:           65[FLASH]     Max mismatch density:  0.250000[FLASH]     Allow "outie" pairs:   false[FLASH]     Cap mismatch quals:    false[FLASH]     Combiner threads:      1[FLASH]     Input format:          FASTQ, phred_offset=64[FLASH]     Output format:         FASTQ, phred_offset=64[FLASH]  [FLASH] Starting reader and writer threads[FLASH] Starting 1 combiner threads[FLASH] Processed 200 read pairs[FLASH]  [FLASH] Read combination statistics:[FLASH]     Total pairs:      200[FLASH]     Combined pairs:   5[FLASH]     Uncombined pairs: 195[FLASH]     Percent combined: 2.50%[FLASH]  [FLASH] Writing histogram files.[FLASH]  [FLASH] FLASH v1.2.11 complete![FLASH] 0.019 seconds elapsed
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #4)" name="3" time="43.15416216850281">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #5)" name="4" time="31.61061692237854">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "generate_histogram": false,  "layout|reads": {   "id": "3e644445142ed7e8",   "src": "hdca"  },  "layout|select_layout": "collection" }, "job": {  "command_line": "flash --threads=${GALAXY_SLOTS:-1} -m 10 -M 65 -x 0.25  \u0027/galaxy/server/database/objects/a/4/d/dataset_a4dfe099-71db-4a43-87f0-4886798953e9.dat\u0027 \u0027/galaxy/server/database/objects/6/c/e/dataset_6cedd291-b2b9-4d40-a743-8a92e37fa6dd.dat\u0027 -p 33 -z --output-suffix=\u0027\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-05-29T01:05:19.573378",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-ph4qq",  "galaxy_version": "24.1",  "handler": null,  "history_id": "0a5e5cef6c7de951",  "id": "b7a3c1958a8cba78",  "inputs": {   "layout|reads1": {    "id": "f64d894c70752b22",    "src": "hda",    "uuid": "a4dfe099-71db-4a43-87f0-4886798953e9"   },   "layout|reads2": {    "id": "15fcf5e7345bfb7b",    "src": "hda",    "uuid": "6cedd291-b2b9-4d40-a743-8a92e37fa6dd"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "hist": {    "id": "131b2b3fe676d83c",    "src": "hda",    "uuid": "fc7f6952-296e-48bd-bd43-311daf8bee3f"   },   "log": {    "id": "4635e46d8c138203",    "src": "hda",    "uuid": "ea2dc53f-2f88-4a7f-9b2d-a4decbbdbf79"   },   "merged_reads": {    "id": "21e9e4aa13941a84",    "src": "hda",    "uuid": "fe058194-6aba-469f-8872-b57f2e711528"   },   "unmerged_reads_f": {    "id": "dfc2f7e9745a9e37",    "src": "hda",    "uuid": "21145049-73c6-4605-8115-cbfd719386fc"   },   "unmerged_reads_r": {    "id": "4858a0a0237576f0",    "src": "hda",    "uuid": "392b45f5-60d8-4880-9361-2f1c3a57f8d7"   }  },  "params": {   "__input_ext": "\"input\"",   "allow_outies": "false",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "generate_histogram": "false",   "layout": "{\"__current_case__\": 1, \"reads\": {\"values\": [{\"id\": 2, \"src\": \"hdca\"}]}, \"select_layout\": \"collection\"}",   "max_mismatch_density": "\"0.25\"",   "max_overlap": "\"65\"",   "min_overlap": "\"10\"",   "save_log": "false"  },  "state": "error",  "stderr": "",  "stdout": "[FLASH] Starting FLASH v1.2.11\n[FLASH] Fast Length Adjustment of SHort reads\n[FLASH]  \n[FLASH] Input files:\n[FLASH]     /galaxy/server/database/objects/a/4/d/dataset_a4dfe099-71db-4a43-87f0-4886798953e9.dat\n[FLASH]     /galaxy/server/database/objects/6/c/e/dataset_6cedd291-b2b9-4d40-a743-8a92e37fa6dd.dat\n[FLASH]  \n[FLASH] Output files:\n[FLASH]     ./out.extendedFrags.fastq\n[FLASH]     ./out.notCombined_1.fastq\n[FLASH]     ./out.notCombined_2.fastq\n[FLASH]     ./out.hist\n[FLASH]     ./out.histogram\n[FLASH]  \n[FLASH] Parameters:\n[FLASH]     Min overlap:           10\n[FLASH]     Max overlap:           65\n[FLASH]     Max mismatch density:  0.250000\n[FLASH]     Allow \"outie\" pairs:   false\n[FLASH]     Cap mismatch quals:    false\n[FLASH]     Combiner threads:      1\n[FLASH]     Input format:          FASTQ, phred_offset=33\n[FLASH]     Output format:         FASTQ, phred_offset=33, gzip\n[FLASH]  \n[FLASH] Starting reader and writer threads\n[FLASH] Starting 1 combiner threads\n[FLASH] Processed 500 read pairs\n[FLASH]  \n[FLASH] Read combination statistics:\n[FLASH]     Total pairs:      500\n[FLASH]     Combined pairs:   18\n[FLASH]     Uncombined pairs: 482\n[FLASH]     Percent combined: 3.60%\n[FLASH]  \n[FLASH] Writing histogram files.\n[FLASH]  \n[FLASH] FLASH v1.2.11 complete!\n[FLASH] 0.039 seconds elapsed\n",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/flash/flash/1.2.11.4",  "tool_stderr": "",  "tool_stdout": "[FLASH] Starting FLASH v1.2.11\n[FLASH] Fast Length Adjustment of SHort reads\n[FLASH]  \n[FLASH] Input files:\n[FLASH]     /galaxy/server/database/objects/a/4/d/dataset_a4dfe099-71db-4a43-87f0-4886798953e9.dat\n[FLASH]     /galaxy/server/database/objects/6/c/e/dataset_6cedd291-b2b9-4d40-a743-8a92e37fa6dd.dat\n[FLASH]  \n[FLASH] Output files:\n[FLASH]     ./out.extendedFrags.fastq\n[FLASH]     ./out.notCombined_1.fastq\n[FLASH]     ./out.notCombined_2.fastq\n[FLASH]     ./out.hist\n[FLASH]     ./out.histogram\n[FLASH]  \n[FLASH] Parameters:\n[FLASH]     Min overlap:           10\n[FLASH]     Max overlap:           65\n[FLASH]     Max mismatch density:  0.250000\n[FLASH]     Allow \"outie\" pairs:   false\n[FLASH]     Cap mismatch quals:    false\n[FLASH]     Combiner threads:      1\n[FLASH]     Input format:          FASTQ, phred_offset=33\n[FLASH]     Output format:         FASTQ, phred_offset=33, gzip\n[FLASH]  \n[FLASH] Starting reader and writer threads\n[FLASH] Starting 1 combiner threads\n[FLASH] Processed 500 read pairs\n[FLASH]  \n[FLASH] Read combination statistics:\n[FLASH]     Total pairs:      500\n[FLASH]     Combined pairs:   18\n[FLASH]     Uncombined pairs: 482\n[FLASH]     Percent combined: 3.60%\n[FLASH]  \n[FLASH] Writing histogram files.\n[FLASH]  \n[FLASH] FLASH v1.2.11 complete!\n[FLASH] 0.039 seconds elapsed\n",  "update_time": "2025-05-29T01:05:25.410384",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/flash/flash/1.2.11.4, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/flash/flash/1.2.11.4, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/flash/flash/1.2.11.4, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/flash/flash/1.2.11.4, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/flash/flash/1.2.11.4, exit_code: None, stderr: ." ], "status": "failure", "test_index": 4, "time_seconds": 31.61061692237854, "tool_id": "flash", "tool_version": "1.2.11.4"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            [FLASH] Starting FLASH v1.2.11[FLASH] Fast Length Adjustment of SHort reads[FLASH]  [FLASH] Input files:[FLASH]     /galaxy/server/database/objects/a/4/d/dataset_a4dfe099-71db-4a43-87f0-4886798953e9.dat[FLASH]     /galaxy/server/database/objects/6/c/e/dataset_6cedd291-b2b9-4d40-a743-8a92e37fa6dd.dat[FLASH]  [FLASH] Output files:[FLASH]     ./out.extendedFrags.fastq[FLASH]     ./out.notCombined_1.fastq[FLASH]     ./out.notCombined_2.fastq[FLASH]     ./out.hist[FLASH]     ./out.histogram[FLASH]  [FLASH] Parameters:[FLASH]     Min overlap:           10[FLASH]     Max overlap:           65[FLASH]     Max mismatch density:  0.250000[FLASH]     Allow "outie" pairs:   false[FLASH]     Cap mismatch quals:    false[FLASH]     Combiner threads:      1[FLASH]     Input format:          FASTQ, phred_offset=33[FLASH]     Output format:         FASTQ, phred_offset=33, gzip[FLASH]  [FLASH] Starting reader and writer threads[FLASH] Starting 1 combiner threads[FLASH] Processed 500 read pairs[FLASH]  [FLASH] Read combination statistics:[FLASH]     Total pairs:      500[FLASH]     Combined pairs:   18[FLASH]     Uncombined pairs: 482[FLASH]     Percent combined: 3.60%[FLASH]  [FLASH] Writing histogram files.[FLASH]  [FLASH] FLASH v1.2.11 complete![FLASH] 0.039 seconds elapsed
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="ivar_filtervariants (Test #1)" name="0" time="45.38320064544678">
+        
+            
+            <system-out><![CDATA[
+            Header format of ./var_0.tsv did not match! Please use files generated using "ivar variants" command.
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="medaka_consensus (Test #1)" name="0" time="83.97303915023804">
+        
+            
+            <system-out><![CDATA[
+            [01:21:51 - Predict] Reducing threads to 2, anymore is a waste.[01:21:51 - Predict] It looks like you are running medaka without a GPU and attempted to set a high number of threads. We have scaled this down to an optimal number. If you wish to improve performance please see https://nanoporetech.github.io/medaka/installation.html#improving-parallelism.[01:21:51 - Predict] Setting tensorflow inter/intra-op threads to 2/1.[01:21:51 - Predict] Processing region(s): ref:0-30[01:21:51 - Predict] Using model: /usr/local/lib/python3.8/site-packages/medaka/data/r941_min_high_g360_model.hdf5.[01:21:51 - DataStre] Writing sample registry.[01:21:51 - Predict] Processing 1 long region(s) with batching.[01:21:51 - MdlStore] filepath /usr/local/lib/python3.8/site-packages/medaka/data/r941_min_high_g360_model.hdf52025-05-29 01:21:51.732609: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  SSE4.1 SSE4.2 AVX AVX2 FMATo enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.[01:21:52 - BAMFile] Creating pool of 16 BAM file sets.[01:21:52 - DLoader] Sample-0: started[01:21:52 - Sampler] Initializing sampler for consensus of region ref:0-30.[01:21:52 - DLoader] Sample-1: started[01:21:52 - DLoader] Sample-1: finished[01:21:52 - DLoader] Initialised. Batch size:100. Workers:2. Cache:800[01:21:52 - PWorker] Running inference for 0.0M draft bases.[01:21:52 - Feature] Pileup counts do not span requested region, requested ref:0-30, received 0-9.[01:21:52 - Feature] Processed ref:0.0-9.0 (median depth 1.0)[01:21:52 - Feature] Pileup counts do not span requested region, requested ref:0-30, received 14-29.[01:21:52 - Feature] Processed ref:14.0-29.0 (median depth 1.0)[01:21:52 - Sampler] Took 0.04s to make features.[01:21:52 - Sampler] Region ref:0.0-9.0 (10 positions) is smaller than inference chunk length 10000, quarantining.[01:21:52 - Sampler] Region ref:14.0-29.0 (16 positions) is smaller than inference chunk length 10000, quarantining.[01:21:52 - DLoader] Sample-0: finished[01:21:52 - DLoader] Batches ready: 0. Samples ready: 0 (0.0 batches)[01:21:52 - DataStre] Writing sample registry.[01:21:52 - PWorker] Processed 0 batches[01:21:52 - PWorker] All done, 2 remainder regions.[01:21:52 - Predict] Processing 2 short region(s).[01:21:52 - MdlStore] filepath /usr/local/lib/python3.8/site-packages/medaka/data/r941_min_high_g360_model.hdf5[01:21:53 - DLoader] Sample-0: started[01:21:53 - Sampler] Initializing sampler for consensus of region ref:0-10.[01:21:53 - DLoader] Sample-1: started[01:21:53 - Sampler] Initializing sampler for consensus of region ref:14-30.[01:21:53 - Feature] Processed ref:14.0-29.0 (median depth 1.0)[01:21:53 - DLoader] Initialised. Batch size:1. Workers:2. Cache:8[01:21:53 - Feature] Processed ref:0.0-9.0 (median depth 1.0)[01:21:53 - Sampler] Took 0.02s to make features.[01:21:53 - PWorker] Running inference for 0.0M draft bases.[01:21:53 - Sampler] Took 0.04s to make features.[01:21:53 - Sampler] Pileup for ref:14.0-29.0 is of width 16[01:21:53 - Sampler] Pileup for ref:0.0-9.0 is of width 10[01:21:53 - DLoader] Sample-0: finished[01:21:53 - DLoader] Sample-1: finished[01:21:53 - DLoader] Batches ready: 2. Samples ready: 0 (0.0 batches)[01:21:53 - DataStre] Loaded sample register.[01:21:53 - DataStre] Adding ref:14.0-29.0 to sample registry[01:21:53 - DLoader] Batches ready: 1. Samples ready: 0 (0.0 batches)[01:21:53 - DataStre] Adding ref:0.0-9.0 to sample registry[01:21:53 - DLoader] Batches ready: 0. Samples ready: 0 (0.0 batches)[01:21:53 - DataStre] Writing sample registry.[01:21:53 - PWorker] Processed 2 batches[01:21:53 - PWorker] All done, 0 remainder regions.[01:21:53 - Predict] Finished processing all regions.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.[01:21:53 - BAMFile] Closing BAM file set.
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="medaka_consensus (Test #2)" name="1" time="46.20378804206848">
+        
+            
+            <system-out><![CDATA[
+            [01:22:45 - Predict] Reducing threads to 2, anymore is a waste.[01:22:45 - Predict] It looks like you are running medaka without a GPU and attempted to set a high number of threads. We have scaled this down to an optimal number. If you wish to improve performance please see https://nanoporetech.github.io/medaka/installation.html#improving-parallelism.[01:22:45 - Predict] Setting tensorflow inter/intra-op threads to 2/1.[01:22:45 - Predict] Processing region(s): ref:0-30[01:22:45 - Predict] Using model: /usr/local/lib/python3.8/site-packages/medaka/data/r941_min_fast_g303_model.hdf5.[01:22:45 - DataStre] Writing sample registry.[01:22:45 - Predict] Processing 1 long region(s) with batching.[01:22:45 - MdlStore] filepath /usr/local/lib/python3.8/site-packages/medaka/data/r941_min_fast_g303_model.hdf52025-05-29 01:22:45.216982: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  SSE4.1 SSE4.2 AVX AVX2 FMATo enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.[01:22:45 - BAMFile] Creating pool of 16 BAM file sets.[01:22:45 - DLoader] Sample-0: started[01:22:45 - Sampler] Initializing sampler for consensus of region ref:0-30.[01:22:45 - DLoader] Sample-1: started[01:22:45 - DLoader] Sample-1: finished[01:22:45 - Feature] Pileup counts do not span requested region, requested ref:0-30, received 0-9.[01:22:45 - DLoader] Initialised. Batch size:99. Workers:2. Cache:792[01:22:46 - PWorker] Running inference for 0.0M draft bases.[01:22:46 - Feature] Processed ref:0.0-9.0 (median depth 1.0)[01:22:46 - Feature] Pileup counts do not span requested region, requested ref:0-30, received 14-29.[01:22:46 - Feature] Processed ref:14.0-29.0 (median depth 1.0)[01:22:46 - Sampler] Took 0.03s to make features.[01:22:46 - Sampler] Region ref:0.0-9.0 (10 positions) is smaller than inference chunk length 9999, quarantining.[01:22:46 - Sampler] Region ref:14.0-29.0 (16 positions) is smaller than inference chunk length 9999, quarantining.[01:22:46 - DLoader] Sample-0: finished[01:22:46 - DLoader] Batches ready: 0. Samples ready: 0 (0.0 batches)[01:22:46 - DataStre] Writing sample registry.[01:22:46 - PWorker] Processed 0 batches[01:22:46 - PWorker] All done, 2 remainder regions.[01:22:46 - Predict] Processing 2 short region(s).[01:22:46 - MdlStore] filepath /usr/local/lib/python3.8/site-packages/medaka/data/r941_min_fast_g303_model.hdf5[01:22:46 - DLoader] Sample-0: started[01:22:46 - Sampler] Initializing sampler for consensus of region ref:0-10.[01:22:46 - DLoader] Sample-1: started[01:22:46 - Sampler] Initializing sampler for consensus of region ref:14-30.[01:22:46 - DLoader] Initialised. Batch size:1. Workers:2. Cache:8[01:22:46 - PWorker] Running inference for 0.0M draft bases.[01:22:46 - Feature] Processed ref:0.0-9.0 (median depth 1.0)[01:22:46 - Sampler] Took 0.05s to make features.[01:22:46 - Sampler] Pileup for ref:0.0-9.0 is of width 10[01:22:46 - DLoader] Sample-0: finished[01:22:46 - Feature] Processed ref:14.0-29.0 (median depth 1.0)[01:22:46 - Sampler] Took 0.06s to make features.[01:22:46 - Sampler] Pileup for ref:14.0-29.0 is of width 16[01:22:46 - DLoader] Batches ready: 0. Samples ready: 0 (0.0 batches)[01:22:46 - DLoader] Sample-1: finished[01:22:47 - DataStre] Loaded sample register.[01:22:47 - DataStre] Adding ref:0.0-9.0 to sample registry[01:22:47 - DLoader] Batches ready: 1. Samples ready: 0 (0.0 batches)[01:22:47 - DataStre] Adding ref:14.0-29.0 to sample registry[01:22:47 - DLoader] Batches ready: 0. Samples ready: 0 (0.0 batches)[01:22:47 - DataStre] Writing sample registry.[01:22:47 - PWorker] Processed 2 batches[01:22:47 - PWorker] All done, 0 remainder regions.[01:22:47 - Predict] Finished processing all regions.[01:22:47 - Predict] Validating and finalising output data.[01:22:47 - DataStre] Writing sample registry.[01:22:47 - DataStre] Created missing sample register.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.[01:22:47 - BAMFile] Closing BAM file set.
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="poretools_nucdist (Test #1)" name="0" time="72.83210873603821">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="poretools_nucdist (Test #2)" name="1" time="40.48227381706238">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="qualimap_multi_bamqc (Test #1)" name="0" time="141.36538767814636">
+        
+            
+            <system-out><![CDATA[
+            Java memory size is set to 1200MLaunching application...detected environment java options -Djava.awt.headless=true -Xmx4080mQualiMap v.2.3Built on 2023-05-19 16:57Selected tool: multi-bamqcRunning multi-sample BAM QCChecking input pathsLoading sample dataCreating chartsPreparing result reportWriting HTML report...HTML report created successfullyFinished
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="racon (Test #1)" name="0" time="54.19989848136902">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [racon::Polisher::initialize] loaded target sequences 0.001185 s[racon::Polisher::initialize] loaded sequences 0.010155 s[racon::Polisher::initialize] loaded overlaps 0.013454 s[racon::Polisher::initialize] aligning overlaps [=>                  ] 0.002020 s[racon::Polisher::initialize] aligning overlaps [==>                 ] 0.002084 s[racon::Polisher::initialize] aligning overlaps [===>                ] 0.002184 s[racon::Polisher::initialize] aligning overlaps [====>               ] 0.002254 s[racon::Polisher::initialize] aligning overlaps [=====>              ] 0.002449 s[racon::Polisher::initialize] aligning overlaps [======>             ] 0.002476 s[racon::Polisher::initialize] aligning overlaps [=======>            ] 0.002569 s[racon::Polisher::initialize] aligning overlaps [========>           ] 0.002626 s[racon::Polisher::initialize] aligning overlaps [=========>          ] 0.002731 s[racon::Polisher::initialize] aligning overlaps [==========>         ] 0.002785 s[racon::Polisher::initialize] aligning overlaps [===========>        ] 0.002944 s[racon::Polisher::initialize] aligning overlaps [============>       ] 0.002978 s[racon::Polisher::initialize] aligning overlaps [=============>      ] 0.003186 s[racon::Polisher::initialize] aligning overlaps [==============>     ] 0.003201 s[racon::Polisher::initialize] aligning overlaps [===============>    ] 0.003211 s[racon::Polisher::initialize] aligning overlaps [================>   ] 0.003293 s[racon::Polisher::initialize] aligning overlaps [=================>  ] 0.003308 s[racon::Polisher::initialize] aligning overlaps [==================> ] 0.003350 s[racon::Polisher::initialize] aligning overlaps [===================>] 0.003470 s[racon::Polisher::initialize] aligning overlaps [====================] 0.003487 s[racon::Polisher::initialize] transformed data into windows 0.000318 s[racon::Polisher::polish] generating consensus [=>                  ] 0.053262 s[racon::Polisher::polish] generating consensus [==>                 ] 0.054259 s[racon::Polisher::polish] generating consensus [===>                ] 0.084197 s[racon::Polisher::polish] generating consensus [====>               ] 0.084304 s[racon::Polisher::polish] generating consensus [=====>              ] 0.084322 s[racon::Polisher::polish] generating consensus [======>             ] 0.105747 s[racon::Polisher::polish] generating consensus [=======>            ] 0.105781 s[racon::Polisher::polish] generating consensus [========>           ] 0.111331 s[racon::Polisher::polish] generating consensus [=========>          ] 0.163412 s[racon::Polisher::polish] generating consensus [==========>         ] 0.170799 s[racon::Polisher::polish] generating consensus [===========>        ] 0.262458 s[racon::Polisher::polish] generating consensus [============>       ] 0.262521 s[racon::Polisher::polish] generating consensus [=============>      ] 0.262542 s[racon::Polisher::polish] generating consensus [==============>     ] 0.327341 s[racon::Polisher::polish] generating consensus [===============>    ] 0.327494 s[racon::Polisher::polish] generating consensus [================>   ] 0.327643 s[racon::Polisher::polish] generating consensus [=================>  ] 0.339695 s[racon::Polisher::polish] generating consensus [==================> ] 0.358308 s[racon::Polisher::polish] generating consensus [===================>] 0.399903 s[racon::Polisher::polish] generating consensus [====================] 0.400033 s[racon::Polisher::] total = 0.432100 s
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="racon (Test #2)" name="1" time="45.99674463272095">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [racon::Polisher::initialize] loaded target sequences 0.000943 s[racon::Polisher::initialize] loaded sequences 0.009153 s[racon::Polisher::initialize] loaded overlaps 0.000547 s[racon::Polisher::initialize] aligning overlaps [=>                  ] 0.013283 s[racon::Polisher::initialize] aligning overlaps [==>                 ] 0.020257 s[racon::Polisher::initialize] aligning overlaps [===>                ] 0.028080 s[racon::Polisher::initialize] aligning overlaps [====>               ] 0.030768 s[racon::Polisher::initialize] aligning overlaps [=====>              ] 0.035863 s[racon::Polisher::initialize] aligning overlaps [======>             ] 0.036147 s[racon::Polisher::initialize] aligning overlaps [=======>            ] 0.041547 s[racon::Polisher::initialize] aligning overlaps [========>           ] 0.047648 s[racon::Polisher::initialize] aligning overlaps [=========>          ] 0.051924 s[racon::Polisher::initialize] aligning overlaps [==========>         ] 0.055273 s[racon::Polisher::initialize] aligning overlaps [===========>        ] 0.058880 s[racon::Polisher::initialize] aligning overlaps [============>       ] 0.063614 s[racon::Polisher::initialize] aligning overlaps [=============>      ] 0.072480 s[racon::Polisher::initialize] aligning overlaps [==============>     ] 0.075422 s[racon::Polisher::initialize] aligning overlaps [===============>    ] 0.088485 s[racon::Polisher::initialize] aligning overlaps [================>   ] 0.098760 s[racon::Polisher::initialize] aligning overlaps [=================>  ] 0.107243 s[racon::Polisher::initialize] aligning overlaps [==================> ] 0.107997 s[racon::Polisher::initialize] aligning overlaps [===================>] 0.108016 s[racon::Polisher::initialize] aligning overlaps [====================] 0.112894 s[racon::Polisher::initialize] transformed data into windows 0.000556 s[racon::Polisher::polish] generating consensus [=>                  ] 0.019019 s[racon::Polisher::polish] generating consensus [==>                 ] 0.021930 s[racon::Polisher::polish] generating consensus [===>                ] 0.039221 s[racon::Polisher::polish] generating consensus [====>               ] 0.039280 s[racon::Polisher::polish] generating consensus [=====>              ] 0.049837 s[racon::Polisher::polish] generating consensus [======>             ] 0.049871 s[racon::Polisher::polish] generating consensus [=======>            ] 0.057545 s[racon::Polisher::polish] generating consensus [========>           ] 0.057632 s[racon::Polisher::polish] generating consensus [=========>          ] 0.067180 s[racon::Polisher::polish] generating consensus [==========>         ] 0.067209 s[racon::Polisher::polish] generating consensus [===========>        ] 0.081846 s[racon::Polisher::polish] generating consensus [============>       ] 0.086548 s[racon::Polisher::polish] generating consensus [=============>      ] 0.113841 s[racon::Polisher::polish] generating consensus [==============>     ] 0.121443 s[racon::Polisher::polish] generating consensus [===============>    ] 0.144770 s[racon::Polisher::polish] generating consensus [================>   ] 0.166718 s[racon::Polisher::polish] generating consensus [=================>  ] 0.174537 s[racon::Polisher::polish] generating consensus [==================> ] 0.182874 s[racon::Polisher::polish] generating consensus [===================>] 0.191470 s[racon::Polisher::polish] generating consensus [====================] 0.241240 s[racon::Polisher::] total = 0.368965 s
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="racon (Test #3)" name="2" time="46.815932750701904">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [racon::Polisher::initialize] loaded target sequences 0.001152 s[racon::Polisher::initialize] loaded sequences 0.009309 s[racon::Polisher::initialize] loaded overlaps 0.012610 s[racon::Polisher::initialize] aligning overlaps [=>                  ] 0.001818 s[racon::Polisher::initialize] aligning overlaps [==>                 ] 0.001878 s[racon::Polisher::initialize] aligning overlaps [===>                ] 0.002004 s[racon::Polisher::initialize] aligning overlaps [====>               ] 0.002072 s[racon::Polisher::initialize] aligning overlaps [=====>              ] 0.002190 s[racon::Polisher::initialize] aligning overlaps [======>             ] 0.002213 s[racon::Polisher::initialize] aligning overlaps [=======>            ] 0.002345 s[racon::Polisher::initialize] aligning overlaps [========>           ] 0.002573 s[racon::Polisher::initialize] aligning overlaps [=========>          ] 0.002629 s[racon::Polisher::initialize] aligning overlaps [==========>         ] 0.002643 s[racon::Polisher::initialize] aligning overlaps [===========>        ] 0.002735 s[racon::Polisher::initialize] aligning overlaps [============>       ] 0.002821 s[racon::Polisher::initialize] aligning overlaps [=============>      ] 0.002867 s[racon::Polisher::initialize] aligning overlaps [==============>     ] 0.002975 s[racon::Polisher::initialize] aligning overlaps [===============>    ] 0.002990 s[racon::Polisher::initialize] aligning overlaps [================>   ] 0.003111 s[racon::Polisher::initialize] aligning overlaps [=================>  ] 0.003125 s[racon::Polisher::initialize] aligning overlaps [==================> ] 0.003182 s[racon::Polisher::initialize] aligning overlaps [===================>] 0.003196 s[racon::Polisher::initialize] aligning overlaps [====================] 0.003232 s[racon::Polisher::initialize] transformed data into windows 0.000317 s[racon::Polisher::polish] generating consensus [=>                  ] 0.021797 s[racon::Polisher::polish] generating consensus [==>                 ] 0.022288 s[racon::Polisher::polish] generating consensus [===>                ] 0.040047 s[racon::Polisher::polish] generating consensus [====>               ] 0.040107 s[racon::Polisher::polish] generating consensus [=====>              ] 0.048722 s[racon::Polisher::polish] generating consensus [======>             ] 0.048756 s[racon::Polisher::polish] generating consensus [=======>            ] 0.058687 s[racon::Polisher::polish] generating consensus [========>           ] 0.058765 s[racon::Polisher::polish] generating consensus [=========>          ] 0.070718 s[racon::Polisher::polish] generating consensus [==========>         ] 0.079113 s[racon::Polisher::polish] generating consensus [===========>        ] 0.093895 s[racon::Polisher::polish] generating consensus [============>       ] 0.109759 s[racon::Polisher::polish] generating consensus [=============>      ] 0.135033 s[racon::Polisher::polish] generating consensus [==============>     ] 0.141180 s[racon::Polisher::polish] generating consensus [===============>    ] 0.169668 s[racon::Polisher::polish] generating consensus [================>   ] 0.172194 s[racon::Polisher::polish] generating consensus [=================>  ] 0.201245 s[racon::Polisher::polish] generating consensus [==================> ] 0.201278 s[racon::Polisher::polish] generating consensus [===================>] 0.218193 s[racon::Polisher::polish] generating consensus [====================] 0.254049 s[racon::Polisher::] total = 0.283647 s
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #1)" name="0" time="43.09098792076111">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #2)" name="1" time="39.91357779502869">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #3)" name="2" time="38.75225782394409">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #4)" name="3" time="39.49070596694946">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #5)" name="4" time="36.90554881095886">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #6)" name="5" time="38.6330144405365">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #7)" name="6" time="13.453258514404297">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1434, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 747, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 839, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1434, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 747, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.10/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 839, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 6, "time_seconds": 13.453258514404297, "tool_id": "samtools_sort", "tool_version": "2.0.5"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #8)" name="7" time="38.19545364379883">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #9)" name="8" time="39.55603575706482">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="vcfallelicprimitives (Test #1)" name="0" time="49.6328763961792">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="vcfprimers (Test #1)" name="0" time="38.38534331321716">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            index file localref.fa.fai not found, generating...
+            ]]></system-err>
+        
+    </testcase>
+    
+</testsuite>
