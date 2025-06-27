@@ -1,0 +1,46 @@
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:28,753 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-vgzgb with k8s id: gxy-vgzgb succeeded
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:28,776 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-mnlzb failed and it is not a deletion case. Current state: running
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:28,777 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Trying with error file in _handle_job_failure
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:28,831 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] An unknown error occurred in this job and the maximum number of retries have been exceeded for job: gxy-mnlzb.
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:28,842 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Checking if job 123 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes ERROR 2025-06-27 01:30:28,882 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Could not clean up k8s batch job. Ignoring...
+Traceback (most recent call last):
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/http.py", line 437, in raise_for_status
+    resp.raise_for_status()
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 409 Client Error: Conflict for url: https://34.118.224.1:443/apis/batch/v1/namespaces/prod-25-06-27-00-43-1/jobs/gxy-mnlzb
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/galaxy/server/lib/galaxy/jobs/runners/kubernetes.py", line 872, in _handle_job_failure
+    self.__cleanup_k8s_job(job)
+  File "/galaxy/server/lib/galaxy/jobs/runners/kubernetes.py", line 879, in __cleanup_k8s_job
+    delete_job(job, k8s_cleanup_job)
+  File "/galaxy/server/lib/galaxy/jobs/runners/util/pykube_util.py", line 108, in delete_job
+    job.scale(replicas=0)
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/mixins.py", line 30, in scale
+    self.update()
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/objects.py", line 165, in update
+    self.patch(self.obj, subresource=subresource)
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/objects.py", line 157, in patch
+    self.api.raise_for_status(r)
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/http.py", line 444, in raise_for_status
+    raise HTTPError(resp.status_code, payload["message"])
+pykube.exceptions.HTTPError: Operation cannot be fulfilled on jobs.batch "gxy-mnlzb": the object has been modified; please apply your changes to the latest version and try again
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:28,892 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] PP Getting into fail_job in k8s runner
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:28,901 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (123/gxy-mnlzb) tool_stdout: 
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:28,901 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (123/gxy-mnlzb) tool_stderr: 
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:28,901 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (123/gxy-mnlzb) job_stdout: 
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:28,901 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (123/gxy-mnlzb) job_stderr: An unknown error occurred in this job and the maximum number of retries have been exceeded for job: gxy-mnlzb.
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:28,901 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Attempting to stop job 123 (gxy-mnlzb)
+galaxy.jobs.runners DEBUG 2025-06-27 01:30:28,906 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] executing external set_meta script for job 122: GALAXY_LIB="/galaxy/server/lib"; if [ "$GALAXY_LIB" != "None" ]; then if [ -n "$PYTHONPATH" ]; then PYTHONPATH="$GALAXY_LIB:$PYTHONPATH"; else PYTHONPATH="$GALAXY_LIB"; fi; export PYTHONPATH; fi; GALAXY_VIRTUAL_ENV="None"; if [ "$GALAXY_VIRTUAL_ENV" != "None" -a -z "$VIRTUAL_ENV" -a -f "$GALAXY_VIRTUAL_ENV/bin/activate" ]; then . "$GALAXY_VIRTUAL_ENV/bin/activate"; fi; python metadata/set.py
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:28,924 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Found job with id gxy-mnlzb to delete
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:28,927 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking if job 123 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:29,039 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (123/gxy-mnlzb) Terminated at user's request
+galaxy.jobs.runners DEBUG 2025-06-27 01:30:36,427 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] execution of external set_meta for job 122 finished
+galaxy.tool_util.provided_metadata DEBUG 2025-06-27 01:30:36,471 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] unnamed outputs [{'__unnamed_outputs': [{'destination': {'type': 'hdas'}, 'elements': [{'name': 'category.tab', 'dbkey': '?', 'ext': 'tabular', 'link_data_only': False, 'sources': [], 'hashes': [], 'info': 'uploaded tabular file', 'state': 'ok', 'filename': '/galaxy/server/database/jobs_directory/000/122/working/data_fetch_upload_q2sv7ff9', 'object_id': 145}]}]}]
+galaxy.jobs INFO 2025-06-27 01:30:36,528 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Collecting metrics for Job 122 in /galaxy/server/database/jobs_directory/000/122
+galaxy.jobs DEBUG 2025-06-27 01:30:36,591 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] job_wrapper.finish for job 122 executed (141.238 ms)
+galaxy.jobs.runners.kubernetes DEBUG 2025-06-27 01:30:36,612 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 122 is an interactive tool. guest ports: []. interactive entry points: []
