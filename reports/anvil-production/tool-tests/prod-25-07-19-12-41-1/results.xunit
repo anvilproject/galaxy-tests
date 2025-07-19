@@ -1,0 +1,1034 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Results (powered by Planemo)"
+           tests="67"
+           errors="11"
+           failures="11"
+           skip="0">
+    
+    <testcase classname="bcftools_plugin_counts (Test #1)" name="0" time="44.61376953125">
+        
+            
+            <system-out><![CDATA[
+            Number of samples: 3Number of SNPs:    11Number of INDELs:  3Number of MNPs:    0Number of others:  0Number of sites:   15
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_view (Test #1)" name="0" time="40.09091520309448">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_view (Test #2)" name="1" time="35.51236915588379">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_view (Test #11)" name="10" time="35.28186082839966">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_view (Test #12)" name="11" time="11.748623609542847">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 11, "time_seconds": 11.748623609542847, "tool_id": "bcftools_view", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_view (Test #13)" name="12" time="34.83664894104004">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_view (Test #3)" name="2" time="11.319252967834473">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 2, "time_seconds": 11.319252967834473, "tool_id": "bcftools_view", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_view (Test #4)" name="3" time="34.50782060623169">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_view (Test #5)" name="4" time="34.40126848220825">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_view (Test #6)" name="5" time="34.47756505012512">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_view (Test #7)" name="6" time="10.909732341766357">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 6, "time_seconds": 10.909732341766357, "tool_id": "bcftools_view", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_view (Test #8)" name="7" time="34.8587064743042">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_view (Test #9)" name="8" time="35.368369579315186">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_view (Test #10)" name="9" time="34.49696493148804">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="datamash_transpose (Test #1)" name="0" time="0.3040194511413574">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (datamash_transpose_input.txt) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (datamash_transpose_input.txt) cannot be found.\n", "status": "error", "test_index": 0, "time_seconds": 0.3040194511413574, "tool_id": "datamash_transpose", "tool_version": "1.8+galaxy1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="deeptools_bam_compare (Test #1)" name="0" time="50.75330471992493">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            bamFilesList: ['one.bam', 'two.bam']binLength: 5numberOfSamples: 0blackListFileName: NoneskipZeroOverZero: Falsebed_and_bin: FalsegenomeChunkSize: NonedefaultFragmentLength: read lengthnumberOfProcessors: 8verbose: Falseregion: NonebedFile: NoneminMappingQuality: NoneignoreDuplicates: FalsechrsToSkip: []stepSize: 5center_read: FalsesamFlag_include: NonesamFlag_exclude: NoneminFragmentLength: 0maxFragmentLength: 0zerosToNans: FalsesmoothLength: Nonesave_data: Falseout_file_for_raw_data: NonemaxPairedFragmentLength: 1000
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="deeptools_bam_compare (Test #2)" name="1" time="36.172388792037964">
+        
+            
+            <system-out><![CDATA[
+            Due to filtering, 83.33333333333334% of the aforementioned alignments will be used 39.16666666666667Due to filtering, 83.33333333333334% of the aforementioned alignments will be used 39.16666666666667
+            ]]></system-out>
+            <system-err><![CDATA[
+            bamFilesList: ['one.bam', 'two.bam']binLength: 10numberOfSamples: 0blackListFileName: NoneskipZeroOverZero: Falsebed_and_bin: FalsegenomeChunkSize: NonedefaultFragmentLength: read lengthnumberOfProcessors: 8verbose: Falseregion: NonebedFile: NoneminMappingQuality: 1ignoreDuplicates: FalsechrsToSkip: []stepSize: 10center_read: FalsesamFlag_include: NonesamFlag_exclude: NoneminFragmentLength: 0maxFragmentLength: 0zerosToNans: FalsesmoothLength: Nonesave_data: Falseout_file_for_raw_data: NonemaxPairedFragmentLength: 1000
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="kallisto_pseudo (Test #1)" name="0" time="21.008482456207275">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 0, "time_seconds": 21.008482456207275, "tool_id": "kallisto_pseudo", "tool_version": "0.48.0+galaxy1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="kallisto_pseudo (Test #2)" name="1" time="13.048925399780273">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 1, "time_seconds": 13.048925399780273, "tool_id": "kallisto_pseudo", "tool_version": "0.48.0+galaxy1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="kallisto_pseudo (Test #3)" name="2" time="40.22632145881653">
+        
+            
+            <system-out><![CDATA[
+            {"n_targets": 1,"n_bootstraps": 0,"n_processed": 100,"n_pseudoaligned": 0,"n_unique": 0,"p_pseudoaligned": 0.0,"p_unique": 0.0,"kallisto_version": "0.48.0","index_version": 10,"start_time": "Sat Jul 19 13:37:43 2025","call": "kallisto pseudo -i reference.kallisto --threads 1 -o . --single --fragment-length 200 --sd 20 /galaxy/server/database/objects/e/1/c/dataset_e1cdf6b2-242d-463b-ac9c-56c346a2929c.dat"}
+            ]]></system-out>
+            <system-err><![CDATA[
+            [build] loading fasta file reference.fa[build] k-mer length: 31[build] counting k-mers ... done.[build] building target de Bruijn graph ...  done [build] creating equivalence classes ...  done[build] target de Bruijn graph has 1 contigs and contains 16269 k-mers [quant] fragment length distribution is truncated gaussian with mean = 200, sd = 20[index] k-mer length: 31[index] number of targets: 1[index] number of k-mers: 16,269[index] number of equivalence classes: 1[quant] running in single-end mode[quant] will process file 1: /galaxy/server/database/objects/e/1/c/dataset_e1cdf6b2-242d-463b-ac9c-56c346a2929c.dat[quant] finding pseudoalignments for the reads ... done[quant] processed 100 reads, 100 reads pseudoaligned
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="kallisto_pseudo (Test #4)" name="3" time="41.74082827568054">
+        
+            
+            <system-out><![CDATA[
+            {"n_targets": 1,"n_bootstraps": 0,"n_processed": 200,"n_pseudoaligned": 0,"n_unique": 0,"p_pseudoaligned": 0.0,"p_unique": 0.0,"kallisto_version": "0.48.0","index_version": 10,"start_time": "Sat Jul 19 13:38:25 2025","call": "kallisto pseudo -i reference.kallisto --threads 1 -o . /galaxy/server/database/objects/6/c/2/dataset_6c217ec7-89f6-4102-97eb-55d8658ad02f.dat /galaxy/server/database/objects/6/c/1/dataset_6c118f8e-aea5-42f0-96ec-02b49fcb26ea.dat"}
+            ]]></system-out>
+            <system-err><![CDATA[
+            [build] loading fasta file reference.fa[build] k-mer length: 31[build] counting k-mers ... done.[build] building target de Bruijn graph ...  done [build] creating equivalence classes ...  done[build] target de Bruijn graph has 15 contigs and contains 16670 k-mers [quant] fragment length distribution will be estimated from the data[index] k-mer length: 31[index] number of targets: 1[index] number of k-mers: 16,670[index] number of equivalence classes: 1[quant] running in paired-end mode[quant] will process pair 1: /galaxy/server/database/objects/6/c/2/dataset_6c217ec7-89f6-4102-97eb-55d8658ad02f.dat                             /galaxy/server/database/objects/6/c/1/dataset_6c118f8e-aea5-42f0-96ec-02b49fcb26ea.dat[quant] finding pseudoalignments for the reads ... done[quant] processed 200 reads, 200 reads pseudoaligned
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="kallisto_pseudo (Test #5)" name="4" time="20.53616237640381">
+        
+            <error type="error" message="parameter 'index': an invalid option (None) was selected, please verify"><![CDATA[
+                { "dynamic_param_error": true, "execution_problem": "parameter \u0027index\u0027: an invalid option (None) was selected, please verify", "inputs": {  "single_paired|collection|collection_selector": "datasets",  "single_paired|collection|fastq_umi|forward": {   "id": "77372cd025503483",   "src": "hda"  },  "single_paired|collection|fastq_umi|reverse": {   "id": "b1abc9464facc288",   "src": "hda"  },  "single_paired|collection|fastq_umi|umi": "yes",  "single_paired|single_paired_selector": "paired" }, "status": "error", "test_index": 4, "time_seconds": 20.53616237640381, "tool_id": "kallisto_pseudo", "tool_version": "0.48.0+galaxy1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="lofreq_alnqual (Test #1)" name="0" time="48.46659541130066">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="lofreq_alnqual (Test #2)" name="1" time="36.979278564453125">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="lofreq_alnqual (Test #3)" name="2" time="28.711532831192017">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "alnqual_choice|alnquals_to_use": "-A",  "reads": {   "id": "0b05573ff8bf1e02",   "src": "hda"  },  "reference_source|ref": {   "id": "af7334cef1ab761a",   "src": "hda"  },  "reference_source|ref_selector": "history" }, "job": {  "command_line": "ln -s \u0027/galaxy/server/database/objects/4/c/e/dataset_4ce23ddd-3577-4881-9e6a-22f1e489b623.dat\u0027 reference.fa \u0026\u0026 lofreq faidx reference.fa 2\u003e\u00261 || echo \"Error running samtools faidx for indexing fasta reference for lofreq\" \u003e\u00262 \u0026\u0026  lofreq alnqual -b  -A  \u0027/galaxy/server/database/objects/b/d/8/dataset_bd8dffdf-16b1-4676-b292-946f05777fba.dat\u0027 \u0027reference.fa\u0027 \u003e \u0027/galaxy/server/database/objects/c/7/f/dataset_c7f1f803-0269-467c-b47c-a48bfbeb225b.dat\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-07-19T13:35:43.977413",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-hmfg6",  "galaxy_version": "24.1",  "handler": null,  "history_id": "e906e068d7d31c00",  "id": "ce4b0c2ec1584544",  "inputs": {   "reads": {    "id": "0b05573ff8bf1e02",    "src": "hda",    "uuid": "bd8dffdf-16b1-4676-b292-946f05777fba"   },   "reference_source|ref": {    "id": "af7334cef1ab761a",    "src": "hda",    "uuid": "4ce23ddd-3577-4881-9e6a-22f1e489b623"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output": {    "id": "2eca470c9f85c9e7",    "src": "hda",    "uuid": "c7f1f803-0269-467c-b47c-a48bfbeb225b"   }  },  "params": {   "__input_ext": "\"input\"",   "alnqual_choice": "{\"__current_case__\": 2, \"alnquals_to_use\": \"-A\", \"extended_baq\": true}",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "recompute_all": "false",   "reference_source": "{\"__current_case__\": 1, \"ref\": {\"values\": [{\"id\": 192, \"src\": \"hda\"}]}, \"ref_selector\": \"history\"}"  },  "state": "error",  "stderr": "",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/lofreq_alnqual/lofreq_alnqual/2.1.5+galaxy1",  "tool_stderr": "",  "tool_stdout": "",  "update_time": "2025-07-19T13:35:50.046307",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/lofreq_alnqual/lofreq_alnqual/2.1.5+galaxy1, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/lofreq_alnqual/lofreq_alnqual/2.1.5+galaxy1, exit_code: None, stderr: ." ], "status": "failure", "test_index": 2, "time_seconds": 28.711532831192017, "tool_id": "lofreq_alnqual", "tool_version": "2.1.5+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="lofreq_alnqual (Test #4)" name="3" time="12.20241403579712">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 3, "time_seconds": 12.20241403579712, "tool_id": "lofreq_alnqual", "tool_version": "2.1.5+galaxy1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="lofreq_alnqual (Test #5)" name="4" time="37.248560190200806">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="mummer_show_coords (Test #1)" name="0" time="40.31345534324646">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="poretools_qualpos (Test #1)" name="0" time="12.908406972885132">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 0, "time_seconds": 12.908406972885132, "tool_id": "poretools_qualpos", "tool_version": "0.6.1a1.1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="poretools_qualpos (Test #2)" name="1" time="72.10772633552551">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            INFO:poreminion:Processing data...INFO:poreminion:Constructing box plot...INFO:poreminion:Writing plot to file...
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #1)" name="0" time="31.760591983795166">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "input": {   "id": "e5d5307db0afbefc",   "src": "hda"  },  "output_fmt_cond|output_fmt_select": "fasta",  "outputs": "other" }, "job": {  "command_line": "addthreads=${GALAXY_SLOTS:-1} \u0026\u0026 (( addthreads-- )) \u0026\u0026  samtools sort -@ $addthreads -n \u0027/galaxy/server/database/objects/e/2/5/dataset_e25f2f32-8228-47cd-9b56-9d94f84d7796.dat\u0027 \u003e input \u0026\u0026   samtools fasta    input  \u003e output.fasta \u0026\u0026 ln -s output.fasta output",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-07-19T13:10:09.973339",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-zxcbj",  "galaxy_version": "24.1",  "handler": null,  "history_id": "e906e068d7d31c00",  "id": "c34a729e285d7224",  "inputs": {   "input": {    "id": "e5d5307db0afbefc",    "src": "hda",    "uuid": "e25f2f32-8228-47cd-9b56-9d94f84d7796"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output": {    "id": "ca9be5440bc1ce2e",    "src": "hda",    "uuid": "d0a7ac6d-9947-4a71-b950-1f5f2409c602"   }  },  "params": {   "__input_ext": "\"bam\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "copy_arb_tags": null,   "copy_tags": "false",   "dbkey": "\"?\"",   "exclusive_filter": null,   "exclusive_filter_all": null,   "idxout_cond": "{\"__current_case__\": 0, \"idxout_select\": \"no\"}",   "inclusive_filter": null,   "output_fmt_cond": "{\"__current_case__\": 1, \"output_fmt_select\": \"fasta\"}",   "outputs": "\"other\"",   "read_numbering": "\"\""  },  "state": "error",  "stderr": "[M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 400 reads\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1",  "tool_stderr": "[M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 400 reads\n",  "tool_stdout": "",  "update_time": "2025-07-19T13:10:18.960811",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1, exit_code: None, stderr: [M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 400 reads\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1, exit_code: None, stderr: [M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 400 reads\n." ], "status": "failure", "test_index": 0, "time_seconds": 31.760591983795166, "tool_id": "samtools_fastx", "tool_version": "1.9+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 0 singletons[M::bam2fq_mainloop] processed 400 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #2)" name="1" time="38.07104301452637">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 0 singletons[M::bam2fq_mainloop] processed 400 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #11)" name="10" time="39.82554244995117">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "idxout_cond|barcode_tag": "BC",  "idxout_cond|idxout_select": "yes",  "idxout_cond|index_format": "n2i2",  "idxout_cond|write1st": true,  "input": {   "id": "7f9313e0ae5733ef",   "src": "hda"  },  "output_fmt_cond|output_fmt_select": "fastqsanger",  "outputs": [   "r1",   "r2",   "s",   "other"  ] }, "job": {  "command_line": "addthreads=${GALAXY_SLOTS:-1} \u0026\u0026 (( addthreads-- )) \u0026\u0026  samtools sort -@ $addthreads -n \u0027/galaxy/server/database/objects/f/c/5/dataset_fc5708f8-19cf-4d9e-a5fe-bf817ee4dc4c.dat\u0027 \u003e input \u0026\u0026   samtools fastq     -1 forward.fastqsanger -2 reverse.fastqsanger -s singletons.fastqsanger --i1 i1.fastqsanger --i2 i2.fastqsanger --index-format n2i2 --barcode-tag BC  input  \u003e output.fastqsanger \u0026\u0026 ln -s output.fastqsanger output \u0026\u0026 ln -s forward.fastqsanger forward \u0026\u0026 ln -s reverse.fastqsanger reverse \u0026\u0026 ln -s singletons.fastqsanger singletons \u0026\u0026 ln -s i1.fastqsanger i1 \u0026\u0026 ln -s i2.fastqsanger i2",  "command_version": "Version: 1.9 (using htslib 1.9)",  "copied_from_job_id": null,  "create_time": "2025-07-19T13:16:09.009961",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-9qqcv",  "galaxy_version": "24.1",  "handler": null,  "history_id": "e906e068d7d31c00",  "id": "49b7f3a61ce0c893",  "inputs": {   "input": {    "id": "7f9313e0ae5733ef",    "src": "hda",    "uuid": "fc5708f8-19cf-4d9e-a5fe-bf817ee4dc4c"   }  },  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "0E-7",    "title": "Job Runtime (Wall Clock)",    "value": "0 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1752930970.0000000",    "title": "Job End Time",    "value": "2025-07-19 13:16:10"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1752930970.0000000",    "title": "Job Start Time",    "value": "2025-07-19 13:16:10"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "4080.0000000",    "title": "Memory Allocated (MB)",    "value": "4080"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Cores Allocated",    "value": "1"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "forward": {    "id": "08279d34f397fddf",    "src": "hda",    "uuid": "7fe93024-9b57-4b20-ab2a-8dfe3112554f"   },   "i1": {    "id": "bf737789242b9f71",    "src": "hda",    "uuid": "7336ba77-c66a-41c9-af71-c3b64d158147"   },   "i2": {    "id": "0e86cc3cdb7c3a44",    "src": "hda",    "uuid": "f69733d3-9d16-4ffd-847b-6df7f2875f27"   },   "output": {    "id": "ec65c5de3c948f46",    "src": "hda",    "uuid": "31272436-0c08-4d64-ba5a-e785b84a9305"   },   "reverse": {    "id": "27a326503acecaf2",    "src": "hda",    "uuid": "5ccc3d81-9c46-45c8-88b6-0d99fc46f84b"   },   "singletons": {    "id": "faf8a6d84ec8c3a0",    "src": "hda",    "uuid": "23238ad9-612b-4092-87b2-3bba5814dedc"   }  },  "params": {   "__input_ext": "\"sam\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "copy_arb_tags": null,   "copy_tags": "false",   "dbkey": "\"?\"",   "exclusive_filter": null,   "exclusive_filter_all": null,   "idxout_cond": "{\"__current_case__\": 1, \"barcode_tag\": \"BC\", \"idxout_select\": \"yes\", \"index_format\": \"n2i2\", \"quality_tag\": null, \"write1st\": true, \"write2nd\": true}",   "inclusive_filter": null,   "output_fmt_cond": "{\"__current_case__\": 0, \"default_quality\": \"\", \"ilumina_casava\": false, \"output_fmt_select\": \"fastqsanger\", \"output_quality\": false}",   "outputs": "[\"r1\", \"r2\", \"s\", \"other\"]",   "read_numbering": "\"\""  },  "state": "ok",  "stderr": "[M::bam2fq_mainloop] discarded 2 singletons\n[M::bam2fq_mainloop] processed 36 reads\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1",  "tool_stderr": "[M::bam2fq_mainloop] discarded 2 singletons\n[M::bam2fq_mainloop] processed 36 reads\n",  "tool_stdout": "",  "update_time": "2025-07-19T13:16:23.071292",  "user_email": "tests@fake.org" }, "output_problems": [  "Output i1:  different than expected, difference (using diff):\n( /tmp/tmpwlymsnz5bc.fq.expected v. /tmp/tmp025b28vlbc.fq.expected )\n--- local_file\n+++ history_data\n@@ -9,4 +9,4 @@\n @ref1_grp2_p001\n CA\n +\n-\"\"\n+cd\n" ], "status": "failure", "test_index": 10, "time_seconds": 39.82554244995117, "tool_id": "samtools_fastx", "tool_version": "1.9+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 2 singletons[M::bam2fq_mainloop] processed 36 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #12)" name="11" time="38.35572648048401">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "idxout_cond|barcode_tag": "BC",  "idxout_cond|idxout_select": "yes",  "idxout_cond|index_format": "n2i2",  "idxout_cond|write1st": true,  "input": {   "id": "7d2cff57f5438745",   "src": "hda"  },  "output_fmt_cond|output_fmt_select": "fastqsanger",  "output_fmt_cond|output_quality": true,  "outputs": [   "r1",   "r2",   "s",   "other"  ] }, "job": {  "command_line": "addthreads=${GALAXY_SLOTS:-1} \u0026\u0026 (( addthreads-- )) \u0026\u0026  samtools sort -@ $addthreads -n \u0027/galaxy/server/database/objects/e/9/b/dataset_e9bbda67-395c-4f04-98d6-ee8b4431e9a4.dat\u0027 \u003e input \u0026\u0026   samtools fastq -O    -1 forward.fastqsanger -2 reverse.fastqsanger -s singletons.fastqsanger --i1 i1.fastqsanger --i2 i2.fastqsanger --index-format n2i2 --barcode-tag BC  input  \u003e output.fastqsanger \u0026\u0026 ln -s output.fastqsanger output \u0026\u0026 ln -s forward.fastqsanger forward \u0026\u0026 ln -s reverse.fastqsanger reverse \u0026\u0026 ln -s singletons.fastqsanger singletons \u0026\u0026 ln -s i1.fastqsanger i1 \u0026\u0026 ln -s i2.fastqsanger i2",  "command_version": "Version: 1.9 (using htslib 1.9)",  "copied_from_job_id": null,  "create_time": "2025-07-19T13:16:48.034630",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-x8tnp",  "galaxy_version": "24.1",  "handler": null,  "history_id": "e906e068d7d31c00",  "id": "157093485bb0e747",  "inputs": {   "input": {    "id": "7d2cff57f5438745",    "src": "hda",    "uuid": "e9bbda67-395c-4f04-98d6-ee8b4431e9a4"   }  },  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "0E-7",    "title": "Job Runtime (Wall Clock)",    "value": "0 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1752931010.0000000",    "title": "Job End Time",    "value": "2025-07-19 13:16:50"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1752931010.0000000",    "title": "Job Start Time",    "value": "2025-07-19 13:16:50"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "4080.0000000",    "title": "Memory Allocated (MB)",    "value": "4080"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Cores Allocated",    "value": "1"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "forward": {    "id": "45d7314baed19f68",    "src": "hda",    "uuid": "26c7e8f3-9f44-484e-8eba-566326f0af90"   },   "i1": {    "id": "27005355be7aef2c",    "src": "hda",    "uuid": "df5d9ee4-9f23-4a06-8690-383e2f815aad"   },   "i2": {    "id": "ad6aaeae8c3c34b6",    "src": "hda",    "uuid": "fd50a98f-0598-4846-8e59-aa3e788bfc27"   },   "output": {    "id": "738f6d04f8ba7ea6",    "src": "hda",    "uuid": "1fb9313e-d1ee-4a5c-8d7f-393d9d5e7655"   },   "reverse": {    "id": "3b1985a4d9daa206",    "src": "hda",    "uuid": "6bca7892-fc95-4235-b6be-52e6ca105bd6"   },   "singletons": {    "id": "514f0c38187dfcab",    "src": "hda",    "uuid": "dca3a0ec-6b00-4fbc-9f24-35b8d739a8ba"   }  },  "params": {   "__input_ext": "\"sam\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "copy_arb_tags": null,   "copy_tags": "false",   "dbkey": "\"?\"",   "exclusive_filter": null,   "exclusive_filter_all": null,   "idxout_cond": "{\"__current_case__\": 1, \"barcode_tag\": \"BC\", \"idxout_select\": \"yes\", \"index_format\": \"n2i2\", \"quality_tag\": null, \"write1st\": true, \"write2nd\": true}",   "inclusive_filter": null,   "output_fmt_cond": "{\"__current_case__\": 0, \"default_quality\": \"\", \"ilumina_casava\": false, \"output_fmt_select\": \"fastqsanger\", \"output_quality\": true}",   "outputs": "[\"r1\", \"r2\", \"s\", \"other\"]",   "read_numbering": "\"\""  },  "state": "ok",  "stderr": "[M::bam2fq_mainloop] discarded 2 singletons\n[M::bam2fq_mainloop] processed 36 reads\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1",  "tool_stderr": "[M::bam2fq_mainloop] discarded 2 singletons\n[M::bam2fq_mainloop] processed 36 reads\n",  "tool_stdout": "",  "update_time": "2025-07-19T13:17:01.557085",  "user_email": "tests@fake.org" }, "output_problems": [  "Output i1:  different than expected, difference (using diff):\n( /tmp/tmp9a6cz1mtbc10.fq.expected v. /tmp/tmps6aehqgabc10.fq.expected )\n--- local_file\n+++ history_data\n@@ -9,4 +9,4 @@\n @ref1_grp2_p001\n CA\n +\n-\"\"\n+cd\n" ], "status": "failure", "test_index": 11, "time_seconds": 38.35572648048401, "tool_id": "samtools_fastx", "tool_version": "1.9+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 2 singletons[M::bam2fq_mainloop] processed 36 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #13)" name="12" time="37.94343948364258">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "idxout_cond|barcode_tag": "BC",  "idxout_cond|idxout_select": "yes",  "idxout_cond|index_format": "n2i2",  "idxout_cond|write1st": true,  "input": {   "id": "9d69ada1e0437dde",   "src": "hda"  },  "output_fmt_cond|output_fmt_select": "fastqsanger",  "output_fmt_cond|output_quality": true,  "outputs": [   "r1",   "r2",   "s",   "other"  ] }, "job": {  "command_line": "addthreads=${GALAXY_SLOTS:-1} \u0026\u0026 (( addthreads-- )) \u0026\u0026  samtools sort -@ $addthreads -n \u0027/galaxy/server/database/objects/0/2/a/dataset_02a3ee69-cd9d-4353-b24e-8765bdfcb947.dat\u0027 \u003e input \u0026\u0026   samtools fastq -O    -1 forward.fastqsanger -2 reverse.fastqsanger -s singletons.fastqsanger --i1 i1.fastqsanger --i2 i2.fastqsanger --index-format n2i2 --barcode-tag BC  input  \u003e output.fastqsanger \u0026\u0026 ln -s output.fastqsanger output \u0026\u0026 ln -s forward.fastqsanger forward \u0026\u0026 ln -s reverse.fastqsanger reverse \u0026\u0026 ln -s singletons.fastqsanger singletons \u0026\u0026 ln -s i1.fastqsanger i1 \u0026\u0026 ln -s i2.fastqsanger i2",  "command_version": "Version: 1.9 (using htslib 1.9)",  "copied_from_job_id": null,  "create_time": "2025-07-19T13:17:26.177148",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-qhhlx",  "galaxy_version": "24.1",  "handler": null,  "history_id": "e906e068d7d31c00",  "id": "23d39f37f0e758f1",  "inputs": {   "input": {    "id": "9d69ada1e0437dde",    "src": "hda",    "uuid": "02a3ee69-cd9d-4353-b24e-8765bdfcb947"   }  },  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "0E-7",    "title": "Job Runtime (Wall Clock)",    "value": "0 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1752931048.0000000",    "title": "Job End Time",    "value": "2025-07-19 13:17:28"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1752931048.0000000",    "title": "Job Start Time",    "value": "2025-07-19 13:17:28"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "4080.0000000",    "title": "Memory Allocated (MB)",    "value": "4080"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Cores Allocated",    "value": "1"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "forward": {    "id": "69454c9040c57e9a",    "src": "hda",    "uuid": "eeb8d9a0-12ed-4e5e-b1c5-fcf8393d47e6"   },   "i1": {    "id": "06b26db271b9708c",    "src": "hda",    "uuid": "e4e9d2ec-cb2a-4ed7-9efb-359caae5a88b"   },   "i2": {    "id": "12a051c79341ad65",    "src": "hda",    "uuid": "e8b014ac-7678-4584-8444-c74e1b389159"   },   "output": {    "id": "10f72fb6000dce00",    "src": "hda",    "uuid": "89c66b0f-062a-47c2-88b9-d24699689017"   },   "reverse": {    "id": "c4ec9fc72a545eaa",    "src": "hda",    "uuid": "742cddee-befe-41cb-9804-d48eacc2f304"   },   "singletons": {    "id": "7650fae599c0b363",    "src": "hda",    "uuid": "688bf515-18eb-41c4-8585-24c9e9140d9c"   }  },  "params": {   "__input_ext": "\"sam\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "copy_arb_tags": null,   "copy_tags": "false",   "dbkey": "\"?\"",   "exclusive_filter": null,   "exclusive_filter_all": null,   "idxout_cond": "{\"__current_case__\": 1, \"barcode_tag\": \"BC\", \"idxout_select\": \"yes\", \"index_format\": \"n2i2\", \"quality_tag\": null, \"write1st\": true, \"write2nd\": true}",   "inclusive_filter": null,   "output_fmt_cond": "{\"__current_case__\": 0, \"default_quality\": \"\", \"ilumina_casava\": false, \"output_fmt_select\": \"fastqsanger\", \"output_quality\": true}",   "outputs": "[\"r1\", \"r2\", \"s\", \"other\"]",   "read_numbering": "\"\""  },  "state": "ok",  "stderr": "[M::bam2fq_mainloop] discarded 2 singletons\n[M::bam2fq_mainloop] processed 36 reads\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1",  "tool_stderr": "[M::bam2fq_mainloop] discarded 2 singletons\n[M::bam2fq_mainloop] processed 36 reads\n",  "tool_stdout": "",  "update_time": "2025-07-19T13:17:39.664033",  "user_email": "tests@fake.org" }, "output_problems": [  "Output i1:  different than expected, difference (using diff):\n( /tmp/tmpzkfxp4dsbc10.fq.expected v. /tmp/tmpy3xcmty_bc10.fq.expected )\n--- local_file\n+++ history_data\n@@ -9,4 +9,4 @@\n @ref1_grp2_p001\n CA\n +\n-\"\"\n+cd\n" ], "status": "failure", "test_index": 12, "time_seconds": 37.94343948364258, "tool_id": "samtools_fastx", "tool_version": "1.9+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 2 singletons[M::bam2fq_mainloop] processed 36 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #14)" name="13" time="39.29462122917175">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 2 singletons[M::bam2fq_mainloop] processed 36 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #15)" name="14" time="36.08003091812134">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 2 singletons[M::bam2fq_mainloop] processed 36 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #16)" name="15" time="35.893418312072754">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "copy_arb_tags": "MD,ia",  "copy_tags": true,  "input": {   "id": "7228f3534bda767f",   "src": "hda"  },  "output_fmt_cond|output_fmt_select": "fastqsanger",  "outputs": [   "r1",   "r2",   "s",   "other"  ],  "read_numbering": "-N" }, "job": {  "command_line": "addthreads=${GALAXY_SLOTS:-1} \u0026\u0026 (( addthreads-- )) \u0026\u0026  samtools sort -@ $addthreads -n \u0027/galaxy/server/database/objects/f/b/5/dataset_fb572385-b491-4768-9f94-be3182677cd9.dat\u0027 \u003e input \u0026\u0026   samtools fastq   -t -T \u0027MD,ia\u0027 -N -1 forward.fastqsanger -2 reverse.fastqsanger -s singletons.fastqsanger  input  \u003e output.fastqsanger \u0026\u0026 ln -s output.fastqsanger output \u0026\u0026 ln -s forward.fastqsanger forward \u0026\u0026 ln -s reverse.fastqsanger reverse \u0026\u0026 ln -s singletons.fastqsanger singletons",  "command_version": "Version: 1.9 (using htslib 1.9)",  "copied_from_job_id": null,  "create_time": "2025-07-19T13:19:19.596217",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-dtqkl",  "galaxy_version": "24.1",  "handler": null,  "history_id": "e906e068d7d31c00",  "id": "a9789ed2de8bdef4",  "inputs": {   "input": {    "id": "7228f3534bda767f",    "src": "hda",    "uuid": "fb572385-b491-4768-9f94-be3182677cd9"   }  },  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Job Runtime (Wall Clock)",    "value": "1 second"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1752931162.0000000",    "title": "Job End Time",    "value": "2025-07-19 13:19:22"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1752931161.0000000",    "title": "Job Start Time",    "value": "2025-07-19 13:19:21"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "4080.0000000",    "title": "Memory Allocated (MB)",    "value": "4080"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Cores Allocated",    "value": "1"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "forward": {    "id": "5cd58a8e982b5cf2",    "src": "hda",    "uuid": "9a89ea1c-fc7a-4412-8e18-565242eba38e"   },   "output": {    "id": "eef41a7982fd93ab",    "src": "hda",    "uuid": "e74f1cea-5e6b-4592-807e-2387715e019e"   },   "reverse": {    "id": "fdbb90fbcc3bf173",    "src": "hda",    "uuid": "336391fd-3546-4363-9829-7344128281a6"   },   "singletons": {    "id": "e653c34249ad5300",    "src": "hda",    "uuid": "5f5bacd9-cac1-418f-9804-628913eceb51"   }  },  "params": {   "__input_ext": "\"sam\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "copy_arb_tags": "\"MD,ia\"",   "copy_tags": "true",   "dbkey": "\"?\"",   "exclusive_filter": null,   "exclusive_filter_all": null,   "idxout_cond": "{\"__current_case__\": 0, \"idxout_select\": \"no\"}",   "inclusive_filter": null,   "output_fmt_cond": "{\"__current_case__\": 0, \"default_quality\": \"\", \"ilumina_casava\": false, \"output_fmt_select\": \"fastqsanger\", \"output_quality\": false}",   "outputs": "[\"r1\", \"r2\", \"s\", \"other\"]",   "read_numbering": "\"-N\""  },  "state": "ok",  "stderr": "[M::bam2fq_mainloop] discarded 2 singletons\n[M::bam2fq_mainloop] processed 36 reads\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1",  "tool_stderr": "[M::bam2fq_mainloop] discarded 2 singletons\n[M::bam2fq_mainloop] processed 36 reads\n",  "tool_stdout": "",  "update_time": "2025-07-19T13:19:33.614709",  "user_email": "tests@fake.org" }, "output_problems": [  "Output forward:  different than expected, difference (using diff):\n( /tmp/tmp4vl25jgb7.1.fq.expected v. /tmp/tmpdhsxbf0z7.1.fq.expected )\n--- local_file\n+++ history_data\n@@ -1,68 +1,68 @@\n-@ref1_grp1_p001/1\tMD:Z:10\tRG:Z:grp1\tBC:Z:AC-GT\n+@ref1_grp1_p001/1\tRG:Z:grp1\tBC:Z:AC-GT\tMD:Z:10\n CGAGCTCGGT\n +\n !!!!!!!!!!\n-@ref1_grp1_p002/1\tMD:Z:10\tRG:Z:grp1\tBC:Z:AATT+CCGG\n+@ref1_grp1_p002/1\tRG:Z:grp1\tBC:Z:AATT+CCGG\tMD:Z:10\n CTCGGTACCC\n +\n ##########\n-@ref1_grp1_p003/1\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p003/1\tRG:Z:grp1\tMD:Z:10\n GTACCCGGGG\n +\n %%%%%%%%%%\n-@ref1_grp1_p004/1\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p004/1\tRG:Z:grp1\tMD:Z:10\n CCGGGGATCC\n +\n \u0027\u0027\u0027\u0027\u0027\u0027\u0027\u0027\u0027\u0027\n-@ref1_grp1_p005/1\tMD:Z:10\tRG:Z:grp1\tia:i:40000\n+@ref1_grp1_p005/1\tRG:Z:grp1\tMD:Z:10\tia:i:40000\n********\n*SNIP *\n********\n-@ref2_grp3_p001/1\tMD:Z:15\tRG:Z:grp3\n+@ref2_grp3_p001/1\tRG:Z:grp3\tMD:Z:15\n GTGACACTATAGAAT\n +\n ~~~~~~~~~~~~~~~\n-@ref2_grp3_p002/1\tMD:Z:15\tRG:Z:grp3\n+@ref2_grp3_p002/1\tRG:Z:grp3\tMD:Z:15\n CTGTTTCCTGTGTGA\n +\n {{{{{{{{{{{{{{{\n-@ref2_grp3_p003/1\tMD:Z:1T0T0C0T0A0T0A0G0T0G0T0C0A0C0\tRG:Z:grp3\n+@ref2_grp3_p003/1\tRG:Z:grp3\tMD:Z:1T0T0C0T0A0T0A0G0T0G0T0C0A0C0\n ACGTMRWSYKVHDBN\n +\n 0123456789abcd!\n-@ref12_grp1_p001/1\tMD:Z:10\tRG:Z:grp1\n+@ref12_grp1_p001/1\tRG:Z:grp1\tMD:Z:10\n TGCAGGCATG\n +\n AAAAAAAAAA\n-@ref12_grp2_p001/1\tMD:Z:10\tRG:Z:grp2\n+@ref12_grp2_p001/1\tRG:Z:grp2\tMD:Z:10\n CAAGCTTGAG\n +\n AAAAAAAAAA\n",  "Output reverse:  different than expected, difference (using diff):\n( /tmp/tmpzloc9cef7.2.fq.expected v. /tmp/tmp86p0_akn7.2.fq.expected )\n--- local_file\n+++ history_data\n@@ -1,68 +1,68 @@\n-@ref1_grp1_p001/2\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p001/2\tRG:Z:grp1\tMD:Z:10\n GTCGACTCTA\n +\n ----------\n-@ref1_grp1_p002/2\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p002/2\tRG:Z:grp1\tMD:Z:10\n GCAGGTCGAC\n +\n //////////\n-@ref1_grp1_p003/2\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p003/2\tRG:Z:grp1\tMD:Z:10\n GCCTGCAGGT\n +\n 1111111111\n-@ref1_grp1_p004/2\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p004/2\tRG:Z:grp1\tMD:Z:10\n GCATGCCTGC\n +\n 3333333333\n-@ref1_grp1_p005/2\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p005/2\tRG:Z:grp1\tMD:Z:10\n********\n*SNIP *\n********\n-@ref2_grp3_p001/2\tMD:Z:0T0A0A1C0A0T0G0G0T0C0A1A0G0\tRG:Z:grp3\n+@ref2_grp3_p001/2\tRG:Z:grp3\tMD:Z:0T0A0A1C0A0T0G0G0T0C0A1A0G0\n CTGTTTCCTGTGTGA\n +\n |||||||||||||||\n-@ref2_grp3_p002/2\tMD:Z:15\tRG:Z:grp3\n+@ref2_grp3_p002/2\tRG:Z:grp3\tMD:Z:15\n CGCCAAGCTATTTAG\n +\n }}}}}}}}}}}}}}}\n-@ref2_grp3_p003/2\tMD:Z:0A0T0T0C0T0A0T0A0G0T0G0T1A0C0\tRG:Z:grp3\n+@ref2_grp3_p003/2\tRG:Z:grp3\tMD:Z:0A0T0T0C0T0A0T0A0G0T0G0T1A0C0\n ACGTMRWSYKVHDBN\n +\n 0123456789abcd!\n-@ref12_grp1_p001/2\tMD:Z:10\tRG:Z:grp1\n+@ref12_grp1_p001/2\tRG:Z:grp1\tMD:Z:10\n CACTATAGAA\n +\n BBBBBBBBBB\n-@ref12_grp2_p001/2\tMD:Z:10\tRG:Z:grp2\n+@ref12_grp2_p001/2\tRG:Z:grp2\tMD:Z:10\n ATTTAGGTGA\n +\n BBBBBBBBBB\n",  "Output singletons:  different than expected, difference (using diff):\n( /tmp/tmpaotk9nz_7.s.fq.expected v. /tmp/tmpb_hbi2387.s.fq.expected )\n--- local_file\n+++ history_data\n@@ -1,4 +1,4 @@\n-@ref1_grp2_p002a/1\tMD:Z:10\tRG:Z:grp2\n+@ref1_grp2_p002a/1\tRG:Z:grp2\tMD:Z:10\n CGGTACCCGG\n +\n $$$$$$$$$$\n" ], "status": "failure", "test_index": 15, "time_seconds": 35.893418312072754, "tool_id": "samtools_fastx", "tool_version": "1.9+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 2 singletons[M::bam2fq_mainloop] processed 36 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #17)" name="16" time="36.1840283870697">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "copy_arb_tags": "MD,ia",  "copy_tags": true,  "input": {   "id": "3f856738d17321c6",   "src": "hda"  },  "output_fmt_cond|ilumina_casava": true,  "output_fmt_cond|output_fmt_select": "fastqsanger",  "outputs": [   "r1",   "r2",   "s",   "other"  ],  "read_numbering": "-N" }, "job": {  "command_line": "addthreads=${GALAXY_SLOTS:-1} \u0026\u0026 (( addthreads-- )) \u0026\u0026  samtools sort -@ $addthreads -n \u0027/galaxy/server/database/objects/5/5/2/dataset_5521554e-df2a-41ff-bd60-a23cb246d14d.dat\u0027 \u003e input \u0026\u0026   samtools fastq  -i -t -T \u0027MD,ia\u0027 -N -1 forward.fastqsanger -2 reverse.fastqsanger -s singletons.fastqsanger  input  \u003e output.fastqsanger \u0026\u0026 ln -s output.fastqsanger output \u0026\u0026 ln -s forward.fastqsanger forward \u0026\u0026 ln -s reverse.fastqsanger reverse \u0026\u0026 ln -s singletons.fastqsanger singletons",  "command_version": "Version: 1.9 (using htslib 1.9)",  "copied_from_job_id": null,  "create_time": "2025-07-19T13:19:56.349659",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-jsts2",  "galaxy_version": "24.1",  "handler": null,  "history_id": "e906e068d7d31c00",  "id": "f9685617785169de",  "inputs": {   "input": {    "id": "3f856738d17321c6",    "src": "hda",    "uuid": "5521554e-df2a-41ff-bd60-a23cb246d14d"   }  },  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "0E-7",    "title": "Job Runtime (Wall Clock)",    "value": "0 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1752931198.0000000",    "title": "Job End Time",    "value": "2025-07-19 13:19:58"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1752931198.0000000",    "title": "Job Start Time",    "value": "2025-07-19 13:19:58"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "4080.0000000",    "title": "Memory Allocated (MB)",    "value": "4080"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Cores Allocated",    "value": "1"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "forward": {    "id": "f32fead9f179e1ae",    "src": "hda",    "uuid": "ad58c412-369a-43e1-bbc2-ef97a65ed2fa"   },   "output": {    "id": "c8838156ccbdbf37",    "src": "hda",    "uuid": "38bab5e2-b5ff-4987-8479-b5e242e0df20"   },   "reverse": {    "id": "c5293edc997de01f",    "src": "hda",    "uuid": "06da4992-27a3-4d13-9868-eddf1d9c98c8"   },   "singletons": {    "id": "95a8ed768bdaab22",    "src": "hda",    "uuid": "48b0f769-18e2-4383-a8b4-e7c465adec47"   }  },  "params": {   "__input_ext": "\"sam\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "copy_arb_tags": "\"MD,ia\"",   "copy_tags": "true",   "dbkey": "\"?\"",   "exclusive_filter": null,   "exclusive_filter_all": null,   "idxout_cond": "{\"__current_case__\": 0, \"idxout_select\": \"no\"}",   "inclusive_filter": null,   "output_fmt_cond": "{\"__current_case__\": 0, \"default_quality\": \"\", \"ilumina_casava\": true, \"output_fmt_select\": \"fastqsanger\", \"output_quality\": false}",   "outputs": "[\"r1\", \"r2\", \"s\", \"other\"]",   "read_numbering": "\"-N\""  },  "state": "ok",  "stderr": "[M::bam2fq_mainloop] discarded 2 singletons\n[M::bam2fq_mainloop] processed 36 reads\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1",  "tool_stderr": "[M::bam2fq_mainloop] discarded 2 singletons\n[M::bam2fq_mainloop] processed 36 reads\n",  "tool_stdout": "",  "update_time": "2025-07-19T13:20:09.899382",  "user_email": "tests@fake.org" }, "output_problems": [  "Output forward:  different than expected, difference (using diff):\n( /tmp/tmp2yk4yi447.1.fq.expected v. /tmp/tmpljtvep4r7.1.fq.expected )\n--- local_file\n+++ history_data\n@@ -1,68 +1,68 @@\n-@ref1_grp1_p001/1\tMD:Z:10\tRG:Z:grp1\tBC:Z:AC-GT\n+@ref1_grp1_p001/1\tRG:Z:grp1\tBC:Z:AC-GT\tMD:Z:10\n CGAGCTCGGT\n +\n !!!!!!!!!!\n-@ref1_grp1_p002/1\tMD:Z:10\tRG:Z:grp1\tBC:Z:AATT+CCGG\n+@ref1_grp1_p002/1\tRG:Z:grp1\tBC:Z:AATT+CCGG\tMD:Z:10\n CTCGGTACCC\n +\n ##########\n-@ref1_grp1_p003/1\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p003/1\tRG:Z:grp1\tMD:Z:10\n GTACCCGGGG\n +\n %%%%%%%%%%\n-@ref1_grp1_p004/1\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p004/1\tRG:Z:grp1\tMD:Z:10\n CCGGGGATCC\n +\n \u0027\u0027\u0027\u0027\u0027\u0027\u0027\u0027\u0027\u0027\n-@ref1_grp1_p005/1\tMD:Z:10\tRG:Z:grp1\tia:i:40000\n+@ref1_grp1_p005/1\tRG:Z:grp1\tMD:Z:10\tia:i:40000\n********\n*SNIP *\n********\n-@ref2_grp3_p001/1\tMD:Z:15\tRG:Z:grp3\n+@ref2_grp3_p001/1\tRG:Z:grp3\tMD:Z:15\n GTGACACTATAGAAT\n +\n ~~~~~~~~~~~~~~~\n-@ref2_grp3_p002/1\tMD:Z:15\tRG:Z:grp3\n+@ref2_grp3_p002/1\tRG:Z:grp3\tMD:Z:15\n CTGTTTCCTGTGTGA\n +\n {{{{{{{{{{{{{{{\n-@ref2_grp3_p003/1\tMD:Z:1T0T0C0T0A0T0A0G0T0G0T0C0A0C0\tRG:Z:grp3\n+@ref2_grp3_p003/1\tRG:Z:grp3\tMD:Z:1T0T0C0T0A0T0A0G0T0G0T0C0A0C0\n ACGTMRWSYKVHDBN\n +\n 0123456789abcd!\n-@ref12_grp1_p001/1\tMD:Z:10\tRG:Z:grp1\n+@ref12_grp1_p001/1\tRG:Z:grp1\tMD:Z:10\n TGCAGGCATG\n +\n AAAAAAAAAA\n-@ref12_grp2_p001/1\tMD:Z:10\tRG:Z:grp2\n+@ref12_grp2_p001/1\tRG:Z:grp2\tMD:Z:10\n CAAGCTTGAG\n +\n AAAAAAAAAA\n",  "Output reverse:  different than expected, difference (using diff):\n( /tmp/tmpfsfwk82x7.2.fq.expected v. /tmp/tmpj3d_o1ge7.2.fq.expected )\n--- local_file\n+++ history_data\n@@ -1,68 +1,68 @@\n-@ref1_grp1_p001/2\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p001/2\tRG:Z:grp1\tMD:Z:10\n GTCGACTCTA\n +\n ----------\n-@ref1_grp1_p002/2\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p002/2\tRG:Z:grp1\tMD:Z:10\n GCAGGTCGAC\n +\n //////////\n-@ref1_grp1_p003/2\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p003/2\tRG:Z:grp1\tMD:Z:10\n GCCTGCAGGT\n +\n 1111111111\n-@ref1_grp1_p004/2\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p004/2\tRG:Z:grp1\tMD:Z:10\n GCATGCCTGC\n +\n 3333333333\n-@ref1_grp1_p005/2\tMD:Z:10\tRG:Z:grp1\n+@ref1_grp1_p005/2\tRG:Z:grp1\tMD:Z:10\n********\n*SNIP *\n********\n-@ref2_grp3_p001/2\tMD:Z:0T0A0A1C0A0T0G0G0T0C0A1A0G0\tRG:Z:grp3\n+@ref2_grp3_p001/2\tRG:Z:grp3\tMD:Z:0T0A0A1C0A0T0G0G0T0C0A1A0G0\n CTGTTTCCTGTGTGA\n +\n |||||||||||||||\n-@ref2_grp3_p002/2\tMD:Z:15\tRG:Z:grp3\n+@ref2_grp3_p002/2\tRG:Z:grp3\tMD:Z:15\n CGCCAAGCTATTTAG\n +\n }}}}}}}}}}}}}}}\n-@ref2_grp3_p003/2\tMD:Z:0A0T0T0C0T0A0T0A0G0T0G0T1A0C0\tRG:Z:grp3\n+@ref2_grp3_p003/2\tRG:Z:grp3\tMD:Z:0A0T0T0C0T0A0T0A0G0T0G0T1A0C0\n ACGTMRWSYKVHDBN\n +\n 0123456789abcd!\n-@ref12_grp1_p001/2\tMD:Z:10\tRG:Z:grp1\n+@ref12_grp1_p001/2\tRG:Z:grp1\tMD:Z:10\n CACTATAGAA\n +\n BBBBBBBBBB\n-@ref12_grp2_p001/2\tMD:Z:10\tRG:Z:grp2\n+@ref12_grp2_p001/2\tRG:Z:grp2\tMD:Z:10\n ATTTAGGTGA\n +\n BBBBBBBBBB\n",  "Output singletons:  different than expected, difference (using diff):\n( /tmp/tmp6swmckrp7.s.fq.expected v. /tmp/tmp11mcp3iw7.s.fq.expected )\n--- local_file\n+++ history_data\n@@ -1,4 +1,4 @@\n-@ref1_grp2_p002a/1\tMD:Z:10\tRG:Z:grp2\n+@ref1_grp2_p002a/1\tRG:Z:grp2\tMD:Z:10\n CGGTACCCGG\n +\n $$$$$$$$$$\n" ], "status": "failure", "test_index": 16, "time_seconds": 36.1840283870697, "tool_id": "samtools_fastx", "tool_version": "1.9+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 2 singletons[M::bam2fq_mainloop] processed 36 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #18)" name="17" time="34.97809052467346">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "idxout_cond|barcode_tag": "BC",  "idxout_cond|idxout_select": "yes",  "idxout_cond|index_format": "n2i2",  "idxout_cond|write1st": true,  "input": {   "id": "ec614361daf2dfb2",   "src": "hda"  },  "output_fmt_cond|ilumina_casava": true,  "output_fmt_cond|output_fmt_select": "fastqsanger",  "outputs": [   "r1",   "r2",   "s",   "other"  ] }, "job": {  "command_line": "addthreads=${GALAXY_SLOTS:-1} \u0026\u0026 (( addthreads-- )) \u0026\u0026  samtools sort -@ $addthreads -n \u0027/galaxy/server/database/objects/2/8/c/dataset_28cf778a-7785-4aa1-84b6-9aa54029eaad.dat\u0027 \u003e input \u0026\u0026   samtools fastq  -i   -1 forward.fastqsanger -2 reverse.fastqsanger -s singletons.fastqsanger --i1 i1.fastqsanger --i2 i2.fastqsanger --index-format n2i2 --barcode-tag BC  input  \u003e output.fastqsanger \u0026\u0026 ln -s output.fastqsanger output \u0026\u0026 ln -s forward.fastqsanger forward \u0026\u0026 ln -s reverse.fastqsanger reverse \u0026\u0026 ln -s singletons.fastqsanger singletons \u0026\u0026 ln -s i1.fastqsanger i1 \u0026\u0026 ln -s i2.fastqsanger i2",  "command_version": "Version: 1.9 (using htslib 1.9)",  "copied_from_job_id": null,  "create_time": "2025-07-19T13:20:31.449276",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-npj98",  "galaxy_version": "24.1",  "handler": null,  "history_id": "e906e068d7d31c00",  "id": "5784c54b506c0762",  "inputs": {   "input": {    "id": "ec614361daf2dfb2",    "src": "hda",    "uuid": "28cf778a-7785-4aa1-84b6-9aa54029eaad"   }  },  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "0E-7",    "title": "Job Runtime (Wall Clock)",    "value": "0 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1752931233.0000000",    "title": "Job End Time",    "value": "2025-07-19 13:20:33"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1752931233.0000000",    "title": "Job Start Time",    "value": "2025-07-19 13:20:33"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "4080.0000000",    "title": "Memory Allocated (MB)",    "value": "4080"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Cores Allocated",    "value": "1"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "forward": {    "id": "4a19e09bb406e977",    "src": "hda",    "uuid": "0c346c90-4b7b-4079-a6dc-dca3040de86b"   },   "i1": {    "id": "71a333c304e776be",    "src": "hda",    "uuid": "99bc5131-3990-4b24-bfc7-1e1d55002b97"   },   "i2": {    "id": "c68d957b786918b2",    "src": "hda",    "uuid": "45e32c46-0049-4d9e-a853-8f7b309983a2"   },   "output": {    "id": "7a802c9dc14adc29",    "src": "hda",    "uuid": "89002b82-db8d-41d3-b802-e4047ef3e603"   },   "reverse": {    "id": "6dec0e39055b7458",    "src": "hda",    "uuid": "0a9b1b61-0d9e-4809-bf2a-a773295738f6"   },   "singletons": {    "id": "cc39a09e14b9672c",    "src": "hda",    "uuid": "3ed130f6-d190-4336-b138-3ac8a19ae1c9"   }  },  "params": {   "__input_ext": "\"sam\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "copy_arb_tags": null,   "copy_tags": "false",   "dbkey": "\"?\"",   "exclusive_filter": null,   "exclusive_filter_all": null,   "idxout_cond": "{\"__current_case__\": 1, \"barcode_tag\": \"BC\", \"idxout_select\": \"yes\", \"index_format\": \"n2i2\", \"quality_tag\": null, \"write1st\": true, \"write2nd\": true}",   "inclusive_filter": null,   "output_fmt_cond": "{\"__current_case__\": 0, \"default_quality\": \"\", \"ilumina_casava\": true, \"output_fmt_select\": \"fastqsanger\", \"output_quality\": false}",   "outputs": "[\"r1\", \"r2\", \"s\", \"other\"]",   "read_numbering": "\"\""  },  "state": "ok",  "stderr": "[M::bam2fq_mainloop] discarded 2 singletons\n[M::bam2fq_mainloop] processed 36 reads\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1",  "tool_stderr": "[M::bam2fq_mainloop] discarded 2 singletons\n[M::bam2fq_mainloop] processed 36 reads\n",  "tool_stdout": "",  "update_time": "2025-07-19T13:20:44.692589",  "user_email": "tests@fake.org" }, "output_problems": [  "Output forward:  different than expected, difference (using diff):\n( /tmp/tmpt3tk3f098.1.fq.expected v. /tmp/tmph9lrwkvu8.1.fq.expected )\n--- local_file\n+++ history_data\n@@ -1,68 +1,68 @@\n-@ref1_grp1_p001 1:N:0:ACGT\n+@ref1_grp1_p001 1:N:0:GT\n CGAGCTCGGT\n +\n !!!!!!!!!!\n-@ref1_grp1_p002 1:N:0:AATTCCGG\n+@ref1_grp1_p002 1:N:0:TT\n CTCGGTACCC\n +\n ##########\n-@ref1_grp1_p003 1:N:0:0\n+@ref1_grp1_p003\n GTACCCGGGG\n +\n %%%%%%%%%%\n-@ref1_grp1_p004 1:N:0:0\n+@ref1_grp1_p004\n CCGGGGATCC\n +\n \u0027\u0027\u0027\u0027\u0027\u0027\u0027\u0027\u0027\u0027\n-@ref1_grp1_p005 1:N:0:0\n+@ref1_grp1_p005\n********\n*SNIP *\n********\n-@ref2_grp3_p001 1:N:0:0\n+@ref2_grp3_p001\n GTGACACTATAGAAT\n +\n ~~~~~~~~~~~~~~~\n-@ref2_grp3_p002 1:N:0:0\n+@ref2_grp3_p002\n CTGTTTCCTGTGTGA\n +\n {{{{{{{{{{{{{{{\n-@ref2_grp3_p003 1:N:0:0\n+@ref2_grp3_p003\n ACGTMRWSYKVHDBN\n +\n 0123456789abcd!\n-@ref12_grp1_p001 1:N:0:0\n+@ref12_grp1_p001\n TGCAGGCATG\n +\n AAAAAAAAAA\n-@ref12_grp2_p001 1:N:0:0\n+@ref12_grp2_p001\n CAAGCTTGAG\n +\n AAAAAAAAAA\n",  "Output reverse:  different than expected, difference (using diff):\n( /tmp/tmpq3yhuhxi8.2.fq.expected v. /tmp/tmpswj8inyo8.2.fq.expected )\n--- local_file\n+++ history_data\n@@ -1,68 +1,68 @@\n-@ref1_grp1_p001 2:N:0:ACGT\n+@ref1_grp1_p001 1:N:0:GT\n GTCGACTCTA\n +\n ----------\n-@ref1_grp1_p002 2:N:0:AATTCCGG\n+@ref1_grp1_p002 1:N:0:TT\n GCAGGTCGAC\n +\n //////////\n-@ref1_grp1_p003 2:N:0:0\n+@ref1_grp1_p003\n GCCTGCAGGT\n +\n 1111111111\n-@ref1_grp1_p004 2:N:0:0\n+@ref1_grp1_p004\n GCATGCCTGC\n +\n 3333333333\n-@ref1_grp1_p005 2:N:0:0\n+@ref1_grp1_p005\n********\n*SNIP *\n********\n-@ref2_grp3_p001 2:N:0:0\n+@ref2_grp3_p001\n CTGTTTCCTGTGTGA\n +\n |||||||||||||||\n-@ref2_grp3_p002 2:N:0:0\n+@ref2_grp3_p002\n CGCCAAGCTATTTAG\n +\n }}}}}}}}}}}}}}}\n-@ref2_grp3_p003 2:N:0:0\n+@ref2_grp3_p003\n ACGTMRWSYKVHDBN\n +\n 0123456789abcd!\n-@ref12_grp1_p001 2:N:0:0\n+@ref12_grp1_p001\n CACTATAGAA\n +\n BBBBBBBBBB\n-@ref12_grp2_p001 2:N:0:0\n+@ref12_grp2_p001\n ATTTAGGTGA\n +\n BBBBBBBBBB\n",  "Output singletons:  different than expected, difference (using diff):\n( /tmp/tmpc9nqjv6f8.s.fq.expected v. /tmp/tmpjtw9yyo58.s.fq.expected )\n--- local_file\n+++ history_data\n@@ -1,8 +1,8 @@\n-@ref1_grp2_p002a 1:N:0:0\n+@ref1_grp2_p002a\n CGGTACCCGG\n +\n $$$$$$$$$$\n-@unaligned_grp3_p001 1:N:0:0\n+@unaligned_grp3_p001\n CACTCGTTCATGACG\n +\n 0123456789abcde\n",  "Output i1:  different than expected, difference (using diff):\n( /tmp/tmp16x_k_u28.i.fq.expected v. /tmp/tmp4mck4x7i8.i.fq.expected )\n--- local_file\n+++ history_data\n@@ -1,12 +1,12 @@\n-@ref1_grp1_p001 1:N:0:ACGT\n+@ref1_grp1_p001 1:N:0:GT\n GT\n +\n \"\"\n-@ref1_grp1_p002 1:N:0:AATTCCGG\n+@ref1_grp1_p002 1:N:0:TT\n TT\n +\n \"\"\n-@ref1_grp2_p001 1:N:0:TGCA\n+@ref1_grp2_p001 1:N:0:CA\n CA\n +\n-\"\"\n+cd\n" ], "status": "failure", "test_index": 17, "time_seconds": 34.97809052467346, "tool_id": "samtools_fastx", "tool_version": "1.9+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 2 singletons[M::bam2fq_mainloop] processed 36 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #3)" name="2" time="28.699886798858643">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "input": {   "id": "157093485bb0e747",   "src": "hda"  },  "output_fmt_cond|output_fmt_select": "fasta",  "outputs": [   "r0",   "r1",   "r2"  ] }, "job": {  "command_line": "addthreads=${GALAXY_SLOTS:-1} \u0026\u0026 (( addthreads-- )) \u0026\u0026  samtools sort -@ $addthreads -n \u0027/galaxy/server/database/objects/c/2/8/dataset_c28876d7-5df3-434a-8719-4515ab6e26ab.dat\u0027 \u003e input \u0026\u0026   samtools fasta   -0 nonspecific.fasta -1 forward.fasta -2 reverse.fasta  input  \u003e /dev/null \u0026\u0026 ln -s nonspecific.fasta nonspecific \u0026\u0026 ln -s forward.fasta forward \u0026\u0026 ln -s reverse.fasta reverse",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-07-19T13:11:18.895722",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-2whfm",  "galaxy_version": "24.1",  "handler": null,  "history_id": "e906e068d7d31c00",  "id": "47289d499bb74467",  "inputs": {   "input": {    "id": "157093485bb0e747",    "src": "hda",    "uuid": "c28876d7-5df3-434a-8719-4515ab6e26ab"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "forward": {    "id": "23d39f37f0e758f1",    "src": "hda",    "uuid": "778d725b-7b2e-4ec0-88c4-e773f598372a"   },   "nonspecific": {    "id": "7c66893693c46ade",    "src": "hda",    "uuid": "71da9488-84c3-4d47-844d-b994bae9d5c3"   },   "reverse": {    "id": "619c3b5aa57ab4e6",    "src": "hda",    "uuid": "ce5bdaae-1169-40e9-8cb1-1e3ee06d0532"   }  },  "params": {   "__input_ext": "\"sam\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "copy_arb_tags": null,   "copy_tags": "false",   "dbkey": "\"?\"",   "exclusive_filter": null,   "exclusive_filter_all": null,   "idxout_cond": "{\"__current_case__\": 0, \"idxout_select\": \"no\"}",   "inclusive_filter": null,   "output_fmt_cond": "{\"__current_case__\": 1, \"output_fmt_select\": \"fasta\"}",   "outputs": "[\"r0\", \"r1\", \"r2\"]",   "read_numbering": "\"\""  },  "state": "error",  "stderr": "[M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 396 reads\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1",  "tool_stderr": "[M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 396 reads\n",  "tool_stdout": "",  "update_time": "2025-07-19T13:11:25.195168",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1, exit_code: None, stderr: [M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 396 reads\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1, exit_code: None, stderr: [M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 396 reads\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1, exit_code: None, stderr: [M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 396 reads\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1, exit_code: None, stderr: [M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 396 reads\n." ], "status": "failure", "test_index": 2, "time_seconds": 28.699886798858643, "tool_id": "samtools_fastx", "tool_version": "1.9+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 0 singletons[M::bam2fq_mainloop] processed 396 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #4)" name="3" time="36.34731101989746">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 0 singletons[M::bam2fq_mainloop] processed 400 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #5)" name="4" time="36.006027698516846">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "input": {   "id": "d63f73424c624232",   "src": "hda"  },  "output_fmt_cond|output_fmt_select": "fastqsanger.gz",  "outputs": [   "r0",   "r1",   "r2"  ] }, "job": {  "command_line": "addthreads=${GALAXY_SLOTS:-1} \u0026\u0026 (( addthreads-- )) \u0026\u0026  samtools sort -@ $addthreads -n \u0027/galaxy/server/database/objects/3/e/3/dataset_3e380ce2-82ec-4b6e-9b23-e4c31afbf096.dat\u0027 \u003e input \u0026\u0026   samtools fastq     -0 nonspecific.fastqsanger.gz -1 forward.fastqsanger.gz -2 reverse.fastqsanger.gz  input  \u003e /dev/null \u0026\u0026 ln -s nonspecific.fastqsanger.gz nonspecific \u0026\u0026 ln -s forward.fastqsanger.gz forward \u0026\u0026 ln -s reverse.fastqsanger.gz reverse",  "command_version": "Version: 1.9 (using htslib 1.9)",  "copied_from_job_id": null,  "create_time": "2025-07-19T13:12:24.455738",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-qq47m",  "galaxy_version": "24.1",  "handler": null,  "history_id": "e906e068d7d31c00",  "id": "a3f9ad6f80c8e1d3",  "inputs": {   "input": {    "id": "d63f73424c624232",    "src": "hda",    "uuid": "3e380ce2-82ec-4b6e-9b23-e4c31afbf096"   }  },  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Job Runtime (Wall Clock)",    "value": "1 second"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1752930746.0000000",    "title": "Job End Time",    "value": "2025-07-19 13:12:26"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1752930745.0000000",    "title": "Job Start Time",    "value": "2025-07-19 13:12:25"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "4080.0000000",    "title": "Memory Allocated (MB)",    "value": "4080"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Cores Allocated",    "value": "1"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "forward": {    "id": "a9789ed2de8bdef4",    "src": "hda",    "uuid": "d7669300-15be-4724-a8d5-5db7b27028ab"   },   "nonspecific": {    "id": "0008168282f927e9",    "src": "hda",    "uuid": "7c85d43c-0171-4cbb-ae69-35f656796f40"   },   "reverse": {    "id": "1f76566ff007a084",    "src": "hda",    "uuid": "67dc7cc9-a5c9-4944-a9d4-ba1915413da7"   }  },  "params": {   "__input_ext": "\"bam\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "copy_arb_tags": null,   "copy_tags": "false",   "dbkey": "\"?\"",   "exclusive_filter": null,   "exclusive_filter_all": null,   "idxout_cond": "{\"__current_case__\": 0, \"idxout_select\": \"no\"}",   "inclusive_filter": null,   "output_fmt_cond": "{\"__current_case__\": 2, \"default_quality\": \"\", \"ilumina_casava\": false, \"output_fmt_select\": \"fastqsanger.gz\", \"output_quality\": false}",   "outputs": "[\"r0\", \"r1\", \"r2\"]",   "read_numbering": "\"\""  },  "state": "ok",  "stderr": "[M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 400 reads\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1",  "tool_stderr": "[M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 400 reads\n",  "tool_stdout": "",  "update_time": "2025-07-19T13:12:37.672329",  "user_email": "tests@fake.org" }, "output_problems": [  "Output nonspecific:  different than expected, difference (using diff):\n( /tmp/tmpjh6a1x6gsamtools_fastx-out2-1.fastq.gz v. /tmp/tmplvlogx6esamtools_fastx-out2-1.fastq.gz )\nBinary data detected, not displaying diff",  "Output forward:  different than expected, difference (using diff):\n( /tmp/tmpyfjlvpa4samtools_fastx-out2-2.fastq.gz v. /tmp/tmpndok2_easamtools_fastx-out2-2.fastq.gz )\nBinary data detected, not displaying diff",  "Output reverse:  different than expected, difference (using diff):\n( /tmp/tmpq8b3dh1ssamtools_fastx-out2-3.fastq.gz v. /tmp/tmpx6o4k1e7samtools_fastx-out2-3.fastq.gz )\nBinary data detected, not displaying diff" ], "status": "failure", "test_index": 4, "time_seconds": 36.006027698516846, "tool_id": "samtools_fastx", "tool_version": "1.9+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 0 singletons[M::bam2fq_mainloop] processed 400 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #6)" name="5" time="36.504388093948364">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "input": {   "id": "f9685617785169de",   "src": "hda"  },  "output_fmt_cond|output_fmt_select": "fasta.gz",  "outputs": [   "r0",   "r1",   "r2"  ] }, "job": {  "command_line": "addthreads=${GALAXY_SLOTS:-1} \u0026\u0026 (( addthreads-- )) \u0026\u0026  samtools sort -@ $addthreads -n \u0027/galaxy/server/database/objects/9/d/8/dataset_9d872caa-b6eb-4e3c-b77c-0d8df3297d01.dat\u0027 \u003e input \u0026\u0026   samtools fasta   -0 nonspecific.fasta.gz -1 forward.fasta.gz -2 reverse.fasta.gz  input  \u003e /dev/null \u0026\u0026 ln -s nonspecific.fasta.gz nonspecific \u0026\u0026 ln -s forward.fasta.gz forward \u0026\u0026 ln -s reverse.fasta.gz reverse",  "command_version": "Version: 1.9 (using htslib 1.9)",  "copied_from_job_id": null,  "create_time": "2025-07-19T13:12:59.996042",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-4gxl6",  "galaxy_version": "24.1",  "handler": null,  "history_id": "e906e068d7d31c00",  "id": "522966d76f43fd27",  "inputs": {   "input": {    "id": "f9685617785169de",    "src": "hda",    "uuid": "9d872caa-b6eb-4e3c-b77c-0d8df3297d01"   }  },  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "0E-7",    "title": "Job Runtime (Wall Clock)",    "value": "0 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1752930781.0000000",    "title": "Job End Time",    "value": "2025-07-19 13:13:01"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1752930781.0000000",    "title": "Job Start Time",    "value": "2025-07-19 13:13:01"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "4080.0000000",    "title": "Memory Allocated (MB)",    "value": "4080"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Cores Allocated",    "value": "1"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "forward": {    "id": "5784c54b506c0762",    "src": "hda",    "uuid": "f758fa35-d019-4748-81a0-e2e420b69cf3"   },   "nonspecific": {    "id": "ea04c68c33b737dd",    "src": "hda",    "uuid": "32ab4a8a-1757-4a67-bedd-d8c353e96463"   },   "reverse": {    "id": "a8070d402c48811d",    "src": "hda",    "uuid": "e215cc35-b2ef-43d9-b4ce-0c155a196739"   }  },  "params": {   "__input_ext": "\"sam\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "copy_arb_tags": null,   "copy_tags": "false",   "dbkey": "\"?\"",   "exclusive_filter": null,   "exclusive_filter_all": null,   "idxout_cond": "{\"__current_case__\": 0, \"idxout_select\": \"no\"}",   "inclusive_filter": null,   "output_fmt_cond": "{\"__current_case__\": 3, \"output_fmt_select\": \"fasta.gz\"}",   "outputs": "[\"r0\", \"r1\", \"r2\"]",   "read_numbering": "\"\""  },  "state": "ok",  "stderr": "[M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 396 reads\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/samtools_fastx/samtools_fastx/1.9+galaxy1",  "tool_stderr": "[M::bam2fq_mainloop] discarded 0 singletons\n[M::bam2fq_mainloop] processed 396 reads\n",  "tool_stdout": "",  "update_time": "2025-07-19T13:13:14.194132",  "user_email": "tests@fake.org" }, "output_problems": [  "Output nonspecific:  different than expected, difference (using diff):\n( /tmp/tmpp5yo5uawsamtools_fastx-out3-1.fasta.gz v. /tmp/tmp_3o61dwhsamtools_fastx-out3-1.fasta.gz )\nBinary data detected, not displaying diff",  "Output forward:  different than expected, difference (using diff):\n( /tmp/tmpo_4zyhe3samtools_fastx-out3-2.fasta.gz v. /tmp/tmpg9jp_zupsamtools_fastx-out3-2.fasta.gz )\nBinary data detected, not displaying diff",  "Output reverse:  different than expected, difference (using diff):\n( /tmp/tmpkjxh56basamtools_fastx-out3-3.fasta.gz v. /tmp/tmpl2j28apqsamtools_fastx-out3-3.fasta.gz )\nBinary data detected, not displaying diff" ], "status": "failure", "test_index": 5, "time_seconds": 36.504388093948364, "tool_id": "samtools_fastx", "tool_version": "1.9+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 0 singletons[M::bam2fq_mainloop] processed 396 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #7)" name="6" time="36.42743468284607">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 0 singletons[M::bam2fq_mainloop] processed 36 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #8)" name="7" time="37.87766098976135">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 0 singletons[M::bam2fq_mainloop] processed 36 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #9)" name="8" time="38.37414360046387">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 1 singletons[M::bam2fq_mainloop] processed 37 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_fastx (Test #10)" name="9" time="38.51734805107117">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [M::bam2fq_mainloop] discarded 2 singletons[M::bam2fq_mainloop] processed 36 reads
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_slice_bam (Test #1)" name="0" time="36.91386270523071">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_slice_bam (Test #2)" name="1" time="34.373825788497925">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_slice_bam (Test #3)" name="2" time="33.06335091590881">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #1)" name="0" time="96.3398368358612">
+        
+            
+            <system-out><![CDATA[
+            pigz 2.6total 20K    drwxr-sr-x    2 101      root        4.0K Jul 19 13:01 .drwxr-sr-x   11 101      root        4.0K Jul 19 13:01 ..lrwxrwxrwx    1 root     root          86 Jul 19 13:01 input_1.fastq -> /galaxy/server/database/objects/e/5/3/dataset_e5329f0e-f46f-4edb-aeb4-86dc3452134c.dat-rw-r--r--    1 root     root        1.8K Jul 19 13:01 input_1.fastq_trimming_report.txt-rw-r--r--    1 root     root         508 Jul 19 13:01 input_1_trimmed.fq
+            ]]></system-out>
+            <system-err><![CDATA[
+            Path to Cutadapt set as: 'cutadapt' (default)Cutadapt seems to be working fine (tested command 'cutadapt --version')Cutadapt version: 3.4Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)Letting the (modified) Cutadapt deal with the Python version insteadParallel gzip (pigz) detected. Proceeding with multicore (de)compression using 5 coresOutput will be written into the directory: /galaxy/server/database/jobs_directory/000/2/working/AUTO-DETECTING ADAPTER TYPE===========================Attempting to auto-detect adapter type from the first 1 million sequences of the first file (>> input_1.fastq <<)Found perfect matches for the following adapter sequences:Adapter typeCountSequenceSequences analysedPercentageIllumina0AGATCGGAAGAGC20.00smallRNA0TGGAATTCTCGG20.00Nextera0CTGTCTCTTATA20.00Unable to auto-detect most prominent adapter from the first specified file (count Illumina: 0, count smallRNA: 0, count Nextera: 0)Defaulting to Illumina universal adapter ( AGATCGGAAGAGC ). Specify -a SEQUENCE to avoid this behavior).Writing report to '/galaxy/server/database/jobs_directory/000/2/working/input_1.fastq_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_1.fastqTrimming mode: single-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'AGATCGGAAGAGC' (Illumina TruSeq, Sanger iPCR; default (inconclusive auto-detection))Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length before a sequence gets removed: 20 bpCutadapt seems to be fairly up-to-date (version 3.4). Setting -j 5Writing final adapter and quality trimmed output to input_1_trimmed.fq  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'AGATCGGAAGAGC' from file input_1.fastq <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a AGATCGGAAGAGC input_1.fastqProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (8154 µs/read; 0.01 M reads/minute).=== Summary ===Total reads processed:                       2Reads with adapters:                         1 (50.0%)Reads written (passing filters):             2 (100.0%)Total basepairs processed:           188 bpQuality-trimmed:                      20 bp (10.6%)Total written (filtered):            167 bp (88.8%)=== Adapter 1 ===Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 1 timesNo. of allowed errors:1-9 bp: 0; 10-13 bp: 1Bases preceding removed adapters:  A: 0.0%  C: 100.0%  G: 0.0%  T: 0.0%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts110.501RUN STATISTICS FOR INPUT FILE: input_1.fastq=============================================2 sequences processed in totalSequences removed because they became shorter than the length cutoff of 20 bp:0 (0.0%)
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #2)" name="1" time="37.83980202674866">
+        
+            
+            <system-out><![CDATA[
+            pigz 2.6total 20K    drwxr-sr-x    2 101      root        4.0K Jul 19 13:02 .drwxr-sr-x   11 101      root        4.0K Jul 19 13:02 ..lrwxrwxrwx    1 root     root          86 Jul 19 13:02 input_1.fastq.gz -> /galaxy/server/database/objects/c/1/1/dataset_c119a06f-b589-49e8-850e-79fad0ab404d.dat-rw-r--r--    1 root     root        1.9K Jul 19 13:02 input_1.fastq.gz_trimming_report.txt-rw-r--r--    1 root     root         291 Jul 19 13:02 input_1_trimmed.fq
+            ]]></system-out>
+            <system-err><![CDATA[
+            Path to Cutadapt set as: 'cutadapt' (default)Cutadapt seems to be working fine (tested command 'cutadapt --version')Cutadapt version: 3.4Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)Letting the (modified) Cutadapt deal with the Python version insteadParallel gzip (pigz) detected. Proceeding with multicore (de)compression using 5 coresOutput will be written into the directory: /galaxy/server/database/jobs_directory/000/4/working/AUTO-DETECTING ADAPTER TYPE===========================Attempting to auto-detect adapter type from the first 1 million sequences of the first file (>> input_1.fastq.gz <<)Found perfect matches for the following adapter sequences:Adapter typeCountSequenceSequences analysedPercentageNextera0CTGTCTCTTATA20.00Illumina0AGATCGGAAGAGC20.00smallRNA0TGGAATTCTCGG20.00Unable to auto-detect most prominent adapter from the first specified file (count Nextera: 0, count Illumina: 0, count smallRNA: 0)Defaulting to Illumina universal adapter ( AGATCGGAAGAGC ). Specify -a SEQUENCE to avoid this behavior).Writing report to '/galaxy/server/database/jobs_directory/000/4/working/input_1.fastq.gz_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_1.fastq.gzTrimming mode: single-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'AGATCGGAAGAGC' (Illumina TruSeq, Sanger iPCR; default (inconclusive auto-detection))Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length before a sequence gets removed: 20 bpOutput file(s) will be GZIP compressedCutadapt seems to be fairly up-to-date (version 3.4). Setting -j 5Writing final adapter and quality trimmed output to input_1_trimmed.fq.gz  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'AGATCGGAAGAGC' from file input_1.fastq.gz <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a AGATCGGAAGAGC input_1.fastq.gzProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (8694 µs/read; 0.01 M reads/minute).=== Summary ===Total reads processed:                       2Reads with adapters:                         1 (50.0%)Reads written (passing filters):             2 (100.0%)Total basepairs processed:           188 bpQuality-trimmed:                      20 bp (10.6%)Total written (filtered):            167 bp (88.8%)=== Adapter 1 ===Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 1 timesNo. of allowed errors:1-9 bp: 0; 10-13 bp: 1Bases preceding removed adapters:  A: 0.0%  C: 100.0%  G: 0.0%  T: 0.0%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts110.501RUN STATISTICS FOR INPUT FILE: input_1.fastq.gz=============================================2 sequences processed in totalSequences removed because they became shorter than the length cutoff of 20 bp:0 (0.0%)
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #11)" name="10" time="37.696319818496704">
+        
+            
+            <system-out><![CDATA[
+            pigz 2.6total 40K    drwxr-sr-x    2 101      root        4.0K Jul 19 13:07 .drwxr-sr-x   11 101      root        4.0K Jul 19 13:07 ..lrwxrwxrwx    1 root     root          86 Jul 19 13:07 input_1.fastq -> /galaxy/server/database/objects/d/0/f/dataset_d0f448af-746a-420a-b937-f95d8eee1c15.dat-rw-r--r--    1 root     root        8.7K Jul 19 13:07 input_1_hardtrim.fqlrwxrwxrwx    1 root     root          86 Jul 19 13:07 input_2.fastq -> /galaxy/server/database/objects/5/e/8/dataset_5e8aaf86-8909-46b7-b2df-fd82c1ad8647.dat-rw-r--r--    1 root     root        8.7K Jul 19 13:07 input_2_hardtrim.fq
+            ]]></system-out>
+            <system-err><![CDATA[
+            Path to Cutadapt set as: 'cutadapt' (default)Cutadapt seems to be working fine (tested command 'cutadapt --version')Cutadapt version: 3.4Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)Letting the (modified) Cutadapt deal with the Python version insteadParallel gzip (pigz) detected. Proceeding with multicore (de)compression using 5 coresOutput will be written into the directory: /galaxy/server/database/jobs_directory/000/27/working/Hard-trimming from 5'-end selected. File(s) will be trimmed to leave the rightmost 20 bp on the 3'-end, and Trim Galore will then exit.Input file name:  input_1.fastqWriting trimmed version (using the last 20 bp only) of the input file 'input_1.fastq' to 'input_1.20bp_3prime.fq'Finished writing out converted version of the FastQ file input_1.fastq (99 sequences in total)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Input file name:  input_2.fastqWriting trimmed version (using the last 20 bp only) of the input file 'input_2.fastq' to 'input_2.20bp_3prime.fq'Finished writing out converted version of the FastQ file input_2.fastq (99 sequences in total)~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #12)" name="11" time="22.01200222969055">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 11, "time_seconds": 22.01200222969055, "tool_id": "trim_galore", "tool_version": "0.6.7+galaxy0"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #13)" name="12" time="37.1754834651947">
+        
+            
+            <system-out><![CDATA[
+            pigz 2.6total 128K   drwxr-sr-x    2 101      root        4.0K Jul 19 13:08 .drwxr-sr-x   11 101      root        4.0K Jul 19 13:08 ..-rw-r--r--    1 root     root       54.8K Jul 19 13:08 input_1.clock_UMI.R1.fqlrwxrwxrwx    1 root     root          86 Jul 19 13:08 input_1.fastq -> /galaxy/server/database/objects/9/0/e/dataset_90e6638c-8278-4810-b81a-ecd903985645.dat-rw-r--r--    1 root     root       54.8K Jul 19 13:08 input_2.clock_UMI.R2.fqlrwxrwxrwx    1 root     root          86 Jul 19 13:08 input_2.fastq -> /galaxy/server/database/objects/7/0/c/dataset_70cd4cfb-a8a5-42fa-b72f-4a4f4d6fa643.dat
+            ]]></system-out>
+            <system-err><![CDATA[
+            Path to Cutadapt set as: 'cutadapt' (default)Cutadapt seems to be working fine (tested command 'cutadapt --version')Cutadapt version: 3.4Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)Letting the (modified) Cutadapt deal with the Python version insteadParallel gzip (pigz) detected. Proceeding with multicore (de)compression using 5 coresOutput will be written into the directory: /galaxy/server/database/jobs_directory/000/32/working/IT'S TIME FOR CLOCK PROCESSING!!![pun intended]Writing dual trimmed version of the input file 'input_1.fastq' to 'input_1.clock_UMI.R1.fq'Writing dual trimmed version of the input file 'input_2.fastq' to 'input_2.clock_UMI.R2.fq'                 ---Sequences processed in total: 99thereof had fixed sequence CAGT in both R1 and R2: 99 (100.00%)     ~~~~~~~~~~~~~~~~~~~~~~~~~~~Pre-processing finished...Please run Trim Galore again to remove adapters, poor quality bases as well as UMI/fixed sequences from the 3'-end of the reads.A sample command for this is:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~trim_galore --paired --three_prime_clip_R1 15 --three_prime_clip_R2 15 *.clock_UMI.R1.fq.gz *.clock_UMI.R2.fq.gz~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Trim Galore Epigenetic Clock processing complete.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #14)" name="13" time="36.764655113220215">
+        
+            
+            <system-out><![CDATA[
+            pigz 2.6total 136K   drwxr-sr-x    2 101      root        4.0K Jul 19 13:09 .drwxr-sr-x   11 101      root        4.0K Jul 19 13:09 ..lrwxrwxrwx    1 root     root          86 Jul 19 13:09 input_1.fastq -> /galaxy/server/database/objects/c/2/9/dataset_c2993e72-2f5c-4cd8-a0fa-91884d66d919.dat-rw-r--r--    1 root     root        1.8K Jul 19 13:09 input_1.fastq_trimming_report.txt-rw-r--r--    1 root     root       53.6K Jul 19 13:09 input_1_val_1.fqlrwxrwxrwx    1 root     root          86 Jul 19 13:09 input_2.fastq -> /galaxy/server/database/objects/1/a/8/dataset_1a87d739-23ff-4995-a857-d86feb7d4c7d.dat-rw-r--r--    1 root     root        2.3K Jul 19 13:09 input_2.fastq_trimming_report.txt-rw-r--r--    1 root     root       53.5K Jul 19 13:09 input_2_val_2.fq
+            ]]></system-out>
+            <system-err><![CDATA[
+            Path to Cutadapt set as: 'cutadapt' (default)Cutadapt seems to be working fine (tested command 'cutadapt --version')Cutadapt version: 3.4Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)Letting the (modified) Cutadapt deal with the Python version insteadParallel gzip (pigz) detected. Proceeding with multicore (de)compression using 5 coresOutput will be written into the directory: /galaxy/server/database/jobs_directory/000/35/working/AUTO-DETECTING POLY-A TYPE===========================Attempting to auto-detect PolyA type from the first 1 million sequences of the first file (>> input_1.fastq <<)Found perfect matches for the following mono-polymer sequences:Poly-nucleotide typeCountSequenceSequences analysedPercentagePolyA3AAAAAAAAAA993.03PolyT0TTTTTTTTTT990.00Using PolyA Polymer for trimming (count: 3). Second best hit was PolyT (count: 0)Writing report to '/galaxy/server/database/jobs_directory/000/35/working/input_1.fastq_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_1.fastqTrimming mode: paired-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'AAAAAAAAAAAAAAAAAAAA' (Poly-A Read 1; auto-detected)Maximum trimming error rate: 0.1 (default)Optional adapter 2 sequence (only used for read 2 of paired-end files): 'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT'Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length for both reads before a sequence pair gets removed: 20 bpCutadapt seems to be fairly up-to-date (version 3.4). Setting -j 5Writing final adapter and quality trimmed output to input_1_trimmed.fqPOLY-A TRIMMING MODE; EXPERIMENTAL!!  >>> Now performing Poly-A trimming for the adapter sequence: 'AAAAAAAAAAAAAAAAAAAA' from file input_1.fastq <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -O 1 -a AAAAAAAAAAAAAAAAAAAA /galaxy/server/database/jobs_directory/000/35/working/input_1.fastqProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (176 µs/read; 0.34 M reads/minute).=== Summary ===Total reads processed:                      99Reads with adapters:                        21 (21.2%)Reads written (passing filters):            99 (100.0%)Total basepairs processed:        24,849 bpTotal written (filtered):         24,825 bp (99.9%)=== Adapter 1 ===Sequence: AAAAAAAAAAAAAAAAAAAA; Type: regular 3'; Length: 20; Trimmed: 21 timesNo. of allowed errors:1-9 bp: 0; 10-19 bp: 1; 20 bp: 2Bases preceding removed adapters:  A: 0.0%  C: 19.0%  G: 52.4%  T: 28.6%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts11824.8018236.203RUN STATISTICS FOR INPUT FILE: input_1.fastq=============================================99 sequences processed in totalThe length threshold of paired-end sequences gets evaluated later on (in the validation step)Writing report to '/galaxy/server/database/jobs_directory/000/35/working/input_2.fastq_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_2.fastqTrimming mode: paired-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'AAAAAAAAAAAAAAAAAAAA' (Poly-A Read 1; auto-detected)Maximum trimming error rate: 0.1 (default)Optional adapter 2 sequence (only used for read 2 of paired-end files): 'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT'Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length for both reads before a sequence pair gets removed: 20 bpCutadapt seems to be fairly up-to-date (version 3.4). Setting -j -j 5Writing final adapter and quality trimmed output to input_2_trimmed.fqPOLY-A TRIMMING MODE; EXPERIMENTAL!!  >>> Now performing Poly-A trimming for the adapter sequence: 'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT' from file input_2.fastq <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -O 1 -g TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT /galaxy/server/database/jobs_directory/000/35/working/input_2.fastqProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (209 µs/read; 0.29 M reads/minute).=== Summary ===Total reads processed:                      99Reads with adapters:                        13 (13.1%)Reads written (passing filters):            99 (100.0%)Total basepairs processed:        24,849 bpTotal written (filtered):         24,828 bp (99.9%)=== Adapter 1 ===Sequence: TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT; Type: regular 5'; Length: 150; Trimmed: 13 timesNo. of allowed errors:1-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-39 bp: 3; 40-49 bp: 4; 50-59 bp: 5; 60-69 bp: 6; 70-79 bp: 7; 80-89 bp: 8; 90-99 bp: 9; 100-109 bp: 10; 110-119 bp: 11; 120-129 bp: 12; 130-139 bp: 13; 140-149 bp: 14; 150 bp: 15Overview of removed sequenceslengthcountexpectmax.errerror counts1524.805286.208RUN STATISTICS FOR INPUT FILE: input_2.fastq=============================================99 sequences processed in totalThe length threshold of paired-end sequences gets evaluated later on (in the validation step)Validate paired-end files input_1_trimmed.fq and input_2_trimmed.fqfile_1: input_1_trimmed.fq, file_2: input_2_trimmed.fq>>>>> Now validing the length of the 2 paired-end infiles: input_1_trimmed.fq and input_2_trimmed.fq <<<<<Writing validated paired-end Read 1 reads to input_1_val_1.fqWriting validated paired-end Read 2 reads to input_2_val_2.fqTotal number of sequences analysed: 99Number of sequence pairs removed because at least one read was shorter than the length cutoff (20 bp): 0 (0.00%)Deleting both intermediate output files input_1_trimmed.fq and input_2_trimmed.fq====================================================================================================
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #3)" name="2" time="36.41045141220093">
+        
+            
+            <system-out><![CDATA[
+            pigz 2.6total 20K    drwxr-sr-x    2 101      root        4.0K Jul 19 13:02 .drwxr-sr-x   11 101      root        4.0K Jul 19 13:02 ..lrwxrwxrwx    1 root     root          86 Jul 19 13:02 input_1.fastq -> /galaxy/server/database/objects/a/2/6/dataset_a263357f-e4dc-4d00-9b2e-7d09ca2824fd.dat-rw-r--r--    1 root     root        1.6K Jul 19 13:02 input_1.fastq_trimming_report.txt-rw-r--r--    1 root     root         508 Jul 19 13:02 input_1_trimmed.fq
+            ]]></system-out>
+            <system-err><![CDATA[
+            Path to Cutadapt set as: 'cutadapt' (default)Cutadapt seems to be working fine (tested command 'cutadapt --version')Cutadapt version: 3.4Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)Letting the (modified) Cutadapt deal with the Python version insteadParallel gzip (pigz) detected. Proceeding with multicore (de)compression using 5 coresOutput will be written into the directory: /galaxy/server/database/jobs_directory/000/6/working/Writing report to '/galaxy/server/database/jobs_directory/000/6/working/input_1.fastq_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_1.fastqTrimming mode: single-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'AGATCGGAAGAGC' (Illumina TruSeq, Sanger iPCR; user defined)Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length before a sequence gets removed: 20 bpCutadapt seems to be fairly up-to-date (version 3.4). Setting -j 5Writing final adapter and quality trimmed output to input_1_trimmed.fq  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'AGATCGGAAGAGC' from file input_1.fastq <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a AGATCGGAAGAGC input_1.fastqProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (8512 µs/read; 0.01 M reads/minute).=== Summary ===Total reads processed:                       2Reads with adapters:                         1 (50.0%)Reads written (passing filters):             2 (100.0%)Total basepairs processed:           188 bpQuality-trimmed:                      20 bp (10.6%)Total written (filtered):            167 bp (88.8%)=== Adapter 1 ===Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 1 timesNo. of allowed errors:1-9 bp: 0; 10-13 bp: 1Bases preceding removed adapters:  A: 0.0%  C: 100.0%  G: 0.0%  T: 0.0%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts110.501RUN STATISTICS FOR INPUT FILE: input_1.fastq=============================================2 sequences processed in totalSequences removed because they became shorter than the length cutoff of 20 bp:0 (0.0%)
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #4)" name="3" time="36.00865912437439">
+        
+            
+            <system-out><![CDATA[
+            pigz 2.6total 20K    drwxr-sr-x    2 101      root        4.0K Jul 19 13:03 .drwxr-sr-x   11 101      root        4.0K Jul 19 13:03 ..lrwxrwxrwx    1 root     root          86 Jul 19 13:03 input_1.fastq.gz -> /galaxy/server/database/objects/5/b/8/dataset_5b863a6f-2db4-4858-a4c0-3ef6fd2df97f.dat-rw-r--r--    1 root     root        1.6K Jul 19 13:03 input_1.fastq.gz_trimming_report.txt-rw-r--r--    1 root     root         291 Jul 19 13:03 input_1_trimmed.fq
+            ]]></system-out>
+            <system-err><![CDATA[
+            Path to Cutadapt set as: 'cutadapt' (default)Cutadapt seems to be working fine (tested command 'cutadapt --version')Cutadapt version: 3.4Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)Letting the (modified) Cutadapt deal with the Python version insteadParallel gzip (pigz) detected. Proceeding with multicore (de)compression using 5 coresOutput will be written into the directory: /galaxy/server/database/jobs_directory/000/8/working/Writing report to '/galaxy/server/database/jobs_directory/000/8/working/input_1.fastq.gz_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_1.fastq.gzTrimming mode: single-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'AGATCGGAAGAGC' (Illumina TruSeq, Sanger iPCR; user defined)Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length before a sequence gets removed: 20 bpOutput file(s) will be GZIP compressedCutadapt seems to be fairly up-to-date (version 3.4). Setting -j 5Writing final adapter and quality trimmed output to input_1_trimmed.fq.gz  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'AGATCGGAAGAGC' from file input_1.fastq.gz <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a AGATCGGAAGAGC input_1.fastq.gzProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (9053 µs/read; 0.01 M reads/minute).=== Summary ===Total reads processed:                       2Reads with adapters:                         1 (50.0%)Reads written (passing filters):             2 (100.0%)Total basepairs processed:           188 bpQuality-trimmed:                      20 bp (10.6%)Total written (filtered):            167 bp (88.8%)=== Adapter 1 ===Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 1 timesNo. of allowed errors:1-9 bp: 0; 10-13 bp: 1Bases preceding removed adapters:  A: 0.0%  C: 100.0%  G: 0.0%  T: 0.0%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts110.501RUN STATISTICS FOR INPUT FILE: input_1.fastq.gz=============================================2 sequences processed in totalSequences removed because they became shorter than the length cutoff of 20 bp:0 (0.0%)
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #5)" name="4" time="36.4001522064209">
+        
+            
+            <system-out><![CDATA[
+            pigz 2.6total 20K    drwxr-sr-x    2 101      root        4.0K Jul 19 13:04 .drwxr-sr-x   11 101      root        4.0K Jul 19 13:04 ..lrwxrwxrwx    1 root     root          86 Jul 19 13:04 input_1.fastq -> /galaxy/server/database/objects/f/2/9/dataset_f29a8b4a-423e-4272-8038-bc9d19bcd3e4.dat-rw-r--r--    1 root     root        1.8K Jul 19 13:04 input_1.fastq_trimming_report.txt-rw-r--r--    1 root     root         508 Jul 19 13:04 input_1_trimmed.fq
+            ]]></system-out>
+            <system-err><![CDATA[
+            Path to Cutadapt set as: 'cutadapt' (default)Cutadapt seems to be working fine (tested command 'cutadapt --version')Cutadapt version: 3.4Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)Letting the (modified) Cutadapt deal with the Python version insteadParallel gzip (pigz) detected. Proceeding with multicore (de)compression using 5 coresOutput will be written into the directory: /galaxy/server/database/jobs_directory/000/10/working/AUTO-DETECTING ADAPTER TYPE===========================Attempting to auto-detect adapter type from the first 1 million sequences of the first file (>> input_1.fastq <<)Found perfect matches for the following adapter sequences:Adapter typeCountSequenceSequences analysedPercentageIllumina0AGATCGGAAGAGC20.00smallRNA0TGGAATTCTCGG20.00Nextera0CTGTCTCTTATA20.00Unable to auto-detect most prominent adapter from the first specified file (count Illumina: 0, count smallRNA: 0, count Nextera: 0)Defaulting to Illumina universal adapter ( AGATCGGAAGAGC ). Specify -a SEQUENCE to avoid this behavior).Writing report to '/galaxy/server/database/jobs_directory/000/10/working/input_1.fastq_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_1.fastqTrimming mode: single-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'AGATCGGAAGAGC' (Illumina TruSeq, Sanger iPCR; default (inconclusive auto-detection))Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length before a sequence gets removed: 20 bpCutadapt seems to be fairly up-to-date (version 3.4). Setting -j 5Writing final adapter and quality trimmed output to input_1_trimmed.fq  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'AGATCGGAAGAGC' from file input_1.fastq <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a AGATCGGAAGAGC input_1.fastqProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (8430 µs/read; 0.01 M reads/minute).=== Summary ===Total reads processed:                       2Reads with adapters:                         1 (50.0%)Reads written (passing filters):             2 (100.0%)Total basepairs processed:           188 bpQuality-trimmed:                      20 bp (10.6%)Total written (filtered):            167 bp (88.8%)=== Adapter 1 ===Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 1 timesNo. of allowed errors:1-9 bp: 0; 10-13 bp: 1Bases preceding removed adapters:  A: 0.0%  C: 100.0%  G: 0.0%  T: 0.0%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts110.501RUN STATISTICS FOR INPUT FILE: input_1.fastq=============================================2 sequences processed in totalSequences removed because they became shorter than the length cutoff of 20 bp:0 (0.0%)
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #6)" name="5" time="34.887805461883545">
+        
+            
+            <system-out><![CDATA[
+            pigz 2.6total 20K    drwxr-sr-x    2 101      root        4.0K Jul 19 13:04 .drwxr-sr-x   11 101      root        4.0K Jul 19 13:04 ..lrwxrwxrwx    1 root     root          86 Jul 19 13:04 input_1.fastq.gz -> /galaxy/server/database/objects/7/2/9/dataset_729118f5-d510-4dfe-b2cb-11593ac21d34.dat-rw-r--r--    1 root     root        1.9K Jul 19 13:04 input_1.fastq.gz_trimming_report.txt-rw-r--r--    1 root     root         291 Jul 19 13:04 input_1_trimmed.fq
+            ]]></system-out>
+            <system-err><![CDATA[
+            Path to Cutadapt set as: 'cutadapt' (default)Cutadapt seems to be working fine (tested command 'cutadapt --version')Cutadapt version: 3.4Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)Letting the (modified) Cutadapt deal with the Python version insteadParallel gzip (pigz) detected. Proceeding with multicore (de)compression using 5 coresOutput will be written into the directory: /galaxy/server/database/jobs_directory/000/12/working/AUTO-DETECTING ADAPTER TYPE===========================Attempting to auto-detect adapter type from the first 1 million sequences of the first file (>> input_1.fastq.gz <<)Found perfect matches for the following adapter sequences:Adapter typeCountSequenceSequences analysedPercentageIllumina0AGATCGGAAGAGC20.00Nextera0CTGTCTCTTATA20.00smallRNA0TGGAATTCTCGG20.00Unable to auto-detect most prominent adapter from the first specified file (count Illumina: 0, count Nextera: 0, count smallRNA: 0)Defaulting to Illumina universal adapter ( AGATCGGAAGAGC ). Specify -a SEQUENCE to avoid this behavior).Writing report to '/galaxy/server/database/jobs_directory/000/12/working/input_1.fastq.gz_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_1.fastq.gzTrimming mode: single-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'AGATCGGAAGAGC' (Illumina TruSeq, Sanger iPCR; default (inconclusive auto-detection))Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length before a sequence gets removed: 20 bpOutput file(s) will be GZIP compressedCutadapt seems to be fairly up-to-date (version 3.4). Setting -j 5Writing final adapter and quality trimmed output to input_1_trimmed.fq.gz  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'AGATCGGAAGAGC' from file input_1.fastq.gz <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a AGATCGGAAGAGC input_1.fastq.gzProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (8802 µs/read; 0.01 M reads/minute).=== Summary ===Total reads processed:                       2Reads with adapters:                         1 (50.0%)Reads written (passing filters):             2 (100.0%)Total basepairs processed:           188 bpQuality-trimmed:                      20 bp (10.6%)Total written (filtered):            167 bp (88.8%)=== Adapter 1 ===Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 1 timesNo. of allowed errors:1-9 bp: 0; 10-13 bp: 1Bases preceding removed adapters:  A: 0.0%  C: 100.0%  G: 0.0%  T: 0.0%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts110.501RUN STATISTICS FOR INPUT FILE: input_1.fastq.gz=============================================2 sequences processed in totalSequences removed because they became shorter than the length cutoff of 20 bp:0 (0.0%)
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #7)" name="6" time="40.10906720161438">
+        
+            
+            <system-out><![CDATA[
+            pigz 2.6total 128K   drwxr-sr-x    2 101      root        4.0K Jul 19 13:05 .drwxr-sr-x   11 101      root        4.0K Jul 19 13:05 ..lrwxrwxrwx    1 root     root          86 Jul 19 13:05 input_1.fastq -> /galaxy/server/database/objects/b/8/a/dataset_b8a4a9a7-938f-4e8a-8b18-f6dce3ec511d.dat-rw-r--r--    1 root     root        2.0K Jul 19 13:05 input_1.fastq_trimming_report.txt-rw-r--r--    1 root     root       49.9K Jul 19 13:05 input_1_val_1.fqlrwxrwxrwx    1 root     root          86 Jul 19 13:05 input_2.fastq -> /galaxy/server/database/objects/e/4/f/dataset_e4fff9fb-f564-4830-a006-23fe54003abf.dat-rw-r--r--    1 root     root        2.2K Jul 19 13:05 input_2.fastq_trimming_report.txt-rw-r--r--    1 root     root       49.8K Jul 19 13:05 input_2_val_2.fq
+            ]]></system-out>
+            <system-err><![CDATA[
+            Path to Cutadapt set as: 'cutadapt' (default)Cutadapt seems to be working fine (tested command 'cutadapt --version')Cutadapt version: 3.4Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)Letting the (modified) Cutadapt deal with the Python version insteadParallel gzip (pigz) detected. Proceeding with multicore (de)compression using 5 coresOutput will be written into the directory: /galaxy/server/database/jobs_directory/000/15/working/AUTO-DETECTING ADAPTER TYPE===========================Attempting to auto-detect adapter type from the first 1 million sequences of the first file (>> input_1.fastq <<)Found perfect matches for the following adapter sequences:Adapter typeCountSequenceSequences analysedPercentageNextera29CTGTCTCTTATA9929.29Illumina0AGATCGGAAGAGC990.00smallRNA0TGGAATTCTCGG990.00Using Nextera adapter for trimming (count: 29). Second best hit was Illumina (count: 0)Writing report to '/galaxy/server/database/jobs_directory/000/15/working/input_1.fastq_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_1.fastqTrimming mode: paired-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'CTGTCTCTTATA' (Nextera Transposase sequence; auto-detected)Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length for both reads before a sequence pair gets removed: 20 bpCutadapt seems to be fairly up-to-date (version 3.4). Setting -j 5Writing final adapter and quality trimmed output to input_1_trimmed.fq  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'CTGTCTCTTATA' from file input_1.fastq <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a CTGTCTCTTATA input_1.fastqProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (217 µs/read; 0.28 M reads/minute).=== Summary ===Total reads processed:                      99Reads with adapters:                        52 (52.5%)Reads written (passing filters):            99 (100.0%)Total basepairs processed:        24,849 bpQuality-trimmed:                     205 bp (0.8%)Total written (filtered):         23,339 bp (93.9%)=== Adapter 1 ===Sequence: CTGTCTCTTATA; Type: regular 3'; Length: 12; Trimmed: 52 timesNo. of allowed errors:1-9 bp: 0; 10-12 bp: 1Bases preceding removed adapters:  A: 9.6%  C: 38.5%  G: 23.1%  T: 28.8%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts11124.8011256.205331.503430.4031210.0111320.0121410.0111610.0111710.010 12020.0122110.0112410.0112620.0123110.0113310.0114120.0124910.0115010.0115410.0115610.0115820.0126010.0116720.0126810.0116910.0117310.0118010.0118610.011RUN STATISTICS FOR INPUT FILE: input_1.fastq=============================================99 sequences processed in totalThe length threshold of paired-end sequences gets evaluated later on (in the validation step)Writing report to '/galaxy/server/database/jobs_directory/000/15/working/input_2.fastq_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_2.fastqTrimming mode: paired-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'CTGTCTCTTATA' (Nextera Transposase sequence; auto-detected)Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length for both reads before a sequence pair gets removed: 20 bpCutadapt seems to be fairly up-to-date (version 3.4). Setting -j -j 5Writing final adapter and quality trimmed output to input_2_trimmed.fq  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'CTGTCTCTTATA' from file input_2.fastq <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a CTGTCTCTTATA input_2.fastqProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (208 µs/read; 0.29 M reads/minute).=== Summary ===Total reads processed:                      99Reads with adapters:                        58 (58.6%)Reads written (passing filters):            99 (100.0%)Total basepairs processed:        24,849 bpQuality-trimmed:                     745 bp (3.0%)Total written (filtered):         23,035 bp (92.7%)=== Adapter 1 ===Sequence: CTGTCTCTTATA; Type: regular 3'; Length: 12; Trimmed: 58 timesNo. of allowed errors:1-9 bp: 0; 10-12 bp: 1Bases preceding removed adapters:  A: 12.1%  C: 37.9%  G: 8.6%  T: 41.4%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts11624.8016276.207311.501420.402620.002910.0011010.0111310.0111420.0121510.0111610.0111710.0111920.0122110.0112510.0113010.0113220.0123410.0113620.0123810.0114010.0114110.0114210.0114310.0114910.0115110.0115610.0115710.0116010.0116710.0118010.011RUN STATISTICS FOR INPUT FILE: input_2.fastq=============================================99 sequences processed in totalThe length threshold of paired-end sequences gets evaluated later on (in the validation step)Validate paired-end files input_1_trimmed.fq and input_2_trimmed.fqfile_1: input_1_trimmed.fq, file_2: input_2_trimmed.fq>>>>> Now validing the length of the 2 paired-end infiles: input_1_trimmed.fq and input_2_trimmed.fq <<<<<Writing validated paired-end Read 1 reads to input_1_val_1.fqWriting validated paired-end Read 2 reads to input_2_val_2.fqTotal number of sequences analysed: 99Number of sequence pairs removed because at least one read was shorter than the length cutoff (20 bp): 1 (1.01%)Deleting both intermediate output files input_1_trimmed.fq and input_2_trimmed.fq====================================================================================================
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #8)" name="7" time="39.180015087127686">
+        
+            
+            <system-out><![CDATA[
+            pigz 2.6total 48K    drwxr-sr-x    2 101      root        4.0K Jul 19 13:05 .drwxr-sr-x   11 101      root        4.0K Jul 19 13:05 ..lrwxrwxrwx    1 root     root          86 Jul 19 13:05 input_1.fastq.gz -> /galaxy/server/database/objects/d/d/3/dataset_dd301bab-c90b-445d-8bb4-dba67af23e64.dat-rw-r--r--    1 root     root        2.0K Jul 19 13:05 input_1.fastq.gz_trimming_report.txt-rw-r--r--    1 root     root       10.7K Jul 19 13:05 input_1_val_1.fqlrwxrwxrwx    1 root     root          86 Jul 19 13:05 input_2.fastq.gz -> /galaxy/server/database/objects/3/0/7/dataset_307bbdfc-5ac5-4b9f-9bfe-63a9ea0b6634.dat-rw-r--r--    1 root     root        2.2K Jul 19 13:05 input_2.fastq.gz_trimming_report.txt-rw-r--r--    1 root     root       10.5K Jul 19 13:05 input_2_val_2.fq
+            ]]></system-out>
+            <system-err><![CDATA[
+            Path to Cutadapt set as: 'cutadapt' (default)Cutadapt seems to be working fine (tested command 'cutadapt --version')Cutadapt version: 3.4Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)Letting the (modified) Cutadapt deal with the Python version insteadParallel gzip (pigz) detected. Proceeding with multicore (de)compression using 5 coresOutput will be written into the directory: /galaxy/server/database/jobs_directory/000/18/working/AUTO-DETECTING ADAPTER TYPE===========================Attempting to auto-detect adapter type from the first 1 million sequences of the first file (>> input_1.fastq.gz <<)Found perfect matches for the following adapter sequences:Adapter typeCountSequenceSequences analysedPercentageNextera29CTGTCTCTTATA9929.29Illumina0AGATCGGAAGAGC990.00smallRNA0TGGAATTCTCGG990.00Using Nextera adapter for trimming (count: 29). Second best hit was Illumina (count: 0)Writing report to '/galaxy/server/database/jobs_directory/000/18/working/input_1.fastq.gz_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_1.fastq.gzTrimming mode: paired-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'CTGTCTCTTATA' (Nextera Transposase sequence; auto-detected)Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length for both reads before a sequence pair gets removed: 20 bpOutput file(s) will be GZIP compressedCutadapt seems to be fairly up-to-date (version 3.4). Setting -j 5Writing final adapter and quality trimmed output to input_1_trimmed.fq.gz  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'CTGTCTCTTATA' from file input_1.fastq.gz <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a CTGTCTCTTATA input_1.fastq.gzProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (171 µs/read; 0.35 M reads/minute).=== Summary ===Total reads processed:                      99Reads with adapters:                        52 (52.5%)Reads written (passing filters):            99 (100.0%)Total basepairs processed:        24,849 bpQuality-trimmed:                     205 bp (0.8%)Total written (filtered):         23,339 bp (93.9%)=== Adapter 1 ===Sequence: CTGTCTCTTATA; Type: regular 3'; Length: 12; Trimmed: 52 timesNo. of allowed errors:1-9 bp: 0; 10-12 bp: 1Bases preceding removed adapters:  A: 9.6%  C: 38.5%  G: 23.1%  T: 28.8%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts11124.8011256.205331.503430.4031210.0111320.0121410.0111610.0111710.010 12020.0122110.0112410.0112620.0123110.0113310.0114120.0124910.0115010.0115410.0115610.0115820.0126010.0116720.0126810.0116910.0117310.0118010.0118610.011RUN STATISTICS FOR INPUT FILE: input_1.fastq.gz=============================================99 sequences processed in totalThe length threshold of paired-end sequences gets evaluated later on (in the validation step)Writing report to '/galaxy/server/database/jobs_directory/000/18/working/input_2.fastq.gz_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_2.fastq.gzTrimming mode: paired-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'CTGTCTCTTATA' (Nextera Transposase sequence; auto-detected)Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length for both reads before a sequence pair gets removed: 20 bpOutput file(s) will be GZIP compressedCutadapt seems to be fairly up-to-date (version 3.4). Setting -j -j 5Writing final adapter and quality trimmed output to input_2_trimmed.fq.gz  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'CTGTCTCTTATA' from file input_2.fastq.gz <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a CTGTCTCTTATA input_2.fastq.gzProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (178 µs/read; 0.34 M reads/minute).=== Summary ===Total reads processed:                      99Reads with adapters:                        58 (58.6%)Reads written (passing filters):            99 (100.0%)Total basepairs processed:        24,849 bpQuality-trimmed:                     745 bp (3.0%)Total written (filtered):         23,035 bp (92.7%)=== Adapter 1 ===Sequence: CTGTCTCTTATA; Type: regular 3'; Length: 12; Trimmed: 58 timesNo. of allowed errors:1-9 bp: 0; 10-12 bp: 1Bases preceding removed adapters:  A: 12.1%  C: 37.9%  G: 8.6%  T: 41.4%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts11624.8016276.207311.501420.402620.002910.0011010.0111310.0111420.0121510.0111610.0111710.0111920.0122110.0112510.0113010.0113220.0123410.0113620.0123810.0114010.0114110.0114210.0114310.0114910.0115110.0115610.0115710.0116010.0116710.0118010.011RUN STATISTICS FOR INPUT FILE: input_2.fastq.gz=============================================99 sequences processed in totalThe length threshold of paired-end sequences gets evaluated later on (in the validation step)Validate paired-end files input_1_trimmed.fq.gz and input_2_trimmed.fq.gzfile_1: input_1_trimmed.fq.gz, file_2: input_2_trimmed.fq.gz>>>>> Now validing the length of the 2 paired-end infiles: input_1_trimmed.fq.gz and input_2_trimmed.fq.gz <<<<<Writing validated paired-end Read 1 reads to input_1_val_1.fq.gzWriting validated paired-end Read 2 reads to input_2_val_2.fq.gzTotal number of sequences analysed: 99Number of sequence pairs removed because at least one read was shorter than the length cutoff (20 bp): 1 (1.01%)Deleting both intermediate output files input_1_trimmed.fq.gz and input_2_trimmed.fq.gz====================================================================================================
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #9)" name="8" time="40.764960050582886">
+        
+            
+            <system-out><![CDATA[
+            pigz 2.6total 132K   drwxr-sr-x    2 101      root        4.0K Jul 19 13:06 .drwxr-sr-x   11 101      root        4.0K Jul 19 13:06 ..lrwxrwxrwx    1 root     root          86 Jul 19 13:06 input_1.fastq -> /galaxy/server/database/objects/7/5/4/dataset_754fdbf7-a9d7-4da5-aaeb-573724520cbd.dat-rw-r--r--    1 root     root        2.0K Jul 19 13:06 input_1.fastq_trimming_report.txt-rw-r--r--    1 root     root         551 Jul 19 13:06 input_1_unpaired_1.fq-rw-r--r--    1 root     root       49.9K Jul 19 13:06 input_1_val_1.fqlrwxrwxrwx    1 root     root          86 Jul 19 13:06 input_2.fastq -> /galaxy/server/database/objects/a/3/a/dataset_a3a200eb-672d-4ad9-991c-88955152e63f.dat-rw-r--r--    1 root     root        2.3K Jul 19 13:06 input_2.fastq_trimming_report.txt-rw-r--r--    1 root     root           0 Jul 19 13:06 input_2_unpaired_2.fq-rw-r--r--    1 root     root       49.8K Jul 19 13:06 input_2_val_2.fq
+            ]]></system-out>
+            <system-err><![CDATA[
+            Path to Cutadapt set as: 'cutadapt' (default)Cutadapt seems to be working fine (tested command 'cutadapt --version')Cutadapt version: 3.4Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)Letting the (modified) Cutadapt deal with the Python version insteadParallel gzip (pigz) detected. Proceeding with multicore (de)compression using 5 coresOutput will be written into the directory: /galaxy/server/database/jobs_directory/000/21/working/AUTO-DETECTING ADAPTER TYPE===========================Attempting to auto-detect adapter type from the first 1 million sequences of the first file (>> input_1.fastq <<)Found perfect matches for the following adapter sequences:Adapter typeCountSequenceSequences analysedPercentageNextera29CTGTCTCTTATA9929.29smallRNA0TGGAATTCTCGG990.00Illumina0AGATCGGAAGAGC990.00Using Nextera adapter for trimming (count: 29). Second best hit was smallRNA (count: 0)Writing report to '/galaxy/server/database/jobs_directory/000/21/working/input_1.fastq_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_1.fastqTrimming mode: paired-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'CTGTCTCTTATA' (Nextera Transposase sequence; auto-detected)Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length for both reads before a sequence pair gets removed: 20 bpLength cut-off for read 1: 35 bp (default)Length cut-off for read 2: 35 bb (default)Cutadapt seems to be fairly up-to-date (version 3.4). Setting -j 5Writing final adapter and quality trimmed output to input_1_trimmed.fq  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'CTGTCTCTTATA' from file input_1.fastq <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a CTGTCTCTTATA input_1.fastqProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (189 µs/read; 0.32 M reads/minute).=== Summary ===Total reads processed:                      99Reads with adapters:                        52 (52.5%)Reads written (passing filters):            99 (100.0%)Total basepairs processed:        24,849 bpQuality-trimmed:                     205 bp (0.8%)Total written (filtered):         23,339 bp (93.9%)=== Adapter 1 ===Sequence: CTGTCTCTTATA; Type: regular 3'; Length: 12; Trimmed: 52 timesNo. of allowed errors:1-9 bp: 0; 10-12 bp: 1Bases preceding removed adapters:  A: 9.6%  C: 38.5%  G: 23.1%  T: 28.8%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts11124.8011256.205331.503430.4031210.0111320.0121410.0111610.0111710.010 12020.0122110.0112410.0112620.0123110.0113310.0114120.0124910.0115010.0115410.0115610.0115820.0126010.0116720.0126810.0116910.0117310.0118010.0118610.011RUN STATISTICS FOR INPUT FILE: input_1.fastq=============================================99 sequences processed in totalThe length threshold of paired-end sequences gets evaluated later on (in the validation step)Writing report to '/galaxy/server/database/jobs_directory/000/21/working/input_2.fastq_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_2.fastqTrimming mode: paired-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'CTGTCTCTTATA' (Nextera Transposase sequence; auto-detected)Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length for both reads before a sequence pair gets removed: 20 bpLength cut-off for read 1: 35 bp (default)Length cut-off for read 2: 35 bb (default)Cutadapt seems to be fairly up-to-date (version 3.4). Setting -j -j 5Writing final adapter and quality trimmed output to input_2_trimmed.fq  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'CTGTCTCTTATA' from file input_2.fastq <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a CTGTCTCTTATA input_2.fastqProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (202 µs/read; 0.30 M reads/minute).=== Summary ===Total reads processed:                      99Reads with adapters:                        58 (58.6%)Reads written (passing filters):            99 (100.0%)Total basepairs processed:        24,849 bpQuality-trimmed:                     745 bp (3.0%)Total written (filtered):         23,035 bp (92.7%)=== Adapter 1 ===Sequence: CTGTCTCTTATA; Type: regular 3'; Length: 12; Trimmed: 58 timesNo. of allowed errors:1-9 bp: 0; 10-12 bp: 1Bases preceding removed adapters:  A: 12.1%  C: 37.9%  G: 8.6%  T: 41.4%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts11624.8016276.207311.501420.402620.002910.0011010.0111310.0111420.0121510.0111610.0111710.0111920.0122110.0112510.0113010.0113220.0123410.0113620.0123810.0114010.0114110.0114210.0114310.0114910.0115110.0115610.0115710.0116010.0116710.0118010.011RUN STATISTICS FOR INPUT FILE: input_2.fastq=============================================99 sequences processed in totalThe length threshold of paired-end sequences gets evaluated later on (in the validation step)Validate paired-end files input_1_trimmed.fq and input_2_trimmed.fqfile_1: input_1_trimmed.fq, file_2: input_2_trimmed.fq>>>>> Now validing the length of the 2 paired-end infiles: input_1_trimmed.fq and input_2_trimmed.fq <<<<<Writing validated paired-end Read 1 reads to input_1_val_1.fqWriting validated paired-end Read 2 reads to input_2_val_2.fqWriting unpaired read 1 reads to input_1_unpaired_1.fqWriting unpaired read 2 reads to input_2_unpaired_2.fqTotal number of sequences analysed: 99Number of sequence pairs removed because at least one read was shorter than the length cutoff (20 bp): 1 (1.01%)Deleting both intermediate output files input_1_trimmed.fq and input_2_trimmed.fq====================================================================================================
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="trim_galore (Test #10)" name="9" time="40.03914451599121">
+        
+            
+            <system-out><![CDATA[
+            pigz 2.6total 56K    drwxr-sr-x    2 101      root        4.0K Jul 19 13:07 .drwxr-sr-x   11 101      root        4.0K Jul 19 13:07 ..lrwxrwxrwx    1 root     root          86 Jul 19 13:07 input_1.fastq.gz -> /galaxy/server/database/objects/c/d/5/dataset_cd597678-eaa4-4155-ab7b-961336494d8c.dat-rw-r--r--    1 root     root        2.1K Jul 19 13:07 input_1.fastq.gz_trimming_report.txt-rw-r--r--    1 root     root         255 Jul 19 13:07 input_1_unpaired_1.fq-rw-r--r--    1 root     root       10.7K Jul 19 13:07 input_1_val_1.fqlrwxrwxrwx    1 root     root          86 Jul 19 13:07 input_2.fastq.gz -> /galaxy/server/database/objects/7/5/c/dataset_75cf1286-47a9-42a0-b8e4-9dc19cbefd22.dat-rw-r--r--    1 root     root        2.3K Jul 19 13:07 input_2.fastq.gz_trimming_report.txt-rw-r--r--    1 root     root          20 Jul 19 13:07 input_2_unpaired_2.fq-rw-r--r--    1 root     root       10.5K Jul 19 13:07 input_2_val_2.fq
+            ]]></system-out>
+            <system-err><![CDATA[
+            Path to Cutadapt set as: 'cutadapt' (default)Cutadapt seems to be working fine (tested command 'cutadapt --version')Cutadapt version: 3.4Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)Letting the (modified) Cutadapt deal with the Python version insteadParallel gzip (pigz) detected. Proceeding with multicore (de)compression using 5 coresOutput will be written into the directory: /galaxy/server/database/jobs_directory/000/24/working/AUTO-DETECTING ADAPTER TYPE===========================Attempting to auto-detect adapter type from the first 1 million sequences of the first file (>> input_1.fastq.gz <<)Found perfect matches for the following adapter sequences:Adapter typeCountSequenceSequences analysedPercentageNextera29CTGTCTCTTATA9929.29smallRNA0TGGAATTCTCGG990.00Illumina0AGATCGGAAGAGC990.00Using Nextera adapter for trimming (count: 29). Second best hit was smallRNA (count: 0)Writing report to '/galaxy/server/database/jobs_directory/000/24/working/input_1.fastq.gz_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_1.fastq.gzTrimming mode: paired-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'CTGTCTCTTATA' (Nextera Transposase sequence; auto-detected)Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length for both reads before a sequence pair gets removed: 20 bpLength cut-off for read 1: 35 bp (default)Length cut-off for read 2: 35 bb (default)Output file(s) will be GZIP compressedCutadapt seems to be fairly up-to-date (version 3.4). Setting -j 5Writing final adapter and quality trimmed output to input_1_trimmed.fq.gz  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'CTGTCTCTTATA' from file input_1.fastq.gz <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a CTGTCTCTTATA input_1.fastq.gzProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (173 µs/read; 0.35 M reads/minute).=== Summary ===Total reads processed:                      99Reads with adapters:                        52 (52.5%)Reads written (passing filters):            99 (100.0%)Total basepairs processed:        24,849 bpQuality-trimmed:                     205 bp (0.8%)Total written (filtered):         23,339 bp (93.9%)=== Adapter 1 ===Sequence: CTGTCTCTTATA; Type: regular 3'; Length: 12; Trimmed: 52 timesNo. of allowed errors:1-9 bp: 0; 10-12 bp: 1Bases preceding removed adapters:  A: 9.6%  C: 38.5%  G: 23.1%  T: 28.8%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts11124.8011256.205331.503430.4031210.0111320.0121410.0111610.0111710.010 12020.0122110.0112410.0112620.0123110.0113310.0114120.0124910.0115010.0115410.0115610.0115820.0126010.0116720.0126810.0116910.0117310.0118010.0118610.011RUN STATISTICS FOR INPUT FILE: input_1.fastq.gz=============================================99 sequences processed in totalThe length threshold of paired-end sequences gets evaluated later on (in the validation step)Writing report to '/galaxy/server/database/jobs_directory/000/24/working/input_2.fastq.gz_trimming_report.txt'SUMMARISING RUN PARAMETERS==========================Input filename: input_2.fastq.gzTrimming mode: paired-endTrim Galore version: 0.6.7Cutadapt version: 3.4Python version: could not detectNumber of cores used for trimming: 5Quality Phred score cutoff: 20Quality encoding type selected: ASCII+33Adapter sequence: 'CTGTCTCTTATA' (Nextera Transposase sequence; auto-detected)Maximum trimming error rate: 0.1 (default)Minimum required adapter overlap (stringency): 1 bpMinimum required sequence length for both reads before a sequence pair gets removed: 20 bpLength cut-off for read 1: 35 bp (default)Length cut-off for read 2: 35 bb (default)Output file(s) will be GZIP compressedCutadapt seems to be fairly up-to-date (version 3.4). Setting -j -j 5Writing final adapter and quality trimmed output to input_2_trimmed.fq.gz  >>> Now performing quality (cutoff '-q 20') and adapter trimming in a single pass for the adapter sequence: 'CTGTCTCTTATA' from file input_2.fastq.gz <<< This is cutadapt 3.4 with Python 3.9.6Command line parameters: -j 5 -e 0.1 -q 20 -O 1 -a CTGTCTCTTATA input_2.fastq.gzProcessing reads on 5 cores in single-end mode ...Finished in 0.02 s (186 µs/read; 0.32 M reads/minute).=== Summary ===Total reads processed:                      99Reads with adapters:                        58 (58.6%)Reads written (passing filters):            99 (100.0%)Total basepairs processed:        24,849 bpQuality-trimmed:                     745 bp (3.0%)Total written (filtered):         23,035 bp (92.7%)=== Adapter 1 ===Sequence: CTGTCTCTTATA; Type: regular 3'; Length: 12; Trimmed: 58 timesNo. of allowed errors:1-9 bp: 0; 10-12 bp: 1Bases preceding removed adapters:  A: 12.1%  C: 37.9%  G: 8.6%  T: 41.4%  none/other: 0.0%Overview of removed sequenceslengthcountexpectmax.errerror counts11624.8016276.207311.501420.402620.002910.0011010.0111310.0111420.0121510.0111610.0111710.0111920.0122110.0112510.0113010.0113220.0123410.0113620.0123810.0114010.0114110.0114210.0114310.0114910.0115110.0115610.0115710.0116010.0116710.0118010.011RUN STATISTICS FOR INPUT FILE: input_2.fastq.gz=============================================99 sequences processed in totalThe length threshold of paired-end sequences gets evaluated later on (in the validation step)Validate paired-end files input_1_trimmed.fq.gz and input_2_trimmed.fq.gzfile_1: input_1_trimmed.fq.gz, file_2: input_2_trimmed.fq.gz>>>>> Now validing the length of the 2 paired-end infiles: input_1_trimmed.fq.gz and input_2_trimmed.fq.gz <<<<<Writing validated paired-end Read 1 reads to input_1_val_1.fq.gzWriting validated paired-end Read 2 reads to input_2_val_2.fq.gzWriting unpaired read 1 reads to input_1_unpaired_1.fq.gzWriting unpaired read 2 reads to input_2_unpaired_2.fq.gzTotal number of sequences analysed: 99Number of sequence pairs removed because at least one read was shorter than the length cutoff (20 bp): 1 (1.01%)Deleting both intermediate output files input_1_trimmed.fq.gz and input_2_trimmed.fq.gz====================================================================================================
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="vcfcheck (Test #1)" name="0" time="20.721747159957886">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 0, "time_seconds": 20.721747159957886, "tool_id": "vcfcheck", "tool_version": "1.0.0_rc3+galaxy0"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="vcfdistance (Test #1)" name="0" time="40.313315629959106">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+</testsuite>
