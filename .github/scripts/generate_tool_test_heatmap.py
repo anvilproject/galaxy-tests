@@ -10,6 +10,7 @@ import re
 REPORTS_DIR = "../../reports/anvil-production/tool-tests" #TODO update to dynamic path
 README_PATH = os.path.join(REPORTS_DIR, "..", "README.md")
 DEFAULT_OUTPUT_FILE = os.path.join(REPORTS_DIR, "..", "tool_test_heatmap.svg")
+LAST_N_REPORTS = 10  # Number of latest reports
 
 
 def parse_results_json(json_path):
@@ -40,7 +41,7 @@ def collect_all_results():
         raise FileNotFoundError(f"No JSON reports found at {pattern}. Please check REPORTS_DIR.")
 
     all_results = []
-    for path in report_paths[-10:]:  # last 10 reports
+    for path in report_paths[-LAST_N_REPORTS:]:
         report_id = os.path.basename(os.path.dirname(path))
         df = parse_results_json(path)
         df["Report"] = report_id
