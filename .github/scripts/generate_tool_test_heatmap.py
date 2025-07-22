@@ -1,5 +1,6 @@
 import os
 import re
+import json
 
 # Define the base directory
 BASE_DIR = "../../reports/anvil-production/tool-tests"
@@ -14,41 +15,72 @@ def get_results_files(total_files_max):
     Parameters:
         total_files_max (int): The maximum number of matching folder paths to return.
     """
-    
-    # Define the regex pattern for the datetime format 'YYYY-MM-DD-HH-MM-SS'
     datetime_pattern = re.compile(r"\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}")
-
-    # Initialize an empty list to store matching folder paths
     matching_folders = []
     
-    # Check if the base directory exists
     if not os.path.exists(BASE_DIR):
         print(f"Directory '{BASE_DIR}' does not exist.")
         return matching_folders
 
-    # Get and sort the directory entries in descending order
     sorted_entries = sorted(os.listdir(BASE_DIR), reverse=True)
 
-    # Iterate through the sorted entries in the base directory
     for entry in sorted_entries:
         entry_path = os.path.join(BASE_DIR, entry)
-        
-        # Check if the entry is a directory and contains the datetime pattern
         if os.path.isdir(entry_path) and datetime_pattern.search(entry):
             matching_folders.append(f"{entry_path}/results.json")
-
-        # Stop adding folders if the limit is reached
         if len(matching_folders) >= total_files_max:
             break
     
-    # Output the list of matching folder paths to the console log
-    print("Matching folders:")
-    for folder in matching_folders:
-        print(folder)
-    
     return matching_folders
 
-# If this script is run directly, execute the function with a sample limit
+def join_results(total_files_max):
+    """
+    Calls get_results_files() to retrieve result file paths, then processes each file
+    to extract and print the specified parameters. Outputs the combined results to a JSON file.
+    
+    Parameters:
+        total_files_max (int): The maximum number of result files to process.
+    """
+    result_files = get_results_files(total_files_max)
+    combined_results = []
+
+    for result_file in result_files:
+        if not os.path.exists(result_file):
+            print(f"File not found: {result_file}")
+            continue
+
+        try:
+            with open(result_file, 'r') as file:
+                data = json.load(file)
+                
+                # Check if "tests" exists and is a list
+                if "tests" in data and isinstance(data["tests"], list):
+                    for test_data in data["tests"]:  # Iterate over all objects in the "tests" array
+                        # Extract the required parameters
+                        result_data = {
+                            "file": result_file,
+                            "id": test_data.get("id"),
+                            "data": {
+                                "status": test_data.get("data", {}).get("status", "Unknown"),
+                                "tool_id": test_data.get("data", {}).get("tool_id", "Unknown"),
+                                "tool_version": test_data.get("data", {}).get("tool_version", "Unknown"),
+                                "test_index": test_data.get("data", {}).get("test_index", "Unknown"),
+                                "time_seconds": test_data.get("data", {}).get("time_seconds", 0),
+                            },
+                        }
+                        combined_results.append(result_data)
+                    
+                        # Print the full path and extracted parameters for each test
+                        # print(f"File: {result_file}")
+                        # print(result_data)
+                else:
+                    print(f"No valid 'tests' data found in file: {result_file}")
+        except Exception as e:
+            print(f"Error processing file {result_file}: {e}")
+
+    return combined_results
+
+# If this script is run directly, execute the join_results function
 if __name__ == "__main__":
-    # Example: Limit the results to 5 folders
-    get_results_files(total_files_max=5)
+    # Example: Process up to 5 result files
+    join_results(total_files_max=5)
