@@ -1,6 +1,7 @@
 import os
 import re
 import json
+from collections import defaultdict
 
 # Define the base directory
 BASE_DIR = "../../reports/anvil-production/tool-tests"
@@ -77,10 +78,83 @@ def join_results(total_files_max):
                     print(f"No valid 'tests' data found in file: {result_file}")
         except Exception as e:
             print(f"Error processing file {result_file}: {e}")
-
+    
     return combined_results
 
-# If this script is run directly, execute the join_results function
+def aggregate_results(total_files_max):
+    """
+    Calls the join_results() method to retrieve joined results, then aggregates the data
+    based on the "id" value to produce consolidated results.
+
+    Parameters:
+        total_files_max (int): The maximum number of result files to process.
+
+    Returns:
+        aggregated_results (list): A list of aggregated results grouped by "id".
+    """
+    # Call join_results() to get the joined results
+    joined_results = join_results(total_files_max)
+
+    # Dictionary to hold aggregated data
+    aggregation = defaultdict(lambda: {
+        "file": [],
+        "data": {
+            "tool_id": None,
+            "tool_version": None,
+            "test_index": 0,
+            "test_index_calc": "count",
+            "time_seconds_item": [],
+            "time_seconds": 0,
+            "time_calc": "total",
+            "status_item": [],
+            "status": 0.0,
+            "status_calc": "average"
+        }
+    })
+
+    # Process each result in joined_results
+    for result in joined_results:
+        result_id = result["id"]
+        result_file = result["file"]
+        result_data = result["data"]
+
+        # Aggregate "file" values into a list
+        if result_file not in aggregation[result_id]["file"]:
+            aggregation[result_id]["file"].append(result_file)
+
+        # Set "tool_id" and "tool_version" (should already be unique)
+        aggregation[result_id]["data"]["tool_id"] = result_data["tool_id"]
+        aggregation[result_id]["data"]["tool_version"] = result_data["tool_version"]
+
+        # Increment "test_index" as a count of consolidated objects
+        aggregation[result_id]["data"]["test_index"] += 1
+
+        # Add "time_seconds" to the total and append to "time_seconds_item"
+        aggregation[result_id]["data"]["time_seconds"] += result_data["time_seconds"]
+        aggregation[result_id]["data"]["time_seconds_item"].append(result_data["time_seconds"])
+
+        # Calculate "status" as an average (fail=0, success=1) and append to "status_item"
+        status_value = 1 if result_data["status"] == "success" else 0
+        aggregation[result_id]["data"]["status"] += status_value
+        aggregation[result_id]["data"]["status_item"].append(status_value)
+
+    # Finalize the "status" average and convert to a list
+    aggregated_results = []
+    for result_id, aggregated_data in aggregation.items():
+        # Calculate the average "status"
+        aggregated_data["data"]["status"] = round(
+            aggregated_data["data"]["status"] / aggregated_data["data"]["test_index"], 7
+        )
+        # Add the aggregated result to the list
+        aggregated_results.append({
+            "id": result_id,
+            "file": aggregated_data["file"],
+            "data": aggregated_data["data"]
+        })
+
+    return aggregated_results
+
+# If this script is run directly, execute the aggregate_results function
 if __name__ == "__main__":
     # Example: Process up to 5 result files
-    join_results(total_files_max=5)
+    aggregate_results(total_files_max=35)
