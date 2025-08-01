@@ -1,0 +1,557 @@
+galaxy.jobs.runners DEBUG 2025-08-01 01:39:21,064 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] execution of external set_meta for job 116 finished
+galaxy.model.metadata DEBUG 2025-08-01 01:39:21,103 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] loading metadata from file for: HistoryDatasetAssociation 139
+galaxy.model.metadata DEBUG 2025-08-01 01:39:21,112 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] loading metadata from file for: HistoryDatasetAssociation 140
+galaxy.util WARNING 2025-08-01 01:39:21,119 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Unable to honor primary group (grp.struct_group(gr_name='galaxy', gr_passwd='x', gr_gid=101, gr_mem=[])) for /galaxy/server/database/objects/6/f/4/dataset_6f4370cb-0b1f-492c-8c60-d06ad9f1d363.dat, group remains grp.struct_group(gr_name='nogroup', gr_passwd='x', gr_gid=65534, gr_mem=[]), error was: [Errno 1] Operation not permitted: '/galaxy/server/database/objects/6/f/4/dataset_6f4370cb-0b1f-492c-8c60-d06ad9f1d363.dat'
+galaxy.util WARNING 2025-08-01 01:39:21,119 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Unable to honor primary group (grp.struct_group(gr_name='galaxy', gr_passwd='x', gr_gid=101, gr_mem=[])) for /galaxy/server/database/objects/e/4/b/dataset_e4b55b3c-1b6b-4907-a797-ba80b1019718.dat, group remains grp.struct_group(gr_name='nogroup', gr_passwd='x', gr_gid=65534, gr_mem=[]), error was: [Errno 1] Operation not permitted: '/galaxy/server/database/objects/e/4/b/dataset_e4b55b3c-1b6b-4907-a797-ba80b1019718.dat'
+galaxy.jobs INFO 2025-08-01 01:39:21,146 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Collecting metrics for Job 116 in /galaxy/server/database/jobs_directory/000/116
+galaxy.jobs DEBUG 2025-08-01 01:39:21,179 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] job_wrapper.finish for job 116 executed (96.095 ms)
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:21,200 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Checking if job 116 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.handler DEBUG 2025-08-01 01:39:24,353 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Grabbed Job(s): 117
+tpv.core.entities DEBUG 2025-08-01 01:39:24,379 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Ranking destinations: [runner=k8s, dest_name=k8s, min_accepted_cores=None, min_accepted_mem=None, min_accepted_gpus=None, max_accepted_cores=100, max_accepted_mem=800, max_accepted_gpus=None, tpv_dest_tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=docker, type=TagType.ACCEPT>], handler_tags=None<class 'tpv.core.entities.Destination'> id=k8s, abstract=False, cores=None, mem=None, gpus=None, min_cores = None, min_mem = None, min_gpus = None, max_cores = 8, max_mem = 48, max_gpus = None, env=[], params={'tpv_cores': '{cores}', 'tpv_gpus': '{gpus}', 'tpv_mem': '{mem}', 'docker_enabled': 'true', 'limits_cpu': '{cores}', 'limits_memory': '{mem}Gi', 'requests_cpu': '{cores}', 'requests_memory': '{mem}Gi'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[], rank=, inherits=None, context={}, rules={}] for entity: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} using default ranker
+tpv.core.entities DEBUG 2025-08-01 01:39:24,379 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Destination: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} scored: 0
+galaxy.jobs.mapper DEBUG 2025-08-01 01:39:24,379 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (117) Mapped job to destination id: k8s
+galaxy.jobs.handler DEBUG 2025-08-01 01:39:24,383 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (117) Dispatching to k8s runner
+galaxy.jobs DEBUG 2025-08-01 01:39:24,393 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (117) Persisting job destination (destination id: k8s)
+galaxy.jobs DEBUG 2025-08-01 01:39:24,407 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (117) Working directory for job is: /galaxy/server/database/jobs_directory/000/117
+galaxy.jobs.runners DEBUG 2025-08-01 01:39:24,414 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Job [117] queued (31.117 ms)
+galaxy.jobs.handler INFO 2025-08-01 01:39:24,416 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (117) Job dispatched
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:24,419 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Starting queue_job for job 117
+galaxy.jobs DEBUG 2025-08-01 01:39:24,478 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Job wrapper for Job [117] prepared (51.670 ms)
+galaxy.jobs.command_factory INFO 2025-08-01 01:39:24,494 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Built script [/galaxy/server/database/jobs_directory/000/117/tool_script.sh] for tool command [python '/galaxy/server/lib/galaxy/tools/data_fetch.py' --galaxy-root '/galaxy/server' --datatypes-registry '/galaxy/server/database/jobs_directory/000/117/registry.xml' --request-version '1' --request '/galaxy/server/database/jobs_directory/000/117/configs/tmpc92b6vff']
+galaxy.jobs.runners DEBUG 2025-08-01 01:39:24,504 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] (117) command is: mkdir -p working outputs configs
+if [ -d _working ]; then
+    rm -rf working/ outputs/ configs/; cp -R _working working; cp -R _outputs outputs; cp -R _configs configs
+else
+    cp -R working _working; cp -R outputs _outputs; cp -R configs _configs
+fi
+cd working; __out="${TMPDIR:-.}/out.$$" __err="${TMPDIR:-.}/err.$$"
+mkfifo "$__out" "$__err"
+trap 'rm -f "$__out" "$__err"' EXIT
+tee -a '../outputs/tool_stdout' < "$__out" &
+tee -a '../outputs/tool_stderr' < "$__err" >&2 & /bin/bash /galaxy/server/database/jobs_directory/000/117/tool_script.sh > "$__out" 2> "$__err"; return_code=$?; echo $return_code > /galaxy/server/database/jobs_directory/000/117/galaxy_117.ec; sh -c "exit $return_code"
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:24,516 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 117 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:24,534 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 117 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:25,138 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job set to running...
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:35,425 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-bkths failed and it is not a deletion case. Current state: running
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:35,426 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Trying with error file in _handle_job_failure
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:35,485 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] An unknown error occurred in this job and the maximum number of retries have been exceeded for job: gxy-bkths.
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:35,493 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Checking if job 117 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes ERROR 2025-08-01 01:39:35,528 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Could not clean up k8s batch job. Ignoring...
+Traceback (most recent call last):
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/http.py", line 437, in raise_for_status
+    resp.raise_for_status()
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 409 Client Error: Conflict for url: https://34.118.224.1:443/apis/batch/v1/namespaces/prod-25-08-01-00-53-1/jobs/gxy-bkths
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/galaxy/server/lib/galaxy/jobs/runners/kubernetes.py", line 872, in _handle_job_failure
+    self.__cleanup_k8s_job(job)
+  File "/galaxy/server/lib/galaxy/jobs/runners/kubernetes.py", line 879, in __cleanup_k8s_job
+    delete_job(job, k8s_cleanup_job)
+  File "/galaxy/server/lib/galaxy/jobs/runners/util/pykube_util.py", line 108, in delete_job
+    job.scale(replicas=0)
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/mixins.py", line 30, in scale
+    self.update()
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/objects.py", line 165, in update
+    self.patch(self.obj, subresource=subresource)
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/objects.py", line 157, in patch
+    self.api.raise_for_status(r)
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/http.py", line 444, in raise_for_status
+    raise HTTPError(resp.status_code, payload["message"])
+pykube.exceptions.HTTPError: Operation cannot be fulfilled on jobs.batch "gxy-bkths": the object has been modified; please apply your changes to the latest version and try again
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:35,536 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] PP Getting into fail_job in k8s runner
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:35,541 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (117/gxy-bkths) tool_stdout: 
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:35,541 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (117/gxy-bkths) tool_stderr: 
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:35,541 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (117/gxy-bkths) job_stdout: 
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:35,541 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (117/gxy-bkths) job_stderr: An unknown error occurred in this job and the maximum number of retries have been exceeded for job: gxy-bkths.
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:35,541 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Attempting to stop job 117 (gxy-bkths)
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:35,555 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Found job with id gxy-bkths to delete
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:35,556 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking if job 117 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:35,651 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (117/gxy-bkths) Terminated at user's request
+galaxy.jobs.handler DEBUG 2025-08-01 01:39:36,626 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Grabbed Job(s): 119, 118
+tpv.core.entities DEBUG 2025-08-01 01:39:36,653 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Ranking destinations: [runner=k8s, dest_name=k8s, min_accepted_cores=None, min_accepted_mem=None, min_accepted_gpus=None, max_accepted_cores=100, max_accepted_mem=800, max_accepted_gpus=None, tpv_dest_tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=docker, type=TagType.ACCEPT>], handler_tags=None<class 'tpv.core.entities.Destination'> id=k8s, abstract=False, cores=None, mem=None, gpus=None, min_cores = None, min_mem = None, min_gpus = None, max_cores = 8, max_mem = 48, max_gpus = None, env=[], params={'tpv_cores': '{cores}', 'tpv_gpus': '{gpus}', 'tpv_mem': '{mem}', 'docker_enabled': 'true', 'limits_cpu': '{cores}', 'limits_memory': '{mem}Gi', 'requests_cpu': '{cores}', 'requests_memory': '{mem}Gi'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[], rank=, inherits=None, context={}, rules={}] for entity: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} using default ranker
+tpv.core.entities DEBUG 2025-08-01 01:39:36,653 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Destination: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} scored: 0
+galaxy.jobs.mapper DEBUG 2025-08-01 01:39:36,653 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (118) Mapped job to destination id: k8s
+galaxy.jobs.handler DEBUG 2025-08-01 01:39:36,657 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (118) Dispatching to k8s runner
+galaxy.jobs DEBUG 2025-08-01 01:39:36,668 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (118) Persisting job destination (destination id: k8s)
+galaxy.jobs DEBUG 2025-08-01 01:39:36,680 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (118) Working directory for job is: /galaxy/server/database/jobs_directory/000/118
+galaxy.jobs.runners DEBUG 2025-08-01 01:39:36,687 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Job [118] queued (30.258 ms)
+galaxy.jobs.handler INFO 2025-08-01 01:39:36,690 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (118) Job dispatched
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:36,692 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Starting queue_job for job 118
+tpv.core.entities DEBUG 2025-08-01 01:39:36,702 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Ranking destinations: [runner=k8s, dest_name=k8s, min_accepted_cores=None, min_accepted_mem=None, min_accepted_gpus=None, max_accepted_cores=100, max_accepted_mem=800, max_accepted_gpus=None, tpv_dest_tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=docker, type=TagType.ACCEPT>], handler_tags=None<class 'tpv.core.entities.Destination'> id=k8s, abstract=False, cores=None, mem=None, gpus=None, min_cores = None, min_mem = None, min_gpus = None, max_cores = 8, max_mem = 48, max_gpus = None, env=[], params={'tpv_cores': '{cores}', 'tpv_gpus': '{gpus}', 'tpv_mem': '{mem}', 'docker_enabled': 'true', 'limits_cpu': '{cores}', 'limits_memory': '{mem}Gi', 'requests_cpu': '{cores}', 'requests_memory': '{mem}Gi'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[], rank=, inherits=None, context={}, rules={}] for entity: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} using default ranker
+tpv.core.entities DEBUG 2025-08-01 01:39:36,702 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Destination: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} scored: 0
+galaxy.jobs.mapper DEBUG 2025-08-01 01:39:36,703 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (119) Mapped job to destination id: k8s
+galaxy.jobs.handler DEBUG 2025-08-01 01:39:36,708 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (119) Dispatching to k8s runner
+galaxy.jobs DEBUG 2025-08-01 01:39:36,723 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (119) Persisting job destination (destination id: k8s)
+galaxy.jobs DEBUG 2025-08-01 01:39:36,738 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (119) Working directory for job is: /galaxy/server/database/jobs_directory/000/119
+galaxy.jobs.runners DEBUG 2025-08-01 01:39:36,744 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Job [119] queued (36.422 ms)
+galaxy.jobs.handler INFO 2025-08-01 01:39:36,747 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (119) Job dispatched
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:36,749 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Starting queue_job for job 119
+galaxy.jobs DEBUG 2025-08-01 01:39:36,764 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Job wrapper for Job [118] prepared (63.257 ms)
+galaxy.jobs.command_factory INFO 2025-08-01 01:39:36,787 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Built script [/galaxy/server/database/jobs_directory/000/118/tool_script.sh] for tool command [python '/galaxy/server/lib/galaxy/tools/data_fetch.py' --galaxy-root '/galaxy/server' --datatypes-registry '/galaxy/server/database/jobs_directory/000/118/registry.xml' --request-version '1' --request '/galaxy/server/database/jobs_directory/000/118/configs/tmp6nnmba7e']
+galaxy.jobs.runners DEBUG 2025-08-01 01:39:36,797 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (118) command is: mkdir -p working outputs configs
+if [ -d _working ]; then
+    rm -rf working/ outputs/ configs/; cp -R _working working; cp -R _outputs outputs; cp -R _configs configs
+else
+    cp -R working _working; cp -R outputs _outputs; cp -R configs _configs
+fi
+cd working; __out="${TMPDIR:-.}/out.$$" __err="${TMPDIR:-.}/err.$$"
+mkfifo "$__out" "$__err"
+trap 'rm -f "$__out" "$__err"' EXIT
+tee -a '../outputs/tool_stdout' < "$__out" &
+tee -a '../outputs/tool_stderr' < "$__err" >&2 & /bin/bash /galaxy/server/database/jobs_directory/000/118/tool_script.sh > "$__out" 2> "$__err"; return_code=$?; echo $return_code > /galaxy/server/database/jobs_directory/000/118/galaxy_118.ec; sh -c "exit $return_code"
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:36,809 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking if job 118 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs DEBUG 2025-08-01 01:39:36,821 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Job wrapper for Job [119] prepared (63.671 ms)
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:36,827 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking if job 118 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.command_factory INFO 2025-08-01 01:39:36,839 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Built script [/galaxy/server/database/jobs_directory/000/119/tool_script.sh] for tool command [python '/galaxy/server/lib/galaxy/tools/data_fetch.py' --galaxy-root '/galaxy/server' --datatypes-registry '/galaxy/server/database/jobs_directory/000/119/registry.xml' --request-version '1' --request '/galaxy/server/database/jobs_directory/000/119/configs/tmpsiem218d']
+galaxy.jobs.runners DEBUG 2025-08-01 01:39:36,848 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] (119) command is: mkdir -p working outputs configs
+if [ -d _working ]; then
+    rm -rf working/ outputs/ configs/; cp -R _working working; cp -R _outputs outputs; cp -R _configs configs
+else
+    cp -R working _working; cp -R outputs _outputs; cp -R configs _configs
+fi
+cd working; __out="${TMPDIR:-.}/out.$$" __err="${TMPDIR:-.}/err.$$"
+mkfifo "$__out" "$__err"
+trap 'rm -f "$__out" "$__err"' EXIT
+tee -a '../outputs/tool_stdout' < "$__out" &
+tee -a '../outputs/tool_stderr' < "$__err" >&2 & /bin/bash /galaxy/server/database/jobs_directory/000/119/tool_script.sh > "$__out" 2> "$__err"; return_code=$?; echo $return_code > /galaxy/server/database/jobs_directory/000/119/galaxy_119.ec; sh -c "exit $return_code"
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:36,859 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Checking if job 119 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:36,874 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Checking if job 119 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:37,577 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job set to running...
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:37,643 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job set to running...
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:48,171 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-vbp85 with k8s id: gxy-vbp85 succeeded
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:48,188 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-7fdzr with k8s id: gxy-7fdzr succeeded
+galaxy.jobs.runners DEBUG 2025-08-01 01:39:48,285 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] executing external set_meta script for job 118: GALAXY_LIB="/galaxy/server/lib"; if [ "$GALAXY_LIB" != "None" ]; then if [ -n "$PYTHONPATH" ]; then PYTHONPATH="$GALAXY_LIB:$PYTHONPATH"; else PYTHONPATH="$GALAXY_LIB"; fi; export PYTHONPATH; fi; GALAXY_VIRTUAL_ENV="None"; if [ "$GALAXY_VIRTUAL_ENV" != "None" -a -z "$VIRTUAL_ENV" -a -f "$GALAXY_VIRTUAL_ENV/bin/activate" ]; then . "$GALAXY_VIRTUAL_ENV/bin/activate"; fi; python metadata/set.py
+galaxy.jobs.runners DEBUG 2025-08-01 01:39:48,316 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] executing external set_meta script for job 119: GALAXY_LIB="/galaxy/server/lib"; if [ "$GALAXY_LIB" != "None" ]; then if [ -n "$PYTHONPATH" ]; then PYTHONPATH="$GALAXY_LIB:$PYTHONPATH"; else PYTHONPATH="$GALAXY_LIB"; fi; export PYTHONPATH; fi; GALAXY_VIRTUAL_ENV="None"; if [ "$GALAXY_VIRTUAL_ENV" != "None" -a -z "$VIRTUAL_ENV" -a -f "$GALAXY_VIRTUAL_ENV/bin/activate" ]; then . "$GALAXY_VIRTUAL_ENV/bin/activate"; fi; python metadata/set.py
+galaxy.jobs.runners DEBUG 2025-08-01 01:39:57,593 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] execution of external set_meta for job 118 finished
+galaxy.jobs.runners DEBUG 2025-08-01 01:39:57,597 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] execution of external set_meta for job 119 finished
+galaxy.tool_util.provided_metadata DEBUG 2025-08-01 01:39:57,635 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] unnamed outputs [{'__unnamed_outputs': [{'destination': {'type': 'hdas'}, 'elements': [{'name': 'labels.tab', 'dbkey': '?', 'ext': 'tabular', 'link_data_only': False, 'sources': [], 'hashes': [], 'info': 'uploaded tabular file', 'state': 'ok', 'filename': '/galaxy/server/database/jobs_directory/000/119/working/data_fetch_upload_jqh8cf50', 'object_id': 143}]}]}]
+galaxy.tool_util.provided_metadata DEBUG 2025-08-01 01:39:57,635 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] unnamed outputs [{'__unnamed_outputs': [{'destination': {'type': 'hdas'}, 'elements': [{'name': 'input.tab', 'dbkey': '?', 'ext': 'tabular', 'link_data_only': False, 'sources': [], 'hashes': [], 'info': 'uploaded tabular file', 'state': 'ok', 'filename': '/galaxy/server/database/jobs_directory/000/118/working/data_fetch_upload_wd5_yofp', 'object_id': 142}]}]}]
+galaxy.jobs INFO 2025-08-01 01:39:57,895 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Collecting metrics for Job 119 in /galaxy/server/database/jobs_directory/000/119
+galaxy.jobs INFO 2025-08-01 01:39:57,914 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Collecting metrics for Job 118 in /galaxy/server/database/jobs_directory/000/118
+galaxy.jobs DEBUG 2025-08-01 01:39:57,940 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] job_wrapper.finish for job 119 executed (323.611 ms)
+galaxy.jobs DEBUG 2025-08-01 01:39:57,950 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] job_wrapper.finish for job 118 executed (332.842 ms)
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:57,961 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 119 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:57,967 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Checking if job 118 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.handler DEBUG 2025-08-01 01:39:59,169 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Grabbed Job(s): 120
+tpv.core.entities DEBUG 2025-08-01 01:39:59,203 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Ranking destinations: [runner=k8s, dest_name=k8s, min_accepted_cores=None, min_accepted_mem=None, min_accepted_gpus=None, max_accepted_cores=100, max_accepted_mem=800, max_accepted_gpus=None, tpv_dest_tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=docker, type=TagType.ACCEPT>], handler_tags=None<class 'tpv.core.entities.Destination'> id=k8s, abstract=False, cores=None, mem=None, gpus=None, min_cores = None, min_mem = None, min_gpus = None, max_cores = 8, max_mem = 48, max_gpus = None, env=[], params={'tpv_cores': '{cores}', 'tpv_gpus': '{gpus}', 'tpv_mem': '{mem}', 'docker_enabled': 'true', 'limits_cpu': '{cores}', 'limits_memory': '{mem}Gi', 'requests_cpu': '{cores}', 'requests_memory': '{mem}Gi'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[], rank=, inherits=None, context={}, rules={}] for entity: <class 'tpv.core.entities.Tool'> id=default, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} using default ranker
+tpv.core.entities DEBUG 2025-08-01 01:39:59,203 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Destination: <class 'tpv.core.entities.Tool'> id=default, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} scored: 0
+galaxy.jobs.mapper DEBUG 2025-08-01 01:39:59,204 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (120) Mapped job to destination id: k8s
+galaxy.jobs.handler DEBUG 2025-08-01 01:39:59,208 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (120) Dispatching to k8s runner
+galaxy.jobs DEBUG 2025-08-01 01:39:59,220 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (120) Persisting job destination (destination id: k8s)
+galaxy.jobs DEBUG 2025-08-01 01:39:59,232 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (120) Working directory for job is: /galaxy/server/database/jobs_directory/000/120
+galaxy.jobs.runners DEBUG 2025-08-01 01:39:59,241 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Job [120] queued (33.029 ms)
+galaxy.jobs.handler INFO 2025-08-01 01:39:59,243 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (120) Job dispatched
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:59,245 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Starting queue_job for job 120
+galaxy.jobs DEBUG 2025-08-01 01:39:59,329 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Job wrapper for Job [120] prepared (76.390 ms)
+galaxy.tool_util.deps.containers INFO 2025-08-01 01:39:59,329 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking with container resolver [ExplicitContainerResolver[]] found description [None]
+galaxy.tool_util.deps.container_resolvers.mulled DEBUG 2025-08-01 01:39:59,329 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Image name for tool toolshed.g2.bx.psu.edu/repos/iuc/volcanoplot/volcanoplot/0.0.7: mulled-v2-a1e116d3536834ecbbada3c89e7eb04341cbc496:4825d9b0ce09150fdee454e83ca2f24e2f7e952c
+galaxy.tool_util.deps.containers INFO 2025-08-01 01:39:59,567 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking with container resolver [MulledDockerContainerResolver[namespace=biocontainers]] found description [ContainerDescription[identifier=quay.io/biocontainers/mulled-v2-a1e116d3536834ecbbada3c89e7eb04341cbc496:4825d9b0ce09150fdee454e83ca2f24e2f7e952c-0,type=docker]]
+galaxy.jobs.command_factory INFO 2025-08-01 01:39:59,585 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Built script [/galaxy/server/database/jobs_directory/000/120/tool_script.sh] for tool command [echo $(R --version | grep version | grep -v GNU)", ggplot2 version" $(R --vanilla --slave -e "library(ggplot2); cat(sessionInfo()\$otherPkgs\$ggplot2\$Version)" 2> /dev/null | grep -v -i "WARNING: ")", ggrepel version" $(R --vanilla --slave -e "library(ggrepel); cat(sessionInfo()\$otherPkgs\$ggrepel\$Version)" 2> /dev/null | grep -v -i "WARNING: ")", dplyr version" $(R --vanilla --slave -e "library(dplyr); cat(sessionInfo()\$otherPkgs\$dplyr\$Version)" 2> /dev/null | grep -v -i "WARNING: ") > /galaxy/server/database/jobs_directory/000/120/outputs/COMMAND_VERSION 2>&1;
+Rscript '/galaxy/server/database/jobs_directory/000/120/configs/tmpblcncnaq']
+galaxy.jobs.runners DEBUG 2025-08-01 01:39:59,596 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (120) command is: mkdir -p working outputs configs
+if [ -d _working ]; then
+    rm -rf working/ outputs/ configs/; cp -R _working working; cp -R _outputs outputs; cp -R _configs configs
+else
+    cp -R working _working; cp -R outputs _outputs; cp -R configs _configs
+fi
+cd working; __out="${TMPDIR:-.}/out.$$" __err="${TMPDIR:-.}/err.$$"
+mkfifo "$__out" "$__err"
+trap 'rm -f "$__out" "$__err"' EXIT
+tee -a '../outputs/tool_stdout' < "$__out" &
+tee -a '../outputs/tool_stderr' < "$__err" >&2 & /bin/bash /galaxy/server/database/jobs_directory/000/120/tool_script.sh > "$__out" 2> "$__err"; return_code=$?; echo $return_code > /galaxy/server/database/jobs_directory/000/120/galaxy_120.ec; 
+if [ -f "/galaxy/server/database/jobs_directory/000/120/working/volcano_plot.pdf" -a -f "/galaxy/server/database/objects/b/3/0/dataset_b302e422-06f6-4fc7-a280-ecb306d44c39.dat" ] ; then cp "/galaxy/server/database/jobs_directory/000/120/working/volcano_plot.pdf" "/galaxy/server/database/objects/b/3/0/dataset_b302e422-06f6-4fc7-a280-ecb306d44c39.dat" ; fi; sh -c "exit $return_code"
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:59,605 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking if job 120 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.tool_util.deps.containers INFO 2025-08-01 01:39:59,606 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking with container resolver [ExplicitContainerResolver[]] found description [None]
+galaxy.tool_util.deps.container_resolvers.mulled DEBUG 2025-08-01 01:39:59,606 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Image name for tool toolshed.g2.bx.psu.edu/repos/iuc/volcanoplot/volcanoplot/0.0.7: mulled-v2-a1e116d3536834ecbbada3c89e7eb04341cbc496:4825d9b0ce09150fdee454e83ca2f24e2f7e952c
+galaxy.tool_util.deps.containers INFO 2025-08-01 01:39:59,624 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking with container resolver [MulledDockerContainerResolver[namespace=biocontainers]] found description [ContainerDescription[identifier=quay.io/biocontainers/mulled-v2-a1e116d3536834ecbbada3c89e7eb04341cbc496:4825d9b0ce09150fdee454e83ca2f24e2f7e952c-0,type=docker]]
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:39:59,641 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking if job 120 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:00,241 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job set to running...
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:37,221 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-wzm6r with k8s id: gxy-wzm6r succeeded
+galaxy.jobs.runners DEBUG 2025-08-01 01:40:37,328 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] executing external set_meta script for job 120: GALAXY_LIB="/galaxy/server/lib"; if [ "$GALAXY_LIB" != "None" ]; then if [ -n "$PYTHONPATH" ]; then PYTHONPATH="$GALAXY_LIB:$PYTHONPATH"; else PYTHONPATH="$GALAXY_LIB"; fi; export PYTHONPATH; fi; GALAXY_VIRTUAL_ENV="None"; if [ "$GALAXY_VIRTUAL_ENV" != "None" -a -z "$VIRTUAL_ENV" -a -f "$GALAXY_VIRTUAL_ENV/bin/activate" ]; then . "$GALAXY_VIRTUAL_ENV/bin/activate"; fi; python metadata/set.py
+galaxy.jobs.runners DEBUG 2025-08-01 01:40:46,084 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] execution of external set_meta for job 120 finished
+galaxy.model.metadata DEBUG 2025-08-01 01:40:46,137 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] loading metadata from file for: HistoryDatasetAssociation 144
+galaxy.util WARNING 2025-08-01 01:40:46,141 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Unable to honor primary group (grp.struct_group(gr_name='galaxy', gr_passwd='x', gr_gid=101, gr_mem=[])) for /galaxy/server/database/objects/b/3/0/dataset_b302e422-06f6-4fc7-a280-ecb306d44c39.dat, group remains grp.struct_group(gr_name='nogroup', gr_passwd='x', gr_gid=65534, gr_mem=[]), error was: [Errno 1] Operation not permitted: '/galaxy/server/database/objects/b/3/0/dataset_b302e422-06f6-4fc7-a280-ecb306d44c39.dat'
+galaxy.jobs INFO 2025-08-01 01:40:46,193 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Collecting metrics for Job 120 in /galaxy/server/database/jobs_directory/000/120
+galaxy.jobs DEBUG 2025-08-01 01:40:46,219 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] job_wrapper.finish for job 120 executed (112.243 ms)
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:46,367 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking if job 120 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.handler DEBUG 2025-08-01 01:40:48,236 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Grabbed Job(s): 122, 121
+tpv.core.entities DEBUG 2025-08-01 01:40:48,263 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Ranking destinations: [runner=k8s, dest_name=k8s, min_accepted_cores=None, min_accepted_mem=None, min_accepted_gpus=None, max_accepted_cores=100, max_accepted_mem=800, max_accepted_gpus=None, tpv_dest_tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=docker, type=TagType.ACCEPT>], handler_tags=None<class 'tpv.core.entities.Destination'> id=k8s, abstract=False, cores=None, mem=None, gpus=None, min_cores = None, min_mem = None, min_gpus = None, max_cores = 8, max_mem = 48, max_gpus = None, env=[], params={'tpv_cores': '{cores}', 'tpv_gpus': '{gpus}', 'tpv_mem': '{mem}', 'docker_enabled': 'true', 'limits_cpu': '{cores}', 'limits_memory': '{mem}Gi', 'requests_cpu': '{cores}', 'requests_memory': '{mem}Gi'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[], rank=, inherits=None, context={}, rules={}] for entity: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} using default ranker
+tpv.core.entities DEBUG 2025-08-01 01:40:48,263 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Destination: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} scored: 0
+galaxy.jobs.mapper DEBUG 2025-08-01 01:40:48,264 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (121) Mapped job to destination id: k8s
+galaxy.jobs.handler DEBUG 2025-08-01 01:40:48,268 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (121) Dispatching to k8s runner
+galaxy.jobs DEBUG 2025-08-01 01:40:48,278 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (121) Persisting job destination (destination id: k8s)
+galaxy.jobs DEBUG 2025-08-01 01:40:48,291 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (121) Working directory for job is: /galaxy/server/database/jobs_directory/000/121
+galaxy.jobs.runners DEBUG 2025-08-01 01:40:48,299 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Job [121] queued (30.761 ms)
+galaxy.jobs.handler INFO 2025-08-01 01:40:48,302 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (121) Job dispatched
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:48,303 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Starting queue_job for job 121
+tpv.core.entities DEBUG 2025-08-01 01:40:48,314 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Ranking destinations: [runner=k8s, dest_name=k8s, min_accepted_cores=None, min_accepted_mem=None, min_accepted_gpus=None, max_accepted_cores=100, max_accepted_mem=800, max_accepted_gpus=None, tpv_dest_tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=docker, type=TagType.ACCEPT>], handler_tags=None<class 'tpv.core.entities.Destination'> id=k8s, abstract=False, cores=None, mem=None, gpus=None, min_cores = None, min_mem = None, min_gpus = None, max_cores = 8, max_mem = 48, max_gpus = None, env=[], params={'tpv_cores': '{cores}', 'tpv_gpus': '{gpus}', 'tpv_mem': '{mem}', 'docker_enabled': 'true', 'limits_cpu': '{cores}', 'limits_memory': '{mem}Gi', 'requests_cpu': '{cores}', 'requests_memory': '{mem}Gi'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[], rank=, inherits=None, context={}, rules={}] for entity: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} using default ranker
+tpv.core.entities DEBUG 2025-08-01 01:40:48,315 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Destination: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} scored: 0
+galaxy.jobs.mapper DEBUG 2025-08-01 01:40:48,316 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (122) Mapped job to destination id: k8s
+galaxy.jobs.handler DEBUG 2025-08-01 01:40:48,320 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (122) Dispatching to k8s runner
+galaxy.jobs DEBUG 2025-08-01 01:40:48,336 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (122) Persisting job destination (destination id: k8s)
+galaxy.jobs DEBUG 2025-08-01 01:40:48,352 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (122) Working directory for job is: /galaxy/server/database/jobs_directory/000/122
+galaxy.jobs.runners DEBUG 2025-08-01 01:40:48,359 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Job [122] queued (38.790 ms)
+galaxy.jobs.handler INFO 2025-08-01 01:40:48,362 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (122) Job dispatched
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:48,364 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Starting queue_job for job 122
+galaxy.jobs DEBUG 2025-08-01 01:40:48,379 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Job wrapper for Job [121] prepared (65.713 ms)
+galaxy.jobs.command_factory INFO 2025-08-01 01:40:48,399 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Built script [/galaxy/server/database/jobs_directory/000/121/tool_script.sh] for tool command [python '/galaxy/server/lib/galaxy/tools/data_fetch.py' --galaxy-root '/galaxy/server' --datatypes-registry '/galaxy/server/database/jobs_directory/000/121/registry.xml' --request-version '1' --request '/galaxy/server/database/jobs_directory/000/121/configs/tmperynosqu']
+galaxy.jobs.runners DEBUG 2025-08-01 01:40:48,409 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (121) command is: mkdir -p working outputs configs
+if [ -d _working ]; then
+    rm -rf working/ outputs/ configs/; cp -R _working working; cp -R _outputs outputs; cp -R _configs configs
+else
+    cp -R working _working; cp -R outputs _outputs; cp -R configs _configs
+fi
+cd working; __out="${TMPDIR:-.}/out.$$" __err="${TMPDIR:-.}/err.$$"
+mkfifo "$__out" "$__err"
+trap 'rm -f "$__out" "$__err"' EXIT
+tee -a '../outputs/tool_stdout' < "$__out" &
+tee -a '../outputs/tool_stderr' < "$__err" >&2 & /bin/bash /galaxy/server/database/jobs_directory/000/121/tool_script.sh > "$__out" 2> "$__err"; return_code=$?; echo $return_code > /galaxy/server/database/jobs_directory/000/121/galaxy_121.ec; sh -c "exit $return_code"
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:48,421 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking if job 121 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:48,436 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking if job 121 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs DEBUG 2025-08-01 01:40:48,440 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Job wrapper for Job [122] prepared (68.362 ms)
+galaxy.jobs.command_factory INFO 2025-08-01 01:40:48,456 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Built script [/galaxy/server/database/jobs_directory/000/122/tool_script.sh] for tool command [python '/galaxy/server/lib/galaxy/tools/data_fetch.py' --galaxy-root '/galaxy/server' --datatypes-registry '/galaxy/server/database/jobs_directory/000/122/registry.xml' --request-version '1' --request '/galaxy/server/database/jobs_directory/000/122/configs/tmp6f42luby']
+galaxy.jobs.runners DEBUG 2025-08-01 01:40:48,466 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] (122) command is: mkdir -p working outputs configs
+if [ -d _working ]; then
+    rm -rf working/ outputs/ configs/; cp -R _working working; cp -R _outputs outputs; cp -R _configs configs
+else
+    cp -R working _working; cp -R outputs _outputs; cp -R configs _configs
+fi
+cd working; __out="${TMPDIR:-.}/out.$$" __err="${TMPDIR:-.}/err.$$"
+mkfifo "$__out" "$__err"
+trap 'rm -f "$__out" "$__err"' EXIT
+tee -a '../outputs/tool_stdout' < "$__out" &
+tee -a '../outputs/tool_stderr' < "$__err" >&2 & /bin/bash /galaxy/server/database/jobs_directory/000/122/tool_script.sh > "$__out" 2> "$__err"; return_code=$?; echo $return_code > /galaxy/server/database/jobs_directory/000/122/galaxy_122.ec; sh -c "exit $return_code"
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:48,480 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Checking if job 122 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:48,493 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Checking if job 122 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:49,276 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job set to running...
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:49,340 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job set to running...
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:59,760 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-zpgvp failed and it is not a deletion case. Current state: running
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:59,761 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Trying with error file in _handle_job_failure
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:59,833 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] An unknown error occurred in this job and the maximum number of retries have been exceeded for job: gxy-zpgvp.
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:59,841 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Checking if job 121 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes ERROR 2025-08-01 01:40:59,926 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Could not clean up k8s batch job. Ignoring...
+Traceback (most recent call last):
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/http.py", line 437, in raise_for_status
+    resp.raise_for_status()
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 409 Client Error: Conflict for url: https://34.118.224.1:443/apis/batch/v1/namespaces/prod-25-08-01-00-53-1/jobs/gxy-zpgvp
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/galaxy/server/lib/galaxy/jobs/runners/kubernetes.py", line 872, in _handle_job_failure
+    self.__cleanup_k8s_job(job)
+  File "/galaxy/server/lib/galaxy/jobs/runners/kubernetes.py", line 879, in __cleanup_k8s_job
+    delete_job(job, k8s_cleanup_job)
+  File "/galaxy/server/lib/galaxy/jobs/runners/util/pykube_util.py", line 108, in delete_job
+    job.scale(replicas=0)
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/mixins.py", line 30, in scale
+    self.update()
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/objects.py", line 165, in update
+    self.patch(self.obj, subresource=subresource)
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/objects.py", line 157, in patch
+    self.api.raise_for_status(r)
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/http.py", line 444, in raise_for_status
+    raise HTTPError(resp.status_code, payload["message"])
+pykube.exceptions.HTTPError: Operation cannot be fulfilled on jobs.batch "gxy-zpgvp": the object has been modified; please apply your changes to the latest version and try again
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:59,935 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] PP Getting into fail_job in k8s runner
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:59,943 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-f9hkl with k8s id: gxy-f9hkl succeeded
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:59,946 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] (121/gxy-zpgvp) tool_stdout: 
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:59,946 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] (121/gxy-zpgvp) tool_stderr: 
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:59,946 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] (121/gxy-zpgvp) job_stdout: 
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:59,946 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] (121/gxy-zpgvp) job_stderr: An unknown error occurred in this job and the maximum number of retries have been exceeded for job: gxy-zpgvp.
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:59,946 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Attempting to stop job 121 (gxy-zpgvp)
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:59,961 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Found job with id gxy-zpgvp to delete
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:40:59,963 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Checking if job 121 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:00,060 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] (121/gxy-zpgvp) Terminated at user's request
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:00,063 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] executing external set_meta script for job 122: GALAXY_LIB="/galaxy/server/lib"; if [ "$GALAXY_LIB" != "None" ]; then if [ -n "$PYTHONPATH" ]; then PYTHONPATH="$GALAXY_LIB:$PYTHONPATH"; else PYTHONPATH="$GALAXY_LIB"; fi; export PYTHONPATH; fi; GALAXY_VIRTUAL_ENV="None"; if [ "$GALAXY_VIRTUAL_ENV" != "None" -a -z "$VIRTUAL_ENV" -a -f "$GALAXY_VIRTUAL_ENV/bin/activate" ]; then . "$GALAXY_VIRTUAL_ENV/bin/activate"; fi; python metadata/set.py
+galaxy.jobs.handler DEBUG 2025-08-01 01:41:00,585 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Grabbed Job(s): 123
+tpv.core.entities DEBUG 2025-08-01 01:41:00,616 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Ranking destinations: [runner=k8s, dest_name=k8s, min_accepted_cores=None, min_accepted_mem=None, min_accepted_gpus=None, max_accepted_cores=100, max_accepted_mem=800, max_accepted_gpus=None, tpv_dest_tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=docker, type=TagType.ACCEPT>], handler_tags=None<class 'tpv.core.entities.Destination'> id=k8s, abstract=False, cores=None, mem=None, gpus=None, min_cores = None, min_mem = None, min_gpus = None, max_cores = 8, max_mem = 48, max_gpus = None, env=[], params={'tpv_cores': '{cores}', 'tpv_gpus': '{gpus}', 'tpv_mem': '{mem}', 'docker_enabled': 'true', 'limits_cpu': '{cores}', 'limits_memory': '{mem}Gi', 'requests_cpu': '{cores}', 'requests_memory': '{mem}Gi'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[], rank=, inherits=None, context={}, rules={}] for entity: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} using default ranker
+tpv.core.entities DEBUG 2025-08-01 01:41:00,616 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Destination: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} scored: 0
+galaxy.jobs.mapper DEBUG 2025-08-01 01:41:00,617 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (123) Mapped job to destination id: k8s
+galaxy.jobs.handler DEBUG 2025-08-01 01:41:00,621 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (123) Dispatching to k8s runner
+galaxy.jobs DEBUG 2025-08-01 01:41:00,635 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (123) Persisting job destination (destination id: k8s)
+galaxy.jobs DEBUG 2025-08-01 01:41:00,649 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (123) Working directory for job is: /galaxy/server/database/jobs_directory/000/123
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:00,656 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Job [123] queued (34.371 ms)
+galaxy.jobs.handler INFO 2025-08-01 01:41:00,659 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (123) Job dispatched
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:00,661 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Starting queue_job for job 123
+galaxy.jobs DEBUG 2025-08-01 01:41:00,725 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Job wrapper for Job [123] prepared (56.162 ms)
+galaxy.jobs.command_factory INFO 2025-08-01 01:41:00,742 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Built script [/galaxy/server/database/jobs_directory/000/123/tool_script.sh] for tool command [python '/galaxy/server/lib/galaxy/tools/data_fetch.py' --galaxy-root '/galaxy/server' --datatypes-registry '/galaxy/server/database/jobs_directory/000/123/registry.xml' --request-version '1' --request '/galaxy/server/database/jobs_directory/000/123/configs/tmp0hkfqdyb']
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:00,752 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] (123) command is: mkdir -p working outputs configs
+if [ -d _working ]; then
+    rm -rf working/ outputs/ configs/; cp -R _working working; cp -R _outputs outputs; cp -R _configs configs
+else
+    cp -R working _working; cp -R outputs _outputs; cp -R configs _configs
+fi
+cd working; __out="${TMPDIR:-.}/out.$$" __err="${TMPDIR:-.}/err.$$"
+mkfifo "$__out" "$__err"
+trap 'rm -f "$__out" "$__err"' EXIT
+tee -a '../outputs/tool_stdout' < "$__out" &
+tee -a '../outputs/tool_stderr' < "$__err" >&2 & /bin/bash /galaxy/server/database/jobs_directory/000/123/tool_script.sh > "$__out" 2> "$__err"; return_code=$?; echo $return_code > /galaxy/server/database/jobs_directory/000/123/galaxy_123.ec; sh -c "exit $return_code"
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:00,762 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 123 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:00,782 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 123 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:00,999 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job set to running...
+galaxy.jobs.handler DEBUG 2025-08-01 01:41:01,662 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Grabbed Job(s): 124
+tpv.core.entities DEBUG 2025-08-01 01:41:01,691 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Ranking destinations: [runner=k8s, dest_name=k8s, min_accepted_cores=None, min_accepted_mem=None, min_accepted_gpus=None, max_accepted_cores=100, max_accepted_mem=800, max_accepted_gpus=None, tpv_dest_tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=docker, type=TagType.ACCEPT>], handler_tags=None<class 'tpv.core.entities.Destination'> id=k8s, abstract=False, cores=None, mem=None, gpus=None, min_cores = None, min_mem = None, min_gpus = None, max_cores = 8, max_mem = 48, max_gpus = None, env=[], params={'tpv_cores': '{cores}', 'tpv_gpus': '{gpus}', 'tpv_mem': '{mem}', 'docker_enabled': 'true', 'limits_cpu': '{cores}', 'limits_memory': '{mem}Gi', 'requests_cpu': '{cores}', 'requests_memory': '{mem}Gi'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[], rank=, inherits=None, context={}, rules={}] for entity: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} using default ranker
+tpv.core.entities DEBUG 2025-08-01 01:41:01,691 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Destination: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} scored: 0
+galaxy.jobs.mapper DEBUG 2025-08-01 01:41:01,692 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (124) Mapped job to destination id: k8s
+galaxy.jobs.handler DEBUG 2025-08-01 01:41:01,696 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (124) Dispatching to k8s runner
+galaxy.jobs DEBUG 2025-08-01 01:41:01,708 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (124) Persisting job destination (destination id: k8s)
+galaxy.jobs DEBUG 2025-08-01 01:41:01,721 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (124) Working directory for job is: /galaxy/server/database/jobs_directory/000/124
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:01,728 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Job [124] queued (31.928 ms)
+galaxy.jobs.handler INFO 2025-08-01 01:41:01,730 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (124) Job dispatched
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:01,732 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Starting queue_job for job 124
+galaxy.jobs DEBUG 2025-08-01 01:41:01,792 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Job wrapper for Job [124] prepared (53.443 ms)
+galaxy.jobs.command_factory INFO 2025-08-01 01:41:01,813 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Built script [/galaxy/server/database/jobs_directory/000/124/tool_script.sh] for tool command [python '/galaxy/server/lib/galaxy/tools/data_fetch.py' --galaxy-root '/galaxy/server' --datatypes-registry '/galaxy/server/database/jobs_directory/000/124/registry.xml' --request-version '1' --request '/galaxy/server/database/jobs_directory/000/124/configs/tmp20w1avg0']
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:01,831 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] (124) command is: mkdir -p working outputs configs
+if [ -d _working ]; then
+    rm -rf working/ outputs/ configs/; cp -R _working working; cp -R _outputs outputs; cp -R _configs configs
+else
+    cp -R working _working; cp -R outputs _outputs; cp -R configs _configs
+fi
+cd working; __out="${TMPDIR:-.}/out.$$" __err="${TMPDIR:-.}/err.$$"
+mkfifo "$__out" "$__err"
+trap 'rm -f "$__out" "$__err"' EXIT
+tee -a '../outputs/tool_stdout' < "$__out" &
+tee -a '../outputs/tool_stderr' < "$__err" >&2 & /bin/bash /galaxy/server/database/jobs_directory/000/124/tool_script.sh > "$__out" 2> "$__err"; return_code=$?; echo $return_code > /galaxy/server/database/jobs_directory/000/124/galaxy_124.ec; sh -c "exit $return_code"
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:01,844 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 124 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:01,868 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 124 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:02,138 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job set to running...
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:09,146 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] execution of external set_meta for job 122 finished
+galaxy.tool_util.provided_metadata DEBUG 2025-08-01 01:41:09,177 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] unnamed outputs [{'__unnamed_outputs': [{'destination': {'type': 'hdas'}, 'elements': [{'name': 'labels.tab', 'dbkey': '?', 'ext': 'tabular', 'link_data_only': False, 'sources': [], 'hashes': [], 'info': 'uploaded tabular file', 'state': 'ok', 'filename': '/galaxy/server/database/jobs_directory/000/122/working/data_fetch_upload_a1gbw44_', 'object_id': 146}]}]}]
+galaxy.jobs INFO 2025-08-01 01:41:09,222 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Collecting metrics for Job 122 in /galaxy/server/database/jobs_directory/000/122
+galaxy.jobs DEBUG 2025-08-01 01:41:09,255 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] job_wrapper.finish for job 122 executed (92.751 ms)
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:09,273 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking if job 122 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:12,534 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-jbbzj with k8s id: gxy-jbbzj succeeded
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:12,642 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] executing external set_meta script for job 123: GALAXY_LIB="/galaxy/server/lib"; if [ "$GALAXY_LIB" != "None" ]; then if [ -n "$PYTHONPATH" ]; then PYTHONPATH="$GALAXY_LIB:$PYTHONPATH"; else PYTHONPATH="$GALAXY_LIB"; fi; export PYTHONPATH; fi; GALAXY_VIRTUAL_ENV="None"; if [ "$GALAXY_VIRTUAL_ENV" != "None" -a -z "$VIRTUAL_ENV" -a -f "$GALAXY_VIRTUAL_ENV/bin/activate" ]; then . "$GALAXY_VIRTUAL_ENV/bin/activate"; fi; python metadata/set.py
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:13,574 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-klthw with k8s id: gxy-klthw succeeded
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:13,675 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] executing external set_meta script for job 124: GALAXY_LIB="/galaxy/server/lib"; if [ "$GALAXY_LIB" != "None" ]; then if [ -n "$PYTHONPATH" ]; then PYTHONPATH="$GALAXY_LIB:$PYTHONPATH"; else PYTHONPATH="$GALAXY_LIB"; fi; export PYTHONPATH; fi; GALAXY_VIRTUAL_ENV="None"; if [ "$GALAXY_VIRTUAL_ENV" != "None" -a -z "$VIRTUAL_ENV" -a -f "$GALAXY_VIRTUAL_ENV/bin/activate" ]; then . "$GALAXY_VIRTUAL_ENV/bin/activate"; fi; python metadata/set.py
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:21,999 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] execution of external set_meta for job 123 finished
+galaxy.tool_util.provided_metadata DEBUG 2025-08-01 01:41:22,037 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] unnamed outputs [{'__unnamed_outputs': [{'destination': {'type': 'hdas'}, 'elements': [{'name': 'category.tab', 'dbkey': '?', 'ext': 'tabular', 'link_data_only': False, 'sources': [], 'hashes': [], 'info': 'uploaded tabular file', 'state': 'ok', 'filename': '/galaxy/server/database/jobs_directory/000/123/working/data_fetch_upload_tqrk6_7a', 'object_id': 147}]}]}]
+galaxy.jobs INFO 2025-08-01 01:41:22,079 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Collecting metrics for Job 123 in /galaxy/server/database/jobs_directory/000/123
+galaxy.jobs DEBUG 2025-08-01 01:41:22,125 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] job_wrapper.finish for job 123 executed (106.000 ms)
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:22,145 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Checking if job 123 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:23,055 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] execution of external set_meta for job 124 finished
+galaxy.tool_util.provided_metadata DEBUG 2025-08-01 01:41:23,090 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] unnamed outputs [{'__unnamed_outputs': [{'destination': {'type': 'hdas'}, 'elements': [{'name': 'labels.tab', 'dbkey': '?', 'ext': 'tabular', 'link_data_only': False, 'sources': [], 'hashes': [], 'info': 'uploaded tabular file', 'state': 'ok', 'filename': '/galaxy/server/database/jobs_directory/000/124/working/data_fetch_upload_wartv9ab', 'object_id': 148}]}]}]
+galaxy.jobs INFO 2025-08-01 01:41:23,133 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Collecting metrics for Job 124 in /galaxy/server/database/jobs_directory/000/124
+galaxy.jobs DEBUG 2025-08-01 01:41:23,167 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] job_wrapper.finish for job 124 executed (94.055 ms)
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:23,186 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 124 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.handler DEBUG 2025-08-01 01:41:24,333 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Grabbed Job(s): 125
+tpv.core.entities DEBUG 2025-08-01 01:41:24,364 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Ranking destinations: [runner=k8s, dest_name=k8s, min_accepted_cores=None, min_accepted_mem=None, min_accepted_gpus=None, max_accepted_cores=100, max_accepted_mem=800, max_accepted_gpus=None, tpv_dest_tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=docker, type=TagType.ACCEPT>], handler_tags=None<class 'tpv.core.entities.Destination'> id=k8s, abstract=False, cores=None, mem=None, gpus=None, min_cores = None, min_mem = None, min_gpus = None, max_cores = 8, max_mem = 48, max_gpus = None, env=[], params={'tpv_cores': '{cores}', 'tpv_gpus': '{gpus}', 'tpv_mem': '{mem}', 'docker_enabled': 'true', 'limits_cpu': '{cores}', 'limits_memory': '{mem}Gi', 'requests_cpu': '{cores}', 'requests_memory': '{mem}Gi'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[], rank=, inherits=None, context={}, rules={}] for entity: <class 'tpv.core.entities.Tool'> id=default, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} using default ranker
+tpv.core.entities DEBUG 2025-08-01 01:41:24,364 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Destination: <class 'tpv.core.entities.Tool'> id=default, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} scored: 0
+galaxy.jobs.mapper DEBUG 2025-08-01 01:41:24,365 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (125) Mapped job to destination id: k8s
+galaxy.jobs.handler DEBUG 2025-08-01 01:41:24,369 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (125) Dispatching to k8s runner
+galaxy.jobs DEBUG 2025-08-01 01:41:24,380 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (125) Persisting job destination (destination id: k8s)
+galaxy.jobs DEBUG 2025-08-01 01:41:24,391 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (125) Working directory for job is: /galaxy/server/database/jobs_directory/000/125
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:24,400 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Job [125] queued (30.859 ms)
+galaxy.jobs.handler INFO 2025-08-01 01:41:24,402 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (125) Job dispatched
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:24,404 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Starting queue_job for job 125
+galaxy.jobs DEBUG 2025-08-01 01:41:24,466 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Job wrapper for Job [125] prepared (53.944 ms)
+galaxy.tool_util.deps.containers INFO 2025-08-01 01:41:24,466 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Checking with container resolver [ExplicitContainerResolver[]] found description [None]
+galaxy.tool_util.deps.container_resolvers.mulled DEBUG 2025-08-01 01:41:24,466 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Image name for tool toolshed.g2.bx.psu.edu/repos/iuc/volcanoplot/volcanoplot/0.0.7: mulled-v2-a1e116d3536834ecbbada3c89e7eb04341cbc496:4825d9b0ce09150fdee454e83ca2f24e2f7e952c
+galaxy.tool_util.deps.containers INFO 2025-08-01 01:41:24,487 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Checking with container resolver [MulledDockerContainerResolver[namespace=biocontainers]] found description [ContainerDescription[identifier=quay.io/biocontainers/mulled-v2-a1e116d3536834ecbbada3c89e7eb04341cbc496:4825d9b0ce09150fdee454e83ca2f24e2f7e952c-0,type=docker]]
+galaxy.jobs.command_factory INFO 2025-08-01 01:41:24,506 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Built script [/galaxy/server/database/jobs_directory/000/125/tool_script.sh] for tool command [echo $(R --version | grep version | grep -v GNU)", ggplot2 version" $(R --vanilla --slave -e "library(ggplot2); cat(sessionInfo()\$otherPkgs\$ggplot2\$Version)" 2> /dev/null | grep -v -i "WARNING: ")", ggrepel version" $(R --vanilla --slave -e "library(ggrepel); cat(sessionInfo()\$otherPkgs\$ggrepel\$Version)" 2> /dev/null | grep -v -i "WARNING: ")", dplyr version" $(R --vanilla --slave -e "library(dplyr); cat(sessionInfo()\$otherPkgs\$dplyr\$Version)" 2> /dev/null | grep -v -i "WARNING: ") > /galaxy/server/database/jobs_directory/000/125/outputs/COMMAND_VERSION 2>&1;
+Rscript '/galaxy/server/database/jobs_directory/000/125/configs/tmpl15o3red']
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:24,517 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] (125) command is: mkdir -p working outputs configs
+if [ -d _working ]; then
+    rm -rf working/ outputs/ configs/; cp -R _working working; cp -R _outputs outputs; cp -R _configs configs
+else
+    cp -R working _working; cp -R outputs _outputs; cp -R configs _configs
+fi
+cd working; __out="${TMPDIR:-.}/out.$$" __err="${TMPDIR:-.}/err.$$"
+mkfifo "$__out" "$__err"
+trap 'rm -f "$__out" "$__err"' EXIT
+tee -a '../outputs/tool_stdout' < "$__out" &
+tee -a '../outputs/tool_stderr' < "$__err" >&2 & /bin/bash /galaxy/server/database/jobs_directory/000/125/tool_script.sh > "$__out" 2> "$__err"; return_code=$?; echo $return_code > /galaxy/server/database/jobs_directory/000/125/galaxy_125.ec; 
+if [ -f "/galaxy/server/database/jobs_directory/000/125/working/volcano_plot.pdf" -a -f "/galaxy/server/database/objects/7/a/1/dataset_7a1699db-376a-4932-a1c6-b512ebada135.dat" ] ; then cp "/galaxy/server/database/jobs_directory/000/125/working/volcano_plot.pdf" "/galaxy/server/database/objects/7/a/1/dataset_7a1699db-376a-4932-a1c6-b512ebada135.dat" ; fi; sh -c "exit $return_code"
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:24,527 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Checking if job 125 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.tool_util.deps.containers INFO 2025-08-01 01:41:24,527 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Checking with container resolver [ExplicitContainerResolver[]] found description [None]
+galaxy.tool_util.deps.container_resolvers.mulled DEBUG 2025-08-01 01:41:24,527 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Image name for tool toolshed.g2.bx.psu.edu/repos/iuc/volcanoplot/volcanoplot/0.0.7: mulled-v2-a1e116d3536834ecbbada3c89e7eb04341cbc496:4825d9b0ce09150fdee454e83ca2f24e2f7e952c
+galaxy.tool_util.deps.containers INFO 2025-08-01 01:41:24,545 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Checking with container resolver [MulledDockerContainerResolver[namespace=biocontainers]] found description [ContainerDescription[identifier=quay.io/biocontainers/mulled-v2-a1e116d3536834ecbbada3c89e7eb04341cbc496:4825d9b0ce09150fdee454e83ca2f24e2f7e952c-0,type=docker]]
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:24,562 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-3] Checking if job 125 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:25,633 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job set to running...
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:32,818 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-rsx6d failed and it is not a deletion case. Current state: running
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:32,819 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Trying with error file in _handle_job_failure
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:32,902 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] An unknown error occurred in this job and the maximum number of retries have been exceeded for job: gxy-rsx6d.
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:32,910 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Checking if job 125 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes ERROR 2025-08-01 01:41:32,943 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Could not clean up k8s batch job. Ignoring...
+Traceback (most recent call last):
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/http.py", line 437, in raise_for_status
+    resp.raise_for_status()
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 409 Client Error: Conflict for url: https://34.118.224.1:443/apis/batch/v1/namespaces/prod-25-08-01-00-53-1/jobs/gxy-rsx6d
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/galaxy/server/lib/galaxy/jobs/runners/kubernetes.py", line 872, in _handle_job_failure
+    self.__cleanup_k8s_job(job)
+  File "/galaxy/server/lib/galaxy/jobs/runners/kubernetes.py", line 879, in __cleanup_k8s_job
+    delete_job(job, k8s_cleanup_job)
+  File "/galaxy/server/lib/galaxy/jobs/runners/util/pykube_util.py", line 108, in delete_job
+    job.scale(replicas=0)
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/mixins.py", line 30, in scale
+    self.update()
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/objects.py", line 165, in update
+    self.patch(self.obj, subresource=subresource)
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/objects.py", line 157, in patch
+    self.api.raise_for_status(r)
+  File "/galaxy/server/.venv/lib/python3.12/site-packages/pykube/http.py", line 444, in raise_for_status
+    raise HTTPError(resp.status_code, payload["message"])
+pykube.exceptions.HTTPError: Operation cannot be fulfilled on jobs.batch "gxy-rsx6d": the object has been modified; please apply your changes to the latest version and try again
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:32,951 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] PP Getting into fail_job in k8s runner
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:32,957 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] (125/gxy-rsx6d) tool_stdout: [1] "Header row detected"
+null device 
+          1 
+R version 4.0.5 (2021-03-31)
+Platform: x86_64-conda-linux-gnu (64-bit)
+Running under: Debian GNU/Linux 10 (buster)
+
+Matrix products: default
+BLAS/LAPACK: /usr/local/lib/libopenblasp-r0.3.15.so
+
+locale:
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+ [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+ [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] ggrepel_0.9.1 ggplot2_3.3.3 dplyr_1.0.6  
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_1.0.6       magrittr_2.0.1   tidyselect_1.1.1 munsell_0.5.0   
+ [5] colorspace_2.0-1 R6_2.5.0         rlang_0.4.11     fansi_0.5.0     
+ [9] grid_4.0.5       gtable_0.3.0     utf8_1.2.1       withr_2.4.2     
+[13] ellipsis_0.3.2   digest_0.6.27    tibble_3.1.2     lifecycle_1.0.0 
+[17] crayon_1.4.1     purrr_0.3.4      farver_2.1.0     vctrs_0.3.8     
+[21] glue_1.4.2       labeling_0.4.2   compiler_4.0.5   pillar_1.6.1    
+[25] generics_0.1.0   scales_1.1.1     pkgconfig_2.0.3 
+
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:32,957 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] (125/gxy-rsx6d) tool_stderr: Warning message:
+In Sys.setlocale("LC_MESSAGES", "en_US.UTF-8") :
+  OS reports request to set locale to "en_US.UTF-8" cannot be honored
+
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:32,957 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] (125/gxy-rsx6d) job_stdout: 
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:32,957 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] (125/gxy-rsx6d) job_stderr: An unknown error occurred in this job and the maximum number of retries have been exceeded for job: gxy-rsx6d.
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:32,957 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Attempting to stop job 125 (gxy-rsx6d)
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:32,971 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Found job with id gxy-rsx6d to delete
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:32,973 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 125 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:33,057 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] (125/gxy-rsx6d) Terminated at user's request
+galaxy.util WARNING 2025-08-01 01:41:33,090 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Unable to honor primary group (grp.struct_group(gr_name='galaxy', gr_passwd='x', gr_gid=101, gr_mem=[])) for /galaxy/server/database/objects/7/a/1/dataset_7a1699db-376a-4932-a1c6-b512ebada135.dat, group remains grp.struct_group(gr_name='nogroup', gr_passwd='x', gr_gid=65534, gr_mem=[]), error was: [Errno 1] Operation not permitted: '/galaxy/server/database/objects/7/a/1/dataset_7a1699db-376a-4932-a1c6-b512ebada135.dat'
+galaxy.jobs.handler DEBUG 2025-08-01 01:41:34,587 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Grabbed Job(s): 126, 127
+tpv.core.entities DEBUG 2025-08-01 01:41:34,614 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Ranking destinations: [runner=k8s, dest_name=k8s, min_accepted_cores=None, min_accepted_mem=None, min_accepted_gpus=None, max_accepted_cores=100, max_accepted_mem=800, max_accepted_gpus=None, tpv_dest_tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=docker, type=TagType.ACCEPT>], handler_tags=None<class 'tpv.core.entities.Destination'> id=k8s, abstract=False, cores=None, mem=None, gpus=None, min_cores = None, min_mem = None, min_gpus = None, max_cores = 8, max_mem = 48, max_gpus = None, env=[], params={'tpv_cores': '{cores}', 'tpv_gpus': '{gpus}', 'tpv_mem': '{mem}', 'docker_enabled': 'true', 'limits_cpu': '{cores}', 'limits_memory': '{mem}Gi', 'requests_cpu': '{cores}', 'requests_memory': '{mem}Gi'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[], rank=, inherits=None, context={}, rules={}] for entity: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} using default ranker
+tpv.core.entities DEBUG 2025-08-01 01:41:34,614 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Destination: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} scored: 0
+galaxy.jobs.mapper DEBUG 2025-08-01 01:41:34,614 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (126) Mapped job to destination id: k8s
+galaxy.jobs.handler DEBUG 2025-08-01 01:41:34,618 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (126) Dispatching to k8s runner
+galaxy.jobs DEBUG 2025-08-01 01:41:34,628 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (126) Persisting job destination (destination id: k8s)
+galaxy.jobs DEBUG 2025-08-01 01:41:34,642 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (126) Working directory for job is: /galaxy/server/database/jobs_directory/000/126
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:34,649 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Job [126] queued (31.559 ms)
+galaxy.jobs.handler INFO 2025-08-01 01:41:34,652 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (126) Job dispatched
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:34,653 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Starting queue_job for job 126
+tpv.core.entities DEBUG 2025-08-01 01:41:34,663 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Ranking destinations: [runner=k8s, dest_name=k8s, min_accepted_cores=None, min_accepted_mem=None, min_accepted_gpus=None, max_accepted_cores=100, max_accepted_mem=800, max_accepted_gpus=None, tpv_dest_tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=docker, type=TagType.ACCEPT>], handler_tags=None<class 'tpv.core.entities.Destination'> id=k8s, abstract=False, cores=None, mem=None, gpus=None, min_cores = None, min_mem = None, min_gpus = None, max_cores = 8, max_mem = 48, max_gpus = None, env=[], params={'tpv_cores': '{cores}', 'tpv_gpus': '{gpus}', 'tpv_mem': '{mem}', 'docker_enabled': 'true', 'limits_cpu': '{cores}', 'limits_memory': '{mem}Gi', 'requests_cpu': '{cores}', 'requests_memory': '{mem}Gi'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[], rank=, inherits=None, context={}, rules={}] for entity: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} using default ranker
+tpv.core.entities DEBUG 2025-08-01 01:41:34,664 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Destination: <class 'tpv.core.entities.Tool'> id=force_default_container_for_built_in_tools, Rule: force_default_container_for_built_in_tools, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true', 'docker_container_id_override': 'quay.io/galaxyproject/galaxy-anvil:24.1.1'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} scored: 0
+galaxy.jobs.mapper DEBUG 2025-08-01 01:41:34,664 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (127) Mapped job to destination id: k8s
+galaxy.jobs.handler DEBUG 2025-08-01 01:41:34,668 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (127) Dispatching to k8s runner
+galaxy.jobs DEBUG 2025-08-01 01:41:34,684 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (127) Persisting job destination (destination id: k8s)
+galaxy.jobs DEBUG 2025-08-01 01:41:34,700 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (127) Working directory for job is: /galaxy/server/database/jobs_directory/000/127
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:34,707 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Job [127] queued (38.282 ms)
+galaxy.jobs.handler INFO 2025-08-01 01:41:34,710 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (127) Job dispatched
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:34,712 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Starting queue_job for job 127
+galaxy.jobs DEBUG 2025-08-01 01:41:34,729 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Job wrapper for Job [126] prepared (67.520 ms)
+galaxy.jobs.command_factory INFO 2025-08-01 01:41:34,752 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Built script [/galaxy/server/database/jobs_directory/000/126/tool_script.sh] for tool command [python '/galaxy/server/lib/galaxy/tools/data_fetch.py' --galaxy-root '/galaxy/server' --datatypes-registry '/galaxy/server/database/jobs_directory/000/126/registry.xml' --request-version '1' --request '/galaxy/server/database/jobs_directory/000/126/configs/tmp6ycne53r']
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:34,763 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] (126) command is: mkdir -p working outputs configs
+if [ -d _working ]; then
+    rm -rf working/ outputs/ configs/; cp -R _working working; cp -R _outputs outputs; cp -R _configs configs
+else
+    cp -R working _working; cp -R outputs _outputs; cp -R configs _configs
+fi
+cd working; __out="${TMPDIR:-.}/out.$$" __err="${TMPDIR:-.}/err.$$"
+mkfifo "$__out" "$__err"
+trap 'rm -f "$__out" "$__err"' EXIT
+tee -a '../outputs/tool_stdout' < "$__out" &
+tee -a '../outputs/tool_stderr' < "$__err" >&2 & /bin/bash /galaxy/server/database/jobs_directory/000/126/tool_script.sh > "$__out" 2> "$__err"; return_code=$?; echo $return_code > /galaxy/server/database/jobs_directory/000/126/galaxy_126.ec; sh -c "exit $return_code"
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:34,774 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Checking if job 126 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs DEBUG 2025-08-01 01:41:34,784 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Job wrapper for Job [127] prepared (62.784 ms)
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:34,792 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-1] Checking if job 126 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.command_factory INFO 2025-08-01 01:41:34,804 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Built script [/galaxy/server/database/jobs_directory/000/127/tool_script.sh] for tool command [python '/galaxy/server/lib/galaxy/tools/data_fetch.py' --galaxy-root '/galaxy/server' --datatypes-registry '/galaxy/server/database/jobs_directory/000/127/registry.xml' --request-version '1' --request '/galaxy/server/database/jobs_directory/000/127/configs/tmp1iaflbok']
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:34,815 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] (127) command is: mkdir -p working outputs configs
+if [ -d _working ]; then
+    rm -rf working/ outputs/ configs/; cp -R _working working; cp -R _outputs outputs; cp -R _configs configs
+else
+    cp -R working _working; cp -R outputs _outputs; cp -R configs _configs
+fi
+cd working; __out="${TMPDIR:-.}/out.$$" __err="${TMPDIR:-.}/err.$$"
+mkfifo "$__out" "$__err"
+trap 'rm -f "$__out" "$__err"' EXIT
+tee -a '../outputs/tool_stdout' < "$__out" &
+tee -a '../outputs/tool_stderr' < "$__err" >&2 & /bin/bash /galaxy/server/database/jobs_directory/000/127/tool_script.sh > "$__out" 2> "$__err"; return_code=$?; echo $return_code > /galaxy/server/database/jobs_directory/000/127/galaxy_127.ec; sh -c "exit $return_code"
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:34,826 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 127 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:34,839 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 127 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:35,026 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job set to running...
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:36,148 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job set to running...
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:46,229 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-lfmkm with k8s id: gxy-lfmkm succeeded
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:46,339 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] executing external set_meta script for job 126: GALAXY_LIB="/galaxy/server/lib"; if [ "$GALAXY_LIB" != "None" ]; then if [ -n "$PYTHONPATH" ]; then PYTHONPATH="$GALAXY_LIB:$PYTHONPATH"; else PYTHONPATH="$GALAXY_LIB"; fi; export PYTHONPATH; fi; GALAXY_VIRTUAL_ENV="None"; if [ "$GALAXY_VIRTUAL_ENV" != "None" -a -z "$VIRTUAL_ENV" -a -f "$GALAXY_VIRTUAL_ENV/bin/activate" ]; then . "$GALAXY_VIRTUAL_ENV/bin/activate"; fi; python metadata/set.py
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:46,379 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-7tp42 with k8s id: gxy-7tp42 succeeded
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:46,482 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] executing external set_meta script for job 127: GALAXY_LIB="/galaxy/server/lib"; if [ "$GALAXY_LIB" != "None" ]; then if [ -n "$PYTHONPATH" ]; then PYTHONPATH="$GALAXY_LIB:$PYTHONPATH"; else PYTHONPATH="$GALAXY_LIB"; fi; export PYTHONPATH; fi; GALAXY_VIRTUAL_ENV="None"; if [ "$GALAXY_VIRTUAL_ENV" != "None" -a -z "$VIRTUAL_ENV" -a -f "$GALAXY_VIRTUAL_ENV/bin/activate" ]; then . "$GALAXY_VIRTUAL_ENV/bin/activate"; fi; python metadata/set.py
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:55,373 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] execution of external set_meta for job 127 finished
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:55,382 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] execution of external set_meta for job 126 finished
+galaxy.tool_util.provided_metadata DEBUG 2025-08-01 01:41:55,421 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] unnamed outputs [{'__unnamed_outputs': [{'destination': {'type': 'hdas'}, 'elements': [{'name': 'category.tab', 'dbkey': '?', 'ext': 'tabular', 'link_data_only': False, 'sources': [], 'hashes': [], 'info': 'uploaded tabular file', 'state': 'ok', 'filename': '/galaxy/server/database/jobs_directory/000/126/working/data_fetch_upload_mmhgl4io', 'object_id': 150}]}]}]
+galaxy.tool_util.provided_metadata DEBUG 2025-08-01 01:41:55,422 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] unnamed outputs [{'__unnamed_outputs': [{'destination': {'type': 'hdas'}, 'elements': [{'name': 'labels.tab', 'dbkey': '?', 'ext': 'tabular', 'link_data_only': False, 'sources': [], 'hashes': [], 'info': 'uploaded tabular file', 'state': 'ok', 'filename': '/galaxy/server/database/jobs_directory/000/127/working/data_fetch_upload_ahxtv7h4', 'object_id': 151}]}]}]
+galaxy.jobs INFO 2025-08-01 01:41:55,474 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Collecting metrics for Job 126 in /galaxy/server/database/jobs_directory/000/126
+galaxy.jobs INFO 2025-08-01 01:41:55,484 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Collecting metrics for Job 127 in /galaxy/server/database/jobs_directory/000/127
+galaxy.jobs DEBUG 2025-08-01 01:41:55,512 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] job_wrapper.finish for job 126 executed (109.324 ms)
+galaxy.jobs DEBUG 2025-08-01 01:41:55,520 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] job_wrapper.finish for job 127 executed (118.924 ms)
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:55,536 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking if job 126 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:55,541 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 127 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.handler DEBUG 2025-08-01 01:41:56,292 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Grabbed Job(s): 128
+tpv.core.entities DEBUG 2025-08-01 01:41:56,322 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Ranking destinations: [runner=k8s, dest_name=k8s, min_accepted_cores=None, min_accepted_mem=None, min_accepted_gpus=None, max_accepted_cores=100, max_accepted_mem=800, max_accepted_gpus=None, tpv_dest_tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=docker, type=TagType.ACCEPT>], handler_tags=None<class 'tpv.core.entities.Destination'> id=k8s, abstract=False, cores=None, mem=None, gpus=None, min_cores = None, min_mem = None, min_gpus = None, max_cores = 8, max_mem = 48, max_gpus = None, env=[], params={'tpv_cores': '{cores}', 'tpv_gpus': '{gpus}', 'tpv_mem': '{mem}', 'docker_enabled': 'true', 'limits_cpu': '{cores}', 'limits_memory': '{mem}Gi', 'requests_cpu': '{cores}', 'requests_memory': '{mem}Gi'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[], rank=, inherits=None, context={}, rules={}] for entity: <class 'tpv.core.entities.Tool'> id=default, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} using default ranker
+tpv.core.entities DEBUG 2025-08-01 01:41:56,322 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Destination: <class 'tpv.core.entities.Tool'> id=default, abstract=False, cores=1, mem=cores * 3.8, gpus=0, min_cores = None, min_mem = None, min_gpus = None, max_cores = None, max_mem = None, max_gpus = None, env=[], params={'container_monitor': False, 'docker_default_container_id': 'quay.io/galaxyproject/galaxy-anvil:24.1.1', 'tmp_dir': 'true'}, resubmit={}, tags=<class 'tpv.core.entities.TagSetManager'> tags=[<Tag: name=scheduling, value=local, type=TagType.REJECT>, <Tag: name=scheduling, value=offline, type=TagType.REJECT>], rank=, inherits=None, context={}, rules={} scored: 0
+galaxy.jobs.mapper DEBUG 2025-08-01 01:41:56,322 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (128) Mapped job to destination id: k8s
+galaxy.jobs.handler DEBUG 2025-08-01 01:41:56,326 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (128) Dispatching to k8s runner
+galaxy.jobs DEBUG 2025-08-01 01:41:56,337 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (128) Persisting job destination (destination id: k8s)
+galaxy.jobs DEBUG 2025-08-01 01:41:56,350 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (128) Working directory for job is: /galaxy/server/database/jobs_directory/000/128
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:56,358 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] Job [128] queued (32.443 ms)
+galaxy.jobs.handler INFO 2025-08-01 01:41:56,361 [pN:job_handler_0,p:8,tN:JobHandlerQueue.monitor_thread] (128) Job dispatched
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:56,363 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Starting queue_job for job 128
+galaxy.jobs DEBUG 2025-08-01 01:41:56,426 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Job wrapper for Job [128] prepared (55.891 ms)
+galaxy.tool_util.deps.containers INFO 2025-08-01 01:41:56,427 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking with container resolver [ExplicitContainerResolver[]] found description [None]
+galaxy.tool_util.deps.container_resolvers.mulled DEBUG 2025-08-01 01:41:56,427 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Image name for tool toolshed.g2.bx.psu.edu/repos/iuc/volcanoplot/volcanoplot/0.0.7: mulled-v2-a1e116d3536834ecbbada3c89e7eb04341cbc496:4825d9b0ce09150fdee454e83ca2f24e2f7e952c
+galaxy.tool_util.deps.containers INFO 2025-08-01 01:41:56,448 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking with container resolver [MulledDockerContainerResolver[namespace=biocontainers]] found description [ContainerDescription[identifier=quay.io/biocontainers/mulled-v2-a1e116d3536834ecbbada3c89e7eb04341cbc496:4825d9b0ce09150fdee454e83ca2f24e2f7e952c-0,type=docker]]
+galaxy.jobs.command_factory INFO 2025-08-01 01:41:56,466 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Built script [/galaxy/server/database/jobs_directory/000/128/tool_script.sh] for tool command [echo $(R --version | grep version | grep -v GNU)", ggplot2 version" $(R --vanilla --slave -e "library(ggplot2); cat(sessionInfo()\$otherPkgs\$ggplot2\$Version)" 2> /dev/null | grep -v -i "WARNING: ")", ggrepel version" $(R --vanilla --slave -e "library(ggrepel); cat(sessionInfo()\$otherPkgs\$ggrepel\$Version)" 2> /dev/null | grep -v -i "WARNING: ")", dplyr version" $(R --vanilla --slave -e "library(dplyr); cat(sessionInfo()\$otherPkgs\$dplyr\$Version)" 2> /dev/null | grep -v -i "WARNING: ") > /galaxy/server/database/jobs_directory/000/128/outputs/COMMAND_VERSION 2>&1;
+Rscript '/galaxy/server/database/jobs_directory/000/128/configs/tmpelaqqrze']
+galaxy.jobs.runners DEBUG 2025-08-01 01:41:56,478 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] (128) command is: mkdir -p working outputs configs
+if [ -d _working ]; then
+    rm -rf working/ outputs/ configs/; cp -R _working working; cp -R _outputs outputs; cp -R _configs configs
+else
+    cp -R working _working; cp -R outputs _outputs; cp -R configs _configs
+fi
+cd working; __out="${TMPDIR:-.}/out.$$" __err="${TMPDIR:-.}/err.$$"
+mkfifo "$__out" "$__err"
+trap 'rm -f "$__out" "$__err"' EXIT
+tee -a '../outputs/tool_stdout' < "$__out" &
+tee -a '../outputs/tool_stderr' < "$__err" >&2 & /bin/bash /galaxy/server/database/jobs_directory/000/128/tool_script.sh > "$__out" 2> "$__err"; return_code=$?; echo $return_code > /galaxy/server/database/jobs_directory/000/128/galaxy_128.ec; 
+if [ -f "/galaxy/server/database/jobs_directory/000/128/working/volcano_plot.pdf" -a -f "/galaxy/server/database/objects/0/b/5/dataset_0b51912a-dfe3-4a7d-9e04-c14bcdd8f6d0.dat" ] ; then cp "/galaxy/server/database/jobs_directory/000/128/working/volcano_plot.pdf" "/galaxy/server/database/objects/0/b/5/dataset_0b51912a-dfe3-4a7d-9e04-c14bcdd8f6d0.dat" ; fi; sh -c "exit $return_code"
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:56,488 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking if job 128 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.tool_util.deps.containers INFO 2025-08-01 01:41:56,488 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking with container resolver [ExplicitContainerResolver[]] found description [None]
+galaxy.tool_util.deps.container_resolvers.mulled DEBUG 2025-08-01 01:41:56,488 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Image name for tool toolshed.g2.bx.psu.edu/repos/iuc/volcanoplot/volcanoplot/0.0.7: mulled-v2-a1e116d3536834ecbbada3c89e7eb04341cbc496:4825d9b0ce09150fdee454e83ca2f24e2f7e952c
+galaxy.tool_util.deps.containers INFO 2025-08-01 01:41:56,508 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking with container resolver [MulledDockerContainerResolver[namespace=biocontainers]] found description [ContainerDescription[identifier=quay.io/biocontainers/mulled-v2-a1e116d3536834ecbbada3c89e7eb04341cbc496:4825d9b0ce09150fdee454e83ca2f24e2f7e952c-0,type=docker]]
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:56,525 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-0] Checking if job 128 is an interactive tool. guest ports: []. interactive entry points: []
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:41:57,433 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job set to running...
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:42:05,639 [pN:job_handler_0,p:8,tN:KubernetesRunner.monitor_thread] Job id: gxy-rwz5p with k8s id: gxy-rwz5p succeeded
+galaxy.jobs.runners DEBUG 2025-08-01 01:42:05,744 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] executing external set_meta script for job 128: GALAXY_LIB="/galaxy/server/lib"; if [ "$GALAXY_LIB" != "None" ]; then if [ -n "$PYTHONPATH" ]; then PYTHONPATH="$GALAXY_LIB:$PYTHONPATH"; else PYTHONPATH="$GALAXY_LIB"; fi; export PYTHONPATH; fi; GALAXY_VIRTUAL_ENV="None"; if [ "$GALAXY_VIRTUAL_ENV" != "None" -a -z "$VIRTUAL_ENV" -a -f "$GALAXY_VIRTUAL_ENV/bin/activate" ]; then . "$GALAXY_VIRTUAL_ENV/bin/activate"; fi; python metadata/set.py
+galaxy.jobs.runners DEBUG 2025-08-01 01:42:14,674 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] execution of external set_meta for job 128 finished
+galaxy.model.metadata DEBUG 2025-08-01 01:42:14,721 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] loading metadata from file for: HistoryDatasetAssociation 152
+galaxy.util WARNING 2025-08-01 01:42:14,725 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Unable to honor primary group (grp.struct_group(gr_name='galaxy', gr_passwd='x', gr_gid=101, gr_mem=[])) for /galaxy/server/database/objects/0/b/5/dataset_0b51912a-dfe3-4a7d-9e04-c14bcdd8f6d0.dat, group remains grp.struct_group(gr_name='nogroup', gr_passwd='x', gr_gid=65534, gr_mem=[]), error was: [Errno 1] Operation not permitted: '/galaxy/server/database/objects/0/b/5/dataset_0b51912a-dfe3-4a7d-9e04-c14bcdd8f6d0.dat'
+galaxy.jobs INFO 2025-08-01 01:42:14,750 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Collecting metrics for Job 128 in /galaxy/server/database/jobs_directory/000/128
+galaxy.jobs DEBUG 2025-08-01 01:42:14,767 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] job_wrapper.finish for job 128 executed (74.744 ms)
+galaxy.jobs.runners.kubernetes DEBUG 2025-08-01 01:42:14,787 [pN:job_handler_0,p:8,tN:KubernetesRunner.work_thread-2] Checking if job 128 is an interactive tool. guest ports: []. interactive entry points: []
