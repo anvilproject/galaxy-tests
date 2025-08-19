@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Results (powered by Planemo)"
+           tests="44"
+           errors="5"
+           failures="5"
+           skip="0">
+    
+    <testcase classname="bcftools_consensus (Test #1)" name="0" time="21.437283754348755">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 0, "time_seconds": 21.437283754348755, "tool_id": "bcftools_consensus", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_consensus (Test #2)" name="1" time="">
+        
+            <error type="error" message=""><![CDATA[
+                { "status": "skip", "test_index": 1, "tool_id": "bcftools_consensus", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_consensus (Test #3)" name="2" time="38.71204972267151">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "chain": false,  "input_file": {   "id": "863eb2bcbba39d05",   "src": "hda"  },  "reference_source|fasta_ref": {   "id": "5d61d94caf5b123c",   "src": "hda"  },  "reference_source|reference_source_selector": "history",  "rename": true,  "sec_default|mask": {   "id": "254755f14d8eae3c",   "src": "hda"  } }, "job": {  "command_line": "export BCFTOOLS_PLUGINS=`which bcftools | sed \u0027s,bin/bcftools,libexec/bcftools,\u0027`;     bgzip -c \u0027/galaxy/server/database/objects/2/b/2/dataset_2b25ac05-dcaf-48dd-844a-038732d934b9.dat\u0027 \u003e input.vcf.gz \u0026\u0026 bcftools index input.vcf.gz \u0026\u0026     ln -s \u0027/galaxy/server/database/objects/c/4/5/dataset_c4560ea0-351d-4a4e-9b59-f7f1f60d1228.dat\u0027 ref.fa \u0026\u0026 samtools faidx ref.fa \u0026\u0026    bcftools consensus   --fasta-ref ref.fa      --mask \u0027/galaxy/server/database/objects/5/e/e/dataset_5ee63a95-4b8a-475a-b3b7-2a98e6979328.dat\u0027                input.vcf.gz  | awk \u0027BEGIN {i=1} {if (match($0, /^\u003e/)) {if (i==1) {name=\"consensus.vcf\"} else {name=sprintf(\"%s-%d\",\"consensus.vcf\",i);} print(gensub(/\u003e[^ ]+( ?.*)/, \"\u003e\" name \"\\\\1\", 1)); i=i+1;} else {print}}\u0027 \u003e \u0027/galaxy/server/database/objects/f/c/8/dataset_fc8fb0f2-d98c-45b2-8113-60aaf47752db.dat\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-08-19T01:11:13.181359",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-c4zjd",  "galaxy_version": "24.1",  "handler": null,  "history_id": "577cd1c3054bee96",  "id": "a5be5095bbe61b9c",  "inputs": {   "input_file": {    "id": "863eb2bcbba39d05",    "src": "hda",    "uuid": "2b25ac05-dcaf-48dd-844a-038732d934b9"   },   "reference_source|fasta_ref": {    "id": "5d61d94caf5b123c",    "src": "hda",    "uuid": "c4560ea0-351d-4a4e-9b59-f7f1f60d1228"   },   "sec_default|mask": {    "id": "254755f14d8eae3c",    "src": "hda",    "uuid": "5ee63a95-4b8a-475a-b3b7-2a98e6979328"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output_file": {    "id": "a5be5095bbe61b9c",    "src": "hda",    "uuid": "fc8fb0f2-d98c-45b2-8113-60aaf47752db"   }  },  "params": {   "__input_ext": "\"input\"",   "absent": "\"\"",   "chain": "false",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "reference_source": "{\"__current_case__\": 1, \"fasta_ref\": {\"values\": [{\"id\": 42, \"src\": \"hda\"}]}, \"reference_source_selector\": \"history\"}",   "rename": "true",   "sec_default": "{\"conditional_mask\": {\"__current_case__\": 0, \"selector\": \"disabled\"}, \"iupac_codes\": false, \"mark_del\": \"\", \"mark_ins\": null, \"mark_snv\": null, \"mask\": {\"values\": [{\"id\": 43, \"src\": \"hda\"}]}, \"sample\": null, \"select_haplotype\": null}",   "sec_restrict": "{\"exclude\": null, \"include\": null}"  },  "state": "error",  "stderr": "Note: the --sample option not given, applying all records regardless of the genotype\nThe site 1:5 overlaps with another variant, skipping...\nApplied 12 variants\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/bcftools_consensus/bcftools_consensus/1.15.1+galaxy4",  "tool_stderr": "Note: the --sample option not given, applying all records regardless of the genotype\nThe site 1:5 overlaps with another variant, skipping...\nApplied 12 variants\n",  "tool_stdout": "",  "update_time": "2025-08-19T01:11:26.114954",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_consensus/bcftools_consensus/1.15.1+galaxy4, exit_code: None, stderr: Note: the --sample option not given, applying all records regardless of the genotype\nThe site 1:5 overlaps with another variant, skipping...\nApplied 12 variants\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_consensus/bcftools_consensus/1.15.1+galaxy4, exit_code: None, stderr: Note: the --sample option not given, applying all records regardless of the genotype\nThe site 1:5 overlaps with another variant, skipping...\nApplied 12 variants\n." ], "status": "failure", "test_index": 2, "time_seconds": 38.71204972267151, "tool_id": "bcftools_consensus", "tool_version": "1.15.1+galaxy4"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Note: the --sample option not given, applying all records regardless of the genotypeThe site 1:5 overlaps with another variant, skipping...Applied 12 variants
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_consensus (Test #4)" name="3" time="35.80832004547119">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Note: the --sample option not given, applying all records regardless of the genotypeThe site 1:5 overlaps with another variant, skipping...Applied 6 variants
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_consensus (Test #5)" name="4" time="12.003761291503906">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 4, "time_seconds": 12.003761291503906, "tool_id": "bcftools_consensus", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_consensus (Test #6)" name="5" time="34.2192804813385">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Note: the --sample option not given, applying all records regardless of the genotypeThe site 1:5 overlaps with another variant, skipping...Applied 6 variants
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_plugin_impute_info (Test #1)" name="0" time="38.83402419090271">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [impute-info.c] Warning: info tag not added to sites that are not biallelic diploidLines total/info-added/unchanged-no-tag/unchanged-not-biallelic-diploid:33/32/0/1
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_query (Test #1)" name="0" time="33.45515584945679">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_query (Test #2)" name="1" time="25.01864528656006">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "input_files": {   "id": "758c2bb03c5e51d0",   "src": "hda"  },  "sec_query|format": "%CHROM\\t%POS\\t%REF\\t%ALT\\t%DP4\\t%AN[\\t%GT\\t%TGT]\\n",  "sec_query|tsv": true,  "sec_restrict|regions_overlap": "1" }, "job": {  "command_line": "export BCFTOOLS_PLUGINS=`which bcftools | sed \u0027s,bin/bcftools,libexec/bcftools,\u0027`;     bgzip -c \u0027/galaxy/server/database/objects/d/d/1/dataset_dd1bd4e8-c91d-48d8-ac79-8027461c5792.dat\u0027 \u003e input0.vcf.gz \u0026\u0026 bcftools index input0.vcf.gz \u0026\u0026 echo \u0027input0.vcf.gz\u0027 \u003e\u003e vcfs_list \u0026\u0026             bcftools query  --format \u0027%CHROM\\t%POS\\t%REF\\t%ALT\\t%DP4\\t%AN[\\t%GT\\t%TGT]\\n\u0027              --regions-overlap 1           --vcf-list vcfs_list  \u003e /galaxy/server/database/objects/3/7/d/dataset_37d32020-36a2-43af-a3de-aa21cf7742a2.dat",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-08-19T01:14:24.184797",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-jd2pk",  "galaxy_version": "24.1",  "handler": null,  "history_id": "577cd1c3054bee96",  "id": "84277055d178801a",  "inputs": {   "input_files": {    "id": "758c2bb03c5e51d0",    "src": "hda",    "uuid": "dd1bd4e8-c91d-48d8-ac79-8027461c5792"   },   "input_files1": {    "id": "758c2bb03c5e51d0",    "src": "hda",    "uuid": "dd1bd4e8-c91d-48d8-ac79-8027461c5792"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output_file": {    "id": "84277055d178801a",    "src": "hda",    "uuid": "37d32020-36a2-43af-a3de-aa21cf7742a2"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "sec_query": "{\"allow_undef_tags\": false, \"format\": \"%CHROM\\\\t%POS\\\\t%REF\\\\t%ALT\\\\t%DP4\\\\t%AN[\\\\t%GT\\\\t%TGT]\\\\n\", \"print_header\": false, \"tsv\": true}",   "sec_restrict": "{\"collapse\": null, \"exclude\": null, \"include\": null, \"invert_samples\": false, \"invert_samples_file\": false, \"regions\": {\"__current_case__\": 0, \"regions_src\": \"__none__\"}, \"regions_overlap\": \"1\", \"samples\": \"\", \"samples_file\": null, \"targets\": {\"__current_case__\": 0, \"targets_src\": \"__none__\"}, \"targets_overlap\": null}"  },  "state": "error",  "stderr": "",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/bcftools_query/bcftools_query/1.15.1+galaxy4",  "tool_stderr": "",  "tool_stdout": "",  "update_time": "2025-08-19T01:14:29.543681",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_query/bcftools_query/1.15.1+galaxy4, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_query/bcftools_query/1.15.1+galaxy4, exit_code: None, stderr: ." ], "status": "failure", "test_index": 1, "time_seconds": 25.01864528656006, "tool_id": "bcftools_query", "tool_version": "1.15.1+galaxy4"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="deeptools_multi_bam_summary (Test #1)" name="0" time="52.34842252731323">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Number of bins found: 1657
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="deeptools_multi_bam_summary (Test #2)" name="1" time="37.08520793914795">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Number of bins found: 3
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #1)" name="0" time="63.71437883377075">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "input_file": {   "id": "577cd1c3054bee96",   "src": "hda"  },  "manipulate_blocks_0|manipulation_type|manipulation_type_selector": "identifier",  "manipulate_blocks_0|manipulation_type|manipulation|from": "",  "manipulate_blocks_0|manipulation_type|manipulation|manipulation_selector": "translate",  "manipulate_blocks_0|manipulation_type|manipulation|to": "",  "match_blocks_0|match_type|match_type_selector": "identifier",  "match_blocks_0|match_type|match|match_by": ".*",  "match_blocks_0|match_type|match|match_selector": "regex" }, "job": {  "command_line": "gx-fastq-manipulation \u0027/galaxy/server/database/objects/e/1/9/dataset_e19db060-ce49-436d-b2f3-2fc10a465f9f.dat\u0027 \u0027/galaxy/server/database/jobs_directory/000/2/configs/tmpm414ijfq\u0027 \u0027/galaxy/server/database/objects/9/6/2/dataset_9620d9f7-7c46-4015-abf1-2fb885f216ad.dat\u0027 \u0027/galaxy/server/database/objects/9/6/2/dataset_9620d9f7-7c46-4015-abf1-2fb885f216ad_files\u0027 \u0027sanger\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-08-19T01:00:50.400262",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-gxt6h",  "galaxy_version": "24.1",  "handler": null,  "history_id": "577cd1c3054bee96",  "id": "3295c124f75691b1",  "inputs": {   "input_file": {    "id": "577cd1c3054bee96",    "src": "hda",    "uuid": "e19db060-ce49-436d-b2f3-2fc10a465f9f"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output_file": {    "id": "3295c124f75691b1",    "src": "hda",    "uuid": "9620d9f7-7c46-4015-abf1-2fb885f216ad"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "manipulate_blocks": "[{\"__index__\": 0, \"manipulation_type\": {\"__current_case__\": 0, \"manipulation\": {\"__current_case__\": 0, \"from\": \"\", \"manipulation_selector\": \"translate\", \"to\": \"\"}, \"manipulation_type_selector\": \"identifier\"}}]",   "match_blocks": "[{\"__index__\": 0, \"match_type\": {\"__current_case__\": 0, \"match\": {\"__current_case__\": 0, \"match_by\": \".*\", \"match_selector\": \"regex\"}, \"match_type_selector\": \"identifier\"}}]"  },  "state": "error",  "stderr": "",  "stdout": "Manipulated 2 of 2 reads (100.00%).\n",  "tool_id": "toolshed.g2.bx.psu.edu/repos/devteam/fastq_manipulation/fastq_manipulation/1.1.5+galaxy2",  "tool_stderr": "",  "tool_stdout": "Manipulated 2 of 2 reads (100.00%).\n",  "update_time": "2025-08-19T01:01:29.385582",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/fastq_manipulation/fastq_manipulation/1.1.5+galaxy2, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/fastq_manipulation/fastq_manipulation/1.1.5+galaxy2, exit_code: None, stderr: ." ], "status": "failure", "test_index": 0, "time_seconds": 63.71437883377075, "tool_id": "fastq_manipulation", "tool_version": "1.1.5+galaxy2"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            Manipulated 2 of 2 reads (100.00%).
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #2)" name="1" time="25.088040590286255">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "input_file": {   "id": "8ff44056686b92c2",   "src": "hda"  },  "manipulate_blocks_0|manipulation_type|manipulation_type_selector": "identifier",  "manipulate_blocks_0|manipulation_type|manipulation|from": "",  "manipulate_blocks_0|manipulation_type|manipulation|manipulation_selector": "translate",  "manipulate_blocks_0|manipulation_type|manipulation|to": "",  "match_blocks_0|match_type|match_type_selector": "identifier",  "match_blocks_0|match_type|match|match_by": "STRINGDOESNOTEXIST",  "match_blocks_0|match_type|match|match_selector": "regex" }, "job": {  "command_line": "gx-fastq-manipulation \u0027/galaxy/server/database/objects/0/f/0/dataset_0f05e048-29e1-44b5-adab-51074465b37f.dat\u0027 \u0027/galaxy/server/database/jobs_directory/000/4/configs/tmpqwbebcap\u0027 \u0027/galaxy/server/database/objects/1/6/5/dataset_165e4338-afea-4dca-9bfc-9b90e7b6c57c.dat\u0027 \u0027/galaxy/server/database/objects/1/6/5/dataset_165e4338-afea-4dca-9bfc-9b90e7b6c57c_files\u0027 \u0027sanger\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-08-19T01:01:49.341342",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-xhrhp",  "galaxy_version": "24.1",  "handler": null,  "history_id": "577cd1c3054bee96",  "id": "2cc57667f3448098",  "inputs": {   "input_file": {    "id": "8ff44056686b92c2",    "src": "hda",    "uuid": "0f05e048-29e1-44b5-adab-51074465b37f"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output_file": {    "id": "2cc57667f3448098",    "src": "hda",    "uuid": "165e4338-afea-4dca-9bfc-9b90e7b6c57c"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "manipulate_blocks": "[{\"__index__\": 0, \"manipulation_type\": {\"__current_case__\": 0, \"manipulation\": {\"__current_case__\": 0, \"from\": \"\", \"manipulation_selector\": \"translate\", \"to\": \"\"}, \"manipulation_type_selector\": \"identifier\"}}]",   "match_blocks": "[{\"__index__\": 0, \"match_type\": {\"__current_case__\": 0, \"match\": {\"__current_case__\": 0, \"match_by\": \"STRINGDOESNOTEXIST\", \"match_selector\": \"regex\"}, \"match_type_selector\": \"identifier\"}}]"  },  "state": "error",  "stderr": "",  "stdout": "Manipulated 0 of 2 reads (0.00%).\n",  "tool_id": "toolshed.g2.bx.psu.edu/repos/devteam/fastq_manipulation/fastq_manipulation/1.1.5+galaxy2",  "tool_stderr": "",  "tool_stdout": "Manipulated 0 of 2 reads (0.00%).\n",  "update_time": "2025-08-19T01:01:54.826898",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/fastq_manipulation/fastq_manipulation/1.1.5+galaxy2, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/fastq_manipulation/fastq_manipulation/1.1.5+galaxy2, exit_code: None, stderr: ." ], "status": "failure", "test_index": 1, "time_seconds": 25.088040590286255, "tool_id": "fastq_manipulation", "tool_version": "1.1.5+galaxy2"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            Manipulated 0 of 2 reads (0.00%).
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #11)" name="10" time="35.23175644874573">
+        
+            
+            <system-out><![CDATA[
+            Manipulated 1 of 2 reads (50.00%).
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #12)" name="11" time="32.20477652549744">
+        
+            
+            <system-out><![CDATA[
+            Manipulated 2 of 2 reads (100.00%).
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #13)" name="12" time="32.675116539001465">
+        
+            
+            <system-out><![CDATA[
+            Manipulated 2 of 2 reads (100.00%).
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #14)" name="13" time="32.20152950286865">
+        
+            
+            <system-out><![CDATA[
+            Manipulated 2 of 2 reads (100.00%).
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #15)" name="14" time="11.230220794677734">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 14, "time_seconds": 11.230220794677734, "tool_id": "fastq_manipulation", "tool_version": "1.1.5+galaxy2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #3)" name="2" time="32.395386695861816">
+        
+            
+            <system-out><![CDATA[
+            Manipulated 2 of 2 reads (100.00%).
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #4)" name="3" time="33.13699817657471">
+        
+            
+            <system-out><![CDATA[
+            Manipulated 0 of 2 reads (0.00%).
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #5)" name="4" time="33.16438937187195">
+        
+            
+            <system-out><![CDATA[
+            Manipulated 2 of 2 reads (100.00%).
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #6)" name="5" time="33.471200466156006">
+        
+            
+            <system-out><![CDATA[
+            Manipulated 2 of 2 reads (100.00%).
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #7)" name="6" time="11.155137300491333">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 6, "time_seconds": 11.155137300491333, "tool_id": "fastq_manipulation", "tool_version": "1.1.5+galaxy2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #8)" name="7" time="32.669673681259155">
+        
+            
+            <system-out><![CDATA[
+            Manipulated 4 of 4 reads (100.00%).
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #9)" name="8" time="36.48806285858154">
+        
+            
+            <system-out><![CDATA[
+            Manipulated 4 of 4 reads (100.00%).
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastq_manipulation (Test #10)" name="9" time="30.991993188858032">
+        
+            
+            <system-out><![CDATA[
+            Manipulated 1 of 2 reads (50.00%).
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="ivar_trim (Test #1)" name="0" time="46.97384214401245">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Found 196 primers in BED fileReading from sorted.bam-------Results: Primer NameRead CountnCoV-2019_1_LEFT25nCoV-2019_2_LEFT10nCoV-2019_1_RIGHT9nCoV-2019_3_LEFT22nCoV-2019_2_RIGHT17nCoV-2019_4_LEFT20nCoV-2019_3_RIGHT29nCoV-2019_5_LEFT4nCoV-2019_4_RIGHT5nCoV-2019_6_LEFT17nCoV-2019_5_RIGHT16nCoV-2019_7_LEFT21nCoV-2019_6_RIGHT10nCoV-2019_8_LEFT5nCoV-2019_7_RIGHT14nCoV-2019_9_LEFT18nCoV-2019_8_RIGHT10nCoV-2019_10_LEFT20nCoV-2019_9_RIGHT11nCoV-2019_11_LEFT15nCoV-2019_10_RIGHT11nCoV-2019_12_LEFT48nCoV-2019_11_RIGHT31nCoV-2019_13_LEFT31nCoV-2019_12_RIGHT11nCoV-2019_14_LEFT53nCoV-2019_13_RIGHT64nCoV-2019_15_LEFT64nCoV-2019_14_RIGHT89nCoV-2019_16_LEFT168nCoV-2019_15_RIGHT57nCoV-2019_17_LEFT100nCoV-2019_16_RIGHT112nCoV-2019_18_LEFT19nCoV-2019_17_RIGHT23nCoV-2019_19_LEFT72nCoV-2019_18_RIGHT42nCoV-2019_20_LEFT31nCoV-2019_19_RIGHT43nCoV-2019_21_LEFT126nCoV-2019_20_RIGHT63nCoV-2019_22_LEFT55nCoV-2019_21_RIGHT23nCoV-2019_23_LEFT46nCoV-2019_22_RIGHT58nCoV-2019_24_LEFT22nCoV-2019_23_RIGHT2nCoV-2019_25_LEFT7nCoV-2019_24_RIGHT6nCoV-2019_26_LEFT13nCoV-2019_25_RIGHT11nCoV-2019_27_LEFT70nCoV-2019_26_RIGHT14nCoV-2019_28_LEFT15nCoV-2019_27_RIGHT31nCoV-2019_29_LEFT4nCoV-2019_28_RIGHT6nCoV-2019_30_LEFT10nCoV-2019_29_RIGHT70nCoV-2019_31_LEFT33nCoV-2019_30_RIGHT26nCoV-2019_32_LEFT119nCoV-2019_31_RIGHT75nCoV-2019_33_LEFT23nCoV-2019_32_RIGHT52nCoV-2019_34_LEFT51nCoV-2019_33_RIGHT43nCoV-2019_35_LEFT44nCoV-2019_34_RIGHT40nCoV-2019_36_LEFT113nCoV-2019_35_RIGHT86nCoV-2019_37_LEFT74nCoV-2019_36_RIGHT131nCoV-2019_38_LEFT185nCoV-2019_37_RIGHT163nCoV-2019_39_LEFT97nCoV-2019_38_RIGHT113nCoV-2019_40_LEFT67nCoV-2019_39_RIGHT39nCoV-2019_41_LEFT31nCoV-2019_40_RIGHT17nCoV-2019_42_LEFT39nCoV-2019_41_RIGHT5nCoV-2019_43_LEFT47nCoV-2019_42_RIGHT89nCoV-2019_44_LEFT51nCoV-2019_43_RIGHT23nCoV-2019_45_LEFT43nCoV-2019_44_RIGHT70nCoV-2019_46_LEFT11nCoV-2019_45_RIGHT16nCoV-2019_47_LEFT27nCoV-2019_46_RIGHT35nCoV-2019_48_LEFT74nCoV-2019_47_RIGHT25nCoV-2019_49_LEFT40nCoV-2019_48_RIGHT41nCoV-2019_50_LEFT26nCoV-2019_49_RIGHT54nCoV-2019_51_LEFT81nCoV-2019_50_RIGHT19nCoV-2019_52_LEFT33nCoV-2019_51_RIGHT47nCoV-2019_53_LEFT75nCoV-2019_52_RIGHT28nCoV-2019_54_LEFT44nCoV-2019_53_RIGHT35nCoV-2019_55_LEFT66nCoV-2019_54_RIGHT13nCoV-2019_56_LEFT35nCoV-2019_55_RIGHT96nCoV-2019_57_LEFT112nCoV-2019_56_RIGHT69nCoV-2019_58_LEFT15nCoV-2019_57_RIGHT78nCoV-2019_59_LEFT35nCoV-2019_58_RIGHT6nCoV-2019_60_LEFT22nCoV-2019_59_RIGHT23nCoV-2019_61_LEFT33nCoV-2019_60_RIGHT19nCoV-2019_62_LEFT16nCoV-2019_61_RIGHT33nCoV-2019_63_LEFT47nCoV-2019_62_RIGHT17nCoV-2019_64_LEFT6nCoV-2019_63_RIGHT31nCoV-2019_65_LEFT6nCoV-2019_64_RIGHT8nCoV-2019_66_LEFT29nCoV-2019_65_RIGHT59nCoV-2019_67_LEFT6nCoV-2019_66_RIGHT2nCoV-2019_68_LEFT8nCoV-2019_67_RIGHT0nCoV-2019_69_LEFT17nCoV-2019_68_RIGHT9nCoV-2019_70_LEFT0nCoV-2019_69_RIGHT5nCoV-2019_71_LEFT1nCoV-2019_70_RIGHT1nCoV-2019_72_LEFT7nCoV-2019_71_RIGHT5nCoV-2019_73_LEFT0nCoV-2019_72_RIGHT4nCoV-2019_74_LEFT0nCoV-2019_73_RIGHT4nCoV-2019_75_LEFT2nCoV-2019_74_RIGHT0nCoV-2019_76_LEFT2nCoV-2019_75_RIGHT1nCoV-2019_77_LEFT27nCoV-2019_76_RIGHT13nCoV-2019_78_LEFT63nCoV-2019_77_RIGHT87nCoV-2019_79_LEFT5nCoV-2019_78_RIGHT23nCoV-2019_80_LEFT92nCoV-2019_79_RIGHT17nCoV-2019_81_LEFT28nCoV-2019_80_RIGHT33nCoV-2019_82_LEFT150nCoV-2019_81_RIGHT79nCoV-2019_83_LEFT22nCoV-2019_82_RIGHT50nCoV-2019_84_LEFT32nCoV-2019_83_RIGHT41nCoV-2019_85_LEFT77nCoV-2019_84_RIGHT50nCoV-2019_86_LEFT54nCoV-2019_85_RIGHT37nCoV-2019_87_LEFT48nCoV-2019_86_RIGHT30nCoV-2019_88_LEFT58nCoV-2019_87_RIGHT3nCoV-2019_89_LEFT37nCoV-2019_88_RIGHT91nCoV-2019_90_LEFT28nCoV-2019_89_RIGHT30nCoV-2019_91_LEFT27nCoV-2019_90_RIGHT21nCoV-2019_92_LEFT9nCoV-2019_91_RIGHT2nCoV-2019_93_LEFT38nCoV-2019_92_RIGHT14nCoV-2019_94_LEFT116nCoV-2019_93_RIGHT23nCoV-2019_95_LEFT39nCoV-2019_94_RIGHT55nCoV-2019_96_LEFT24nCoV-2019_95_RIGHT8nCoV-2019_97_LEFT0nCoV-2019_96_RIGHT17nCoV-2019_98_LEFT2nCoV-2019_97_RIGHT1nCoV-2019_98_RIGHT2Trimmed primers from 13.29% (6871) of reads.3.5% (1811) of reads were quality trimmed below the minimum length of 30 bp and were not written to file.84.15% (43493) of reads started outside of primer regions. Since the -e flag was given, these reads were written to file.58.16% (30061) of reads had their insert size smaller than their read length[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="ivar_trim (Test #2)" name="1" time="39.27579212188721">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Found 196 primers in BED fileReading from sorted.bam-------Results: Primer NameRead CountnCoV-2019_1_LEFT25nCoV-2019_2_LEFT10nCoV-2019_1_RIGHT9nCoV-2019_3_LEFT22nCoV-2019_2_RIGHT17nCoV-2019_4_LEFT20nCoV-2019_3_RIGHT29nCoV-2019_5_LEFT4nCoV-2019_4_RIGHT5nCoV-2019_6_LEFT17nCoV-2019_5_RIGHT16nCoV-2019_7_LEFT21nCoV-2019_6_RIGHT10nCoV-2019_8_LEFT5nCoV-2019_7_RIGHT14nCoV-2019_9_LEFT18nCoV-2019_8_RIGHT10nCoV-2019_10_LEFT20nCoV-2019_9_RIGHT11nCoV-2019_11_LEFT15nCoV-2019_10_RIGHT11nCoV-2019_12_LEFT48nCoV-2019_11_RIGHT31nCoV-2019_13_LEFT31nCoV-2019_12_RIGHT11nCoV-2019_14_LEFT53nCoV-2019_13_RIGHT64nCoV-2019_15_LEFT64nCoV-2019_14_RIGHT89nCoV-2019_16_LEFT168nCoV-2019_15_RIGHT57nCoV-2019_17_LEFT100nCoV-2019_16_RIGHT112nCoV-2019_18_LEFT19nCoV-2019_17_RIGHT23nCoV-2019_19_LEFT72nCoV-2019_18_RIGHT42nCoV-2019_20_LEFT31nCoV-2019_19_RIGHT43nCoV-2019_21_LEFT126nCoV-2019_20_RIGHT63nCoV-2019_22_LEFT55nCoV-2019_21_RIGHT23nCoV-2019_23_LEFT46nCoV-2019_22_RIGHT58nCoV-2019_24_LEFT22nCoV-2019_23_RIGHT2nCoV-2019_25_LEFT7nCoV-2019_24_RIGHT6nCoV-2019_26_LEFT13nCoV-2019_25_RIGHT11nCoV-2019_27_LEFT70nCoV-2019_26_RIGHT14nCoV-2019_28_LEFT15nCoV-2019_27_RIGHT31nCoV-2019_29_LEFT4nCoV-2019_28_RIGHT6nCoV-2019_30_LEFT10nCoV-2019_29_RIGHT70nCoV-2019_31_LEFT33nCoV-2019_30_RIGHT26nCoV-2019_32_LEFT119nCoV-2019_31_RIGHT75nCoV-2019_33_LEFT23nCoV-2019_32_RIGHT52nCoV-2019_34_LEFT51nCoV-2019_33_RIGHT43nCoV-2019_35_LEFT44nCoV-2019_34_RIGHT40nCoV-2019_36_LEFT113nCoV-2019_35_RIGHT86nCoV-2019_37_LEFT74nCoV-2019_36_RIGHT131nCoV-2019_38_LEFT185nCoV-2019_37_RIGHT163nCoV-2019_39_LEFT97nCoV-2019_38_RIGHT113nCoV-2019_40_LEFT67nCoV-2019_39_RIGHT39nCoV-2019_41_LEFT31nCoV-2019_40_RIGHT17nCoV-2019_42_LEFT39nCoV-2019_41_RIGHT5nCoV-2019_43_LEFT47nCoV-2019_42_RIGHT89nCoV-2019_44_LEFT51nCoV-2019_43_RIGHT23nCoV-2019_45_LEFT43nCoV-2019_44_RIGHT70nCoV-2019_46_LEFT11nCoV-2019_45_RIGHT16nCoV-2019_47_LEFT27nCoV-2019_46_RIGHT35nCoV-2019_48_LEFT74nCoV-2019_47_RIGHT25nCoV-2019_49_LEFT40nCoV-2019_48_RIGHT41nCoV-2019_50_LEFT26nCoV-2019_49_RIGHT54nCoV-2019_51_LEFT81nCoV-2019_50_RIGHT19nCoV-2019_52_LEFT33nCoV-2019_51_RIGHT47nCoV-2019_53_LEFT75nCoV-2019_52_RIGHT28nCoV-2019_54_LEFT44nCoV-2019_53_RIGHT35nCoV-2019_55_LEFT66nCoV-2019_54_RIGHT13nCoV-2019_56_LEFT35nCoV-2019_55_RIGHT96nCoV-2019_57_LEFT112nCoV-2019_56_RIGHT69nCoV-2019_58_LEFT15nCoV-2019_57_RIGHT78nCoV-2019_59_LEFT35nCoV-2019_58_RIGHT6nCoV-2019_60_LEFT22nCoV-2019_59_RIGHT23nCoV-2019_61_LEFT33nCoV-2019_60_RIGHT19nCoV-2019_62_LEFT16nCoV-2019_61_RIGHT33nCoV-2019_63_LEFT47nCoV-2019_62_RIGHT17nCoV-2019_64_LEFT6nCoV-2019_63_RIGHT31nCoV-2019_65_LEFT6nCoV-2019_64_RIGHT8nCoV-2019_66_LEFT29nCoV-2019_65_RIGHT59nCoV-2019_67_LEFT6nCoV-2019_66_RIGHT2nCoV-2019_68_LEFT8nCoV-2019_67_RIGHT0nCoV-2019_69_LEFT17nCoV-2019_68_RIGHT9nCoV-2019_70_LEFT0nCoV-2019_69_RIGHT5nCoV-2019_71_LEFT1nCoV-2019_70_RIGHT1nCoV-2019_72_LEFT7nCoV-2019_71_RIGHT5nCoV-2019_73_LEFT0nCoV-2019_72_RIGHT4nCoV-2019_74_LEFT0nCoV-2019_73_RIGHT4nCoV-2019_75_LEFT2nCoV-2019_74_RIGHT0nCoV-2019_76_LEFT2nCoV-2019_75_RIGHT1nCoV-2019_77_LEFT27nCoV-2019_76_RIGHT13nCoV-2019_78_LEFT63nCoV-2019_77_RIGHT87nCoV-2019_79_LEFT5nCoV-2019_78_RIGHT23nCoV-2019_80_LEFT92nCoV-2019_79_RIGHT17nCoV-2019_81_LEFT28nCoV-2019_80_RIGHT33nCoV-2019_82_LEFT150nCoV-2019_81_RIGHT79nCoV-2019_83_LEFT22nCoV-2019_82_RIGHT50nCoV-2019_84_LEFT32nCoV-2019_83_RIGHT41nCoV-2019_85_LEFT77nCoV-2019_84_RIGHT50nCoV-2019_86_LEFT54nCoV-2019_85_RIGHT37nCoV-2019_87_LEFT48nCoV-2019_86_RIGHT30nCoV-2019_88_LEFT58nCoV-2019_87_RIGHT3nCoV-2019_89_LEFT37nCoV-2019_88_RIGHT91nCoV-2019_90_LEFT28nCoV-2019_89_RIGHT30nCoV-2019_91_LEFT27nCoV-2019_90_RIGHT21nCoV-2019_92_LEFT9nCoV-2019_91_RIGHT2nCoV-2019_93_LEFT38nCoV-2019_92_RIGHT14nCoV-2019_94_LEFT116nCoV-2019_93_RIGHT23nCoV-2019_95_LEFT39nCoV-2019_94_RIGHT55nCoV-2019_96_LEFT24nCoV-2019_95_RIGHT8nCoV-2019_97_LEFT0nCoV-2019_96_RIGHT17nCoV-2019_98_LEFT2nCoV-2019_97_RIGHT1nCoV-2019_98_RIGHT2Trimmed primers from 13.29% (6871) of reads.3.5% (1811) of reads were quality trimmed below the minimum length of 30 bp and were not written to file.84.15% (43493) of reads started outside of primer regions. Since the -e flag was given, these reads were written to file.58.16% (30061) of reads had their insert size smaller than their read length[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="ivar_trim (Test #3)" name="2" time="37.26165413856506">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Found 68 primers in BED fileReading from sorted.bam-------Results: Primer NameRead Count400_2_out_L265400_1_out_R116400_3_out_L*47400_2_out_R269400_4_out_L123400_3_out_R*55400_5_out_L1083400_4_out_R123400_6_out_L139400_5_out_R1044400_7_out_L246400_6_out_R140400_8_out_L*164400_7_out_R251400_9_out_L*105400_8_out_R*164400_10_out_L358400_9_out_R*104400_11_out_L1538400_10_out_R358400_12_out_L297400_11_out_R1541400_13_out_L209400_12_out_R293400_14_out_L*736400_13_out_R229400_15_out_L87400_14_out_R*735400_16_out_L*498400_15_out_R82400_17_out_L**1420400_16_out_R*493400_18_out_L**9400_17_out_R**1415400_19_out_L43400_18_out_R**9400_20_out_L*2128400_19_out_R50400_21_out_L*18400_20_out_R*2158400_22_out_L**33400_21_out_R*10400_23_out_L179400_22_out_R**5400_24_out_L**80400_23_out_R169400_25_out_L**3035400_24_out_R**80400_26_out_L423400_25_out_R**3073400_27_out_L104400_26_out_R428400_28_out_L41400_27_out_R6400_29_out_L113400_28_out_R43400_30_out_L1057400_29_out_R118400_31_out_L166400_30_out_R1054400_32_out_L280400_31_out_R170400_33_out_L*436400_32_out_R283400_34_out_L*688400_33_out_R*433400_35_out_L0400_34_out_R*688Trimmed primers from 99.24% (32302) of reads.10.73% (3493) of reads were quality trimmed below the minimum length of 30 bp and were not written to file.0.65% (212) of reads that started outside of primer regions were not written to file0.91% (296) of reads had their insert size smaller than their read length[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="ivar_trim (Test #4)" name="3" time="36.289111614227295">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Found 68 primers in BED fileReading from sorted.bamMinimum Read Length based on 1000 reads: 125-------Results: Primer NameRead Count400_2_out_L227400_1_out_R156400_3_out_L*76400_2_out_R238400_4_out_L91400_3_out_R*76400_5_out_L1548400_4_out_R98400_6_out_L37400_5_out_R1541400_7_out_L540400_6_out_R38400_8_out_L*143400_7_out_R538400_9_out_L*90400_8_out_R*143400_10_out_L400400_9_out_R*93400_11_out_L2536400_10_out_R402400_12_out_L146400_11_out_R2534400_13_out_L299400_12_out_R141400_14_out_L*676400_13_out_R307400_15_out_L183400_14_out_R*671400_16_out_L*419400_15_out_R180400_17_out_L**2322400_16_out_R*417400_18_out_L**32400_17_out_R**2315400_19_out_L67400_18_out_R**6400_20_out_L*1653400_19_out_R69400_21_out_L*18400_20_out_R*1681400_22_out_L**18400_21_out_R*13400_23_out_L297400_22_out_R**2400_24_out_L**61400_23_out_R292400_25_out_L**4363400_24_out_R**68400_26_out_L310400_25_out_R**4382400_27_out_L95400_26_out_R305400_28_out_L17400_27_out_R21400_29_out_L185400_28_out_R17400_30_out_L1512400_29_out_R187400_31_out_L266400_30_out_R1510400_32_out_L413400_31_out_R273400_33_out_L*546400_32_out_R411400_34_out_L*699400_33_out_R*536400_35_out_L0400_34_out_R*699Trimmed primers from 99.17% (40620) of reads.18.42% (7545) of reads were quality trimmed below the minimum length of 125 bp and were not written to file.0.67% (274) of reads that started outside of primer regions were not written to file0.57% (232) of reads had their insert size smaller than their read length[bam_sort_core] merging from 0 files and 8 in-memory blocks...
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="ivar_trim (Test #5)" name="4" time="">
+        
+            <error type="error" message=""><![CDATA[
+                { "status": "skip", "test_index": 4, "tool_id": "ivar_trim", "tool_version": "1.4.4+galaxy1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="ivar_trim (Test #6)" name="5" time="">
+        
+            <error type="error" message=""><![CDATA[
+                { "status": "skip", "test_index": 5, "tool_id": "ivar_trim", "tool_version": "1.4.4+galaxy1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="medaka_variant (Test #1)" name="0" time="20.439756155014038">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 0, "time_seconds": 20.439756155014038, "tool_id": "medaka_variant", "tool_version": "1.7.2+galaxy1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="medaka_variant (Test #2)" name="1" time="77.17266297340393">
+        
+            
+            <system-out><![CDATA[
+            [01:16:30 - DataStre] Loaded sample register.[01:16:30 - DataIndx] Loaded 1/1 (100.00%) sample files.[01:16:30 - Variants] Label decoding is:0: ('*',)1: ('A',)2: ('C',)3: ('G',)4: ('T',)[01:16:30 - Variants] Processing NC_045512.2:0-.
+            ]]></system-out>
+            <system-err><![CDATA[
+            [01:16:32 - Annotate] Getting chrom coordinates[01:16:32 - Annotate] Processing chunk with coordinates: NC_045512.2:44-1813[01:16:32 - BAMFile] Creating pool of 16 BAM file sets.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="medaka_variant (Test #3)" name="2" time="36.96449112892151">
+        
+            
+            <system-out><![CDATA[
+            [01:17:19 - DataStre] Loaded sample register.[01:17:19 - DataIndx] Loaded 1/1 (100.00%) sample files.[01:17:19 - Variants] Label decoding is:0: ('*',)1: ('A',)2: ('C',)3: ('G',)4: ('T',)[01:17:19 - Variants] Processing NC_045512.2:0-.
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="poretools_times (Test #1)" name="0" time="76.14524555206299">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="sailfish (Test #1)" name="0" time="52.063674211502075">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Version Info: Could not resolve upgrade information in the alotted time.Check for upgrades manually at www.cs.cmu.edu/~ckingsf/sailfish.writing log to ./index_dir/logs/sailfish_index.logRapMap Indexer[Step 1 of 4] : counting k-mersElapsed time: 0.00112332sReplaced 0 non-ATCG nucleotidesClipped poly-A tails from 0 transcriptsBuilding rank-select dictionary and saving to disk doneElapsed time: 2.502e-05sWriting sequence data to file . . . doneElapsed time: 7.102e-05s[info] Building 32-bit suffix array (length of generalized text is 28577)Building suffix array . . . successsaving to disk . . . doneElapsed time: 0.00013541sdoneElapsed time: 0.0026238sprocessed 0 positionskhash had 18955 keyssaving hash to disk . . . doneElapsed time: 0.00137137sVersion Info: Could not resolve upgrade information in the alotted time.Check for upgrades manually at www.cs.cmu.edu/~ckingsf/sailfish.# sailfish (quasi-mapping-based) v0.9.2# [ program ] => sailfish # [ command ] => quant # [ index ] => { ./index_dir }# [ mates1 ] => { ./mate1.fastq }# [ mates2 ] => { ./mate2.fastq }# [ libType ] => { IU }# [ output ] => { ./results }# [ threads ] => { 8 }# [ gcSizeSamp ] => { 1 }# [ gcSpeedSamp ] => { 1 }# [ fldMean ] => { 200 }# [ fldSD ] => { 80 }# [ maxReadOcc ] => { 200 }# [ maxFragLen ] => { 1000 }# [ txpAggregationKey ] => { gene_id }# [ numBiasSamples ] => { 1000000 }# [ numFragSamples ] => { 10000 }# [ numGibbsSamples ] => { 0 }# [ numBootstraps ] => { 0 }Logs will be written to ./results/logs[2025-08-19 01:23:43.377] [jointLog] [info] parsing read library formatthere is 1 libLoading 32-bit quasi indexIndex contained 15 targetsLoaded targets[2025-08-19 01:23:43.430] [jointLog] [info] Loading Quasi index[2025-08-19 01:23:43.435] [jointLog] [info] done[2025-08-19 01:23:43.453] [jointLog] [info] Gathered fragment lengths from all threads[2025-08-19 01:23:43.453] [jointLog] [warning] Sailfish saw fewer then 10000 uniquely mapped reads so 200 will be used as the mean fragment length and 80 as the standard deviation for effective length correction[2025-08-19 01:23:43.454] [jointLog] [info] Estimating effective lengthsDone Quasi-Mapping [2025-08-19 01:23:43.462] [jointLog] [info] Computed 21 rich equivalence classes for further processing[2025-08-19 01:23:43.462] [jointLog] [info] Counted 10000 total reads in the equivalence classes [2025-08-19 01:23:43.462] [jointLog] [info] Starting optimizer:[2025-08-19 01:23:43.463] [jointLog] [info] Optimizing over 21 equivalence classes[2025-08-19 01:23:43.463] [jointLog] [info] iteration = 0 | max rel diff. = 14.873[2025-08-19 01:23:43.463] [jointLog] [info] iteration = 64 | max rel diff. = 0.00117687[2025-08-19 01:23:43.463] [jointLog] [info] Finished optimizer[2025-08-19 01:23:43.463] [jointLog] [info] writing output [2025-08-19 01:23:43.431] [stderrLog] [info] Loading Suffix Array [2025-08-19 01:23:43.432] [stderrLog] [info] Loading Position Hash[2025-08-19 01:23:43.433] [stderrLog] [info] Loading Transcript Info [2025-08-19 01:23:43.434] [stderrLog] [info] Loading Rank-Select Bit Array[2025-08-19 01:23:43.434] [stderrLog] [info] There were 15 set bits in the bit array[2025-08-19 01:23:43.435] [stderrLog] [info] Computing transcript lengths[2025-08-19 01:23:43.435] [stderrLog] [info] Waiting to finish loading hash[2025-08-19 01:23:43.435] [stderrLog] [info] Done loading index
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="sailfish (Test #2)" name="1" time="38.32245135307312">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Version Info: Could not resolve upgrade information in the alotted time.Check for upgrades manually at www.cs.cmu.edu/~ckingsf/sailfish.writing log to ./index_dir/logs/sailfish_index.logRapMap Indexer[Step 1 of 4] : counting k-mersElapsed time: 0.00106121sReplaced 0 non-ATCG nucleotidesClipped poly-A tails from 0 transcriptsBuilding rank-select dictionary and saving to disk doneElapsed time: 1.96e-05sWriting sequence data to file . . . doneElapsed time: 9.58e-05s[info] Building 32-bit suffix array (length of generalized text is 28577)Building suffix array . . . successsaving to disk . . . doneElapsed time: 0.00012336sdoneElapsed time: 0.0149551sprocessed 0 positionskhash had 18955 keyssaving hash to disk . . . doneElapsed time: 0.00099108sVersion Info: Could not resolve upgrade information in the alotted time.Check for upgrades manually at www.cs.cmu.edu/~ckingsf/sailfish.# sailfish (quasi-mapping-based) v0.9.2# [ program ] => sailfish # [ command ] => quant # [ index ] => { ./index_dir }# [ mates1 ] => { /dev/fd/63 }# [ mates2 ] => { /dev/fd/62 }# [ libType ] => { IU }# [ output ] => { ./results }# [ threads ] => { 8 }# [ gcSizeSamp ] => { 1 }# [ gcSpeedSamp ] => { 1 }# [ fldMean ] => { 200 }# [ fldSD ] => { 80 }# [ maxReadOcc ] => { 200 }# [ maxFragLen ] => { 1000 }# [ txpAggregationKey ] => { gene_id }# [ numBiasSamples ] => { 1000000 }# [ numFragSamples ] => { 10000 }# [ numGibbsSamples ] => { 0 }# [ numBootstraps ] => { 0 }Logs will be written to ./results/logs[2025-08-19 01:24:26.005] [jointLog] [info] parsing read library formatthere is 1 lib[2025-08-19 01:24:26.057] [jointLog] [info] Loading Quasi indexLoading 32-bit quasi indexIndex contained 15 targetsLoaded targets[2025-08-19 01:24:26.061] [jointLog] [info] done[2025-08-19 01:24:26.080] [jointLog] [info] Gathered fragment lengths from all threads[2025-08-19 01:24:26.080] [jointLog] [warning] Sailfish saw fewer then 10000 uniquely mapped reads so 200 will be used as the mean fragment length and 80 as the standard deviation for effective length correction[2025-08-19 01:24:26.080] [jointLog] [info] Estimating effective lengthsDone Quasi-Mapping [2025-08-19 01:24:26.089] [jointLog] [info] Computed 21 rich equivalence classes for further processing[2025-08-19 01:24:26.089] [jointLog] [info] Counted 10000 total reads in the equivalence classes [2025-08-19 01:24:26.089] [jointLog] [info] Starting optimizer:[2025-08-19 01:24:26.089] [jointLog] [info] Optimizing over 21 equivalence classes[2025-08-19 01:24:26.089] [jointLog] [info] iteration = 0 | max rel diff. = 14.873[2025-08-19 01:24:26.090] [jointLog] [info] iteration = 64 | max rel diff. = 0.00117687[2025-08-19 01:24:26.090] [jointLog] [info] Finished optimizer[2025-08-19 01:24:26.090] [jointLog] [info] writing output [2025-08-19 01:24:26.059] [stderrLog] [info] Loading Suffix Array [2025-08-19 01:24:26.059] [stderrLog] [info] Loading Position Hash[2025-08-19 01:24:26.060] [stderrLog] [info] Loading Transcript Info [2025-08-19 01:24:26.061] [stderrLog] [info] Loading Rank-Select Bit Array[2025-08-19 01:24:26.061] [stderrLog] [info] There were 15 set bits in the bit array[2025-08-19 01:24:26.061] [stderrLog] [info] Computing transcript lengths[2025-08-19 01:24:26.061] [stderrLog] [info] Waiting to finish loading hash[2025-08-19 01:24:26.061] [stderrLog] [info] Done loading index
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="sailfish (Test #3)" name="2" time="38.81905698776245">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Version Info: Could not resolve upgrade information in the alotted time.Check for upgrades manually at www.cs.cmu.edu/~ckingsf/sailfish.writing log to ./index_dir/logs/sailfish_index.logRapMap Indexer[Step 1 of 4] : counting k-mersElapsed time: 0.001028sReplaced 0 non-ATCG nucleotidesClipped poly-A tails from 0 transcriptsBuilding rank-select dictionary and saving to disk doneElapsed time: 1.524e-05sWriting sequence data to file . . . doneElapsed time: 4.918e-05s[info] Building 32-bit suffix array (length of generalized text is 28577)Building suffix array . . . successsaving to disk . . . doneElapsed time: 0.00013444sdoneElapsed time: 0.00262868sprocessed 0 positionskhash had 18955 keyssaving hash to disk . . . doneElapsed time: 0.00135868sVersion Info: Could not resolve upgrade information in the alotted time.Check for upgrades manually at www.cs.cmu.edu/~ckingsf/sailfish.# sailfish (quasi-mapping-based) v0.9.2# [ program ] => sailfish # [ command ] => quant # [ index ] => { ./index_dir }# [ mates1 ] => { ./mate1.fastq }# [ mates2 ] => { ./mate2.fastq }# [ libType ] => { IU }# [ output ] => { ./results }# [ biasCorrect ] => { }# [ threads ] => { 8 }# [ gcSizeSamp ] => { 1 }# [ gcSpeedSamp ] => { 1 }# [ fldMean ] => { 200 }# [ fldSD ] => { 80 }# [ maxReadOcc ] => { 200 }# [ maxFragLen ] => { 1000 }# [ txpAggregationKey ] => { gene_id }# [ numBiasSamples ] => { 1000000 }# [ numFragSamples ] => { 10000 }# [ numGibbsSamples ] => { 0 }# [ numBootstraps ] => { 0 }Logs will be written to ./results/logs[2025-08-19 01:25:04.066] [jointLog] [info] parsing read library formatthere is 1 libLoading 32-bit quasi indexIndex contained 15 targetsLoaded targets[2025-08-19 01:25:04.119] [jointLog] [info] Loading Quasi index[2025-08-19 01:25:04.123] [jointLog] [info] done[2025-08-19 01:25:04.143] [jointLog] [info] Gathered fragment lengths from all threads[2025-08-19 01:25:04.143] [jointLog] [warning] Sailfish saw fewer then 10000 uniquely mapped reads so 200 will be used as the mean fragment length and 80 as the standard deviation for effective length correction[2025-08-19 01:25:04.144] [jointLog] [info] Estimating effective lengthsDone Quasi-Mapping [2025-08-19 01:25:04.152] [jointLog] [info] Computed 21 rich equivalence classes for further processing[2025-08-19 01:25:04.152] [jointLog] [info] Counted 10000 total reads in the equivalence classes [2025-08-19 01:25:04.152] [jointLog] [info] Starting optimizer:[2025-08-19 01:25:04.153] [jointLog] [info] Optimizing over 21 equivalence classes[2025-08-19 01:25:04.153] [jointLog] [info] iteration = 0 | max rel diff. = 14.873[2025-08-19 01:25:04.153] [jointLog] [info] iteration 50, recomputing effective lengths[2025-08-19 01:25:04.154] [jointLog] [info] iteration = 63 | max rel diff. = 0.00199953[2025-08-19 01:25:04.154] [jointLog] [info] Finished optimizer[2025-08-19 01:25:04.154] [jointLog] [info] writing output [2025-08-19 01:25:04.121] [stderrLog] [info] Loading Suffix Array [2025-08-19 01:25:04.122] [stderrLog] [info] Loading Position Hash[2025-08-19 01:25:04.122] [stderrLog] [info] Loading Transcript Info [2025-08-19 01:25:04.123] [stderrLog] [info] Loading Rank-Select Bit Array[2025-08-19 01:25:04.123] [stderrLog] [info] There were 15 set bits in the bit array[2025-08-19 01:25:04.123] [stderrLog] [info] Computing transcript lengths[2025-08-19 01:25:04.123] [stderrLog] [info] Waiting to finish loading hash[2025-08-19 01:25:04.123] [stderrLog] [info] Done loading index
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="sailfish (Test #4)" name="3" time="45.506988525390625">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Version Info: Could not resolve upgrade information in the alotted time.Check for upgrades manually at www.cs.cmu.edu/~ckingsf/sailfish.writing log to ./index_dir/logs/sailfish_index.logRapMap Indexer[Step 1 of 4] : counting k-mersElapsed time: 0.00127638sReplaced 0 non-ATCG nucleotidesClipped poly-A tails from 0 transcriptsBuilding rank-select dictionary and saving to disk doneElapsed time: 4.283e-05sWriting sequence data to file . . . doneElapsed time: 7.3771e-05s[info] Building 32-bit suffix array (length of generalized text is 28577)Building suffix array . . . successsaving to disk . . . doneElapsed time: 0.00024989sdoneElapsed time: 0.00319934sprocessed 0 positionskhash had 18955 keyssaving hash to disk . . . doneElapsed time: 0.00105483sVersion Info: Could not resolve upgrade information in the alotted time.Check for upgrades manually at www.cs.cmu.edu/~ckingsf/sailfish.# sailfish (quasi-mapping-based) v0.9.2# [ program ] => sailfish # [ command ] => quant # [ index ] => { ./index_dir }# [ mates1 ] => { ./mate1.fastq }# [ mates2 ] => { ./mate2.fastq }# [ libType ] => { IU }# [ output ] => { ./results }# [ biasCorrect ] => { }# [ threads ] => { 8 }# [ gcSizeSamp ] => { 1 }# [ gcSpeedSamp ] => { 1 }# [ fldMean ] => { 200 }# [ fldSD ] => { 80 }# [ maxReadOcc ] => { 200 }# [ geneMap ] => { ./geneMap.tabular }# [ maxFragLen ] => { 1000 }# [ txpAggregationKey ] => { gene_id }# [ numBiasSamples ] => { 1000000 }# [ numFragSamples ] => { 10000 }# [ numGibbsSamples ] => { 0 }# [ numBootstraps ] => { 0 }Logs will be written to ./results/logs[2025-08-19 01:25:47.528] [jointLog] [info] parsing read library formatthere is 1 libLoading 32-bit quasi indexIndex contained 15 targetsLoaded targets[2025-08-19 01:25:47.582] [jointLog] [info] Loading Quasi index[2025-08-19 01:25:47.587] [jointLog] [info] done[2025-08-19 01:25:47.606] [jointLog] [info] Gathered fragment lengths from all threads[2025-08-19 01:25:47.606] [jointLog] [warning] Sailfish saw fewer then 10000 uniquely mapped reads so 200 will be used as the mean fragment length and 80 as the standard deviation for effective length correction[2025-08-19 01:25:47.607] [jointLog] [info] Estimating effective lengthsDone Quasi-Mapping [2025-08-19 01:25:47.616] [jointLog] [info] Computed 21 rich equivalence classes for further processing[2025-08-19 01:25:47.616] [jointLog] [info] Counted 10000 total reads in the equivalence classes [2025-08-19 01:25:47.617] [jointLog] [info] Starting optimizer:[2025-08-19 01:25:47.617] [jointLog] [info] Optimizing over 21 equivalence classes[2025-08-19 01:25:47.617] [jointLog] [info] iteration = 0 | max rel diff. = 14.873[2025-08-19 01:25:47.617] [jointLog] [info] iteration 50, recomputing effective lengths[2025-08-19 01:25:47.619] [jointLog] [info] iteration = 63 | max rel diff. = 0.00199953[2025-08-19 01:25:47.619] [jointLog] [info] Finished optimizer[2025-08-19 01:25:47.619] [jointLog] [info] writing output [2025-08-19 01:25:47.585] [stderrLog] [info] Loading Suffix Array [2025-08-19 01:25:47.585] [stderrLog] [info] Loading Position Hash[2025-08-19 01:25:47.586] [stderrLog] [info] Loading Transcript Info [2025-08-19 01:25:47.587] [stderrLog] [info] Loading Rank-Select Bit Array[2025-08-19 01:25:47.587] [stderrLog] [info] There were 15 set bits in the bit array[2025-08-19 01:25:47.587] [stderrLog] [info] Computing transcript lengths[2025-08-19 01:25:47.587] [stderrLog] [info] Waiting to finish loading hash[2025-08-19 01:25:47.587] [stderrLog] [info] Done loading indexComputing gene-level abundance estimatesThere were 3 transcripts mapping to 3 genesWARNING: couldn't find transcript named [NR_031764]; returning transcript  as it's own genedoneAggregating expressions to gene level . . . done
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="sam_pileup (Test #1)" name="0" time="38.05717492103577">
+        
+            
+                <error type="error" message="Tool exit code: 127"><![CDATA[
+                    { "inputs": {  "c|consensus": "no",  "indels": "no",  "lastCol": "no",  "mapCap": "60",  "refOrHistory|input1": {   "id": "265c28e7536e7cce",   "src": "hda"  },  "refOrHistory|ownFile": {   "id": "70de34f054804b3e",   "src": "hda"  },  "refOrHistory|reference": "history" }, "job": {  "command_line": "ln -s \u0027/galaxy/server/database/objects/6/d/f/dataset_6dfbf094-00f1-4ea1-b202-302c449bed09.dat\u0027 input1.bam \u0026\u0026 ln -s \u0027/galaxy/server/database/objects/_metadata_files/f/9/7/metadata_f97b3cd7-458b-438a-bd29-fe1f95ae8094.dat\u0027 \u0027input1.bam.bai\u0027 \u0026\u0026 ln -s \u0027/galaxy/server/database/objects/5/3/c/dataset_53cc4cae-afce-48a5-a147-21481d79e79e.dat\u0027 reference.fasta \u0026\u0026 samtools faidx reference.fasta \u0026\u0026 samtools pileup -M 60 -f reference.fasta input1.bam \u003e \u0027/galaxy/server/database/objects/5/6/d/dataset_56d9913c-a7e7-433d-9738-4c683204e166.dat\u0027",  "command_version": "",  "copied_from_job_id": null,  "create_time": "2025-08-19T01:08:48.162759",  "dependencies": [],  "exit_code": 127,  "external_id": "gxy-wnwfk",  "galaxy_version": "24.1",  "handler": null,  "history_id": "577cd1c3054bee96",  "id": "b1d654c1ea876238",  "inputs": {   "refOrHistory|input1": {    "id": "265c28e7536e7cce",    "src": "hda",    "uuid": "6dfbf094-00f1-4ea1-b202-302c449bed09"   },   "refOrHistory|ownFile": {    "id": "70de34f054804b3e",    "src": "hda",    "uuid": "53cc4cae-afce-48a5-a147-21481d79e79e"   }  },  "job_messages": [   {    "code_desc": "",    "desc": "Fatal error: Exit code 127 ()",    "error_level": 3,    "exit_code": 127,    "type": "exit_code"   }  ],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "0E-7",    "title": "Job Runtime (Wall Clock)",    "value": "0 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1755565732.0000000",    "title": "Job End Time",    "value": "2025-08-19 01:08:52"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1755565732.0000000",    "title": "Job Start Time",    "value": "2025-08-19 01:08:52"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "4080.0000000",    "title": "Memory Allocated (MB)",    "value": "4080"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Cores Allocated",    "value": "1"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "output1": {    "id": "b1d654c1ea876238",    "src": "hda",    "uuid": "56d9913c-a7e7-433d-9738-4c683204e166"   }  },  "params": {   "__input_ext": "\"input\"",   "c": "{\"__current_case__\": 0, \"consensus\": \"no\"}",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/equCab2.len\"",   "dbkey": "\"equCab2\"",   "indels": "\"no\"",   "lastCol": "\"no\"",   "mapCap": "\"60\"",   "refOrHistory": "{\"__current_case__\": 1, \"input1\": {\"values\": [{\"id\": 29, \"src\": \"hda\"}]}, \"ownFile\": {\"values\": [{\"id\": 30, \"src\": \"hda\"}]}, \"reference\": \"history\"}"  },  "state": "error",  "stderr": "samtools: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/devteam/sam_pileup/sam_pileup/1.1.3",  "tool_stderr": "samtools: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory\n",  "tool_stdout": "",  "update_time": "2025-08-19T01:09:03.552061",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/sam_pileup/sam_pileup/1.1.3, exit_code: 127, stderr: samtools: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/sam_pileup/sam_pileup/1.1.3, exit_code: 127, stderr: samtools: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory\n." ], "status": "failure", "test_index": 0, "time_seconds": 38.05717492103577, "tool_id": "sam_pileup", "tool_version": "1.1.3"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            samtools: error while loading shared libraries: libncurses.so.5: cannot open shared object file: No such file or directory
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_calmd (Test #1)" name="0" time="41.72853088378906">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_calmd (Test #2)" name="1" time="36.65856099128723">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="vcfgeno2haplo (Test #1)" name="0" time="42.540846824645996">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            index file localref.fa.fai not found, generating...no alternate alleles remain at phiX174:1015 after haplotype validation
+            ]]></system-err>
+        
+    </testcase>
+    
+</testsuite>
