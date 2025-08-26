@@ -8,6 +8,7 @@ from unittest import result
 # Define the base directory
 BASE_DIR = "../../reports/anvil-production/tool-tests"
 README_FILE = "../../reports/anvil-production/README.md"
+DATETIME_PATTERN = re.compile(r"\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}")
 
 def get_results_files(total_files_max):
     """
@@ -19,7 +20,6 @@ def get_results_files(total_files_max):
     Parameters:
         total_files_max (int): The maximum number of matching folder paths to return.
     """
-    datetime_pattern = re.compile(r"\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}")
     matching_folders = []
     
     if not os.path.exists(BASE_DIR):
@@ -30,7 +30,7 @@ def get_results_files(total_files_max):
 
     for entry in sorted_entries:
         entry_path = os.path.join(BASE_DIR, entry)
-        if os.path.isdir(entry_path) and datetime_pattern.search(entry):
+        if os.path.isdir(entry_path) and DATETIME_PATTERN.search(entry):
             matching_folders.append(f"{entry_path}/results.json")
         if len(matching_folders) >= total_files_max:
             break
@@ -212,6 +212,10 @@ def report_results(total_files_max):
             # Round the time_seconds to the nearest integer
             if isinstance(time_seconds, (int, float)):
                 time_seconds = round(time_seconds)
+
+            # Extract the deploy_date using the datetime Global Variable by comparing to the folder name
+            deploy_date_match = DATETIME_PATTERN.search(result["file"][i])
+            deploy_date = deploy_date_match.group(0) if deploy_date_match else "Unknown"
             
             # Handle problem_short
             if result["data"]["problem_short"]:
@@ -220,10 +224,10 @@ def report_results(total_files_max):
                 problem_short = ""
             
             if status == 1:
-                tooltip = f"Success: completed in {time_seconds} seconds."
+                tooltip = f"Success: completed in {time_seconds} seconds on {deploy_date}."
                 emoji = f"[🟩]({file_link} \"{tooltip}\")"
             else:
-                tooltip = f"Failure: completed in {time_seconds} seconds. {problem_short}"
+                tooltip = f"Failure: completed in {time_seconds} seconds on {deploy_date}. {problem_short}"
                 emoji = f"[🟥]({file_link} \"{tooltip}\")"
             row.append(emoji)
         markdown_table.append("| " + " | ".join(row) + " |")
