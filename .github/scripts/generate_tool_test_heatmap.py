@@ -402,4 +402,4 @@ def _clean_output(s):
 # If this script is run directly, execute the aggregate_results function
 if __name__ == "__main__":
     # Example: Process up to 5 result files
-    report_results(total_files_max=135)
+    report_results(total_files_max=74)
