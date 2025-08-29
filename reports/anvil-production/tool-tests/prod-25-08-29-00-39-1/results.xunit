@@ -1,0 +1,717 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Results (powered by Planemo)"
+           tests="52"
+           errors="3"
+           failures="7"
+           skip="0">
+    
+    <testcase classname="bam_to_sam (Test #1)" name="0" time="30.76704978942871">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "header": "-h",  "input1": {   "id": "9cf2a260123a1c0a",   "src": "hda"  } }, "job": {  "command_line": "samtools view -o \u0027/galaxy/server/database/objects/0/b/1/dataset_0b13ef00-f4a1-4df5-838d-0a23e6f59fdf.dat\u0027 -h \u0027/galaxy/server/database/objects/a/2/a/dataset_a2a6b255-eec1-4b4a-837a-63959b7541f1.dat\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-08-29T01:12:25.238627",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-pr4bq",  "galaxy_version": "24.1",  "handler": null,  "history_id": "9eaf3858274d4a4c",  "id": "f435cedb4de0a5e1",  "inputs": {   "input1": {    "id": "9cf2a260123a1c0a",    "src": "hda",    "uuid": "a2a6b255-eec1-4b4a-837a-63959b7541f1"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output1": {    "id": "2976818cc12fd571",    "src": "hda",    "uuid": "0b13ef00-f4a1-4df5-838d-0a23e6f59fdf"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "header": "\"-h\""  },  "state": "error",  "stderr": "",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/devteam/bam_to_sam/bam_to_sam/2.0.6",  "tool_stderr": "",  "tool_stdout": "",  "update_time": "2025-08-29T01:12:33.031071",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/bam_to_sam/bam_to_sam/2.0.6, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/bam_to_sam/bam_to_sam/2.0.6, exit_code: None, stderr: ." ], "status": "failure", "test_index": 0, "time_seconds": 30.76704978942871, "tool_id": "bam_to_sam", "tool_version": "2.0.6"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bam_to_sam (Test #2)" name="1" time="37.02815628051758">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bam_to_sam (Test #3)" name="2" time="35.37315058708191">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_merge (Test #1)" name="0" time="41.783374547958374">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_merge (Test #2)" name="1" time="35.59324383735657">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_merge (Test #3)" name="2" time="35.70000600814819">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_merge (Test #4)" name="3" time="35.51537251472473">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_merge (Test #5)" name="4" time="28.2154278755188">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "input_files": [   {    "id": "78f053a7046e1bad",    "src": "hda"   },   {    "id": "a7fe406e7b00cdb6",    "src": "hda"   }  ],  "output_type": "v",  "sec_merge|force_samples": true,  "sec_merge|info_rules": "TR:sum,TA:sum,TG:sum" }, "job": {  "command_line": "export BCFTOOLS_PLUGINS=`which bcftools | sed \u0027s,bin/bcftools,libexec/bcftools,\u0027`;     bgzip -c \u0027/galaxy/server/database/objects/6/d/a/dataset_6da67f9f-3743-4a63-b44e-604e8faf0032.dat\u0027 \u003e input0.vcf.gz \u0026\u0026 bcftools index input0.vcf.gz \u0026\u0026 echo \u0027input0.vcf.gz\u0027 \u003e\u003e vcfs_list \u0026\u0026  bgzip -c \u0027/galaxy/server/database/objects/2/2/0/dataset_2200813a-8b28-4791-aa7d-e9d623e2d7d6.dat\u0027 \u003e input1.vcf.gz \u0026\u0026 bcftools index input1.vcf.gz \u0026\u0026 echo \u0027input1.vcf.gz\u0027 \u003e\u003e vcfs_list \u0026\u0026         bcftools merge    --force-samples  --info-rules \"TR:sum,TA:sum,TG:sum\"            --output-type \u0027v\u0027   --threads ${GALAXY_SLOTS:-4}    input0.vcf.gz input1.vcf.gz  \u003e \u0027/galaxy/server/database/objects/e/e/f/dataset_eef8afe0-1e9c-4294-aa1e-86e31c40a925.dat\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-08-29T01:17:22.632960",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-2m92p",  "galaxy_version": "24.1",  "handler": null,  "history_id": "9eaf3858274d4a4c",  "id": "dd0f24e236ed2d99",  "inputs": {   "input_files": {    "id": "78f053a7046e1bad",    "src": "hda",    "uuid": "6da67f9f-3743-4a63-b44e-604e8faf0032"   },   "input_files1": {    "id": "78f053a7046e1bad",    "src": "hda",    "uuid": "6da67f9f-3743-4a63-b44e-604e8faf0032"   },   "input_files2": {    "id": "a7fe406e7b00cdb6",    "src": "hda",    "uuid": "2200813a-8b28-4791-aa7d-e9d623e2d7d6"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output_file": {    "id": "c358445fb4d8cfa1",    "src": "hda",    "uuid": "eef8afe0-1e9c-4294-aa1e-86e31c40a925"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "output_type": "\"v\"",   "sec_header": "{\"print_header\": false, \"use_header\": null}",   "sec_merge": "{\"force_samples\": true, \"info_rules\": \"TR:sum,TA:sum,TG:sum\", \"merge\": null, \"no_index\": false}",   "sec_restrict": "{\"apply_filters\": \"\", \"regions\": {\"__current_case__\": 0, \"regions_src\": \"__none__\"}, \"regions_overlap\": null}"  },  "state": "error",  "stderr": "",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/bcftools_merge/bcftools_merge/1.15.1+galaxy4",  "tool_stderr": "",  "tool_stdout": "",  "update_time": "2025-08-29T01:17:28.093563",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_merge/bcftools_merge/1.15.1+galaxy4, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_merge/bcftools_merge/1.15.1+galaxy4, exit_code: None, stderr: ." ], "status": "failure", "test_index": 4, "time_seconds": 28.2154278755188, "tool_id": "bcftools_merge", "tool_version": "1.15.1+galaxy4"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_merge (Test #6)" name="5" time="36.248756885528564">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [W::bcf_sr_add_reader] Using multiple unindexed files may produce errors, make sure chromosomes are in the same order!
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_merge (Test #7)" name="6" time="36.345871925354004">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_plugin_missing2ref (Test #1)" name="0" time="41.77106952667236">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Filled 44 REF alleles
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="column_order_header_sort (Test #1)" name="0" time="118.61927461624146">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "input_tabular": {   "id": "9eaf3858274d4a4c",   "src": "hda"  },  "key_column": "1" }, "job": {  "command_line": "python \u0027/cvmfs/cloud.galaxyproject.org/tools/toolshed.g2.bx.psu.edu/repos/iuc/column_order_header_sort/6ae9724caf4d/column_order_header_sort/column_order_header_sort.py\u0027 \u0027/galaxy/server/database/objects/e/b/4/dataset_eb44d81d-a61b-4518-88bd-e3be605cfcab.dat\u0027 \u0027/galaxy/server/database/objects/6/e/c/dataset_6ec53ed5-a957-44e6-92aa-68a0feb627fc.dat\u0027 \u0027\t\u0027 \u00271\u0027",  "command_version": "",  "copied_from_job_id": null,  "create_time": "2025-08-29T00:57:31.730907",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-vgczb",  "galaxy_version": "24.1",  "handler": null,  "history_id": "9eaf3858274d4a4c",  "id": "fef1593e6e5cf7ef",  "inputs": {   "input_tabular": {    "id": "9eaf3858274d4a4c",    "src": "hda",    "uuid": "eb44d81d-a61b-4518-88bd-e3be605cfcab"   }  },  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "0E-7",    "title": "Job Runtime (Wall Clock)",    "value": "0 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1756429130.0000000",    "title": "Job End Time",    "value": "2025-08-29 00:58:50"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1756429130.0000000",    "title": "Job Start Time",    "value": "2025-08-29 00:58:50"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "4080.0000000",    "title": "Memory Allocated (MB)",    "value": "4080"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Cores Allocated",    "value": "1"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "output_tabular": {    "id": "fef1593e6e5cf7ef",    "src": "hda",    "uuid": "6ec53ed5-a957-44e6-92aa-68a0feb627fc"   }  },  "params": {   "__input_ext": "\"tabular\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "key_column": "\"1\""  },  "state": "ok",  "stderr": "",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/column_order_header_sort/column_order_header_sort/0.0.1",  "tool_stderr": "",  "tool_stdout": "",  "update_time": "2025-08-29T00:59:02.873164",  "user_email": "tests@fake.org" }, "output_problems": [  "Output output_tabular:  different than expected, difference (using diff):\n( /tmp/tmp6idjuhyqout_1.tabular v. /tmp/tmptgxi8fnzout_1.tabular )\n--- local_file\n+++ history_data\n@@ -1,4 +1,4 @@\n #KEY\ta\tb\tc\n one\t1-3\t1-1\t1-2\n two\t1-6\t1-4\t1-5\n-three\t1-9\t1-7\t1-8+three\t1-9\t1-7\t1-8\n" ], "status": "failure", "test_index": 0, "time_seconds": 118.61927461624146, "tool_id": "column_order_header_sort", "tool_version": "0.0.1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="deeptools_plot_pca (Test #1)" name="0" time="57.60168719291687">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="deeptools_plot_pca (Test #2)" name="1" time="11.563671350479126">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 1, "time_seconds": 11.563671350479126, "tool_id": "deeptools_plot_pca", "tool_version": "3.5.4+galaxy0"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #1)" name="0" time="38.85620069503784">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Detecting adapter sequence for read1...No adapter detected for read1Read1 before filtering:total reads: 2total bases: 302Q20 bases: 262(86.755%)Q30 bases: 241(79.8013%)Q40 bases: 0(0%)Read1 after filtering:total reads: 2total bases: 302Q20 bases: 262(86.755%)Q30 bases: 241(79.8013%)Q40 bases: 0(0%)Filtering result:reads passed filter: 2reads failed due to low quality: 0reads failed due to too many N: 0reads failed due to too short: 0reads with adapter trimmed: 0bases trimmed due to adapters: 0Duplication rate (may be overestimated since this is SE data): 0%JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for R1_fq.fastqsanger -i R1_fq.fastqsanger -o first.fastqsanger fastp v1.0.1, time used: 1 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #2)" name="1" time="37.902904987335205">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Read1 before filtering:total reads: 99total bases: 24849Q20 bases: 23268(93.6376%)Q30 bases: 22391(90.1083%)Q40 bases: 6(0.0241458%)Read2 before filtering:total reads: 99total bases: 24849Q20 bases: 22676(91.2552%)Q30 bases: 21532(86.6514%)Q40 bases: 9(0.0362188%)Read1 after filtering:total reads: 97total bases: 22942Q20 bases: 21680(94.4992%)Q30 bases: 20981(91.4524%)Q40 bases: 6(0.0261529%)Read2 after filtering:total reads: 97total bases: 22942Q20 bases: 21535(93.8671%)Q30 bases: 20672(90.1055%)Q40 bases: 9(0.0392294%)Filtering result:reads passed filter: 194reads failed due to low quality: 2reads failed due to too many N: 2reads failed due to too short: 0reads with adapter trimmed: 68bases trimmed due to adapters: 2824Duplication rate: 0%Insert size peak (evaluated by paired-end reads): 308JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for Unnamed Collection.fastqsanger -i Unnamed Collection.fastqsanger -I Unnamed Collection_R2.fastqsanger -o first.fastqsanger -O second.fastqsanger fastp v1.0.1, time used: 0 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #11)" name="10" time="37.96796369552612">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            WARNNIG: different read numbers of the 0 packRead1 pack size: 99Read2 pack size: 100Ignore the unmatched readsRead1 before filtering:total reads: 99total bases: 24849Q20 bases: 23268(93.6376%)Q30 bases: 22391(90.1083%)Q40 bases: 6(0.0241458%)Read2 before filtering:total reads: 99total bases: 24849Q20 bases: 22676(91.2552%)Q30 bases: 21532(86.6514%)Q40 bases: 9(0.0362188%)Read1 after filtering:total reads: 97total bases: 22942Q20 bases: 21680(94.4992%)Q30 bases: 20981(91.4524%)Q40 bases: 6(0.0261529%)Read2 after filtering:total reads: 97total bases: 22942Q20 bases: 21535(93.8671%)Q30 bases: 20672(90.1055%)Q40 bases: 9(0.0392294%)Filtering result:reads passed filter: 194reads failed due to low quality: 2reads failed due to too many N: 2reads failed due to too short: 0reads with adapter trimmed: 68bases trimmed due to adapters: 2824Duplication rate: 0%Insert size peak (evaluated by paired-end reads): 308JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for Unnamed Collection.fastqsanger -i Unnamed Collection.fastqsanger -I Unnamed Collection_R2.fastqsanger -o first.fastqsanger -O second.fastqsanger fastp v1.0.1, time used: 0 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #12)" name="11" time="11.780255317687988">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 11, "time_seconds": 11.780255317687988, "tool_id": "fastp", "tool_version": "1.0.1+galaxy1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #13)" name="12" time="28.958221435546875">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "output_options|report_html": false,  "single_paired|merge_reads|include_unmerged": true,  "single_paired|merge_reads|merge": "--merge",  "single_paired|paired_input": {   "id": "01c27a9a89189069",   "src": "hdca"  },  "single_paired|single_paired_selector": "paired_collection" }, "job": {  "command_line": "ln -sf \u0027/galaxy/server/database/objects/f/6/e/dataset_f6e183e7-3fd2-4d2e-9d4f-c3a9f01a8405.dat\u0027 \u0027Unnamed Collection.fastqsanger\u0027 \u0026\u0026 ln -sf \u0027/galaxy/server/database/objects/8/5/0/dataset_85054804-30dd-42a1-ae01-5117f917d627.dat\u0027 \u0027Unnamed Collection_R2.fastqsanger\u0027 \u0026\u0026   fastp  --thread ${GALAXY_SLOTS:-1} --report_title \u0027fastp report for Unnamed Collection.fastqsanger\u0027  -i \u0027Unnamed Collection.fastqsanger\u0027   -I \u0027Unnamed Collection_R2.fastqsanger\u0027 --merge --merged_out merged.fastqsanger --include_unmerged                                                  \u0026\u0026 mv merged.fastqsanger \u0027/galaxy/server/database/objects/7/c/4/dataset_7c44788d-c158-4241-b1ae-88adf93eedf8.dat\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-08-29T01:06:26.444295",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-cxh9p",  "galaxy_version": "24.1",  "handler": null,  "history_id": "9eaf3858274d4a4c",  "id": "a582a998c65f29d5",  "inputs": {   "single_paired|paired_input1": {    "id": "7d8607b676873173",    "src": "hda",    "uuid": "f6e183e7-3fd2-4d2e-9d4f-c3a9f01a8405"   },   "single_paired|paired_input2": {    "id": "3633ae8af2a7d7ba",    "src": "hda",    "uuid": "85054804-30dd-42a1-ae01-5117f917d627"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "merged_reads": {    "id": "2dc4eaa9c598e1a2",    "src": "hda",    "uuid": "7c44788d-c158-4241-b1ae-88adf93eedf8"   },   "report_json": {    "id": "394edf3ae4a24a9c",    "src": "hda",    "uuid": "d8068748-e393-4238-8396-5bc812c3faea"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "filter_options": "{\"length_filtering_options\": {\"disable_length_filtering\": false, \"length_limit\": \"\", \"length_required\": \"\"}, \"low_complexity_filter\": {\"complexity_threshold\": \"\", \"enable_low_complexity_filter\": false}, \"quality_filtering_options\": {\"disable_quality_filtering\": false, \"n_base_limit\": \"\", \"qualified_quality_phred\": \"\", \"unqualified_percent_limit\": \"\"}}",   "output_options": "{\"report_html\": false, \"report_json\": true}",   "overrepresented_sequence_analysis": "{\"overrepresentation_analysis\": false, \"overrepresentation_sampling\": \"\"}",   "read_mod_options": "{\"base_correction_options\": {\"correction\": false}, \"cutting_by_quality_options\": {\"cut_front_select\": {\"__current_case__\": 1, \"cut_front\": \"\"}, \"cut_right_select\": {\"__current_case__\": 1, \"cut_right\": \"\"}, \"cut_tail_select\": {\"__current_case__\": 1, \"cut_tail\": \"\"}}, \"polyg_tail_trimming\": {\"__current_case__\": 1, \"poly_g_min_len\": \"\", \"trimming_select\": \"\"}, \"polyx_tail_trimming\": {\"__current_case__\": 1, \"polyx_trimming_select\": \"\"}, \"umi_processing\": {\"umi\": false, \"umi_len\": \"\", \"umi_loc\": null, \"umi_prefix\": null}}",   "single_paired": "{\"__current_case__\": 1, \"adapter_trimming_options\": {\"adapter_sequence1\": null, \"adapter_sequence2\": null, \"detect_adapter_for_pe\": false, \"disable_adapter_trimming\": false}, \"global_trimming_options\": {\"trim_front1\": \"\", \"trim_front2\": \"\", \"trim_tail1\": \"\", \"trim_tail2\": \"\"}, \"merge_reads\": {\"__current_case__\": 0, \"include_unmerged\": true, \"merge\": \"--merge\"}, \"paired_input\": {\"values\": [{\"id\": 9, \"src\": \"hdca\"}]}, \"single_paired_selector\": \"paired_collection\"}"  },  "state": "error",  "stderr": "Read1 before filtering:\ntotal reads: 99\ntotal bases: 24849\nQ20 bases: 23268(93.6376%)\nQ30 bases: 22391(90.1083%)\nQ40 bases: 6(0.0241458%)\n\nRead2 before filtering:\ntotal reads: 99\ntotal bases: 24849\nQ20 bases: 22676(91.2552%)\nQ30 bases: 21532(86.6514%)\nQ40 bases: 9(0.0362188%)\n\nMerged and filtered:\ntotal reads: 100\ntotal bases: 26456\nQ20 bases: 25141(95.0295%)\nQ30 bases: 24378(92.1454%)\nQ40 bases: 9(0.0340187%)\n\nFiltering result:\nreads passed filter: 197\nreads failed due to low quality: 1\nreads failed due to too many N: 0\nreads failed due to too short: 0\nreads with adapter trimmed: 68\nbases trimmed due to adapters: 2824\nreads corrected by overlap analysis: 55\nbases corrected by overlap analysis: 101\n\nDuplication rate: 0%\n\nInsert size peak (evaluated by paired-end reads): 308\n\nRead pairs merged: 97\n% of original read pairs: 97.9798%\n% in reads after filtering: 97%\n\n\nJSON report: fastp.json\nHTML report: fastp.html\n\nfastp --thread 4 --report_title fastp report for Unnamed Collection.fastqsanger -i Unnamed Collection.fastqsanger -I Unnamed Collection_R2.fastqsanger --merge --merged_out merged.fastqsanger --include_unmerged \nfastp v1.0.1, time used: 1 seconds\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/fastp/fastp/1.0.1+galaxy1",  "tool_stderr": "Read1 before filtering:\ntotal reads: 99\ntotal bases: 24849\nQ20 bases: 23268(93.6376%)\nQ30 bases: 22391(90.1083%)\nQ40 bases: 6(0.0241458%)\n\nRead2 before filtering:\ntotal reads: 99\ntotal bases: 24849\nQ20 bases: 22676(91.2552%)\nQ30 bases: 21532(86.6514%)\nQ40 bases: 9(0.0362188%)\n\nMerged and filtered:\ntotal reads: 100\ntotal bases: 26456\nQ20 bases: 25141(95.0295%)\nQ30 bases: 24378(92.1454%)\nQ40 bases: 9(0.0340187%)\n\nFiltering result:\nreads passed filter: 197\nreads failed due to low quality: 1\nreads failed due to too many N: 0\nreads failed due to too short: 0\nreads with adapter trimmed: 68\nbases trimmed due to adapters: 2824\nreads corrected by overlap analysis: 55\nbases corrected by overlap analysis: 101\n\nDuplication rate: 0%\n\nInsert size peak (evaluated by paired-end reads): 308\n\nRead pairs merged: 97\n% of original read pairs: 97.9798%\n% in reads after filtering: 97%\n\n\nJSON report: fastp.json\nHTML report: fastp.html\n\nfastp --thread 4 --report_title fastp report for Unnamed Collection.fastqsanger -i Unnamed Collection.fastqsanger -I Unnamed Collection_R2.fastqsanger --merge --merged_out merged.fastqsanger --include_unmerged \nfastp v1.0.1, time used: 1 seconds\n",  "tool_stdout": "",  "update_time": "2025-08-29T01:06:32.382994",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/fastp/fastp/1.0.1+galaxy1, exit_code: None, stderr: Read1 before filtering:\ntotal reads: 99\ntotal bases: 24849\nQ20 bases: 23268(93.6376%)\nQ30 bases: 22391(90.1083%)\nQ40 bases: 6(0.0241458%)\n\nRead2 before filtering:\ntotal reads: 99\ntotal bases: 24849\nQ20 bases: 22676(91.2552%)\nQ30 bases: 21532(86.6514%)\nQ40 bases: 9(0.0362188%)\n\nMerged and filtered:\ntotal reads: 100\ntotal bases: 26456\nQ20 bases: 25141(95.0295%)\nQ30 bases: 24378(92.1454%)\nQ40 bases: 9(0.0340187%)\n\nFiltering result:\nreads passed filter: 197\nreads failed due to low quality: 1\nreads failed due to too many N: 0\nreads failed due to too short: 0\nreads with adapter trimmed: 68\nbases trimmed due to adapters: 2824\nreads corrected by overlap analysis: 55\nbases corrected by overlap analysis: 101\n\nDuplication rate: 0%\n\nInsert size peak (evaluated by paired-end reads): 308\n\nRead pairs merged: 97\n% of original read pairs: 97.9798%\n% in reads after filtering: 97%\n\n\nJSON report: fastp.json\nHTML report: fastp.html\n\nfastp --thread 4 --report_title fastp report for Unnamed Collection.fastqsanger -i Unnamed Collection.fastqsanger -I Unnamed Collection_R2.fastqsanger --merge --merged_out merged.fastqsanger --include_unmerged \nfastp v1.0.1, time used: 1 seconds\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/fastp/fastp/1.0.1+galaxy1, exit_code: None, stderr: Read1 before filtering:\ntotal reads: 99\ntotal bases: 24849\nQ20 bases: 23268(93.6376%)\nQ30 bases: 22391(90.1083%)\nQ40 bases: 6(0.0241458%)\n\nRead2 before filtering:\ntotal reads: 99\ntotal bases: 24849\nQ20 bases: 22676(91.2552%)\nQ30 bases: 21532(86.6514%)\nQ40 bases: 9(0.0362188%)\n\nMerged and filtered:\ntotal reads: 100\ntotal bases: 26456\nQ20 bases: 25141(95.0295%)\nQ30 bases: 24378(92.1454%)\nQ40 bases: 9(0.0340187%)\n\nFiltering result:\nreads passed filter: 197\nreads failed due to low quality: 1\nreads failed due to too many N: 0\nreads failed due to too short: 0\nreads with adapter trimmed: 68\nbases trimmed due to adapters: 2824\nreads corrected by overlap analysis: 55\nbases corrected by overlap analysis: 101\n\nDuplication rate: 0%\n\nInsert size peak (evaluated by paired-end reads): 308\n\nRead pairs merged: 97\n% of original read pairs: 97.9798%\n% in reads after filtering: 97%\n\n\nJSON report: fastp.json\nHTML report: fastp.html\n\nfastp --thread 4 --report_title fastp report for Unnamed Collection.fastqsanger -i Unnamed Collection.fastqsanger -I Unnamed Collection_R2.fastqsanger --merge --merged_out merged.fastqsanger --include_unmerged \nfastp v1.0.1, time used: 1 seconds\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/fastp/fastp/1.0.1+galaxy1, exit_code: None, stderr: Read1 before filtering:\ntotal reads: 99\ntotal bases: 24849\nQ20 bases: 23268(93.6376%)\nQ30 bases: 22391(90.1083%)\nQ40 bases: 6(0.0241458%)\n\nRead2 before filtering:\ntotal reads: 99\ntotal bases: 24849\nQ20 bases: 22676(91.2552%)\nQ30 bases: 21532(86.6514%)\nQ40 bases: 9(0.0362188%)\n\nMerged and filtered:\ntotal reads: 100\ntotal bases: 26456\nQ20 bases: 25141(95.0295%)\nQ30 bases: 24378(92.1454%)\nQ40 bases: 9(0.0340187%)\n\nFiltering result:\nreads passed filter: 197\nreads failed due to low quality: 1\nreads failed due to too many N: 0\nreads failed due to too short: 0\nreads with adapter trimmed: 68\nbases trimmed due to adapters: 2824\nreads corrected by overlap analysis: 55\nbases corrected by overlap analysis: 101\n\nDuplication rate: 0%\n\nInsert size peak (evaluated by paired-end reads): 308\n\nRead pairs merged: 97\n% of original read pairs: 97.9798%\n% in reads after filtering: 97%\n\n\nJSON report: fastp.json\nHTML report: fastp.html\n\nfastp --thread 4 --report_title fastp report for Unnamed Collection.fastqsanger -i Unnamed Collection.fastqsanger -I Unnamed Collection_R2.fastqsanger --merge --merged_out merged.fastqsanger --include_unmerged \nfastp v1.0.1, time used: 1 seconds\n." ], "status": "failure", "test_index": 12, "time_seconds": 28.958221435546875, "tool_id": "fastp", "tool_version": "1.0.1+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Read1 before filtering:total reads: 99total bases: 24849Q20 bases: 23268(93.6376%)Q30 bases: 22391(90.1083%)Q40 bases: 6(0.0241458%)Read2 before filtering:total reads: 99total bases: 24849Q20 bases: 22676(91.2552%)Q30 bases: 21532(86.6514%)Q40 bases: 9(0.0362188%)Merged and filtered:total reads: 100total bases: 26456Q20 bases: 25141(95.0295%)Q30 bases: 24378(92.1454%)Q40 bases: 9(0.0340187%)Filtering result:reads passed filter: 197reads failed due to low quality: 1reads failed due to too many N: 0reads failed due to too short: 0reads with adapter trimmed: 68bases trimmed due to adapters: 2824reads corrected by overlap analysis: 55bases corrected by overlap analysis: 101Duplication rate: 0%Insert size peak (evaluated by paired-end reads): 308Read pairs merged: 97% of original read pairs: 97.9798%% in reads after filtering: 97%JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for Unnamed Collection.fastqsanger -i Unnamed Collection.fastqsanger -I Unnamed Collection_R2.fastqsanger --merge --merged_out merged.fastqsanger --include_unmerged fastp v1.0.1, time used: 1 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #14)" name="13" time="39.11869740486145">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Read1 before filtering:total reads: 99total bases: 24849Q20 bases: 23268(93.6376%)Q30 bases: 22391(90.1083%)Q40 bases: 6(0.0241458%)Read2 before filtering:total reads: 99total bases: 24849Q20 bases: 22676(91.2552%)Q30 bases: 21532(86.6514%)Q40 bases: 9(0.0362188%)Merged and filtered:total reads: 97total bases: 25703Q20 bases: 24459(95.1601%)Q30 bases: 23743(92.3744%)Q40 bases: 9(0.0350154%)Filtering result:reads passed filter: 196reads failed due to low quality: 2reads failed due to too many N: 0reads failed due to too short: 0reads with adapter trimmed: 68bases trimmed due to adapters: 2824reads corrected by overlap analysis: 55bases corrected by overlap analysis: 101Duplication rate: 0%Insert size peak (evaluated by paired-end reads): 308Read pairs merged: 97% of original read pairs: 97.9798%% in reads after filtering: 100%JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for Unnamed Collection.fastqsanger.gz -i Unnamed Collection.fastqsanger.gz -I Unnamed Collection_R2.fastqsanger.gz --merge --merged_out merged.fastqsanger.gz --out1 unmerged_R1.fastqsanger.gz --out2 unmerged_R2.fastqsanger.gz --unpaired1 unpaired_R1.fastqsanger.gz --unpaired2 unpaired_R2.fastqsanger.gz fastp v1.0.1, time used: 1 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #15)" name="14" time="38.39884805679321">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Read1 before filtering:total reads: 99total bases: 24849Q20 bases: 23268(93.6376%)Q30 bases: 22391(90.1083%)Q40 bases: 6(0.0241458%)Read2 before filtering:total reads: 99total bases: 24849Q20 bases: 22676(91.2552%)Q30 bases: 21532(86.6514%)Q40 bases: 9(0.0362188%)Merged and filtered:total reads: 100total bases: 26456Q20 bases: 25141(95.0295%)Q30 bases: 24378(92.1454%)Q40 bases: 9(0.0340187%)Filtering result:reads passed filter: 197reads failed due to low quality: 1reads failed due to too many N: 0reads failed due to too short: 0reads with adapter trimmed: 68bases trimmed due to adapters: 2824reads corrected by overlap analysis: 55bases corrected by overlap analysis: 101Duplication rate: 0%Insert size peak (evaluated by paired-end reads): 308Read pairs merged: 97% of original read pairs: 97.9798%% in reads after filtering: 97%JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for Unnamed Collection.fastqsanger.gz -i Unnamed Collection.fastqsanger.gz -I Unnamed Collection_R2.fastqsanger.gz --merge --merged_out merged.fastqsanger.gz --include_unmerged fastp v1.0.1, time used: 1 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #16)" name="15" time="38.083735704422">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Read1 before filtering:total reads: 99total bases: 24849Q20 bases: 22676(91.2552%)Q30 bases: 21532(86.6514%)Q40 bases: 9(0.0362188%)Read2 before filtering:total reads: 99total bases: 24849Q20 bases: 23268(93.6376%)Q30 bases: 22391(90.1083%)Q40 bases: 6(0.0241458%)Read1 after filtering:total reads: 97total bases: 22942Q20 bases: 21535(93.8671%)Q30 bases: 20672(90.1055%)Q40 bases: 9(0.0392294%)Read2 after filtering:total reads: 97total bases: 22942Q20 bases: 21680(94.4992%)Q30 bases: 20981(91.4524%)Q40 bases: 6(0.0261529%)Filtering result:reads passed filter: 194reads failed due to low quality: 2reads failed due to too many N: 2reads failed due to too short: 0reads with adapter trimmed: 68bases trimmed due to adapters: 2824Duplication rate: 0%Insert size peak (evaluated by paired-end reads): 308JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for Unnamed Collection.fastqsanger.gz -i Unnamed Collection.fastqsanger.gz -I Unnamed Collection_R2.fastqsanger.gz -o first.fastqsanger.gz -O second.fastqsanger.gz fastp v1.0.1, time used: 1 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #17)" name="16" time="36.13246703147888">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Detecting adapter sequence for read1...No adapter detected for read1Read1 before filtering:total reads: 2total bases: 302Q20 bases: 262(86.755%)Q30 bases: 241(79.8013%)Q40 bases: 0(0%)Read1 after filtering:total reads: 2total bases: 302Q20 bases: 262(86.755%)Q30 bases: 241(79.8013%)Q40 bases: 0(0%)Filtering result:reads passed filter: 2reads failed due to low quality: 0reads failed due to too many N: 0reads failed due to too short: 0reads with adapter trimmed: 0bases trimmed due to adapters: 0Duplication rate (may be overestimated since this is SE data): 0%JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for R1_fq_gz.fastqsanger.gz -i R1_fq_gz.fastqsanger.gz -o first.fastqsanger.gz --cut_front --cut_front_window_size 2 --cut_front_mean_quality 3 --cut_tail --cut_tail_window_size 4 --cut_tail_mean_quality 5 --cut_right --cut_right_window_size 6 --cut_right_mean_quality 7 fastp v1.0.1, time used: 0 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #3)" name="2" time="37.82071566581726">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Read1 before filtering:total reads: 2total bases: 302Q20 bases: 262(86.755%)Q30 bases: 241(79.8013%)Q40 bases: 0(0%)Read1 after filtering:total reads: 1total bases: 151Q20 bases: 114(75.4967%)Q30 bases: 98(64.9007%)Q40 bases: 0(0%)Filtering result:reads passed filter: 1reads failed due to low quality: 0reads failed due to too many N: 0reads failed due to too short: 1reads with adapter trimmed: 1bases trimmed due to adapters: 139Duplication rate (may be overestimated since this is SE data): 0%JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for R1_fq.fastqsanger -i R1_fq.fastqsanger -o first.fastqsanger --adapter_sequence ATCG fastp v1.0.1, time used: 1 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #4)" name="3" time="34.27009844779968">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Detecting adapter sequence for read1...No adapter detected for read1Read1 before filtering:total reads: 2total bases: 302Q20 bases: 262(86.755%)Q30 bases: 241(79.8013%)Q40 bases: 0(0%)Read1 after filtering:total reads: 2total bases: 286Q20 bases: 246(86.014%)Q30 bases: 226(79.021%)Q40 bases: 0(0%)Filtering result:reads passed filter: 2reads failed due to low quality: 0reads failed due to too many N: 0reads failed due to too short: 0reads with adapter trimmed: 0bases trimmed due to adapters: 0Duplication rate (may be overestimated since this is SE data): 0%JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for R1_fq.fastqsanger -i R1_fq.fastqsanger -o first.fastqsanger -U --umi_loc read1 --umi_len 8 fastp v1.0.1, time used: 1 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #5)" name="4" time="34.70838236808777">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Detecting adapter sequence for read1...No adapter detected for read1Read1 before filtering:total reads: 2total bases: 302Q20 bases: 262(86.755%)Q30 bases: 241(79.8013%)Q40 bases: 0(0%)Read1 after filtering:total reads: 2total bases: 278Q20 bases: 239(85.9712%)Q30 bases: 220(79.1367%)Q40 bases: 0(0%)Filtering result:reads passed filter: 2reads failed due to low quality: 0reads failed due to too many N: 0reads failed due to too short: 0reads with adapter trimmed: 0bases trimmed due to adapters: 0Duplication rate (may be overestimated since this is SE data): 0%JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for R1_fq.fastqsanger -i R1_fq.fastqsanger -o first.fastqsanger -U --umi_loc read1 --umi_len 12 fastp v1.0.1, time used: 1 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #6)" name="5" time="38.058810234069824">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Read1 before filtering:total reads: 99total bases: 24849Q20 bases: 23268(93.6376%)Q30 bases: 22391(90.1083%)Q40 bases: 6(0.0241458%)Read2 before filtering:total reads: 99total bases: 24849Q20 bases: 22676(91.2552%)Q30 bases: 21532(86.6514%)Q40 bases: 9(0.0362188%)Read1 after filtering:total reads: 97total bases: 22166Q20 bases: 20935(94.4464%)Q30 bases: 20255(91.3787%)Q40 bases: 6(0.0270685%)Read2 after filtering:total reads: 97total bases: 22646Q20 bases: 21284(93.9857%)Q30 bases: 20447(90.2897%)Q40 bases: 9(0.0397421%)Filtering result:reads passed filter: 194reads failed due to low quality: 2reads failed due to too many N: 2reads failed due to too short: 0reads with adapter trimmed: 76bases trimmed due to adapters: 3128Duplication rate: 0%Insert size peak (evaluated by paired-end reads): 243JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for Unnamed Collection.fastqsanger -i Unnamed Collection.fastqsanger -I Unnamed Collection_R2.fastqsanger -o first.fastqsanger -O second.fastqsanger -U --umi_loc read1 --umi_len 8 fastp v1.0.1, time used: 1 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #7)" name="6" time="37.42142677307129">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Read1 before filtering:total reads: 99total bases: 24849Q20 bases: 23268(93.6376%)Q30 bases: 22391(90.1083%)Q40 bases: 6(0.0241458%)Read2 before filtering:total reads: 99total bases: 24849Q20 bases: 22676(91.2552%)Q30 bases: 21532(86.6514%)Q40 bases: 9(0.0362188%)Read1 after filtering:total reads: 97total bases: 22678Q20 bases: 21439(94.5366%)Q30 bases: 20756(91.5248%)Q40 bases: 6(0.0264574%)Read2 after filtering:total reads: 97total bases: 22166Q20 bases: 20766(93.684%)Q30 bases: 19910(89.8223%)Q40 bases: 9(0.0406027%)Filtering result:reads passed filter: 194reads failed due to low quality: 2reads failed due to too many N: 2reads failed due to too short: 0reads with adapter trimmed: 68bases trimmed due to adapters: 3096Duplication rate: 0%Insert size peak (evaluated by paired-end reads): 300JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for Unnamed Collection.fastqsanger -i Unnamed Collection.fastqsanger -I Unnamed Collection_R2.fastqsanger -o first.fastqsanger -O second.fastqsanger -U --umi_loc read2 --umi_len 8 fastp v1.0.1, time used: 1 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #8)" name="7" time="36.779024600982666">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Detecting adapter sequence for read1...No adapter detected for read1Read1 before filtering:total reads: 2total bases: 302Q20 bases: 262(86.755%)Q30 bases: 241(79.8013%)Q40 bases: 0(0%)Read1 after filtering:total reads: 2total bases: 302Q20 bases: 262(86.755%)Q30 bases: 241(79.8013%)Q40 bases: 0(0%)Filtering result:reads passed filter: 2reads failed due to low quality: 0reads failed due to too many N: 0reads failed due to too short: 0reads with adapter trimmed: 0bases trimmed due to adapters: 0Duplication rate (may be overestimated since this is SE data): 0%JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for R1_fq.fastqsanger -i R1_fq.fastqsanger -o first.fastqsanger fastp v1.0.1, time used: 1 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #9)" name="8" time="35.90510106086731">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Detecting adapter sequence for read1...No adapter detected for read1Read1 before filtering:total reads: 2total bases: 302Q20 bases: 262(86.755%)Q30 bases: 241(79.8013%)Q40 bases: 0(0%)Read1 after filtering:total reads: 2total bases: 302Q20 bases: 262(86.755%)Q30 bases: 241(79.8013%)Q40 bases: 0(0%)Filtering result:reads passed filter: 2reads failed due to low quality: 0reads failed due to too many N: 0reads failed due to too short: 0reads with adapter trimmed: 0bases trimmed due to adapters: 0Duplication rate (may be overestimated since this is SE data): 0%JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for R1_fq_gz.fastqsanger.gz -i R1_fq_gz.fastqsanger.gz -o first.fastqsanger.gz --poly_g_min_len 10 -g fastp v1.0.1, time used: 1 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="fastp (Test #10)" name="9" time="36.439332723617554">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Detecting adapter sequence for read1...No adapter detected for read1Read1 before filtering:total reads: 2total bases: 302Q20 bases: 262(86.755%)Q30 bases: 241(79.8013%)Q40 bases: 0(0%)Read1 after filtering:total reads: 2total bases: 302Q20 bases: 262(86.755%)Q30 bases: 241(79.8013%)Q40 bases: 0(0%)Filtering result:reads passed filter: 2reads failed due to low quality: 0reads failed due to too many N: 0reads failed due to too short: 0reads with adapter trimmed: 0bases trimmed due to adapters: 0reads with polyX in 3' end: 0bases trimmed in polyX tail: 0Duplication rate (may be overestimated since this is SE data): 0%JSON report: fastp.jsonHTML report: fastp.htmlfastp --thread 4 --report_title fastp report for R1_fq_gz.fastqsanger.gz -i R1_fq_gz.fastqsanger.gz -o first.fastqsanger.gz -x --poly_x_min_len 10 fastp v1.0.1, time used: 0 seconds
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="ivar_variants (Test #1)" name="0" time="46.685940980911255">
+        
+            
+            <system-out><![CDATA[
+            A GFF file containing the open reading frames (ORFs) has not been provided. Amino acid translation will not be done.A reference sequence has not been supplied. Amino acid translation will not be done.
+            ]]></system-out>
+            <system-err><![CDATA[
+            [mpileup] 1 samples in 1 input files[mpileup] Max depth set to maximum value (2147483647)
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="ivar_variants (Test #2)" name="1" time="41.90100860595703">
+        
+            
+            <system-out><![CDATA[
+            A GFF file containing the open reading frames (ORFs) has not been provided. Amino acid translation will not be done.A reference sequence has not been supplied. Amino acid translation will not be done.sampleDELINSSNPvariants0115
+            ]]></system-out>
+            <system-err><![CDATA[
+            [mpileup] 1 samples in 1 input files[mpileup] Max depth set to maximum value (2147483647)
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="ivar_variants (Test #3)" name="2" time="38.41020655632019">
+        
+            
+            <system-out><![CDATA[
+            A GFF file containing the open reading frames (ORFs) has not been provided. Amino acid translation will not be done.A reference sequence has not been supplied. Amino acid translation will not be done.sampleDELINSSNPvariants0010
+            ]]></system-out>
+            <system-err><![CDATA[
+            [mpileup] 1 samples in 1 input files[mpileup] Max depth set to maximum value (2147483647)
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="ivar_variants (Test #4)" name="3" time="41.5707631111145">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [mpileup] 1 samples in 1 input files[mpileup] Max depth set to maximum value (2147483647)
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="ivar_variants (Test #5)" name="4" time="42.35133337974548">
+        
+            
+            <system-out><![CDATA[
+            sampleDELINSSNPvariants0010
+            ]]></system-out>
+            <system-err><![CDATA[
+            [mpileup] 1 samples in 1 input files[mpileup] Max depth set to maximum value (2147483647)
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="lofreq_viterbi (Test #1)" name="0" time="52.46664357185364">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [bam_sort_core] merging from 0 files and 4 in-memory blocks...
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="lofreq_viterbi (Test #2)" name="1" time="38.05971336364746">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [bam_sort_core] merging from 0 files and 4 in-memory blocks...
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="poretools_events (Test #1)" name="0" time="70.77358961105347">
+        
+            
+                <error type="error" message="Tool exit code: 1"><![CDATA[
+                    { "inputs": {  "input": {   "id": "c661caef5fdcdeb1",   "src": "hda"  },  "precalled": false }, "job": {  "command_line": "poretools events  \u0027/galaxy/server/database/objects/d/d/c/dataset_ddca851f-a7aa-4c50-9785-3ad90b297408.dat\u0027 \u003e \u0027/galaxy/server/database/objects/a/9/b/dataset_a9b18a28-4637-4c3c-97c8-01c4a3bbec72.dat\u0027",  "command_version": "",  "copied_from_job_id": null,  "create_time": "2025-08-29T01:20:29.202797",  "dependencies": [],  "exit_code": 1,  "external_id": "gxy-rjfll",  "galaxy_version": "24.1",  "handler": null,  "history_id": "9eaf3858274d4a4c",  "id": "a591f8e160a76d07",  "inputs": {   "input": {    "id": "c661caef5fdcdeb1",    "src": "hda",    "uuid": "ddca851f-a7aa-4c50-9785-3ad90b297408"   }  },  "job_messages": [   {    "code_desc": "",    "desc": "Fatal error: Exit code 1 ()",    "error_level": 3,    "exit_code": 1,    "type": "exit_code"   },   {    "code_desc": "",    "desc": "Fatal error: ",    "error_level": 3,    "match": "Error:",    "stream": "stderr",    "type": "regex"   }  ],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Job Runtime (Wall Clock)",    "value": "1 second"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1756430457.0000000",    "title": "Job End Time",    "value": "2025-08-29 01:20:57"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1756430456.0000000",    "title": "Job Start Time",    "value": "2025-08-29 01:20:56"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "12240.0000000",    "title": "Memory Allocated (MB)",    "value": "12240"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Cores Allocated",    "value": "1"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "output": {    "id": "1424a10a20ade6be",    "src": "hda",    "uuid": "a9b18a28-4637-4c3c-97c8-01c4a3bbec72"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "precalled": "false"  },  "state": "error",  "stderr": "Traceback (most recent call last):\n  File \"/usr/local/bin/poretools\", line 11, in \u003cmodule\u003e\n    load_entry_point(\u0027poretools==0.6.0\u0027, \u0027console_scripts\u0027, \u0027poretools\u0027)()\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 543, in main\n    args.func(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 55, in run_subtool\n    submodule.run(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/events.py\", line 17, in run\n    for fast5 in Fast5File.Fast5FileSet(args.files):\n  File \"/usr/local/lib/python2.7/site-packages/poretools/Fast5File.py\", line 110, in next\n    shutil.rmtree(PORETOOLS_TMPDIR)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 261, in rmtree\n    rmtree(fullname, ignore_errors, onerror)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 270, in rmtree\n    onerror(os.rmdir, path, sys.exc_info())\n  File \"/usr/local/lib/python2.7/shutil.py\", line 268, in rmtree\n    os.rmdir(path)\nOSError: [Errno 39] Directory not empty: \u0027.poretools_tmp/test-data\u0027\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/poretools_events/poretools_events/0.6.1a1.1",  "tool_stderr": "Traceback (most recent call last):\n  File \"/usr/local/bin/poretools\", line 11, in \u003cmodule\u003e\n    load_entry_point(\u0027poretools==0.6.0\u0027, \u0027console_scripts\u0027, \u0027poretools\u0027)()\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 543, in main\n    args.func(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 55, in run_subtool\n    submodule.run(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/events.py\", line 17, in run\n    for fast5 in Fast5File.Fast5FileSet(args.files):\n  File \"/usr/local/lib/python2.7/site-packages/poretools/Fast5File.py\", line 110, in next\n    shutil.rmtree(PORETOOLS_TMPDIR)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 261, in rmtree\n    rmtree(fullname, ignore_errors, onerror)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 270, in rmtree\n    onerror(os.rmdir, path, sys.exc_info())\n  File \"/usr/local/lib/python2.7/shutil.py\", line 268, in rmtree\n    os.rmdir(path)\nOSError: [Errno 39] Directory not empty: \u0027.poretools_tmp/test-data\u0027\n",  "tool_stdout": "",  "update_time": "2025-08-29T01:21:18.065789",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/poretools_events/poretools_events/0.6.1a1.1, exit_code: 1, stderr: Traceback (most recent call last):\n  File \"/usr/local/bin/poretools\", line 11, in \u003cmodule\u003e\n    load_entry_point(\u0027poretools==0.6.0\u0027, \u0027console_scripts\u0027, \u0027poretools\u0027)()\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 543, in main\n    args.func(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 55, in run_subtool\n    submodule.run(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/events.py\", line 17, in run\n    for fast5 in Fast5File.Fast5FileSet(args.files):\n  File \"/usr/local/lib/python2.7/site-packages/poretools/Fast5File.py\", line 110, in next\n    shutil.rmtree(PORETOOLS_TMPDIR)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 261, in rmtree\n    rmtree(fullname, ignore_errors, onerror)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 270, in rmtree\n    onerror(os.rmdir, path, sys.exc_info())\n  File \"/usr/local/lib/python2.7/shutil.py\", line 268, in rmtree\n    os.rmdir(path)\nOSError: [Errno 39] Directory not empty: \u0027.poretools_tmp/test-data\u0027\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/poretools_events/poretools_events/0.6.1a1.1, exit_code: 1, stderr: Traceback (most recent call last):\n  File \"/usr/local/bin/poretools\", line 11, in \u003cmodule\u003e\n    load_entry_point(\u0027poretools==0.6.0\u0027, \u0027console_scripts\u0027, \u0027poretools\u0027)()\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 543, in main\n    args.func(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 55, in run_subtool\n    submodule.run(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/events.py\", line 17, in run\n    for fast5 in Fast5File.Fast5FileSet(args.files):\n  File \"/usr/local/lib/python2.7/site-packages/poretools/Fast5File.py\", line 110, in next\n    shutil.rmtree(PORETOOLS_TMPDIR)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 261, in rmtree\n    rmtree(fullname, ignore_errors, onerror)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 270, in rmtree\n    onerror(os.rmdir, path, sys.exc_info())\n  File \"/usr/local/lib/python2.7/shutil.py\", line 268, in rmtree\n    os.rmdir(path)\nOSError: [Errno 39] Directory not empty: \u0027.poretools_tmp/test-data\u0027\n." ], "status": "failure", "test_index": 0, "time_seconds": 70.77358961105347, "tool_id": "poretools_events", "tool_version": "0.6.1a1.1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Traceback (most recent call last):  File "/usr/local/bin/poretools", line 11, in <module>    load_entry_point('poretools==0.6.0', 'console_scripts', 'poretools')()  File "/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py", line 543, in main    args.func(parser, args)  File "/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py", line 55, in run_subtool    submodule.run(parser, args)  File "/usr/local/lib/python2.7/site-packages/poretools/events.py", line 17, in run    for fast5 in Fast5File.Fast5FileSet(args.files):  File "/usr/local/lib/python2.7/site-packages/poretools/Fast5File.py", line 110, in next    shutil.rmtree(PORETOOLS_TMPDIR)  File "/usr/local/lib/python2.7/shutil.py", line 261, in rmtree    rmtree(fullname, ignore_errors, onerror)  File "/usr/local/lib/python2.7/shutil.py", line 270, in rmtree    onerror(os.rmdir, path, sys.exc_info())  File "/usr/local/lib/python2.7/shutil.py", line 268, in rmtree    os.rmdir(path)OSError: [Errno 39] Directory not empty: '.poretools_tmp/test-data'
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="poretools_events (Test #2)" name="1" time="36.28782105445862">
+        
+            
+                <error type="error" message="Tool exit code: 1"><![CDATA[
+                    { "inputs": {  "input": {   "id": "526985c80c71b271",   "src": "hda"  },  "precalled": true }, "job": {  "command_line": "poretools events --pre-basecalled \u0027/galaxy/server/database/objects/a/b/4/dataset_ab45cfeb-0ce3-4a37-bb39-bc2137194790.dat\u0027 \u003e \u0027/galaxy/server/database/objects/6/c/9/dataset_6c928a95-74a2-428d-ac66-aac40ce46bae.dat\u0027",  "command_version": "",  "copied_from_job_id": null,  "create_time": "2025-08-29T01:21:39.931819",  "dependencies": [],  "exit_code": 1,  "external_id": "gxy-mwhdb",  "galaxy_version": "24.1",  "handler": null,  "history_id": "9eaf3858274d4a4c",  "id": "e28340c2f0f5f99f",  "inputs": {   "input": {    "id": "526985c80c71b271",    "src": "hda",    "uuid": "ab45cfeb-0ce3-4a37-bb39-bc2137194790"   }  },  "job_messages": [   {    "code_desc": "",    "desc": "Fatal error: Exit code 1 ()",    "error_level": 3,    "exit_code": 1,    "type": "exit_code"   },   {    "code_desc": "",    "desc": "Fatal error: ",    "error_level": 3,    "match": "Error:",    "stream": "stderr",    "type": "regex"   }  ],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Job Runtime (Wall Clock)",    "value": "1 second"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1756430502.0000000",    "title": "Job End Time",    "value": "2025-08-29 01:21:42"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1756430501.0000000",    "title": "Job Start Time",    "value": "2025-08-29 01:21:41"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "12240.0000000",    "title": "Memory Allocated (MB)",    "value": "12240"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Cores Allocated",    "value": "1"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "output": {    "id": "511ba91855aaaa9f",    "src": "hda",    "uuid": "6c928a95-74a2-428d-ac66-aac40ce46bae"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "precalled": "true"  },  "state": "error",  "stderr": "Traceback (most recent call last):\n  File \"/usr/local/bin/poretools\", line 11, in \u003cmodule\u003e\n    load_entry_point(\u0027poretools==0.6.0\u0027, \u0027console_scripts\u0027, \u0027poretools\u0027)()\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 543, in main\n    args.func(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 55, in run_subtool\n    submodule.run(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/events.py\", line 13, in run\n    for fast5 in Fast5File.Fast5FileSet(args.files):\n  File \"/usr/local/lib/python2.7/site-packages/poretools/Fast5File.py\", line 110, in next\n    shutil.rmtree(PORETOOLS_TMPDIR)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 261, in rmtree\n    rmtree(fullname, ignore_errors, onerror)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 270, in rmtree\n    onerror(os.rmdir, path, sys.exc_info())\n  File \"/usr/local/lib/python2.7/shutil.py\", line 268, in rmtree\n    os.rmdir(path)\nOSError: [Errno 39] Directory not empty: \u0027.poretools_tmp/test-data\u0027\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/poretools_events/poretools_events/0.6.1a1.1",  "tool_stderr": "Traceback (most recent call last):\n  File \"/usr/local/bin/poretools\", line 11, in \u003cmodule\u003e\n    load_entry_point(\u0027poretools==0.6.0\u0027, \u0027console_scripts\u0027, \u0027poretools\u0027)()\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 543, in main\n    args.func(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 55, in run_subtool\n    submodule.run(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/events.py\", line 13, in run\n    for fast5 in Fast5File.Fast5FileSet(args.files):\n  File \"/usr/local/lib/python2.7/site-packages/poretools/Fast5File.py\", line 110, in next\n    shutil.rmtree(PORETOOLS_TMPDIR)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 261, in rmtree\n    rmtree(fullname, ignore_errors, onerror)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 270, in rmtree\n    onerror(os.rmdir, path, sys.exc_info())\n  File \"/usr/local/lib/python2.7/shutil.py\", line 268, in rmtree\n    os.rmdir(path)\nOSError: [Errno 39] Directory not empty: \u0027.poretools_tmp/test-data\u0027\n",  "tool_stdout": "",  "update_time": "2025-08-29T01:21:54.445413",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/poretools_events/poretools_events/0.6.1a1.1, exit_code: 1, stderr: Traceback (most recent call last):\n  File \"/usr/local/bin/poretools\", line 11, in \u003cmodule\u003e\n    load_entry_point(\u0027poretools==0.6.0\u0027, \u0027console_scripts\u0027, \u0027poretools\u0027)()\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 543, in main\n    args.func(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 55, in run_subtool\n    submodule.run(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/events.py\", line 13, in run\n    for fast5 in Fast5File.Fast5FileSet(args.files):\n  File \"/usr/local/lib/python2.7/site-packages/poretools/Fast5File.py\", line 110, in next\n    shutil.rmtree(PORETOOLS_TMPDIR)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 261, in rmtree\n    rmtree(fullname, ignore_errors, onerror)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 270, in rmtree\n    onerror(os.rmdir, path, sys.exc_info())\n  File \"/usr/local/lib/python2.7/shutil.py\", line 268, in rmtree\n    os.rmdir(path)\nOSError: [Errno 39] Directory not empty: \u0027.poretools_tmp/test-data\u0027\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/poretools_events/poretools_events/0.6.1a1.1, exit_code: 1, stderr: Traceback (most recent call last):\n  File \"/usr/local/bin/poretools\", line 11, in \u003cmodule\u003e\n    load_entry_point(\u0027poretools==0.6.0\u0027, \u0027console_scripts\u0027, \u0027poretools\u0027)()\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 543, in main\n    args.func(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py\", line 55, in run_subtool\n    submodule.run(parser, args)\n  File \"/usr/local/lib/python2.7/site-packages/poretools/events.py\", line 13, in run\n    for fast5 in Fast5File.Fast5FileSet(args.files):\n  File \"/usr/local/lib/python2.7/site-packages/poretools/Fast5File.py\", line 110, in next\n    shutil.rmtree(PORETOOLS_TMPDIR)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 261, in rmtree\n    rmtree(fullname, ignore_errors, onerror)\n  File \"/usr/local/lib/python2.7/shutil.py\", line 270, in rmtree\n    onerror(os.rmdir, path, sys.exc_info())\n  File \"/usr/local/lib/python2.7/shutil.py\", line 268, in rmtree\n    os.rmdir(path)\nOSError: [Errno 39] Directory not empty: \u0027.poretools_tmp/test-data\u0027\n." ], "status": "failure", "test_index": 1, "time_seconds": 36.28782105445862, "tool_id": "poretools_events", "tool_version": "0.6.1a1.1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Traceback (most recent call last):  File "/usr/local/bin/poretools", line 11, in <module>    load_entry_point('poretools==0.6.0', 'console_scripts', 'poretools')()  File "/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py", line 543, in main    args.func(parser, args)  File "/usr/local/lib/python2.7/site-packages/poretools/poretools_main.py", line 55, in run_subtool    submodule.run(parser, args)  File "/usr/local/lib/python2.7/site-packages/poretools/events.py", line 13, in run    for fast5 in Fast5File.Fast5FileSet(args.files):  File "/usr/local/lib/python2.7/site-packages/poretools/Fast5File.py", line 110, in next    shutil.rmtree(PORETOOLS_TMPDIR)  File "/usr/local/lib/python2.7/shutil.py", line 261, in rmtree    rmtree(fullname, ignore_errors, onerror)  File "/usr/local/lib/python2.7/shutil.py", line 270, in rmtree    onerror(os.rmdir, path, sys.exc_info())  File "/usr/local/lib/python2.7/shutil.py", line 268, in rmtree    os.rmdir(path)OSError: [Errno 39] Directory not empty: '.poretools_tmp/test-data'
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_merge (Test #1)" name="0" time="46.39303803443909">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_merge (Test #2)" name="1" time="41.742183685302734">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [bam_translate] PG tag "colt" on read "r001" encountered with no corresponding entry in header, tag lost. Unknown tags are only reported once per input file for each tag ID.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_merge (Test #3)" name="2" time="35.369980812072754">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_merge (Test #4)" name="3" time="37.35421824455261">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [bam_translate] PG tag "colt" on read "r001" encountered with no corresponding entry in header, tag lost. Unknown tags are only reported once per input file for each tag ID.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_merge (Test #5)" name="4" time="12.823760747909546">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 4, "time_seconds": 12.823760747909546, "tool_id": "samtools_merge", "tool_version": "1.9"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="vcfannotategenotypes (Test #1)" name="0" time="44.627979040145874">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="vcfsort (Test #1)" name="0" time="36.78519558906555">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="volcanoplot (Test #1)" name="0" time="80.45480608940125">
+        
+            
+            <system-out><![CDATA[
+            [1] "Header row detected"null device           1 R version 4.4.3 (2025-02-28)Platform: x86_64-conda-linux-gnuRunning under: Debian GNU/Linux 12 (bookworm)Matrix products: defaultBLAS/LAPACK: /usr/local/lib/libopenblasp-r0.3.29.so;  LAPACK version 3.12.0locale: [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8        [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8    [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   time zone: NAtzcode source: system (glibc)attached base packages:[1] stats     graphics  grDevices utils     datasets  methods   base     other attached packages:[1] ggrepel_0.9.6 ggplot2_3.5.2 dplyr_1.1.4  loaded via a namespace (and not attached): [1] labeling_0.4.3     RColorBrewer_1.1-3 R6_2.6.1           tidyselect_1.2.1   [5] farver_2.1.2       magrittr_2.0.3     gtable_0.3.6       glue_1.8.0         [9] tibble_3.2.1       pkgconfig_2.0.3    generics_0.1.4     lifecycle_1.0.4   [13] cli_3.6.5          scales_1.4.0       grid_4.4.3         vctrs_0.6.5       [17] withr_3.0.2        compiler_4.4.3     pillar_1.10.2      Rcpp_1.0.14       [21] rlang_1.1.6       
+            ]]></system-out>
+            <system-err><![CDATA[
+            Warning message:In Sys.setlocale("LC_MESSAGES", "en_US.UTF-8") :  OS reports request to set locale to "en_US.UTF-8" cannot be honoredWarning: Your system is mis-configured: ‘/var/db/timezone/localtime’ is not a symlinkWarning: ‘/var/db/timezone/localtime’ is not identical to any known timezone file
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="volcanoplot (Test #2)" name="1" time="50.97707438468933">
+        
+            
+            <system-out><![CDATA[
+            [1] "Header row detected"null device           1 R version 4.4.3 (2025-02-28)Platform: x86_64-conda-linux-gnuRunning under: Debian GNU/Linux 12 (bookworm)Matrix products: defaultBLAS/LAPACK: /usr/local/lib/libopenblasp-r0.3.29.so;  LAPACK version 3.12.0locale: [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8        [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8    [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   time zone: NAtzcode source: system (glibc)attached base packages:[1] stats     graphics  grDevices utils     datasets  methods   base     other attached packages:[1] ggrepel_0.9.6 ggplot2_3.5.2 dplyr_1.1.4  loaded via a namespace (and not attached): [1] labeling_0.4.3     RColorBrewer_1.1-3 R6_2.6.1           tidyselect_1.2.1   [5] farver_2.1.2       magrittr_2.0.3     gtable_0.3.6       glue_1.8.0         [9] tibble_3.2.1       pkgconfig_2.0.3    generics_0.1.4     lifecycle_1.0.4   [13] cli_3.6.5          scales_1.4.0       grid_4.4.3         vctrs_0.6.5       [17] withr_3.0.2        compiler_4.4.3     pillar_1.10.2      Rcpp_1.0.14       [21] rlang_1.1.6       
+            ]]></system-out>
+            <system-err><![CDATA[
+            Warning message:In Sys.setlocale("LC_MESSAGES", "en_US.UTF-8") :  OS reports request to set locale to "en_US.UTF-8" cannot be honoredWarning: Your system is mis-configured: ‘/var/db/timezone/localtime’ is not a symlinkWarning: ‘/var/db/timezone/localtime’ is not identical to any known timezone file
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="volcanoplot (Test #3)" name="2" time="48.738232374191284">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "input": {   "id": "b2089fb839fb1657",   "src": "hda"  },  "labels|label_file": {   "id": "5995178a58e0efea",   "src": "hda"  },  "labels|label_select": "file",  "lfc_thresh": "0",  "out_options|rscript_out": true,  "with_header|fdr_col": "4",  "with_header|header": "yes",  "with_header|label_col": "1",  "with_header|lfc_col": "2",  "with_header|pval_col": "3" }, "job": {  "command_line": "cp \u0027/galaxy/server/database/jobs_directory/000/132/configs/tmpqz7_wfzx\u0027 rscript.txt \u0026\u0026 Rscript \u0027/galaxy/server/database/jobs_directory/000/132/configs/tmpqz7_wfzx\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-08-29T01:30:49.051656",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-brpdc",  "galaxy_version": "24.1",  "handler": null,  "history_id": "9eaf3858274d4a4c",  "id": "c7e764c2de31791b",  "inputs": {   "input": {    "id": "b2089fb839fb1657",    "src": "hda",    "uuid": "1906ddb5-59a3-4e16-8c8f-4f4e94adfc9e"   },   "labels|label_file": {    "id": "5995178a58e0efea",    "src": "hda",    "uuid": "141bdce2-158d-42b8-9c15-25f80ce0cefd"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "plot": {    "id": "0e8c61db29106eac",    "src": "hda",    "uuid": "6de3d83b-9dd0-407d-8167-722cabc91291"   },   "rscript": {    "id": "4c395a3961a9906a",    "src": "hda",    "uuid": "b64acb45-710d-43a0-b71a-3b6b9304931d"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "labels": "{\"__current_case__\": 1, \"label_file\": {\"values\": [{\"id\": 162, \"src\": \"hda\"}]}, \"label_select\": \"file\"}",   "lfc_thresh": "\"0.0\"",   "out_options": "{\"rscript_out\": true}",   "plot_options": "{\"boxes\": false, \"legend\": null, \"legend_labs\": \"Down,Not Sig,Up\", \"title\": null, \"xlab\": null, \"xmax\": \"\", \"xmin\": \"\", \"ylab\": null, \"ymax\": \"\"}",   "shape_or_facet": null,   "signif_thresh": "\"0.05\"",   "with_header": "{\"__current_case__\": 1, \"fdr_col\": \"4\", \"header\": \"yes\", \"label_col\": \"1\", \"lfc_col\": \"2\", \"pval_col\": \"3\", \"shape_col\": null}"  },  "state": "error",  "stderr": "Warning message:\nIn Sys.setlocale(\"LC_MESSAGES\", \"en_US.UTF-8\") :\n  OS reports request to set locale to \"en_US.UTF-8\" cannot be honored\nWarning: Your system is mis-configured: \u2018/var/db/timezone/localtime\u2019 is not a symlink\nWarning: \u2018/var/db/timezone/localtime\u2019 is not identical to any known timezone file\n",  "stdout": "null device \n          1 \nR version 4.4.3 (2025-02-28)\nPlatform: x86_64-conda-linux-gnu\nRunning under: Debian GNU/Linux 12 (bookworm)\n\nMatrix products: default\nBLAS/LAPACK: /usr/local/lib/libopenblasp-r0.3.29.so;  LAPACK version 3.12.0\n\nlocale:\n [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       \n [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   \n [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          \n[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   \n\ntime zone: NA\ntzcode source: system (glibc)\n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n[1] ggrepel_0.9.6 ggplot2_3.5.2 dplyr_1.1.4  \n\nloaded via a namespace (and not attached):\n [1] labeling_0.4.3     RColorBrewer_1.1-3 R6_2.6.1           tidyselect_1.2.1  \n [5] farver_2.1.2       magrittr_2.0.3     gtable_0.3.6       glue_1.8.0        \n [9] tibble_3.2.1       pkgconfig_2.0.3    generics_0.1.4     lifecycle_1.0.4   \n[13] cli_3.6.5          scales_1.4.0       grid_4.4.3         vctrs_0.6.5       \n[17] withr_3.0.2        compiler_4.4.3     pillar_1.10.2      Rcpp_1.0.14       \n[21] rlang_1.1.6       \n",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/volcanoplot/volcanoplot/3.5.2+galaxy0",  "tool_stderr": "Warning message:\nIn Sys.setlocale(\"LC_MESSAGES\", \"en_US.UTF-8\") :\n  OS reports request to set locale to \"en_US.UTF-8\" cannot be honored\nWarning: Your system is mis-configured: \u2018/var/db/timezone/localtime\u2019 is not a symlink\nWarning: \u2018/var/db/timezone/localtime\u2019 is not identical to any known timezone file\n",  "tool_stdout": "null device \n          1 \nR version 4.4.3 (2025-02-28)\nPlatform: x86_64-conda-linux-gnu\nRunning under: Debian GNU/Linux 12 (bookworm)\n\nMatrix products: default\nBLAS/LAPACK: /usr/local/lib/libopenblasp-r0.3.29.so;  LAPACK version 3.12.0\n\nlocale:\n [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       \n [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   \n [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          \n[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   \n\ntime zone: NA\ntzcode source: system (glibc)\n\nattached base packages:\n[1] stats     graphics  grDevices utils     datasets  methods   base     \n\nother attached packages:\n[1] ggrepel_0.9.6 ggplot2_3.5.2 dplyr_1.1.4  \n\nloaded via a namespace (and not attached):\n [1] labeling_0.4.3     RColorBrewer_1.1-3 R6_2.6.1           tidyselect_1.2.1  \n [5] farver_2.1.2       magrittr_2.0.3     gtable_0.3.6       glue_1.8.0        \n [9] tibble_3.2.1       pkgconfig_2.0.3    generics_0.1.4     lifecycle_1.0.4   \n[13] cli_3.6.5          scales_1.4.0       grid_4.4.3         vctrs_0.6.5       \n[17] withr_3.0.2        compiler_4.4.3     pillar_1.10.2      Rcpp_1.0.14       \n[21] rlang_1.1.6       \n",  "update_time": "2025-08-29T01:31:14.167251",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/volcanoplot/volcanoplot/3.5.2+galaxy0, exit_code: None, stderr: Warning message:\nIn Sys.setlocale(\"LC_MESSAGES\", \"en_US.UTF-8\") :\n  OS reports request to set locale to \"en_US.UTF-8\" cannot be honored\nWarning: Your system is mis-configured: \u2018/var/db/timezone/localtime\u2019 is not a symlink\nWarning: \u2018/var/db/timezone/localtime\u2019 is not identical to any known timezone file\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/volcanoplot/volcanoplot/3.5.2+galaxy0, exit_code: None, stderr: Warning message:\nIn Sys.setlocale(\"LC_MESSAGES\", \"en_US.UTF-8\") :\n  OS reports request to set locale to \"en_US.UTF-8\" cannot be honored\nWarning: Your system is mis-configured: \u2018/var/db/timezone/localtime\u2019 is not a symlink\nWarning: \u2018/var/db/timezone/localtime\u2019 is not identical to any known timezone file\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/volcanoplot/volcanoplot/3.5.2+galaxy0, exit_code: None, stderr: Warning message:\nIn Sys.setlocale(\"LC_MESSAGES\", \"en_US.UTF-8\") :\n  OS reports request to set locale to \"en_US.UTF-8\" cannot be honored\nWarning: Your system is mis-configured: \u2018/var/db/timezone/localtime\u2019 is not a symlink\nWarning: \u2018/var/db/timezone/localtime\u2019 is not identical to any known timezone file\n." ], "status": "failure", "test_index": 2, "time_seconds": 48.738232374191284, "tool_id": "volcanoplot", "tool_version": "3.5.2+galaxy0"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            null device           1 R version 4.4.3 (2025-02-28)Platform: x86_64-conda-linux-gnuRunning under: Debian GNU/Linux 12 (bookworm)Matrix products: defaultBLAS/LAPACK: /usr/local/lib/libopenblasp-r0.3.29.so;  LAPACK version 3.12.0locale: [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8        [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8    [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   time zone: NAtzcode source: system (glibc)attached base packages:[1] stats     graphics  grDevices utils     datasets  methods   base     other attached packages:[1] ggrepel_0.9.6 ggplot2_3.5.2 dplyr_1.1.4  loaded via a namespace (and not attached): [1] labeling_0.4.3     RColorBrewer_1.1-3 R6_2.6.1           tidyselect_1.2.1   [5] farver_2.1.2       magrittr_2.0.3     gtable_0.3.6       glue_1.8.0         [9] tibble_3.2.1       pkgconfig_2.0.3    generics_0.1.4     lifecycle_1.0.4   [13] cli_3.6.5          scales_1.4.0       grid_4.4.3         vctrs_0.6.5       [17] withr_3.0.2        compiler_4.4.3     pillar_1.10.2      Rcpp_1.0.14       [21] rlang_1.1.6       
+            ]]></system-out>
+            <system-err><![CDATA[
+            Warning message:In Sys.setlocale("LC_MESSAGES", "en_US.UTF-8") :  OS reports request to set locale to "en_US.UTF-8" cannot be honoredWarning: Your system is mis-configured: ‘/var/db/timezone/localtime’ is not a symlinkWarning: ‘/var/db/timezone/localtime’ is not identical to any known timezone file
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="volcanoplot (Test #4)" name="3" time="50.934956789016724">
+        
+            
+            <system-out><![CDATA[
+            [1] "Header row detected"null device           1 R version 4.4.3 (2025-02-28)Platform: x86_64-conda-linux-gnuRunning under: Debian GNU/Linux 12 (bookworm)Matrix products: defaultBLAS/LAPACK: /usr/local/lib/libopenblasp-r0.3.29.so;  LAPACK version 3.12.0locale: [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8        [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8    [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   time zone: NAtzcode source: system (glibc)attached base packages:[1] stats     graphics  grDevices utils     datasets  methods   base     other attached packages:[1] ggrepel_0.9.6 ggplot2_3.5.2 dplyr_1.1.4  loaded via a namespace (and not attached): [1] labeling_0.4.3     RColorBrewer_1.1-3 R6_2.6.1           tidyselect_1.2.1   [5] farver_2.1.2       magrittr_2.0.3     gtable_0.3.6       glue_1.8.0         [9] tibble_3.2.1       pkgconfig_2.0.3    generics_0.1.4     lifecycle_1.0.4   [13] cli_3.6.5          scales_1.4.0       grid_4.4.3         vctrs_0.6.5       [17] withr_3.0.2        compiler_4.4.3     pillar_1.10.2      Rcpp_1.0.14       [21] rlang_1.1.6       
+            ]]></system-out>
+            <system-err><![CDATA[
+            Warning message:In Sys.setlocale("LC_MESSAGES", "en_US.UTF-8") :  OS reports request to set locale to "en_US.UTF-8" cannot be honoredWarning message:No shared levels found between `names(values)` of the manual scale and thedata's colour values. Warning: Your system is mis-configured: ‘/var/db/timezone/localtime’ is not a symlinkWarning: ‘/var/db/timezone/localtime’ is not identical to any known timezone file
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="volcanoplot (Test #5)" name="4" time="52.64098072052002">
+        
+            
+            <system-out><![CDATA[
+            [1] "Header row detected"null device           1 R version 4.4.3 (2025-02-28)Platform: x86_64-conda-linux-gnuRunning under: Debian GNU/Linux 12 (bookworm)Matrix products: defaultBLAS/LAPACK: /usr/local/lib/libopenblasp-r0.3.29.so;  LAPACK version 3.12.0locale: [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8        [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8    [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   time zone: NAtzcode source: system (glibc)attached base packages:[1] stats     graphics  grDevices utils     datasets  methods   base     other attached packages:[1] ggrepel_0.9.6 ggplot2_3.5.2 dplyr_1.1.4  loaded via a namespace (and not attached): [1] labeling_0.4.3     RColorBrewer_1.1-3 R6_2.6.1           tidyselect_1.2.1   [5] farver_2.1.2       magrittr_2.0.3     gtable_0.3.6       glue_1.8.0         [9] tibble_3.2.1       pkgconfig_2.0.3    generics_0.1.4     lifecycle_1.0.4   [13] cli_3.6.5          scales_1.4.0       grid_4.4.3         vctrs_0.6.5       [17] withr_3.0.2        compiler_4.4.3     pillar_1.10.2      Rcpp_1.0.14       [21] rlang_1.1.6       
+            ]]></system-out>
+            <system-err><![CDATA[
+            Warning message:In Sys.setlocale("LC_MESSAGES", "en_US.UTF-8") :  OS reports request to set locale to "en_US.UTF-8" cannot be honoredWarning: Your system is mis-configured: ‘/var/db/timezone/localtime’ is not a symlinkWarning: ‘/var/db/timezone/localtime’ is not identical to any known timezone file
+            ]]></system-err>
+        
+    </testcase>
+    
+</testsuite>
