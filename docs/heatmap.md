@@ -1,3 +1,8 @@
+---
+layout: default
+title: Heatmap
+---
+
 # Automated Tests for Galaxy on Kubernetes Stacks
 ## Galaxy on GKE deployed via GalaxyKubeMan (AnVIL)
 ### Deployment Testing
