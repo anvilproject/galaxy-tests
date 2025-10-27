@@ -87,6 +87,9 @@ jobs:
           helm install galaxy-deps galaxy/galaxy-deps \
             -n galaxy-deps \
             --create-namespace \
+            --wait \
+            --wait-for-jobs \
+            --timeout 300s \
             --version $DEPS_VERSION
       - name: Deploy GalaxyKubeMan
         continue-on-error: true
