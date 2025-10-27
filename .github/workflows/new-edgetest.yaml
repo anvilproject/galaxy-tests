@@ -91,6 +91,25 @@ jobs:
             --wait-for-jobs \
             --timeout 300s \
             --version $DEPS_VERSION
+      - name: Wait for CVMFS CSI driver to be ready
+        run: |
+          echo "Waiting for CVMFS CSI driver to be registered..."
+          for i in {1..60}; do
+            if kubectl get csidriver cvmfs.csi.cern.ch 2>/dev/null; then
+              echo "CVMFS CSI driver is registered"
+              break
+            fi
+            echo "Attempt $i/60: Waiting for CVMFS CSI driver..."
+            sleep 5
+          done
+
+          echo "Waiting for CVMFS CSI driver pods to be ready..."
+          kubectl wait --for=condition=ready pod \
+            -l app.kubernetes.io/name=cvmfs-csi \
+            -n galaxy-deps \
+            --timeout=300s || echo "Warning: CVMFS CSI driver pods not ready"
+
+          echo "CVMFS CSI driver setup complete"
       - name: Deploy GalaxyKubeMan
         continue-on-error: true
         run: >
@@ -109,6 +128,46 @@ jobs:
         run: kubectl get pods -n ${{needs.deploygke.outputs.prefix}}-1; kubectl get pvc -n ${{needs.deploygke.outputs.prefix}}-1; kubectl get pv -n ${{needs.deploygke.outputs.prefix}}-1; kubectl get sc -n ${{needs.deploygke.outputs.prefix}}-1
       - name: Get events
         run: kubectl get events -n ${{needs.deploygke.outputs.prefix}}-1
+      - name: Debug deployment on failure
+        if: failure()
+        run: |
+          echo "=== Deployment failed, gathering debug information ==="
+
+          echo "=== All pods in GKM namespace ==="
+          kubectl get pods -n ${{needs.deploygke.outputs.prefix}}-1 -o wide
+
+          echo "=== All pods in galaxy-deps namespace ==="
+          kubectl get pods -n galaxy-deps -o wide
+
+          echo "=== CSI Drivers ==="
+          kubectl get csidriver
+
+          echo "=== Storage Classes ==="
+          kubectl get sc
+
+          echo "=== PVCs in GKM namespace ==="
+          kubectl get pvc -n ${{needs.deploygke.outputs.prefix}}-1
+
+          echo "=== PVCs in galaxy-deps namespace ==="
+          kubectl get pvc -n galaxy-deps
+
+          echo "=== Recent events in GKM namespace ==="
+          kubectl get events -n ${{needs.deploygke.outputs.prefix}}-1 --sort-by='.lastTimestamp' | tail -50
+
+          echo "=== Recent events in galaxy-deps namespace ==="
+          kubectl get events -n galaxy-deps --sort-by='.lastTimestamp' | tail -50
+
+          echo "=== Describe pending/failed pods in GKM namespace ==="
+          for pod in $(kubectl get pods -n ${{needs.deploygke.outputs.prefix}}-1 --field-selector=status.phase!=Running,status.phase!=Succeeded -o name 2>/dev/null); do
+            echo "--- Describing $pod ---"
+            kubectl describe -n ${{needs.deploygke.outputs.prefix}}-1 $pod
+          done
+
+          echo "=== Describe pending/failed pods in galaxy-deps namespace ==="
+          for pod in $(kubectl get pods -n galaxy-deps --field-selector=status.phase!=Running,status.phase!=Succeeded -o name 2>/dev/null); do
+            echo "--- Describing $pod ---"
+            kubectl describe -n galaxy-deps $pod
+          done
       - uses: actions/setup-python@v4
         with:
           python-version: '3.12'
