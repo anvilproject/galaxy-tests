@@ -230,4 +230,12 @@ jobs:
         continue-on-error: true
         run: gcloud container clusters delete "${{needs.deploygke.outputs.prefix}}" --zone "$GKE_ZONE" --quiet
       - name: Delete the two GCP Disks for first Galaxy
+        continue-on-error: true
         run: gcloud compute disks delete "${{needs.deploygke.outputs.prefix}}-1-postgres-pd" --zone "$GKE_ZONE" --quiet && gcloud compute disks delete "${{needs.deploygke.outputs.prefix}}-1-nfs-pd" --zone "$GKE_ZONE" --quiet
+      - name: Delete stale health check firewall rules
+        continue-on-error: true
+        run: |
+          CLUSTER_PREFIX="${{needs.deploygke.outputs.prefix}}"
+          gcloud compute firewall-rules list --format="value(name)" \
+            --filter="name~k8s-.*-node-http-hc AND targetTags:gke-${CLUSTER_PREFIX}-*" | \
+            xargs -r -n1 gcloud compute firewall-rules delete --quie
