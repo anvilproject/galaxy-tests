@@ -45,7 +45,8 @@ jobs:
     env:
       GKE_ZONE: us-east1-b
       GXY_TMP: /tmp/gxy
-      GKM_VERSION: "3.0.0"
+      GKM_VERSION: "4.0.0"
+      DEPS_VERSION: "1.1.1"
       USE_GKE_GCLOUD_AUTH_PLUGIN: True
     runs-on: ubuntu-latest
     permissions:
@@ -74,10 +75,19 @@ jobs:
         run: curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
       - name: Add anvil repository
         run: helm repo add anvil https://github.com/cloudve/helm-charts/raw/anvil
+      - name: Add Galaxy repository (for Galaxy deps)
+        run: helm repo add galaxy https://github.com/cloudve/helm-charts/raw/master
       - name: Generate the values file
         run: cat .github/templates/edge-values-template.yaml | sed "s/{{prefix}}/${{needs.deploygke.outputs.prefix}}/g" | sed "s/{{password}}/${{secrets.COMMON_PASSWORD}}/g" > edge-values.yaml
       - name: Print values file
         run: cat edge-values.yaml
+      - name: Deploy Galaxy dependencies
+        continue-on-error: false
+        run: >
+          helm install galaxy-deps galaxy/galaxy-deps \
+            -n galaxy-deps \
+            --create-namespace \
+            --version $DEPS_VERSION
       - name: Deploy GalaxyKubeMan
         continue-on-error: true
         run: >
