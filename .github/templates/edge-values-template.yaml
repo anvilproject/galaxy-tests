@@ -30,6 +30,9 @@ galaxy:
         affinity:
           nodeSelector:
             cloud.google.com/gke-nodepool: default-pool
+        storage:
+          pvcTemplate:
+            volumeName: "{{prefix}}-1-postgres-pv"
     persistence:
       existingClaim: {{prefix}}-1-postgres-disk-pvc
       storageClass: nfs-{{prefix}}-1
