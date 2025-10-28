@@ -111,7 +111,7 @@ jobs:
 
           echo "CVMFS CSI driver setup complete"
       - name: Deploy GalaxyKubeMan
-        continue-on-error: true
+        continue-on-error: false
         run: >
           (time sh -c "helm install --create-namespace -n ${{needs.deploygke.outputs.prefix}}-1 ${{needs.deploygke.outputs.prefix}}-1 anvil/galaxykubeman\
               --wait\
