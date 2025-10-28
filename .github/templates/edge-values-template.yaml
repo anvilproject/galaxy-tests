@@ -28,9 +28,10 @@ galaxy:
     operator:
       operatorSpecExtra:
         affinity:
-          nodeSelector: 
+          nodeSelector:
             cloud.google.com/gke-nodepool: default-pool
-    persistence: 
+    persistence:
+      existingClaim: {{prefix}}-1-postgres-disk-pvc
       storageClass: nfs-{{prefix}}-1
   rabbitmq:
     nodeSelector: 
