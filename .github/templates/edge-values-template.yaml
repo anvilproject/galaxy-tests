@@ -72,3 +72,7 @@ persistence:
       extraSpec:
         gcePersistentDisk:
           pdName: {{prefix}}-1-postgres-pd
+postgresql:
+  primary:
+    persistence:
+      existingClaim: {{prefix}}-1-postgres-disk-pvc
