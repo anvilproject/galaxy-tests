@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Results (powered by Planemo)"
+           tests="44"
+           errors="6"
+           failures="6"
+           skip="0">
+    
+    <testcase classname="bcftools_norm (Test #1)" name="0" time="39.633516788482666">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:21/0/13/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #2)" name="1" time="">
+        
+            <error type="error" message=""><![CDATA[
+                { "status": "skip", "test_index": 1, "tool_id": "bcftools_norm", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #3)" name="2" time="34.40538930892944">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:19/7/0/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #4)" name="3" time="28.028234243392944">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "input_file": {   "id": "5a1c60095f2283d9",   "src": "hda"  },  "multiallelics|mode": "-",  "normalize_indels": true,  "output_type": "v",  "reference_source|fasta_ref": {   "id": "40ca889743a47493",   "src": "hda"  },  "reference_source|reference_source_selector": "history" }, "job": {  "command_line": "export BCFTOOLS_PLUGINS=`which bcftools | sed \u0027s,bin/bcftools,libexec/bcftools,\u0027`;     bgzip -c \u0027/galaxy/server/database/objects/0/7/4/dataset_07443c4f-9d42-41e7-8431-e2ab1df53c9e.dat\u0027 \u003e input.vcf.gz \u0026\u0026 bcftools index input.vcf.gz \u0026\u0026     ln -s \u0027/galaxy/server/database/objects/9/5/5/dataset_955d9da5-f26d-44ae-9bc1-f75a0994eab4.dat\u0027 ref.fa \u0026\u0026 samtools faidx ref.fa \u0026\u0026    awk \u0027{ if ($0 !~ /\u003e/) {print toupper($0)} else {print $0} }\u0027 \u0027ref.fa\u0027 \u003e ref_upper.fa \u0026\u0026           bcftools norm   --fasta-ref ref_upper.fa  --check-ref w   --multiallelics \u0027-both\u0027  --site-win 1000             --output-type \u0027v\u0027   --threads ${GALAXY_SLOTS:-4}    input.vcf.gz  \u003e \u0027/galaxy/server/database/objects/7/1/9/dataset_7196885e-8e12-4cc8-abf1-dd80f2bc6461.dat\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-10-30T01:15:05.294961",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-wr9f5",  "galaxy_version": "24.1",  "handler": null,  "history_id": "1496e0b559b190ef",  "id": "4d7d81e9cf0efd4c",  "inputs": {   "input_file": {    "id": "5a1c60095f2283d9",    "src": "hda",    "uuid": "07443c4f-9d42-41e7-8431-e2ab1df53c9e"   },   "reference_source|fasta_ref": {    "id": "40ca889743a47493",    "src": "hda",    "uuid": "955d9da5-f26d-44ae-9bc1-f75a0994eab4"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output_file": {    "id": "6b43bbc6afcfe84e",    "src": "hda",    "uuid": "7196885e-8e12-4cc8-abf1-dd80f2bc6461"   }  },  "params": {   "__input_ext": "\"input\"",   "atomize": "false",   "check_ref": "\"w\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "multiallelics": "{\"__current_case__\": 1, \"mode\": \"-\", \"multiallelic_types\": \"both\"}",   "normalize_indels": "true",   "old_rec_tag": "\"\"",   "output_type": "\"v\"",   "reference_source": "{\"__current_case__\": 1, \"fasta_ref\": {\"values\": [{\"id\": 75, \"src\": \"hda\"}]}, \"reference_source_selector\": \"history\"}",   "rm_dup": "\"\"",   "sec_default": "{\"site_win\": \"1000\"}",   "sec_restrict": "{\"regions\": {\"__current_case__\": 0, \"regions_src\": \"__none__\"}, \"regions_overlap\": null, \"targets\": {\"__current_case__\": 0, \"targets_src\": \"__none__\"}, \"targets_overlap\": null}"  },  "state": "error",  "stderr": "Lines   total/split/realigned/skipped:\t19/7/19/0\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/bcftools_norm/bcftools_norm/1.15.1+galaxy4",  "tool_stderr": "Lines   total/split/realigned/skipped:\t19/7/19/0\n",  "tool_stdout": "",  "update_time": "2025-10-30T01:15:11.715806",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_norm/bcftools_norm/1.15.1+galaxy4, exit_code: None, stderr: Lines   total/split/realigned/skipped:\t19/7/19/0\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_norm/bcftools_norm/1.15.1+galaxy4, exit_code: None, stderr: Lines   total/split/realigned/skipped:\t19/7/19/0\n." ], "status": "failure", "test_index": 3, "time_seconds": 28.028234243392944, "tool_id": "bcftools_norm", "tool_version": "1.15.1+galaxy4"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:19/7/19/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #5)" name="4" time="27.52360200881958">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "input_file": {   "id": "bc69dd8242e6e749",   "src": "hda"  },  "multiallelics|mode": "+",  "output_type": "v",  "reference_source|fasta_ref": {   "id": "24429464b8f13e8d",   "src": "hda"  },  "reference_source|reference_source_selector": "history" }, "job": {  "command_line": "export BCFTOOLS_PLUGINS=`which bcftools | sed \u0027s,bin/bcftools,libexec/bcftools,\u0027`;     bgzip -c \u0027/galaxy/server/database/objects/4/0/6/dataset_406fcb1e-4002-496f-8fa9-71c4a9311cc5.dat\u0027 \u003e input.vcf.gz \u0026\u0026 bcftools index input.vcf.gz \u0026\u0026     ln -s \u0027/galaxy/server/database/objects/6/c/d/dataset_6cdc8930-043c-4d83-9fa5-d7782339e34d.dat\u0027 ref.fa \u0026\u0026 samtools faidx ref.fa \u0026\u0026    awk \u0027{ if ($0 !~ /\u003e/) {print toupper($0)} else {print $0} }\u0027 \u0027ref.fa\u0027 \u003e ref_upper.fa \u0026\u0026           bcftools norm   --fasta-ref ref_upper.fa  --check-ref w --do-not-normalize  --multiallelics \u0027+both\u0027   --site-win 1000             --output-type \u0027v\u0027   --threads ${GALAXY_SLOTS:-4}    input.vcf.gz  \u003e \u0027/galaxy/server/database/objects/3/6/e/dataset_36e41127-9e2a-430c-9d58-f95f8bb788c3.dat\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-10-30T01:15:34.480880",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-2kxfr",  "galaxy_version": "24.1",  "handler": null,  "history_id": "1496e0b559b190ef",  "id": "c85ac1d022d87be8",  "inputs": {   "input_file": {    "id": "bc69dd8242e6e749",    "src": "hda",    "uuid": "406fcb1e-4002-496f-8fa9-71c4a9311cc5"   },   "reference_source|fasta_ref": {    "id": "24429464b8f13e8d",    "src": "hda",    "uuid": "6cdc8930-043c-4d83-9fa5-d7782339e34d"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output_file": {    "id": "41b9bebc8e48755d",    "src": "hda",    "uuid": "36e41127-9e2a-430c-9d58-f95f8bb788c3"   }  },  "params": {   "__input_ext": "\"input\"",   "atomize": "false",   "check_ref": "\"w\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "multiallelics": "{\"__current_case__\": 2, \"mode\": \"+\", \"multiallelic_types\": \"both\", \"strict_filter\": false}",   "normalize_indels": "false",   "old_rec_tag": "\"\"",   "output_type": "\"v\"",   "reference_source": "{\"__current_case__\": 1, \"fasta_ref\": {\"values\": [{\"id\": 78, \"src\": \"hda\"}]}, \"reference_source_selector\": \"history\"}",   "rm_dup": "\"\"",   "sec_default": "{\"site_win\": \"1000\"}",   "sec_restrict": "{\"regions\": {\"__current_case__\": 0, \"regions_src\": \"__none__\"}, \"regions_overlap\": null, \"targets\": {\"__current_case__\": 0, \"targets_src\": \"__none__\"}, \"targets_overlap\": null}"  },  "state": "error",  "stderr": "Lines   total/split/realigned/skipped:\t26/0/0/0\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/bcftools_norm/bcftools_norm/1.15.1+galaxy4",  "tool_stderr": "Lines   total/split/realigned/skipped:\t26/0/0/0\n",  "tool_stdout": "",  "update_time": "2025-10-30T01:15:39.361591",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_norm/bcftools_norm/1.15.1+galaxy4, exit_code: None, stderr: Lines   total/split/realigned/skipped:\t26/0/0/0\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_norm/bcftools_norm/1.15.1+galaxy4, exit_code: None, stderr: Lines   total/split/realigned/skipped:\t26/0/0/0\n." ], "status": "failure", "test_index": 4, "time_seconds": 27.52360200881958, "tool_id": "bcftools_norm", "tool_version": "1.15.1+galaxy4"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:26/0/0/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #6)" name="5" time="33.73249912261963">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:26/0/0/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #7)" name="6" time="35.6773476600647">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:8/0/0/0REF/ALT total/modified/added:  8/5/3
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #8)" name="7" time="34.711289167404175">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:39/20/3/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #9)" name="8" time="">
+        
+            <error type="error" message=""><![CDATA[
+                { "status": "skip", "test_index": 8, "tool_id": "bcftools_norm", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_plugin_fill_tags (Test #1)" name="0" time="38.958725452423096">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_plugin_fill_tags (Test #2)" name="1" time="10.821138620376587">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 1, "time_seconds": 10.821138620376587, "tool_id": "bcftools_plugin_fill_tags", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="circos (Test #1)" name="0" time="80.37737226486206">
+        
+            
+            <system-out><![CDATA[
+            debuggroup summary 0.13s welcome to circos v0.69-8 15 Jun 2019 on Perl 5.032001debuggroup summary 0.13s current working directory /galaxy/server/database/jobs_directory/000/106/workingdebuggroup summary 0.13s command /usr/local/bin/circos -conf circos/conf/circos.conf -noparanoiddebuggroup summary 0.13s loading configuration from file circos/conf/circos.confdebuggroup summary 0.13s found conf file circos/conf/circos.confdebuggroup summary 0.24s debug will appear for these features: output,summarydebuggroup summary 0.24s bitmap output image ./circos.pngdebuggroup summary 0.24s SVG output image ./circos.svgdebuggroup summary 0.24s parsing karyotype and organizing ideogramsdebuggroup summary 0.24s karyotype has 2 chromosomes of total size 56,082debuggroup summary 0.25s applying global and local scalingdebuggroup summary 0.25s allocating image, colors and brushesdebuggroup summary 5.01s drawing 2 ideograms of total size 56,082debuggroup summary 5.01s drawing highlights and ideogramsdebuggroup output 5.02s generating outputdebuggroup output 5.33s created PNG image ./circos.png (40 kb)debuggroup output 5.33s created SVG image ./circos.svg (2 kb)
+            ]]></system-out>
+            <system-err><![CDATA[
+            Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="circos (Test #2)" name="1" time="50.61471652984619">
+        
+            
+            <system-out><![CDATA[
+            debuggroup summary 0.12s welcome to circos v0.69-8 15 Jun 2019 on Perl 5.032001debuggroup summary 0.13s current working directory /galaxy/server/database/jobs_directory/000/111/workingdebuggroup summary 0.13s command /usr/local/bin/circos -conf circos/conf/circos.conf -noparanoiddebuggroup summary 0.13s loading configuration from file circos/conf/circos.confdebuggroup summary 0.13s found conf file circos/conf/circos.confdebuggroup summary 0.23s debug will appear for these features: output,summarydebuggroup summary 0.23s bitmap output image ./circos.pngdebuggroup summary 0.23s SVG output image ./circos.svgdebuggroup summary 0.23s parsing karyotype and organizing ideogramsdebuggroup summary 0.24s karyotype has 2 chromosomes of total size 56,082debuggroup summary 0.24s applying global and local scalingdebuggroup summary 0.24s allocating image, colors and brushesdebuggroup summary 5.12s drawing 2 ideograms of total size 56,082debuggroup summary 5.12s drawing highlights and ideogramsdebuggroup summary 5.16s found conf file /usr/local/bin/../etc/tracks/link.confdebuggroup summary 5.16s process track_0 link circos/conf/../data/links-0.txtdebuggroup summary 5.17s drawing link track_0 z 0debuggroup !circoswarning 5.20s  Data point of type [link] [50000-50500] extended past end of ideogram [ctgA 0-50001]. This data point will be [trimmed].debuggroup !circoswarning 5.20s  Data point of type [link] [51000-51500] extended past end of ideogram [ctgA 0-50001]. This data point will be [hidden].debuggroup summary 5.20s found conf file /usr/local/bin/../etc/tracks/histogram.confdebuggroup summary 5.20s found conf file /usr/local/bin/../etc/tracks/scatter.confdebuggroup summary 5.20s found conf file /usr/local/bin/../etc/tracks/tile.confdebuggroup summary 5.20s processing track_0 histogram circos/conf/../data/data-0.txtdebuggroup summary 5.26s processing track_1 scatter circos/conf/../data/data-1.txtdebuggroup summary 5.42s processing track_2 tile circos/conf/../data/data-2.txtdebuggroup summary 5.43s drawing track_0 histogram z 0 data-0.txt orient outdebuggroup summary 5.45s found conf file /usr/local/bin/../etc/tracks/axis.confdebuggroup summary 5.91s drawing track_1 scatter z 0 data-1.txt orient outdebuggroup summary 5.93s found conf file /usr/local/bin/../etc/tracks/axis.confdebuggroup summary 6.07s drawing track_2 tile z 0 data-2.txt orient outdebuggroup summary 6.07s found conf file /usr/local/bin/../etc/tracks/axis.confdebuggroup !circoswarning 6.22s  Data point of type [tile] [3013-6130] extended past end of ideogram [ctgB 0-6079]. This data point will be [trimmed].debuggroup output 6.22s generating outputdebuggroup output 6.60s created PNG image ./circos.png (539 kb)debuggroup output 6.61s created SVG image ./circos.svg (414 kb)
+            ]]></system-out>
+            <system-err><![CDATA[
+            Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value within %Circos::Error::GROUPERROR in uc at /usr/local/bin/../lib/Circos/Error.pm line 354, <F> line 21.Use of uninitialized value within %Circos::Error::GROUPERROR in uc at /usr/local/bin/../lib/Circos/Error.pm line 354, <F> line 21.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781, <F> line 21.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781, <F> line 1214.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value within %Circos::Error::GROUPERROR in uc at /usr/local/bin/../lib/Circos/Error.pm line 354.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="deeptools_plot_enrichment (Test #1)" name="0" time="54.03705930709839">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #1)" name="0" time="77.3784031867981">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #2)" name="1" time="33.779945611953735">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #3)" name="2" time="32.256726026535034">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #4)" name="3" time="32.379974126815796">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #5)" name="4" time="32.86591196060181">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #1)" name="0" time="40.533589124679565">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #2)" name="1" time="39.16628956794739">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #3)" name="2" time="36.29945111274719">
+        
+            
+            <system-out><![CDATA[
+            [FLASH] Starting FLASH v1.2.11[FLASH] Fast Length Adjustment of SHort reads[FLASH]  [FLASH] Input files:[FLASH]     /galaxy/server/database/objects/a/3/b/dataset_a3b8a447-77b9-4860-a4e6-e6ae8e9ca619.dat[FLASH]     /galaxy/server/database/objects/b/d/d/dataset_bdded34b-c44d-4c97-8f8c-52b5bcec69a7.dat[FLASH]  [FLASH] Output files:[FLASH]     ./out.extendedFrags.fastq[FLASH]     ./out.notCombined_1.fastq[FLASH]     ./out.notCombined_2.fastq[FLASH]     ./out.hist[FLASH]     ./out.histogram[FLASH]  [FLASH] Parameters:[FLASH]     Min overlap:           10[FLASH]     Max overlap:           65[FLASH]     Max mismatch density:  0.250000[FLASH]     Allow "outie" pairs:   false[FLASH]     Cap mismatch quals:    false[FLASH]     Combiner threads:      1[FLASH]     Input format:          FASTQ, phred_offset=64[FLASH]     Output format:         FASTQ, phred_offset=64[FLASH]  [FLASH] Starting reader and writer threads[FLASH] Starting 1 combiner threads[FLASH] Processed 200 read pairs[FLASH]  [FLASH] Read combination statistics:[FLASH]     Total pairs:      200[FLASH]     Combined pairs:   5[FLASH]     Uncombined pairs: 195[FLASH]     Percent combined: 2.50%[FLASH]  [FLASH] Writing histogram files.[FLASH]  [FLASH] FLASH v1.2.11 complete![FLASH] 0.027 seconds elapsed
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #4)" name="3" time="20.49483871459961">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 3, "time_seconds": 20.49483871459961, "tool_id": "flash", "tool_version": "1.2.11.4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #5)" name="4" time="12.886761903762817">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 4, "time_seconds": 12.886761903762817, "tool_id": "flash", "tool_version": "1.2.11.4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="ivar_filtervariants (Test #1)" name="0" time="41.62001609802246">
+        
+            
+            <system-out><![CDATA[
+            Header format of ./var_0.tsv did not match! Please use files generated using "ivar variants" command.
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="medaka_consensus (Test #1)" name="0" time="71.89772009849548">
+        
+            
+            <system-out><![CDATA[
+            [01:20:12 - Predict] Reducing threads to 2, anymore is a waste.[01:20:12 - Predict] It looks like you are running medaka without a GPU and attempted to set a high number of threads. We have scaled this down to an optimal number. If you wish to improve performance please see https://nanoporetech.github.io/medaka/installation.html#improving-parallelism.[01:20:12 - Predict] Setting tensorflow inter/intra-op threads to 2/1.[01:20:12 - Predict] Processing region(s): ref:0-30[01:20:12 - Predict] Using model: /usr/local/lib/python3.8/site-packages/medaka/data/r941_min_high_g360_model.hdf5.[01:20:12 - DataStre] Writing sample registry.[01:20:12 - Predict] Processing 1 long region(s) with batching.[01:20:12 - MdlStore] filepath /usr/local/lib/python3.8/site-packages/medaka/data/r941_min_high_g360_model.hdf52025-10-30 01:20:12.411148: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  SSE4.1 SSE4.2 AVX AVX2 FMATo enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.[01:20:12 - BAMFile] Creating pool of 16 BAM file sets.[01:20:12 - DLoader] Sample-0: started[01:20:12 - Sampler] Initializing sampler for consensus of region ref:0-30.[01:20:12 - DLoader] Sample-1: started[01:20:12 - DLoader] Sample-1: finished[01:20:12 - DLoader] Initialised. Batch size:100. Workers:2. Cache:800[01:20:12 - PWorker] Running inference for 0.0M draft bases.[01:20:13 - Feature] Pileup counts do not span requested region, requested ref:0-30, received 0-9.[01:20:13 - Feature] Processed ref:0.0-9.0 (median depth 1.0)[01:20:13 - Feature] Pileup counts do not span requested region, requested ref:0-30, received 14-29.[01:20:13 - Feature] Processed ref:14.0-29.0 (median depth 1.0)[01:20:13 - Sampler] Took 0.06s to make features.[01:20:13 - Sampler] Region ref:0.0-9.0 (10 positions) is smaller than inference chunk length 10000, quarantining.[01:20:13 - Sampler] Region ref:14.0-29.0 (16 positions) is smaller than inference chunk length 10000, quarantining.[01:20:13 - DLoader] Sample-0: finished[01:20:13 - DLoader] Batches ready: 0. Samples ready: 0 (0.0 batches)[01:20:13 - DataStre] Writing sample registry.[01:20:13 - PWorker] Processed 0 batches[01:20:13 - PWorker] All done, 2 remainder regions.[01:20:13 - Predict] Processing 2 short region(s).[01:20:13 - MdlStore] filepath /usr/local/lib/python3.8/site-packages/medaka/data/r941_min_high_g360_model.hdf5[01:20:13 - DLoader] Sample-0: started[01:20:13 - Sampler] Initializing sampler for consensus of region ref:0-10.[01:20:13 - DLoader] Sample-1: started[01:20:13 - Sampler] Initializing sampler for consensus of region ref:14-30.[01:20:13 - DLoader] Initialised. Batch size:1. Workers:2. Cache:8[01:20:13 - PWorker] Running inference for 0.0M draft bases.[01:20:13 - Feature] Processed ref:0.0-9.0 (median depth 1.0)[01:20:13 - Sampler] Took 0.05s to make features.[01:20:13 - Sampler] Pileup for ref:0.0-9.0 is of width 10[01:20:13 - Feature] Processed ref:14.0-29.0 (median depth 1.0)[01:20:13 - Sampler] Took 0.05s to make features.[01:20:13 - Sampler] Pileup for ref:14.0-29.0 is of width 16[01:20:13 - DLoader] Sample-0: finished[01:20:13 - DLoader] Sample-1: finished[01:20:13 - DLoader] Batches ready: 0. Samples ready: 1 (1.0 batches)[01:20:13 - DataStre] Loaded sample register.[01:20:13 - DataStre] Adding ref:0.0-9.0 to sample registry[01:20:13 - DLoader] Batches ready: 1. Samples ready: 0 (0.0 batches)[01:20:13 - DataStre] Adding ref:14.0-29.0 to sample registry[01:20:13 - DLoader] Batches ready: 0. Samples ready: 0 (0.0 batches)[01:20:13 - DataStre] Writing sample registry.[01:20:13 - PWorker] Processed 2 batches[01:20:13 - PWorker] All done, 0 remainder regions.[01:20:13 - Predict] Finished processing all regions.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.[01:20:14 - BAMFile] Closing BAM file set.
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="medaka_consensus (Test #2)" name="1" time="38.890453577041626">
+        
+            
+            <system-out><![CDATA[
+            [01:20:59 - Predict] Reducing threads to 2, anymore is a waste.[01:20:59 - Predict] It looks like you are running medaka without a GPU and attempted to set a high number of threads. We have scaled this down to an optimal number. If you wish to improve performance please see https://nanoporetech.github.io/medaka/installation.html#improving-parallelism.[01:20:59 - Predict] Setting tensorflow inter/intra-op threads to 2/1.[01:20:59 - Predict] Processing region(s): ref:0-30[01:20:59 - Predict] Using model: /usr/local/lib/python3.8/site-packages/medaka/data/r941_min_fast_g303_model.hdf5.[01:20:59 - DataStre] Writing sample registry.[01:20:59 - Predict] Processing 1 long region(s) with batching.[01:20:59 - MdlStore] filepath /usr/local/lib/python3.8/site-packages/medaka/data/r941_min_fast_g303_model.hdf52025-10-30 01:20:59.040371: I tensorflow/core/platform/cpu_feature_guard.cc:151] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  SSE4.1 SSE4.2 AVX AVX2 FMATo enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.[01:20:59 - BAMFile] Creating pool of 16 BAM file sets.[01:20:59 - DLoader] Sample-0: started[01:20:59 - Sampler] Initializing sampler for consensus of region ref:0-30.[01:20:59 - DLoader] Sample-1: started[01:20:59 - DLoader] Sample-1: finished[01:20:59 - DLoader] Initialised. Batch size:99. Workers:2. Cache:792[01:20:59 - Feature] Pileup counts do not span requested region, requested ref:0-30, received 0-9.[01:20:59 - PWorker] Running inference for 0.0M draft bases.[01:20:59 - Feature] Processed ref:0.0-9.0 (median depth 1.0)[01:20:59 - Feature] Pileup counts do not span requested region, requested ref:0-30, received 14-29.[01:20:59 - Feature] Processed ref:14.0-29.0 (median depth 1.0)[01:20:59 - Sampler] Took 0.06s to make features.[01:20:59 - Sampler] Region ref:0.0-9.0 (10 positions) is smaller than inference chunk length 9999, quarantining.[01:20:59 - Sampler] Region ref:14.0-29.0 (16 positions) is smaller than inference chunk length 9999, quarantining.[01:20:59 - DLoader] Sample-0: finished[01:20:59 - DLoader] Batches ready: 0. Samples ready: 0 (0.0 batches)[01:20:59 - DataStre] Writing sample registry.[01:20:59 - PWorker] Processed 0 batches[01:20:59 - PWorker] All done, 2 remainder regions.[01:20:59 - Predict] Processing 2 short region(s).[01:20:59 - MdlStore] filepath /usr/local/lib/python3.8/site-packages/medaka/data/r941_min_fast_g303_model.hdf5[01:21:00 - DLoader] Sample-0: started[01:21:00 - Sampler] Initializing sampler for consensus of region ref:0-10.[01:21:00 - DLoader] Sample-1: started[01:21:00 - Sampler] Initializing sampler for consensus of region ref:14-30.[01:21:00 - Feature] Processed ref:0.0-9.0 (median depth 1.0)[01:21:00 - Sampler] Took 0.01s to make features.[01:21:00 - Sampler] Pileup for ref:0.0-9.0 is of width 10[01:21:00 - DLoader] Initialised. Batch size:1. Workers:2. Cache:8[01:21:00 - PWorker] Running inference for 0.0M draft bases.[01:21:00 - Feature] Processed ref:14.0-29.0 (median depth 1.0)[01:21:00 - Sampler] Took 0.01s to make features.[01:21:00 - Sampler] Pileup for ref:14.0-29.0 is of width 16[01:21:00 - DLoader] Sample-0: finished[01:21:00 - DLoader] Batches ready: 0. Samples ready: 0 (0.0 batches)[01:21:00 - DLoader] Sample-1: finished[01:21:00 - DataStre] Loaded sample register.[01:21:00 - DataStre] Adding ref:0.0-9.0 to sample registry[01:21:00 - DLoader] Batches ready: 1. Samples ready: 0 (0.0 batches)[01:21:00 - DataStre] Adding ref:14.0-29.0 to sample registry[01:21:00 - DLoader] Batches ready: 0. Samples ready: 0 (0.0 batches)[01:21:00 - DataStre] Writing sample registry.[01:21:00 - PWorker] Processed 2 batches[01:21:00 - PWorker] All done, 0 remainder regions.[01:21:00 - Predict] Finished processing all regions.[01:21:00 - Predict] Validating and finalising output data.[01:21:00 - DataStre] Writing sample registry.[01:21:00 - DataStre] Created missing sample register.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.[01:21:00 - BAMFile] Closing BAM file set.
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="poretools_nucdist (Test #1)" name="0" time="68.13875699043274">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="poretools_nucdist (Test #2)" name="1" time="32.900131702423096">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="qualimap_multi_bamqc (Test #1)" name="0" time="54.06632947921753">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 0, "time_seconds": 54.06632947921753, "tool_id": "qualimap_multi_bamqc", "tool_version": "2.3+galaxy0"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="racon (Test #1)" name="0" time="49.91109490394592">
+        
+            
+                <error type="error" message="Tool exit code: 132"><![CDATA[
+                    { "inputs": {  "corrected_reads": {   "id": "e1692ee2f092cb27",   "src": "hda"  },  "error_threshold": "0.2",  "fragment_correction": true,  "include_unpolished": true,  "overlaps": {   "id": "e02c1584d170fce8",   "src": "hda"  },  "reads": {   "id": "00e1cc5e05d06dc7",   "src": "hda"  },  "window_length": "800" }, "job": {  "command_line": "ln -s \u0027/galaxy/server/database/objects/2/4/5/dataset_24532dfe-247c-4ad5-83dc-c57fda9d8b01.dat\u0027 reads.fasta \u0026\u0026 ln -s \u0027/galaxy/server/database/objects/f/3/3/dataset_f33eeb00-214f-4e71-b85f-c19970ad5261.dat\u0027 overlaps.sam \u0026\u0026  ln -s \u0027/galaxy/server/database/objects/a/5/c/dataset_a5cfbe43-a4cc-4749-88ab-f0647230d6ee.dat\u0027 corrected_reads.fasta \u0026\u0026  racon reads.fasta overlaps.sam corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -u -f -w 800 -q 10.0 -e 0.2  -m 3 -x -5 -g -4 \u003e racon_polished_consensus.fa",  "command_version": "1.5.0",  "copied_from_job_id": null,  "create_time": "2025-10-30T01:24:22.044597",  "dependencies": [],  "exit_code": 132,  "external_id": "gxy-95cj5",  "galaxy_version": "24.1",  "handler": null,  "history_id": "1496e0b559b190ef",  "id": "f3ea4c890ca180e5",  "inputs": {   "corrected_reads": {    "id": "e1692ee2f092cb27",    "src": "hda",    "uuid": "a5cfbe43-a4cc-4749-88ab-f0647230d6ee"   },   "overlaps": {    "id": "e02c1584d170fce8",    "src": "hda",    "uuid": "f33eeb00-214f-4e71-b85f-c19970ad5261"   },   "reads": {    "id": "00e1cc5e05d06dc7",    "src": "hda",    "uuid": "24532dfe-247c-4ad5-83dc-c57fda9d8b01"   }  },  "job_messages": [   {    "code_desc": "",    "desc": "Fatal error: Exit code 132 ()",    "error_level": 3,    "exit_code": 132,    "type": "exit_code"   }  ],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Job Runtime (Wall Clock)",    "value": "1 second"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1761787470.0000000",    "title": "Job End Time",    "value": "2025-10-30 01:24:30"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1761787469.0000000",    "title": "Job Start Time",    "value": "2025-10-30 01:24:29"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "38654.0000000",    "title": "Memory Allocated (MB)",    "value": "38654"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "8.0000000",    "title": "Cores Allocated",    "value": "8"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "consensus": {    "id": "b515afb4c41c887a",    "src": "hda",    "uuid": "65512241-1b15-4459-9a0d-c65d7a551afc"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "error_threshold": "\"0.2\"",   "fragment_correction": "true",   "gap": "\"-4\"",   "include_unpolished": "true",   "match": "\"3\"",   "mismatch": "\"-5\"",   "no_trimming": "false",   "quality_threshold": "\"10.0\"",   "window_length": "\"800\""  },  "state": "error",  "stderr": "/galaxy/server/database/jobs_directory/000/93/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.sam corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -u -f -w 800 -q 10.0 -e 0.2 -m 3 -x -5 -g -4 \u003e racon_polished_consensus.fa\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/bgruening/racon/racon/1.5.0+galaxy1",  "tool_stderr": "/galaxy/server/database/jobs_directory/000/93/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.sam corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -u -f -w 800 -q 10.0 -e 0.2 -m 3 -x -5 -g -4 \u003e racon_polished_consensus.fa\n",  "tool_stdout": "",  "update_time": "2025-10-30T01:24:42.491876",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/bgruening/racon/racon/1.5.0+galaxy1, exit_code: 132, stderr: /galaxy/server/database/jobs_directory/000/93/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.sam corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -u -f -w 800 -q 10.0 -e 0.2 -m 3 -x -5 -g -4 \u003e racon_polished_consensus.fa\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/bgruening/racon/racon/1.5.0+galaxy1, exit_code: 132, stderr: /galaxy/server/database/jobs_directory/000/93/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.sam corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -u -f -w 800 -q 10.0 -e 0.2 -m 3 -x -5 -g -4 \u003e racon_polished_consensus.fa\n." ], "status": "failure", "test_index": 0, "time_seconds": 49.91109490394592, "tool_id": "racon", "tool_version": "1.5.0+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            /galaxy/server/database/jobs_directory/000/93/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.sam corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -u -f -w 800 -q 10.0 -e 0.2 -m 3 -x -5 -g -4 > racon_polished_consensus.fa
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="racon (Test #2)" name="1" time="37.68359017372131">
+        
+            
+                <error type="error" message="Tool exit code: 132"><![CDATA[
+                    { "inputs": {  "corrected_reads": {   "id": "2197e8336bbf53d5",   "src": "hda"  },  "overlaps": {   "id": "5a8dbdfc06428063",   "src": "hda"  },  "reads": {   "id": "45bc28be26fafe96",   "src": "hda"  } }, "job": {  "command_line": "ln -s \u0027/galaxy/server/database/objects/f/f/e/dataset_ffef77d9-7660-4130-903b-c7af26f05a5c.dat\u0027 reads.fasta \u0026\u0026 ln -s \u0027/galaxy/server/database/objects/2/9/8/dataset_298369ae-a074-4e77-8462-0bb4a2158718.dat\u0027 overlaps.paf \u0026\u0026  ln -s \u0027/galaxy/server/database/objects/4/c/8/dataset_4c8f79ff-12f6-40bf-be53-3338aa762f59.dat\u0027 corrected_reads.fasta \u0026\u0026  racon reads.fasta overlaps.paf corrected_reads.fasta -t ${GALAXY_SLOTS:-4}   -w 500 -q 10.0 -e 0.3  -m 3 -x -5 -g -4 \u003e racon_polished_consensus.fa",  "command_version": "1.5.0",  "copied_from_job_id": null,  "create_time": "2025-10-30T01:25:08.273839",  "dependencies": [],  "exit_code": 132,  "external_id": "gxy-t5ppx",  "galaxy_version": "24.1",  "handler": null,  "history_id": "1496e0b559b190ef",  "id": "93e1010a4487dc7d",  "inputs": {   "corrected_reads": {    "id": "2197e8336bbf53d5",    "src": "hda",    "uuid": "4c8f79ff-12f6-40bf-be53-3338aa762f59"   },   "overlaps": {    "id": "5a8dbdfc06428063",    "src": "hda",    "uuid": "298369ae-a074-4e77-8462-0bb4a2158718"   },   "reads": {    "id": "45bc28be26fafe96",    "src": "hda",    "uuid": "ffef77d9-7660-4130-903b-c7af26f05a5c"   }  },  "job_messages": [   {    "code_desc": "",    "desc": "Fatal error: Exit code 132 ()",    "error_level": 3,    "exit_code": 132,    "type": "exit_code"   }  ],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Job Runtime (Wall Clock)",    "value": "1 second"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1761787510.0000000",    "title": "Job End Time",    "value": "2025-10-30 01:25:10"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1761787509.0000000",    "title": "Job Start Time",    "value": "2025-10-30 01:25:09"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "38654.0000000",    "title": "Memory Allocated (MB)",    "value": "38654"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "8.0000000",    "title": "Cores Allocated",    "value": "8"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "consensus": {    "id": "77ea6492a0d0e993",    "src": "hda",    "uuid": "03e57168-75be-4842-ab1e-4dfa225055c7"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "error_threshold": "\"0.3\"",   "fragment_correction": "false",   "gap": "\"-4\"",   "include_unpolished": "false",   "match": "\"3\"",   "mismatch": "\"-5\"",   "no_trimming": "false",   "quality_threshold": "\"10.0\"",   "window_length": "\"500\""  },  "state": "error",  "stderr": "/galaxy/server/database/jobs_directory/000/97/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.paf corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -w 500 -q 10.0 -e 0.3 -m 3 -x -5 -g -4 \u003e racon_polished_consensus.fa\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/bgruening/racon/racon/1.5.0+galaxy1",  "tool_stderr": "/galaxy/server/database/jobs_directory/000/97/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.paf corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -w 500 -q 10.0 -e 0.3 -m 3 -x -5 -g -4 \u003e racon_polished_consensus.fa\n",  "tool_stdout": "",  "update_time": "2025-10-30T01:25:20.305581",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/bgruening/racon/racon/1.5.0+galaxy1, exit_code: 132, stderr: /galaxy/server/database/jobs_directory/000/97/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.paf corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -w 500 -q 10.0 -e 0.3 -m 3 -x -5 -g -4 \u003e racon_polished_consensus.fa\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/bgruening/racon/racon/1.5.0+galaxy1, exit_code: 132, stderr: /galaxy/server/database/jobs_directory/000/97/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.paf corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -w 500 -q 10.0 -e 0.3 -m 3 -x -5 -g -4 \u003e racon_polished_consensus.fa\n." ], "status": "failure", "test_index": 1, "time_seconds": 37.68359017372131, "tool_id": "racon", "tool_version": "1.5.0+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            /galaxy/server/database/jobs_directory/000/97/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.paf corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -w 500 -q 10.0 -e 0.3 -m 3 -x -5 -g -4 > racon_polished_consensus.fa
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="racon (Test #3)" name="2" time="39.74596667289734">
+        
+            
+                <error type="error" message="Tool exit code: 132"><![CDATA[
+                    { "inputs": {  "corrected_reads": {   "id": "b59c1c27e784c546",   "src": "hda"  },  "fragment_correction": false,  "gap": "-3",  "include_unpolished": false,  "match": "7",  "mismatch": "-4",  "no_trimming": true,  "overlaps": {   "id": "cd76aa1e96a0cc1a",   "src": "hda"  },  "quality_threshold": "9.0",  "reads": {   "id": "8d31a94f86bd54cf",   "src": "hda"  } }, "job": {  "command_line": "ln -s \u0027/galaxy/server/database/objects/c/b/e/dataset_cbef89bc-ee54-4526-8752-d5632d6d21bf.dat\u0027 reads.fasta \u0026\u0026 ln -s \u0027/galaxy/server/database/objects/2/e/7/dataset_2e7a68bc-464a-45a5-8377-f78cb16f9acc.dat\u0027 overlaps.sam \u0026\u0026  ln -s \u0027/galaxy/server/database/objects/8/8/f/dataset_88faa583-e464-41e7-8e9b-5a2658feacd9.dat\u0027 corrected_reads.fasta \u0026\u0026  racon reads.fasta overlaps.sam corrected_reads.fasta -t ${GALAXY_SLOTS:-4}   -w 500 -q 9.0 -e 0.3 --no-trimming -m 7 -x -4 -g -3 \u003e racon_polished_consensus.fa",  "command_version": "1.5.0",  "copied_from_job_id": null,  "create_time": "2025-10-30T01:25:46.642996",  "dependencies": [],  "exit_code": 132,  "external_id": "gxy-84mr2",  "galaxy_version": "24.1",  "handler": null,  "history_id": "1496e0b559b190ef",  "id": "f6592e7737ee1929",  "inputs": {   "corrected_reads": {    "id": "b59c1c27e784c546",    "src": "hda",    "uuid": "88faa583-e464-41e7-8e9b-5a2658feacd9"   },   "overlaps": {    "id": "cd76aa1e96a0cc1a",    "src": "hda",    "uuid": "2e7a68bc-464a-45a5-8377-f78cb16f9acc"   },   "reads": {    "id": "8d31a94f86bd54cf",    "src": "hda",    "uuid": "cbef89bc-ee54-4526-8752-d5632d6d21bf"   }  },  "job_messages": [   {    "code_desc": "",    "desc": "Fatal error: Exit code 132 ()",    "error_level": 3,    "exit_code": 132,    "type": "exit_code"   }  ],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "0E-7",    "title": "Job Runtime (Wall Clock)",    "value": "0 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1761787548.0000000",    "title": "Job End Time",    "value": "2025-10-30 01:25:48"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1761787548.0000000",    "title": "Job Start Time",    "value": "2025-10-30 01:25:48"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "38654.0000000",    "title": "Memory Allocated (MB)",    "value": "38654"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "8.0000000",    "title": "Cores Allocated",    "value": "8"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "consensus": {    "id": "fc37f5627a151255",    "src": "hda",    "uuid": "2ebde80a-eeec-47df-9319-f0b82c297a76"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "error_threshold": "\"0.3\"",   "fragment_correction": "false",   "gap": "\"-3\"",   "include_unpolished": "false",   "match": "\"7\"",   "mismatch": "\"-4\"",   "no_trimming": "true",   "quality_threshold": "\"9.0\"",   "window_length": "\"500\""  },  "state": "error",  "stderr": "/galaxy/server/database/jobs_directory/000/101/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.sam corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -w 500 -q 9.0 -e 0.3 --no-trimming -m 7 -x -4 -g -3 \u003e racon_polished_consensus.fa\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/bgruening/racon/racon/1.5.0+galaxy1",  "tool_stderr": "/galaxy/server/database/jobs_directory/000/101/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.sam corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -w 500 -q 9.0 -e 0.3 --no-trimming -m 7 -x -4 -g -3 \u003e racon_polished_consensus.fa\n",  "tool_stdout": "",  "update_time": "2025-10-30T01:25:59.992013",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/bgruening/racon/racon/1.5.0+galaxy1, exit_code: 132, stderr: /galaxy/server/database/jobs_directory/000/101/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.sam corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -w 500 -q 9.0 -e 0.3 --no-trimming -m 7 -x -4 -g -3 \u003e racon_polished_consensus.fa\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/bgruening/racon/racon/1.5.0+galaxy1, exit_code: 132, stderr: /galaxy/server/database/jobs_directory/000/101/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.sam corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -w 500 -q 9.0 -e 0.3 --no-trimming -m 7 -x -4 -g -3 \u003e racon_polished_consensus.fa\n." ], "status": "failure", "test_index": 2, "time_seconds": 39.74596667289734, "tool_id": "racon", "tool_version": "1.5.0+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            /galaxy/server/database/jobs_directory/000/101/tool_script.sh: line 24:    27 Illegal instruction     (core dumped) racon reads.fasta overlaps.sam corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -w 500 -q 9.0 -e 0.3 --no-trimming -m 7 -x -4 -g -3 > racon_polished_consensus.fa
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #1)" name="0" time="12.183660745620728">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 0, "time_seconds": 12.183660745620728, "tool_id": "samtools_sort", "tool_version": "2.0.7"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #2)" name="1" time="36.34752631187439">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #3)" name="2" time="26.021868467330933">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "input1": {   "id": "c949ff9451ac3ea5",   "src": "hda"  },  "prim_key_cond|prim_key_select": "-t",  "prim_key_cond|tag": "RG" }, "job": {  "command_line": "addthreads=${GALAXY_SLOTS:-1} \u0026\u0026 (( addthreads-- )) \u0026\u0026   addmemory=${GALAXY_MEMORY_MB_PER_SLOT:-768} \u0026\u0026 ((addmemory=addmemory*75/100)) \u0026\u0026  samtools sort -@ $addthreads -m $addmemory\"M\" -t RG   -O bam -T \"${TMPDIR:-.}\" \u0027/galaxy/server/database/objects/1/1/4/dataset_114bcbd9-72af-414e-a301-48e92c8eac62.dat\u0027 \u003e \u0027/galaxy/server/database/objects/b/9/0/dataset_b90a92e6-47ea-4427-a97c-f5d991e48910.dat\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-10-30T01:10:02.904549",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-7lcmh",  "galaxy_version": "24.1",  "handler": null,  "history_id": "1496e0b559b190ef",  "id": "d59e7ff07b49b7f4",  "inputs": {   "input1": {    "id": "c949ff9451ac3ea5",    "src": "hda",    "uuid": "114bcbd9-72af-414e-a301-48e92c8eac62"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output1": {    "id": "e1745fe6d37e3dfe",    "src": "hda",    "uuid": "b90a92e6-47ea-4427-a97c-f5d991e48910"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "minhash": "false",   "prim_key_cond": "{\"__current_case__\": 2, \"prim_key_select\": \"-t\", \"sec_key_select\": \"\", \"tag\": \"RG\"}"  },  "state": "error",  "stderr": "",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/devteam/samtools_sort/samtools_sort/2.0.7",  "tool_stderr": "",  "tool_stdout": "",  "update_time": "2025-10-30T01:10:08.852949",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/samtools_sort/samtools_sort/2.0.7, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/samtools_sort/samtools_sort/2.0.7, exit_code: None, stderr: ." ], "status": "failure", "test_index": 2, "time_seconds": 26.021868467330933, "tool_id": "samtools_sort", "tool_version": "2.0.7"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #4)" name="3" time="33.45725226402283">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #5)" name="4" time="32.15272355079651">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #6)" name="5" time="32.5857949256897">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #7)" name="6" time="33.01884388923645">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #8)" name="7" time="33.437939405441284">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #9)" name="8" time="34.021151304244995">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="vcfallelicprimitives (Test #1)" name="0" time="42.312395334243774">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="vcfprimers (Test #1)" name="0" time="18.851824522018433">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.11/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 0, "time_seconds": 18.851824522018433, "tool_id": "vcfprimers", "tool_version": "1.0.0_rc3+galaxy0"}
+            ]]></error>
+        
+    </testcase>
+    
+</testsuite>
