@@ -112,7 +112,9 @@ jobs:
             --wait \
             --wait-for-jobs \
             --timeout 300s \
-            --version $DEPS_VERSION
+            --version $DEPS_VERSION \
+            --set cvmfs.nodeplugin.priorityClassName="" \
+            --set cvmfs.controllerplugin.priorityClassName=""
       - name: Wait for CVMFS CSI driver to be ready
         run: |
           echo "Waiting for CVMFS CSI driver to be registered..."
