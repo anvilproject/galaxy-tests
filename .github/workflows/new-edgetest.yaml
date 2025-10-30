@@ -81,28 +81,28 @@ jobs:
         run: cat .github/templates/edge-values-template.yaml | sed "s/{{prefix}}/${{needs.deploygke.outputs.prefix}}/g" | sed "s/{{password}}/${{secrets.COMMON_PASSWORD}}/g" > edge-values.yaml
       - name: Print values file
         run: cat edge-values.yaml
-      - name: Create namespace and grant PriorityClass permissions
-        run: |
-          # Create the namespace first
-          kubectl create namespace galaxy-deps || echo "Namespace may already exist"
-
-          # Create a ClusterRole that allows using system priority classes
-          kubectl apply -f - <<EOF
-          apiVersion: rbac.authorization.k8s.io/v1
-          kind: ClusterRole
-          metadata:
-            name: system-priority-class-user
-          rules:
-          - apiGroups: ["scheduling.k8s.io"]
-            resources: ["priorityclasses"]
-            resourceNames: ["system-node-critical", "system-cluster-critical"]
-            verbs: ["use"]
-          EOF
-
-          # Bind this role to the default service account in galaxy-deps namespace
-          kubectl create clusterrolebinding galaxy-deps-priority-binding \
-            --clusterrole=system-priority-class-user \
-            --serviceaccount=galaxy-deps:default || echo "Binding may already exist"
+#      - name: Create namespace and grant PriorityClass permissions
+#        run: |
+#          # Create the namespace first
+#          kubectl create namespace galaxy-deps || echo "Namespace may already exist"
+#
+#          # Create a ClusterRole that allows using system priority classes
+#          kubectl apply -f - <<EOF
+#          apiVersion: rbac.authorization.k8s.io/v1
+#          kind: ClusterRole
+#          metadata:
+#            name: system-priority-class-user
+#          rules:
+#          - apiGroups: ["scheduling.k8s.io"]
+#            resources: ["priorityclasses"]
+#            resourceNames: ["system-node-critical", "system-cluster-critical"]
+#            verbs: ["use"]
+#          EOF
+#
+#          # Bind this role to the default service account in galaxy-deps namespace
+#          kubectl create clusterrolebinding galaxy-deps-priority-binding \
+#            --clusterrole=system-priority-class-user \
+#            --serviceaccount=galaxy-deps:default || echo "Binding may already exist"
       - name: Deploy Galaxy dependencies
         continue-on-error: false
         run: >
@@ -112,9 +112,9 @@ jobs:
             --wait \
             --wait-for-jobs \
             --timeout 300s \
-            --version $DEPS_VERSION \
-            --set cvmfs.nodeplugin.priorityClassName="" \
-            --set cvmfs.controllerplugin.priorityClassName=""
+            --version $DEPS_VERSION
+#            --set cvmfs.nodeplugin.priorityClassName="" \
+#            --set cvmfs.controllerplugin.priorityClassName=""
       - name: Wait for CVMFS CSI driver to be ready
         run: |
           echo "Waiting for CVMFS CSI driver to be registered..."
