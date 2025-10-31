@@ -14,7 +14,7 @@ jobs:
   deploygke:
     env:
       GKE_ZONE: us-east1-b
-      GKE_VERSION: "1.31"
+      GKE_VERSION: "1.33"
       GXY_TMP: /tmp/gxy
       PREFIX: edge
     runs-on: ubuntu-latest
@@ -38,7 +38,7 @@ jobs:
       - name: gcloud version
         run:  gcloud --version
       - name: Create GKE cluster
-        run: gcloud container clusters create "${{steps.prefix.outputs.prefix}}" --cluster-version="$GKE_VERSION" --disk-size=100 --num-nodes=1 --machine-type=e2-custom-20-81920 --zone "$GKE_ZONE"
+        run: gcloud container clusters create "${{steps.prefix.outputs.prefix}}" --cluster-version="$GKE_VERSION" --disk-size=100 --num-nodes=1 --machine-type=e2-custom-20-81920 --zone "$GKE_ZONE" --addons=GcePersistentDiskCsiDriver --workload-pool=anvil-and-terra-development.svc.id.goog
 
   testgalaxy1:
     needs: deploygke
