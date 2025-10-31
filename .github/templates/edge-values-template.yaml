@@ -26,6 +26,9 @@ galaxy:
     storageClass: nfs-{{prefix}}-1
   postgresql:
     galaxyDatabasePassword: {{password}}
+    existingDatabase: {{prefix}}-1-postgresql
+    galaxyExistingSecret: {{prefix}}-1-postgresql
+    galaxyExistingSecretKeyRef: password
     operator:
       operatorSpecExtra:
         affinity:
