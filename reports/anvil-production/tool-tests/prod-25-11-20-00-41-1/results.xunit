@@ -1,0 +1,732 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Results (powered by Planemo)"
+           tests="44"
+           errors="12"
+           failures="4"
+           skip="0">
+    
+    <testcase classname="bcftools_norm (Test #1)" name="0" time="54.34207630157471">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:21/0/13/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #2)" name="1" time="">
+        
+            <error type="error" message=""><![CDATA[
+                { "status": "skip", "test_index": 1, "tool_id": "bcftools_norm", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #3)" name="2" time="37.895275592803955">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:19/7/0/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #4)" name="3" time="12.220269203186035">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 3, "time_seconds": 12.220269203186035, "tool_id": "bcftools_norm", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #5)" name="4" time="36.48423624038696">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:26/0/0/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #6)" name="5" time="39.506383180618286">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Lines   total/split/realigned/skipped:26/0/0/0
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #7)" name="6" time="12.274770021438599">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 6, "time_seconds": 12.274770021438599, "tool_id": "bcftools_norm", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #8)" name="7" time="11.288646459579468">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 7, "time_seconds": 11.288646459579468, "tool_id": "bcftools_norm", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_norm (Test #9)" name="8" time="">
+        
+            <error type="error" message=""><![CDATA[
+                { "status": "skip", "test_index": 8, "tool_id": "bcftools_norm", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_plugin_fill_tags (Test #1)" name="0" time="44.5783007144928">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_plugin_fill_tags (Test #2)" name="1" time="12.702528238296509">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 1, "time_seconds": 12.702528238296509, "tool_id": "bcftools_plugin_fill_tags", "tool_version": "1.15.1+galaxy4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="circos (Test #1)" name="0" time="99.3684151172638">
+        
+            
+            <system-out><![CDATA[
+            debuggroup summary 0.18s welcome to circos v0.69-8 15 Jun 2019 on Perl 5.032001debuggroup summary 0.19s current working directory /galaxy/server/database/jobs_directory/000/95/workingdebuggroup summary 0.19s command /usr/local/bin/circos -conf circos/conf/circos.conf -noparanoiddebuggroup summary 0.19s loading configuration from file circos/conf/circos.confdebuggroup summary 0.19s found conf file circos/conf/circos.confdebuggroup summary 0.34s debug will appear for these features: output,summarydebuggroup summary 0.34s bitmap output image ./circos.pngdebuggroup summary 0.34s SVG output image ./circos.svgdebuggroup summary 0.34s parsing karyotype and organizing ideogramsdebuggroup summary 0.34s karyotype has 2 chromosomes of total size 56,082debuggroup summary 0.34s applying global and local scalingdebuggroup summary 0.35s allocating image, colors and brushesdebuggroup summary 6.82s drawing 2 ideograms of total size 56,082debuggroup summary 6.82s drawing highlights and ideogramsdebuggroup output 6.83s generating outputdebuggroup output 7.26s created PNG image ./circos.png (40 kb)debuggroup output 7.26s created SVG image ./circos.svg (2 kb)
+            ]]></system-out>
+            <system-err><![CDATA[
+            Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="circos (Test #2)" name="1" time="59.10856866836548">
+        
+            
+            <system-out><![CDATA[
+            debuggroup summary 0.18s welcome to circos v0.69-8 15 Jun 2019 on Perl 5.032001debuggroup summary 0.18s current working directory /galaxy/server/database/jobs_directory/000/100/workingdebuggroup summary 0.18s command /usr/local/bin/circos -conf circos/conf/circos.conf -noparanoiddebuggroup summary 0.18s loading configuration from file circos/conf/circos.confdebuggroup summary 0.18s found conf file circos/conf/circos.confdebuggroup summary 0.33s debug will appear for these features: output,summarydebuggroup summary 0.33s bitmap output image ./circos.pngdebuggroup summary 0.33s SVG output image ./circos.svgdebuggroup summary 0.33s parsing karyotype and organizing ideogramsdebuggroup summary 0.33s karyotype has 2 chromosomes of total size 56,082debuggroup summary 0.33s applying global and local scalingdebuggroup summary 0.34s allocating image, colors and brushesdebuggroup summary 7.09s drawing 2 ideograms of total size 56,082debuggroup summary 7.09s drawing highlights and ideogramsdebuggroup summary 7.14s found conf file /usr/local/bin/../etc/tracks/link.confdebuggroup summary 7.15s process track_0 link circos/conf/../data/links-0.txtdebuggroup summary 7.15s drawing link track_0 z 0debuggroup !circoswarning 7.20s  Data point of type [link] [50000-50500] extended past end of ideogram [ctgA 0-50001]. This data point will be [trimmed].debuggroup !circoswarning 7.20s  Data point of type [link] [51000-51500] extended past end of ideogram [ctgA 0-50001]. This data point will be [hidden].debuggroup summary 7.20s found conf file /usr/local/bin/../etc/tracks/histogram.confdebuggroup summary 7.20s found conf file /usr/local/bin/../etc/tracks/scatter.confdebuggroup summary 7.20s found conf file /usr/local/bin/../etc/tracks/tile.confdebuggroup summary 7.20s processing track_0 histogram circos/conf/../data/data-0.txtdebuggroup summary 7.29s processing track_1 scatter circos/conf/../data/data-1.txtdebuggroup summary 7.50s processing track_2 tile circos/conf/../data/data-2.txtdebuggroup summary 7.52s drawing track_0 histogram z 0 data-0.txt orient outdebuggroup summary 7.54s found conf file /usr/local/bin/../etc/tracks/axis.confdebuggroup summary 8.22s drawing track_1 scatter z 0 data-1.txt orient outdebuggroup summary 8.23s found conf file /usr/local/bin/../etc/tracks/axis.confdebuggroup summary 8.43s drawing track_2 tile z 0 data-2.txt orient outdebuggroup summary 8.43s found conf file /usr/local/bin/../etc/tracks/axis.confdebuggroup !circoswarning 8.63s  Data point of type [tile] [3013-6130] extended past end of ideogram [ctgB 0-6079]. This data point will be [trimmed].debuggroup output 8.63s generating outputdebuggroup output 9.13s created PNG image ./circos.png (539 kb)debuggroup output 9.14s created SVG image ./circos.svg (414 kb)
+            ]]></system-out>
+            <system-err><![CDATA[
+            Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value within %Circos::Error::GROUPERROR in uc at /usr/local/bin/../lib/Circos/Error.pm line 354, <F> line 21.Use of uninitialized value within %Circos::Error::GROUPERROR in uc at /usr/local/bin/../lib/Circos/Error.pm line 354, <F> line 21.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781, <F> line 21.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781, <F> line 1214.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value in subroutine entry at /usr/local/bin/../lib/Circos/Configuration.pm line 781.Use of uninitialized value within %Circos::Error::GROUPERROR in uc at /usr/local/bin/../lib/Circos/Error.pm line 354.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="deeptools_plot_enrichment (Test #1)" name="0" time="74.57348585128784">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #1)" name="0" time="0.1351299285888672">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (pets.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (pets.tsv) cannot be found.\n", "status": "error", "test_index": 0, "time_seconds": 0.1351299285888672, "tool_id": "filter_tabular", "tool_version": "3.3.1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #2)" name="1" time="0.06918835639953613">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (pets.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (pets.tsv) cannot be found.\n", "status": "error", "test_index": 1, "time_seconds": 0.06918835639953613, "tool_id": "filter_tabular", "tool_version": "3.3.1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #3)" name="2" time="0.07087254524230957">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (customers.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (customers.tsv) cannot be found.\n", "status": "error", "test_index": 2, "time_seconds": 0.07087254524230957, "tool_id": "filter_tabular", "tool_version": "3.3.1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #4)" name="3" time="0.07101726531982422">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (IEDB.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (IEDB.tsv) cannot be found.\n", "status": "error", "test_index": 3, "time_seconds": 0.07101726531982422, "tool_id": "filter_tabular", "tool_version": "3.3.1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="filter_tabular (Test #5)" name="4" time="0.07094359397888184">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (math_input.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (math_input.tsv) cannot be found.\n", "status": "error", "test_index": 4, "time_seconds": 0.07094359397888184, "tool_id": "filter_tabular", "tool_version": "3.3.1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #1)" name="0" time="104.48133420944214">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #2)" name="1" time="42.396496295928955">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #3)" name="2" time="40.950252294540405">
+        
+            
+            <system-out><![CDATA[
+            [FLASH] Starting FLASH v1.2.11[FLASH] Fast Length Adjustment of SHort reads[FLASH]  [FLASH] Input files:[FLASH]     /galaxy/server/database/objects/c/3/c/dataset_c3cd68fa-44ef-46ea-b989-3857da767ed6.dat[FLASH]     /galaxy/server/database/objects/5/f/a/dataset_5fa951c0-367d-4577-bf71-dcba4fcc40bb.dat[FLASH]  [FLASH] Output files:[FLASH]     ./out.extendedFrags.fastq[FLASH]     ./out.notCombined_1.fastq[FLASH]     ./out.notCombined_2.fastq[FLASH]     ./out.hist[FLASH]     ./out.histogram[FLASH]  [FLASH] Parameters:[FLASH]     Min overlap:           10[FLASH]     Max overlap:           65[FLASH]     Max mismatch density:  0.250000[FLASH]     Allow "outie" pairs:   false[FLASH]     Cap mismatch quals:    false[FLASH]     Combiner threads:      1[FLASH]     Input format:          FASTQ, phred_offset=64[FLASH]     Output format:         FASTQ, phred_offset=64[FLASH]  [FLASH] Starting reader and writer threads[FLASH] Starting 1 combiner threads[FLASH] Processed 200 read pairs[FLASH]  [FLASH] Read combination statistics:[FLASH]     Total pairs:      200[FLASH]     Combined pairs:   5[FLASH]     Uncombined pairs: 195[FLASH]     Percent combined: 2.50%[FLASH]  [FLASH] Writing histogram files.[FLASH]  [FLASH] FLASH v1.2.11 complete![FLASH] 0.019 seconds elapsed
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #4)" name="3" time="39.29467797279358">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="flash (Test #5)" name="4" time="13.013883590698242">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 4, "time_seconds": 13.013883590698242, "tool_id": "flash", "tool_version": "1.2.11.4"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="ivar_filtervariants (Test #1)" name="0" time="53.988086462020874">
+        
+            
+            <system-out><![CDATA[
+            Header format of ./var_0.tsv did not match! Please use files generated using "ivar variants" command.
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="medaka_consensus (Test #1)" name="0" time="37.46249580383301">
+        
+            
+                <error type="error" message="Tool exit code: 127"><![CDATA[
+                    { "inputs": {  "bam": {   "id": "7313c861265058d2",   "src": "hda"  } }, "job": {  "command_line": "ln -s \u0027/galaxy/server/database/objects/3/e/5/dataset_3e59d638-7fe7-4a97-8504-ada833e1f2c8.dat\u0027 alignment.bam \u0026\u0026 ln -s \u0027/galaxy/server/database/objects/_metadata_files/9/8/7/metadata_987579f8-f10b-489e-be1e-9e5331655af6.dat\u0027 alignment.bam.bai \u0026\u0026   medaka inference --debug --threads ${GALAXY_SLOTS:-4} --batch_size 100 --chunk_len 10000 --chunk_ovlp 1000 --model r103_fast_g507    alignment.bam \u0027/galaxy/server/database/objects/8/0/f/dataset_80f882f3-625e-4ed4-b791-219f6c9076c7.dat\u0027  2\u003e\u00261 | tee log.txt",  "command_version": "/galaxy/server/database/jobs_directory/000/70/tool_script.sh: line 10: medaka: command not found",  "copied_from_job_id": null,  "create_time": "2025-11-20T01:19:24.892519",  "dependencies": [],  "exit_code": 127,  "external_id": "gxy-qhpb7",  "galaxy_version": "24.1",  "handler": null,  "history_id": "499fbc49e183704a",  "id": "12bd7e8ad24928bf",  "inputs": {   "bam": {    "id": "7313c861265058d2",    "src": "hda",    "uuid": "3e59d638-7fe7-4a97-8504-ada833e1f2c8"   }  },  "job_messages": [   {    "code_desc": "",    "desc": "Fatal error: Exit code 127 ()",    "error_level": 3,    "exit_code": 127,    "type": "exit_code"   }  ],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "0E-7",    "title": "Job Runtime (Wall Clock)",    "value": "0 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1763601567.0000000",    "title": "Job End Time",    "value": "2025-11-20 01:19:27"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1763601567.0000000",    "title": "Job Start Time",    "value": "2025-11-20 01:19:27"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "16428.0000000",    "title": "Memory Allocated (MB)",    "value": "16428"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "4.0000000",    "title": "Cores Allocated",    "value": "4"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "out_result": {    "id": "fb08ca40234ac39f",    "src": "hda",    "uuid": "80f882f3-625e-4ed4-b791-219f6c9076c7"   }  },  "params": {   "RG": "\"\"",   "__input_ext": "\"input\"",   "batch_size": "\"100\"",   "check_output": "false",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "chunk_len": "\"10000\"",   "chunk_ovlp": "\"1000\"",   "dbkey": "\"?\"",   "model": "\"r103_fast_g507\"",   "out": "\"result\"",   "regions_cond": "{\"__current_case__\": 0, \"regions_sel\": \"none\"}",   "save_features": "false",   "tag_keep_missing": "false",   "tag_name": "\"\"",   "tag_value": "\"\""  },  "state": "error",  "stderr": "",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/medaka_consensus/medaka_consensus/2.1.1+galaxy0",  "tool_stderr": "",  "tool_stdout": "",  "update_time": "2025-11-20T01:19:40.052734",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/medaka_consensus/medaka_consensus/2.1.1+galaxy0, exit_code: 127, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/medaka_consensus/medaka_consensus/2.1.1+galaxy0, exit_code: 127, stderr: ." ], "status": "failure", "test_index": 0, "time_seconds": 37.46249580383301, "tool_id": "medaka_consensus", "tool_version": "2.1.1+galaxy0"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="medaka_consensus (Test #2)" name="1" time="37.90154194831848">
+        
+            
+                <error type="error" message="Tool exit code: 127"><![CDATA[
+                    { "inputs": {  "bam": {   "id": "24c19207062f240e",   "src": "hda"  },  "batch_size": "99",  "check_output": true,  "chunk_len": "9999",  "chunk_ovlp": "999",  "model": "r941_min_fast_g507",  "out": [   "result",   "log"  ],  "save_features": true,  "tag_keep_missing": true }, "job": {  "command_line": "ln -s \u0027/galaxy/server/database/objects/0/1/d/dataset_01d5fd59-8471-461c-89cc-dd57a7fd3a2c.dat\u0027 alignment.bam \u0026\u0026 ln -s \u0027/galaxy/server/database/objects/_metadata_files/4/a/e/metadata_4ae2c29e-79ec-4d51-9f86-5e70397f3109.dat\u0027 alignment.bam.bai \u0026\u0026   medaka inference --debug --threads ${GALAXY_SLOTS:-4} --batch_size 99 --chunk_len 9999 --chunk_ovlp 999 --model r941_min_fast_g507 --check_output --save_features --tag_keep_missing alignment.bam \u0027/galaxy/server/database/objects/8/1/8/dataset_818d7a32-18e6-4f84-8fd4-f2045c6173f4.dat\u0027  2\u003e\u00261 | tee log.txt",  "command_version": "/galaxy/server/database/jobs_directory/000/72/tool_script.sh: line 10: medaka: command not found",  "copied_from_job_id": null,  "create_time": "2025-11-20T01:20:02.699225",  "dependencies": [],  "exit_code": 127,  "external_id": "gxy-m6pv7",  "galaxy_version": "24.1",  "handler": null,  "history_id": "499fbc49e183704a",  "id": "916b5c048b502ec3",  "inputs": {   "bam": {    "id": "24c19207062f240e",    "src": "hda",    "uuid": "01d5fd59-8471-461c-89cc-dd57a7fd3a2c"   }  },  "job_messages": [   {    "code_desc": "",    "desc": "Fatal error: Exit code 127 ()",    "error_level": 3,    "exit_code": 127,    "type": "exit_code"   }  ],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "0E-7",    "title": "Job Runtime (Wall Clock)",    "value": "0 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1763601604.0000000",    "title": "Job End Time",    "value": "2025-11-20 01:20:04"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1763601604.0000000",    "title": "Job Start Time",    "value": "2025-11-20 01:20:04"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "16428.0000000",    "title": "Memory Allocated (MB)",    "value": "16428"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "4.0000000",    "title": "Cores Allocated",    "value": "4"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "out_log": {    "id": "b2a67bbe714b1d59",    "src": "hda",    "uuid": "9e23b969-983c-4f97-94d6-a7ad6130e27f"   },   "out_result": {    "id": "17d54299d50131bb",    "src": "hda",    "uuid": "818d7a32-18e6-4f84-8fd4-f2045c6173f4"   }  },  "params": {   "RG": "\"\"",   "__input_ext": "\"input\"",   "batch_size": "\"99\"",   "check_output": "true",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "chunk_len": "\"9999\"",   "chunk_ovlp": "\"999\"",   "dbkey": "\"?\"",   "model": "\"r941_min_fast_g507\"",   "out": "[\"result\", \"log\"]",   "regions_cond": "{\"__current_case__\": 0, \"regions_sel\": \"none\"}",   "save_features": "true",   "tag_keep_missing": "true",   "tag_name": "\"\"",   "tag_value": "\"\""  },  "state": "error",  "stderr": "",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/medaka_consensus/medaka_consensus/2.1.1+galaxy0",  "tool_stderr": "",  "tool_stdout": "",  "update_time": "2025-11-20T01:20:17.802320",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/medaka_consensus/medaka_consensus/2.1.1+galaxy0, exit_code: 127, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/medaka_consensus/medaka_consensus/2.1.1+galaxy0, exit_code: 127, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/medaka_consensus/medaka_consensus/2.1.1+galaxy0, exit_code: 127, stderr: ." ], "status": "failure", "test_index": 1, "time_seconds": 37.90154194831848, "tool_id": "medaka_consensus", "tool_version": "2.1.1+galaxy0"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="poretools_nucdist (Test #1)" name="0" time="80.50862550735474">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="poretools_nucdist (Test #2)" name="1" time="37.458383321762085">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="qualimap_multi_bamqc (Test #1)" name="0" time="54.85468792915344">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 0, "time_seconds": 54.85468792915344, "tool_id": "qualimap_multi_bamqc", "tool_version": "2.3+galaxy0"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="racon (Test #1)" name="0" time="65.61896395683289">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "corrected_reads": {   "id": "2e0095efa3918f0f",   "src": "hda"  },  "error_threshold": "0.2",  "fragment_correction": true,  "include_unpolished": true,  "overlaps": {   "id": "427507f08483d90b",   "src": "hda"  },  "reads": {   "id": "b78e0deb7d61b9fd",   "src": "hda"  },  "window_length": "800" }, "job": {  "command_line": "ln -s \u0027/galaxy/server/database/objects/c/6/7/dataset_c6772b7c-ffbe-4f6d-855f-d2198ed7878d.dat\u0027 reads.fasta \u0026\u0026 ln -s \u0027/galaxy/server/database/objects/f/7/b/dataset_f7b8a634-22b3-48ea-95db-b5df966106f8.dat\u0027 overlaps.sam \u0026\u0026  ln -s \u0027/galaxy/server/database/objects/2/a/b/dataset_2ab95073-2677-47da-81aa-989a67a49f9e.dat\u0027 corrected_reads.fasta \u0026\u0026  racon reads.fasta overlaps.sam corrected_reads.fasta -t ${GALAXY_SLOTS:-4} -u -f -w 800 -q 10.0 -e 0.2  -m 3 -x -5 -g -4 \u003e racon_polished_consensus.fa",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-11-20T01:24:05.715538",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-7j2kq",  "galaxy_version": "24.1",  "handler": null,  "history_id": "499fbc49e183704a",  "id": "da8a3dcf8cb73977",  "inputs": {   "corrected_reads": {    "id": "2e0095efa3918f0f",    "src": "hda",    "uuid": "2ab95073-2677-47da-81aa-989a67a49f9e"   },   "overlaps": {    "id": "427507f08483d90b",    "src": "hda",    "uuid": "f7b8a634-22b3-48ea-95db-b5df966106f8"   },   "reads": {    "id": "b78e0deb7d61b9fd",    "src": "hda",    "uuid": "c6772b7c-ffbe-4f6d-855f-d2198ed7878d"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "consensus": {    "id": "f599b32a920c1826",    "src": "hda",    "uuid": "a8432a05-f6a0-4c00-890f-a153bb926d17"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "error_threshold": "\"0.2\"",   "fragment_correction": "true",   "gap": "\"-4\"",   "include_unpolished": "true",   "match": "\"3\"",   "mismatch": "\"-5\"",   "no_trimming": "false",   "quality_threshold": "\"10.0\"",   "window_length": "\"800\""  },  "state": "error",  "stderr": "[racon::Polisher::initialize] loaded target sequences 0.001298 s\n[racon::Polisher::initialize] loaded sequences 0.010625 s\n[racon::Polisher::initialize] loaded overlaps 0.012066 s\n[racon::Polisher::initialize] aligning overlaps [=\u003e                  ] 0.001946 s\r[racon::Polisher::initialize] aligning overlaps [==\u003e                 ] 0.002032 s\r[racon::Polisher::initialize] aligning overlaps [===\u003e                ] 0.002138 s\r[racon::Polisher::initialize] aligning overlaps [====\u003e               ] 0.002233 s\r[racon::Polisher::initialize] aligning overlaps [=====\u003e              ] 0.002394 s\r[racon::Polisher::initialize] aligning overlaps [======\u003e             ] 0.002493 s\r[racon::Polisher::initialize] aligning overlaps [=======\u003e            ] 0.002575 s\r[racon::Polisher::initialize] aligning overlaps [========\u003e           ] 0.002701 s\r[racon::Polisher::initialize] aligning overlaps [=========\u003e          ] 0.002804 s\r[racon::Polisher::initialize] aligning overlaps [==========\u003e         ] 0.002876 s\r[racon::Polisher::initialize] aligning overlaps [===========\u003e        ] 0.003012 s\r[racon::Polisher::initialize] aligning overlaps [============\u003e       ] 0.003028 s\r[racon::Polisher::initialize] aligning overlaps [=============\u003e      ] 0.003101 s\r[racon::Polisher::initialize] aligning overlaps [==============\u003e     ] 0.003116 s\r[racon::Polisher::initialize] aligning overlaps [===============\u003e    ] 0.003185 s\r[racon::Polisher::initialize] aligning overlaps [================\u003e   ] 0.003270 s\r[racon::Polisher::initialize] aligning overlaps [=================\u003e  ] 0.003286 s\r[racon::Polisher::initialize] aligning overlaps [==================\u003e ] 0.003300 s\r[racon::Polisher::initialize] aligning overlaps [===================\u003e] 0.003404 s\r[racon::Polisher::initialize] aligning overlaps [====================] 0.003415 s\n[racon::Polisher::initialize] transformed data into windows 0.000315 s\n[racon::Polisher::polish] generating consensus [=\u003e                  ] 0.047822 s\r[racon::Polisher::polish] generating consensus [==\u003e                 ] 0.047852 s\r[racon::Polisher::polish] generating consensus [===\u003e                ] 0.075466 s\r[racon::Polisher::polish] generating consensus [====\u003e               ] 0.075503 s\r[racon::Polisher::polish] generating consensus [=====\u003e              ] 0.075519 s\r[racon::Polisher::polish] generating consensus [======\u003e             ] 0.095504 s\r[racon::Polisher::polish] generating consensus [=======\u003e            ] 0.095680 s\r[racon::Polisher::polish] generating consensus [========\u003e           ] 0.101078 s\r[racon::Polisher::polish] generating consensus [=========\u003e          ] 0.151841 s\r[racon::Polisher::polish] generating consensus [==========\u003e         ] 0.157862 s\r[racon::Polisher::polish] generating consensus [===========\u003e        ] 0.238760 s\r[racon::Polisher::polish] generating consensus [============\u003e       ] 0.249152 s\r[racon::Polisher::polish] generating consensus [=============\u003e      ] 0.249227 s\r[racon::Polisher::polish] generating consensus [==============\u003e     ] 0.301249 s\r[racon::Polisher::polish] generating consensus [===============\u003e    ] 0.301304 s\r[racon::Polisher::polish] generating consensus [================\u003e   ] 0.301325 s\r[racon::Polisher::polish] generating consensus [=================\u003e  ] 0.310398 s\r[racon::Polisher::polish] generating consensus [==================\u003e ] 0.340962 s\r[racon::Polisher::polish] generating consensus [===================\u003e] 0.363937 s\r[racon::Polisher::polish] generating consensus [====================] 0.364025 s\n[racon::Polisher::] total = 0.395116 s\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/bgruening/racon/racon/1.5.0+galaxy1",  "tool_stderr": "[racon::Polisher::initialize] loaded target sequences 0.001298 s\n[racon::Polisher::initialize] loaded sequences 0.010625 s\n[racon::Polisher::initialize] loaded overlaps 0.012066 s\n[racon::Polisher::initialize] aligning overlaps [=\u003e                  ] 0.001946 s\r[racon::Polisher::initialize] aligning overlaps [==\u003e                 ] 0.002032 s\r[racon::Polisher::initialize] aligning overlaps [===\u003e                ] 0.002138 s\r[racon::Polisher::initialize] aligning overlaps [====\u003e               ] 0.002233 s\r[racon::Polisher::initialize] aligning overlaps [=====\u003e              ] 0.002394 s\r[racon::Polisher::initialize] aligning overlaps [======\u003e             ] 0.002493 s\r[racon::Polisher::initialize] aligning overlaps [=======\u003e            ] 0.002575 s\r[racon::Polisher::initialize] aligning overlaps [========\u003e           ] 0.002701 s\r[racon::Polisher::initialize] aligning overlaps [=========\u003e          ] 0.002804 s\r[racon::Polisher::initialize] aligning overlaps [==========\u003e         ] 0.002876 s\r[racon::Polisher::initialize] aligning overlaps [===========\u003e        ] 0.003012 s\r[racon::Polisher::initialize] aligning overlaps [============\u003e       ] 0.003028 s\r[racon::Polisher::initialize] aligning overlaps [=============\u003e      ] 0.003101 s\r[racon::Polisher::initialize] aligning overlaps [==============\u003e     ] 0.003116 s\r[racon::Polisher::initialize] aligning overlaps [===============\u003e    ] 0.003185 s\r[racon::Polisher::initialize] aligning overlaps [================\u003e   ] 0.003270 s\r[racon::Polisher::initialize] aligning overlaps [=================\u003e  ] 0.003286 s\r[racon::Polisher::initialize] aligning overlaps [==================\u003e ] 0.003300 s\r[racon::Polisher::initialize] aligning overlaps [===================\u003e] 0.003404 s\r[racon::Polisher::initialize] aligning overlaps [====================] 0.003415 s\n[racon::Polisher::initialize] transformed data into windows 0.000315 s\n[racon::Polisher::polish] generating consensus [=\u003e                  ] 0.047822 s\r[racon::Polisher::polish] generating consensus [==\u003e                 ] 0.047852 s\r[racon::Polisher::polish] generating consensus [===\u003e                ] 0.075466 s\r[racon::Polisher::polish] generating consensus [====\u003e               ] 0.075503 s\r[racon::Polisher::polish] generating consensus [=====\u003e              ] 0.075519 s\r[racon::Polisher::polish] generating consensus [======\u003e             ] 0.095504 s\r[racon::Polisher::polish] generating consensus [=======\u003e            ] 0.095680 s\r[racon::Polisher::polish] generating consensus [========\u003e           ] 0.101078 s\r[racon::Polisher::polish] generating consensus [=========\u003e          ] 0.151841 s\r[racon::Polisher::polish] generating consensus [==========\u003e         ] 0.157862 s\r[racon::Polisher::polish] generating consensus [===========\u003e        ] 0.238760 s\r[racon::Polisher::polish] generating consensus [============\u003e       ] 0.249152 s\r[racon::Polisher::polish] generating consensus [=============\u003e      ] 0.249227 s\r[racon::Polisher::polish] generating consensus [==============\u003e     ] 0.301249 s\r[racon::Polisher::polish] generating consensus [===============\u003e    ] 0.301304 s\r[racon::Polisher::polish] generating consensus [================\u003e   ] 0.301325 s\r[racon::Polisher::polish] generating consensus [=================\u003e  ] 0.310398 s\r[racon::Polisher::polish] generating consensus [==================\u003e ] 0.340962 s\r[racon::Polisher::polish] generating consensus [===================\u003e] 0.363937 s\r[racon::Polisher::polish] generating consensus [====================] 0.364025 s\n[racon::Polisher::] total = 0.395116 s\n",  "tool_stdout": "",  "update_time": "2025-11-20T01:24:40.965158",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/bgruening/racon/racon/1.5.0+galaxy1, exit_code: None, stderr: [racon::Polisher::initialize] loaded target sequences 0.001298 s\n[racon::Polisher::initialize] loaded sequences 0.010625 s\n[racon::Polisher::initialize] loaded overlaps 0.012066 s\n[racon::Polisher::initialize] aligning overlaps [=\u003e                  ] 0.001946 s\r[racon::Polisher::initialize] aligning overlaps [==\u003e                 ] 0.002032 s\r[racon::Polisher::initialize] aligning overlaps [===\u003e                ] 0.002138 s\r[racon::Polisher::initialize] aligning overlaps [====\u003e               ] 0.002233 s\r[racon::Polisher::initialize] aligning overlaps [=====\u003e              ] 0.002394 s\r[racon::Polisher::initialize] aligning overlaps [======\u003e             ] 0.002493 s\r[racon::Polisher::initialize] aligning overlaps [=======\u003e            ] 0.002575 s\r[racon::Polisher::initialize] aligning overlaps [========\u003e           ] 0.002701 s\r[racon::Polisher::initialize] aligning overlaps [=========\u003e          ] 0.002804 s\r[racon::Polisher::initialize] aligning overlaps [==========\u003e         ] 0.002876 s\r[racon::Polisher::initialize] aligning overlaps [===========\u003e        ] 0.003012 s\r[racon::Polisher::initialize] aligning overlaps [============\u003e       ] 0.003028 s\r[racon::Polisher::initialize] aligning overlaps [=============\u003e      ] 0.003101 s\r[racon::Polisher::initialize] aligning overlaps [==============\u003e     ] 0.003116 s\r[racon::Polisher::initialize] aligning overlaps [===============\u003e    ] 0.003185 s\r[racon::Polisher::initialize] aligning overlaps [================\u003e   ] 0.003270 s\r[racon::Polisher::initialize] aligning overlaps [=================\u003e  ] 0.003286 s\r[racon::Polisher::initialize] aligning overlaps [==================\u003e ] 0.003300 s\r[racon::Polisher::initialize] aligning overlaps [===================\u003e] 0.003404 s\r[racon::Polisher::initialize] aligning overlaps [====================] 0.003415 s\n[racon::Polisher::initialize] transformed data into windows 0.000315 s\n[racon::Polisher::polish] generating consensus [=\u003e                  ] 0.047822 s\r[racon::Polisher::polish] generating consensus [==\u003e                 ] 0.047852 s\r[racon::Polisher::polish] generating consensus [===\u003e                ] 0.075466 s\r[racon::Polisher::polish] generating consensus [====\u003e               ] 0.075503 s\r[racon::Polisher::polish] generating consensus [=====\u003e              ] 0.075519 s\r[racon::Polisher::polish] generating consensus [======\u003e             ] 0.095504 s\r[racon::Polisher::polish] generating consensus [=======\u003e            ] 0.095680 s\r[racon::Polisher::polish] generating consensus [========\u003e           ] 0.101078 s\r[racon::Polisher::polish] generating consensus [=========\u003e          ] 0.151841 s\r[racon::Polisher::polish] generating consensus [==========\u003e         ] 0.157862 s\r[racon::Polisher::polish] generating consensus [===========\u003e        ] 0.238760 s\r[racon::Polisher::polish] generating consensus [============\u003e       ] 0.249152 s\r[racon::Polisher::polish] generating consensus [=============\u003e      ] 0.249227 s\r[racon::Polisher::polish] generating consensus [==============\u003e     ] 0.301249 s\r[racon::Polisher::polish] generating consensus [===============\u003e    ] 0.301304 s\r[racon::Polisher::polish] generating consensus [================\u003e   ] 0.301325 s\r[racon::Polisher::polish] generating consensus [=================\u003e  ] 0.310398 s\r[racon::Polisher::polish] generating consensus [==================\u003e ] 0.340962 s\r[racon::Polisher::polish] generating consensus [===================\u003e] 0.363937 s\r[racon::Polisher::polish] generating consensus [====================] 0.364025 s\n[racon::Polisher::] total = 0.395116 s\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/bgruening/racon/racon/1.5.0+galaxy1, exit_code: None, stderr: [racon::Polisher::initialize] loaded target sequences 0.001298 s\n[racon::Polisher::initialize] loaded sequences 0.010625 s\n[racon::Polisher::initialize] loaded overlaps 0.012066 s\n[racon::Polisher::initialize] aligning overlaps [=\u003e                  ] 0.001946 s\r[racon::Polisher::initialize] aligning overlaps [==\u003e                 ] 0.002032 s\r[racon::Polisher::initialize] aligning overlaps [===\u003e                ] 0.002138 s\r[racon::Polisher::initialize] aligning overlaps [====\u003e               ] 0.002233 s\r[racon::Polisher::initialize] aligning overlaps [=====\u003e              ] 0.002394 s\r[racon::Polisher::initialize] aligning overlaps [======\u003e             ] 0.002493 s\r[racon::Polisher::initialize] aligning overlaps [=======\u003e            ] 0.002575 s\r[racon::Polisher::initialize] aligning overlaps [========\u003e           ] 0.002701 s\r[racon::Polisher::initialize] aligning overlaps [=========\u003e          ] 0.002804 s\r[racon::Polisher::initialize] aligning overlaps [==========\u003e         ] 0.002876 s\r[racon::Polisher::initialize] aligning overlaps [===========\u003e        ] 0.003012 s\r[racon::Polisher::initialize] aligning overlaps [============\u003e       ] 0.003028 s\r[racon::Polisher::initialize] aligning overlaps [=============\u003e      ] 0.003101 s\r[racon::Polisher::initialize] aligning overlaps [==============\u003e     ] 0.003116 s\r[racon::Polisher::initialize] aligning overlaps [===============\u003e    ] 0.003185 s\r[racon::Polisher::initialize] aligning overlaps [================\u003e   ] 0.003270 s\r[racon::Polisher::initialize] aligning overlaps [=================\u003e  ] 0.003286 s\r[racon::Polisher::initialize] aligning overlaps [==================\u003e ] 0.003300 s\r[racon::Polisher::initialize] aligning overlaps [===================\u003e] 0.003404 s\r[racon::Polisher::initialize] aligning overlaps [====================] 0.003415 s\n[racon::Polisher::initialize] transformed data into windows 0.000315 s\n[racon::Polisher::polish] generating consensus [=\u003e                  ] 0.047822 s\r[racon::Polisher::polish] generating consensus [==\u003e                 ] 0.047852 s\r[racon::Polisher::polish] generating consensus [===\u003e                ] 0.075466 s\r[racon::Polisher::polish] generating consensus [====\u003e               ] 0.075503 s\r[racon::Polisher::polish] generating consensus [=====\u003e              ] 0.075519 s\r[racon::Polisher::polish] generating consensus [======\u003e             ] 0.095504 s\r[racon::Polisher::polish] generating consensus [=======\u003e            ] 0.095680 s\r[racon::Polisher::polish] generating consensus [========\u003e           ] 0.101078 s\r[racon::Polisher::polish] generating consensus [=========\u003e          ] 0.151841 s\r[racon::Polisher::polish] generating consensus [==========\u003e         ] 0.157862 s\r[racon::Polisher::polish] generating consensus [===========\u003e        ] 0.238760 s\r[racon::Polisher::polish] generating consensus [============\u003e       ] 0.249152 s\r[racon::Polisher::polish] generating consensus [=============\u003e      ] 0.249227 s\r[racon::Polisher::polish] generating consensus [==============\u003e     ] 0.301249 s\r[racon::Polisher::polish] generating consensus [===============\u003e    ] 0.301304 s\r[racon::Polisher::polish] generating consensus [================\u003e   ] 0.301325 s\r[racon::Polisher::polish] generating consensus [=================\u003e  ] 0.310398 s\r[racon::Polisher::polish] generating consensus [==================\u003e ] 0.340962 s\r[racon::Polisher::polish] generating consensus [===================\u003e] 0.363937 s\r[racon::Polisher::polish] generating consensus [====================] 0.364025 s\n[racon::Polisher::] total = 0.395116 s\n." ], "status": "failure", "test_index": 0, "time_seconds": 65.61896395683289, "tool_id": "racon", "tool_version": "1.5.0+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [racon::Polisher::initialize] loaded target sequences 0.001298 s[racon::Polisher::initialize] loaded sequences 0.010625 s[racon::Polisher::initialize] loaded overlaps 0.012066 s[racon::Polisher::initialize] aligning overlaps [=>                  ] 0.001946 s[racon::Polisher::initialize] aligning overlaps [==>                 ] 0.002032 s[racon::Polisher::initialize] aligning overlaps [===>                ] 0.002138 s[racon::Polisher::initialize] aligning overlaps [====>               ] 0.002233 s[racon::Polisher::initialize] aligning overlaps [=====>              ] 0.002394 s[racon::Polisher::initialize] aligning overlaps [======>             ] 0.002493 s[racon::Polisher::initialize] aligning overlaps [=======>            ] 0.002575 s[racon::Polisher::initialize] aligning overlaps [========>           ] 0.002701 s[racon::Polisher::initialize] aligning overlaps [=========>          ] 0.002804 s[racon::Polisher::initialize] aligning overlaps [==========>         ] 0.002876 s[racon::Polisher::initialize] aligning overlaps [===========>        ] 0.003012 s[racon::Polisher::initialize] aligning overlaps [============>       ] 0.003028 s[racon::Polisher::initialize] aligning overlaps [=============>      ] 0.003101 s[racon::Polisher::initialize] aligning overlaps [==============>     ] 0.003116 s[racon::Polisher::initialize] aligning overlaps [===============>    ] 0.003185 s[racon::Polisher::initialize] aligning overlaps [================>   ] 0.003270 s[racon::Polisher::initialize] aligning overlaps [=================>  ] 0.003286 s[racon::Polisher::initialize] aligning overlaps [==================> ] 0.003300 s[racon::Polisher::initialize] aligning overlaps [===================>] 0.003404 s[racon::Polisher::initialize] aligning overlaps [====================] 0.003415 s[racon::Polisher::initialize] transformed data into windows 0.000315 s[racon::Polisher::polish] generating consensus [=>                  ] 0.047822 s[racon::Polisher::polish] generating consensus [==>                 ] 0.047852 s[racon::Polisher::polish] generating consensus [===>                ] 0.075466 s[racon::Polisher::polish] generating consensus [====>               ] 0.075503 s[racon::Polisher::polish] generating consensus [=====>              ] 0.075519 s[racon::Polisher::polish] generating consensus [======>             ] 0.095504 s[racon::Polisher::polish] generating consensus [=======>            ] 0.095680 s[racon::Polisher::polish] generating consensus [========>           ] 0.101078 s[racon::Polisher::polish] generating consensus [=========>          ] 0.151841 s[racon::Polisher::polish] generating consensus [==========>         ] 0.157862 s[racon::Polisher::polish] generating consensus [===========>        ] 0.238760 s[racon::Polisher::polish] generating consensus [============>       ] 0.249152 s[racon::Polisher::polish] generating consensus [=============>      ] 0.249227 s[racon::Polisher::polish] generating consensus [==============>     ] 0.301249 s[racon::Polisher::polish] generating consensus [===============>    ] 0.301304 s[racon::Polisher::polish] generating consensus [================>   ] 0.301325 s[racon::Polisher::polish] generating consensus [=================>  ] 0.310398 s[racon::Polisher::polish] generating consensus [==================> ] 0.340962 s[racon::Polisher::polish] generating consensus [===================>] 0.363937 s[racon::Polisher::polish] generating consensus [====================] 0.364025 s[racon::Polisher::] total = 0.395116 s
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="racon (Test #2)" name="1" time="43.704001665115356">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [racon::Polisher::initialize] loaded target sequences 0.001047 s[racon::Polisher::initialize] loaded sequences 0.010819 s[racon::Polisher::initialize] loaded overlaps 0.000609 s[racon::Polisher::initialize] aligning overlaps [=>                  ] 0.013925 s[racon::Polisher::initialize] aligning overlaps [==>                 ] 0.026613 s[racon::Polisher::initialize] aligning overlaps [===>                ] 0.032770 s[racon::Polisher::initialize] aligning overlaps [====>               ] 0.038423 s[racon::Polisher::initialize] aligning overlaps [=====>              ] 0.043812 s[racon::Polisher::initialize] aligning overlaps [======>             ] 0.045191 s[racon::Polisher::initialize] aligning overlaps [=======>            ] 0.054773 s[racon::Polisher::initialize] aligning overlaps [========>           ] 0.063039 s[racon::Polisher::initialize] aligning overlaps [=========>          ] 0.075188 s[racon::Polisher::initialize] aligning overlaps [==========>         ] 0.084350 s[racon::Polisher::initialize] aligning overlaps [===========>        ] 0.085033 s[racon::Polisher::initialize] aligning overlaps [============>       ] 0.088989 s[racon::Polisher::initialize] aligning overlaps [=============>      ] 0.101717 s[racon::Polisher::initialize] aligning overlaps [==============>     ] 0.104643 s[racon::Polisher::initialize] aligning overlaps [===============>    ] 0.117853 s[racon::Polisher::initialize] aligning overlaps [================>   ] 0.117878 s[racon::Polisher::initialize] aligning overlaps [=================>  ] 0.127000 s[racon::Polisher::initialize] aligning overlaps [==================> ] 0.127022 s[racon::Polisher::initialize] aligning overlaps [===================>] 0.127033 s[racon::Polisher::initialize] aligning overlaps [====================] 0.127043 s[racon::Polisher::initialize] transformed data into windows 0.000328 s[racon::Polisher::polish] generating consensus [=>                  ] 0.019719 s[racon::Polisher::polish] generating consensus [==>                 ] 0.021805 s[racon::Polisher::polish] generating consensus [===>                ] 0.039294 s[racon::Polisher::polish] generating consensus [====>               ] 0.039388 s[racon::Polisher::polish] generating consensus [=====>              ] 0.049132 s[racon::Polisher::polish] generating consensus [======>             ] 0.049172 s[racon::Polisher::polish] generating consensus [=======>            ] 0.056248 s[racon::Polisher::polish] generating consensus [========>           ] 0.056332 s[racon::Polisher::polish] generating consensus [=========>          ] 0.065834 s[racon::Polisher::polish] generating consensus [==========>         ] 0.065908 s[racon::Polisher::polish] generating consensus [===========>        ] 0.081379 s[racon::Polisher::polish] generating consensus [============>       ] 0.089959 s[racon::Polisher::polish] generating consensus [=============>      ] 0.111169 s[racon::Polisher::polish] generating consensus [==============>     ] 0.133467 s[racon::Polisher::polish] generating consensus [===============>    ] 0.141086 s[racon::Polisher::polish] generating consensus [================>   ] 0.158313 s[racon::Polisher::polish] generating consensus [=================>  ] 0.165777 s[racon::Polisher::polish] generating consensus [==================> ] 0.173795 s[racon::Polisher::polish] generating consensus [===================>] 0.181021 s[racon::Polisher::polish] generating consensus [====================] 0.230074 s[racon::Polisher::] total = 0.372575 s
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="racon (Test #3)" name="2" time="13.962682008743286">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 2, "time_seconds": 13.962682008743286, "tool_id": "racon", "tool_version": "1.5.0+galaxy1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #1)" name="0" time="39.184680223464966">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #2)" name="1" time="28.861287355422974">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "input1": {   "id": "d8df006418ba56d6",   "src": "hda"  },  "prim_key_cond|prim_key_select": "-n" }, "job": {  "command_line": "addthreads=${GALAXY_SLOTS:-1} \u0026\u0026 (( addthreads-- )) \u0026\u0026   addmemory=${GALAXY_MEMORY_MB_PER_SLOT:-768} \u0026\u0026 ((addmemory=addmemory*75/100)) \u0026\u0026  samtools sort -@ $addthreads -m $addmemory\"M\" -n  -O bam -T \"${TMPDIR:-.}\" \u0027/galaxy/server/database/objects/f/8/c/dataset_f8ccbe78-fb83-4d7a-9911-e15eb44c763f.dat\u0027 \u003e \u0027/galaxy/server/database/objects/8/4/9/dataset_84961c6d-c88c-4424-866d-8af23f89b0ec.dat\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-11-20T01:08:34.511477",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-m8h65",  "galaxy_version": "24.1",  "handler": null,  "history_id": "499fbc49e183704a",  "id": "f19af16655cb7993",  "inputs": {   "input1": {    "id": "d8df006418ba56d6",    "src": "hda",    "uuid": "f8ccbe78-fb83-4d7a-9911-e15eb44c763f"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output1": {    "id": "b6635d2bccc6c684",    "src": "hda",    "uuid": "84961c6d-c88c-4424-866d-8af23f89b0ec"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "minhash": "false",   "prim_key_cond": "{\"__current_case__\": 1, \"prim_key_select\": \"-n\"}"  },  "state": "error",  "stderr": "",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/devteam/samtools_sort/samtools_sort/2.0.7",  "tool_stderr": "",  "tool_stdout": "",  "update_time": "2025-11-20T01:08:39.619504",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/samtools_sort/samtools_sort/2.0.7, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/samtools_sort/samtools_sort/2.0.7, exit_code: None, stderr: ." ], "status": "failure", "test_index": 1, "time_seconds": 28.861287355422974, "tool_id": "samtools_sort", "tool_version": "2.0.7"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #3)" name="2" time="36.17441368103027">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #4)" name="3" time="35.50593948364258">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #5)" name="4" time="37.676926612854004">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #6)" name="5" time="38.62018704414368">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #7)" name="6" time="36.357670307159424">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #8)" name="7" time="37.38753128051758">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_sort (Test #9)" name="8" time="36.435590982437134">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="vcfallelicprimitives (Test #1)" name="0" time="57.607428312301636">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="vcfprimers (Test #1)" name="0" time="37.04542899131775">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            index file localref.fa.fai not found, generating...
+            ]]></system-err>
+        
+    </testcase>
+    
+</testsuite>
