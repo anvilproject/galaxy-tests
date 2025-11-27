@@ -1,0 +1,951 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Results (powered by Planemo)"
+           tests="57"
+           errors="17"
+           failures="8"
+           skip="0">
+    
+    <testcase classname="bcftools_isec (Test #1)" name="0" time="33.919376373291016">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Note: -w option not given, printing list of sites...
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_isec (Test #2)" name="1" time="27.089934587478638">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "input_files": [   {    "id": "33cd6f728ca41a26",    "src": "hda"   },   {    "id": "ed6b1a3157b2ef34",    "src": "hda"   }  ],  "output_type": "v",  "sec_default|nfiles": "=2",  "sec_restrict|regions_overlap": "1" }, "job": {  "command_line": "export BCFTOOLS_PLUGINS=`which bcftools | sed \u0027s,bin/bcftools,libexec/bcftools,\u0027`;     bgzip -c \u0027/galaxy/server/database/objects/d/d/6/dataset_dd685fa5-551c-40db-9991-5e441ba74119.dat\u0027 \u003e input0.vcf.gz \u0026\u0026 bcftools index input0.vcf.gz \u0026\u0026 echo \u0027input0.vcf.gz\u0027 \u003e\u003e vcfs_list \u0026\u0026  bgzip -c \u0027/galaxy/server/database/objects/a/4/f/dataset_a4fbe3af-e512-4fb1-add8-e1ff9d6ca396.dat\u0027 \u003e input1.vcf.gz \u0026\u0026 bcftools index input1.vcf.gz \u0026\u0026 echo \u0027input1.vcf.gz\u0027 \u003e\u003e vcfs_list \u0026\u0026             bcftools isec   --nfiles \"=2\"    --regions-overlap 1                  --output-type \u0027v\u0027   --threads ${GALAXY_SLOTS:-4}    input0.vcf.gz input1.vcf.gz  \u003e \u0027/galaxy/server/database/objects/7/9/9/dataset_799a66cd-7822-4fa8-8635-d477aef2f109.dat\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-11-27T13:16:38.474923",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-bq5lr",  "galaxy_version": "24.1",  "handler": null,  "history_id": "69db2497628f7e95",  "id": "226b5a2fc9faf0f8",  "inputs": {   "input_files": {    "id": "33cd6f728ca41a26",    "src": "hda",    "uuid": "dd685fa5-551c-40db-9991-5e441ba74119"   },   "input_files1": {    "id": "33cd6f728ca41a26",    "src": "hda",    "uuid": "dd685fa5-551c-40db-9991-5e441ba74119"   },   "input_files2": {    "id": "ed6b1a3157b2ef34",    "src": "hda",    "uuid": "a4fbe3af-e512-4fb1-add8-e1ff9d6ca396"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "output_file": {    "id": "1e96425df2d84322",    "src": "hda",    "uuid": "799a66cd-7822-4fa8-8635-d477aef2f109"   }  },  "params": {   "__input_ext": "\"input\"",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "output_type": "\"v\"",   "sec_default": "{\"complement\": false, \"nfiles\": \"=2\"}",   "sec_restrict": "{\"apply_filters\": \"\", \"collapse\": null, \"exclude\": null, \"include\": null, \"regions\": {\"__current_case__\": 0, \"regions_src\": \"__none__\"}, \"regions_overlap\": \"1\", \"targets\": {\"__current_case__\": 0, \"targets_src\": \"__none__\"}, \"targets_overlap\": null}"  },  "state": "error",  "stderr": "Note: -w option not given, printing list of sites...\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/bcftools_isec/bcftools_isec/1.15.1+galaxy4",  "tool_stderr": "Note: -w option not given, printing list of sites...\n",  "tool_stdout": "",  "update_time": "2025-11-27T13:16:44.795781",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_isec/bcftools_isec/1.15.1+galaxy4, exit_code: None, stderr: Note: -w option not given, printing list of sites...\n.",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/iuc/bcftools_isec/bcftools_isec/1.15.1+galaxy4, exit_code: None, stderr: Note: -w option not given, printing list of sites...\n." ], "status": "failure", "test_index": 1, "time_seconds": 27.089934587478638, "tool_id": "bcftools_isec", "tool_version": "1.15.1+galaxy4"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            Note: -w option not given, printing list of sites...
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="bcftools_query_list_samples (Test #1)" name="0" time="37.986019134521484">
+        
+            
+            <system-out><![CDATA[
+            C,D,
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="column_remove_by_header (Test #1)" name="0" time="89.92738389968872">
+        
+            
+            <system-out><![CDATA[
+            Kept 3 of 5 columns.
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="column_remove_by_header (Test #2)" name="1" time="30.47215175628662">
+        
+            
+            <system-out><![CDATA[
+            Kept 2 of 5 columns.
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="deeptools_plot_fingerprint (Test #1)" name="0" time="49.159019470214844">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "advancedOpt|showAdvancedOpt": "no",  "multibam_conditional|bamfiles": [   {    "id": "3c3cb59de2ef36ed",    "src": "hda"   },   {    "id": "3c3cb59de2ef36ed",    "src": "hda"   }  ],  "output|showOutputSettings": "no" }, "job": {  "command_line": "ln -s \u0027/galaxy/server/database/objects/d/8/b/dataset_d8b2efd0-06dc-4f80-8f4a-421b5b283d9f.dat\u0027 \u0027./0.bam\u0027 \u0026\u0026 ln -s \u0027/galaxy/server/database/objects/_metadata_files/c/c/4/metadata_cc477d5a-82f5-4bb6-bba1-f04ae827d2b4.dat\u0027 \u0027./0.bam.bai\u0027 \u0026\u0026 ln -s \u0027/galaxy/server/database/objects/d/8/b/dataset_d8b2efd0-06dc-4f80-8f4a-421b5b283d9f.dat\u0027 \u0027./1.bam\u0027 \u0026\u0026 ln -s \u0027/galaxy/server/database/objects/_metadata_files/c/c/4/metadata_cc477d5a-82f5-4bb6-bba1-f04ae827d2b4.dat\u0027 \u0027./1.bam.bai\u0027 \u0026\u0026   plotFingerprint --numberOfProcessors \"${GALAXY_SLOTS:-4}\" --bamfiles \u00270.bam\u0027 \u00271.bam\u0027 --labels \u0027bowtie2 test1.bam\u0027 \u0027bowtie2 test1.bam\u0027 --plotFile /galaxy/server/database/objects/7/1/b/dataset_71bd4902-96be-4195-8e55-276e6ab1d698.dat  --plotFileFormat \u0027png\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-11-27T13:22:05.986474",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-t7vth",  "galaxy_version": "24.1",  "handler": null,  "history_id": "69db2497628f7e95",  "id": "f7ca2b3f427b29ad",  "inputs": {   "multibam_conditional|bamfiles": {    "id": "3c3cb59de2ef36ed",    "src": "hda",    "uuid": "d8b2efd0-06dc-4f80-8f4a-421b5b283d9f"   },   "multibam_conditional|bamfiles1": {    "id": "3c3cb59de2ef36ed",    "src": "hda",    "uuid": "d8b2efd0-06dc-4f80-8f4a-421b5b283d9f"   },   "multibam_conditional|bamfiles2": {    "id": "3c3cb59de2ef36ed",    "src": "hda",    "uuid": "d8b2efd0-06dc-4f80-8f4a-421b5b283d9f"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "outFileName": {    "id": "7353162480a8018e",    "src": "hda",    "uuid": "71bd4902-96be-4195-8e55-276e6ab1d698"   }  },  "params": {   "__input_ext": "\"input\"",   "advancedOpt": "{\"__current_case__\": 0, \"showAdvancedOpt\": \"no\"}",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "custom_sample_labels_conditional": "{\"__current_case__\": 0, \"custom_labels_select\": \"No\"}",   "dbkey": "\"?\"",   "multibam_conditional": "{\"__current_case__\": 0, \"bamfiles\": {\"values\": [{\"id\": 184, \"src\": \"hda\"}, {\"id\": 184, \"src\": \"hda\"}]}, \"orderMatters\": \"No\"}",   "output": "{\"__current_case__\": 0, \"showOutputSettings\": \"no\"}",   "region": "\"\""  },  "state": "error",  "stderr": "",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/bgruening/deeptools_plot_fingerprint/deeptools_plot_fingerprint/3.5.4+galaxy0",  "tool_stderr": "",  "tool_stdout": "",  "update_time": "2025-11-27T13:22:37.129582",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/bgruening/deeptools_plot_fingerprint/deeptools_plot_fingerprint/3.5.4+galaxy0, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/bgruening/deeptools_plot_fingerprint/deeptools_plot_fingerprint/3.5.4+galaxy0, exit_code: None, stderr: ." ], "status": "failure", "test_index": 0, "time_seconds": 49.159019470214844, "tool_id": "deeptools_plot_fingerprint", "tool_version": "3.5.4+galaxy0"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="deeptools_plot_fingerprint (Test #2)" name="1" time="50.6070339679718">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="ivar_getmasked (Test #1)" name="0" time="39.97633147239685">
+        
+            
+            <system-out><![CDATA[
+            Found 67 primers in BED filePrimer pair for 400_1_out_R not found in BED file.Primer pair for 400_34_out_L* not found in BED file.Primer pair for 400_35_out_L not found in BED file.400_18_out_L**400_23_out_R400_32_out_L
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="jbrowse (Test #1)" name="0" time="56.058496952056885">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            WARNING: No feature names found for indexing, only reference sequence names will be indexed.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="jbrowse (Test #2)" name="1" time="31.34001660346985">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            WARNING: No feature names found for indexing, only reference sequence names will be indexed.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="jbrowse (Test #3)" name="2" time="35.56821823120117">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            INFO:jbrowse:Processing Default / test-3.bedINFO:jbrowse:Processing Default / test-6.bedWARNING: No feature names found for indexing, only reference sequence names will be indexed.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="jbrowse (Test #4)" name="3" time="68.352609872818">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            INFO:jbrowse:Processing Auto Coloured / A.gffINFO:jbrowse:Processing Auto Coloured / B.gffINFO:jbrowse:Processing Auto Coloured / C.gffINFO:jbrowse:Processing Auto Coloured / D.gffINFO:jbrowse:Processing Ignore Scale / 1.gffINFO:jbrowse:Processing Scaled Colour / 1.gffINFO:jbrowse:Processing Scaled Colour / 1.gffINFO:jbrowse:Processing Scaled Colour / 1.gffINFO:jbrowse:Processing Scaled Colour / 1.gffINFO:jbrowse:Processing Realistic / interpro.gffINFO:jbrowse:Processing Realistic / 2.gffWARNING: No feature names found for indexing, only reference sequence names will be indexed.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="jbrowse (Test #5)" name="4" time="36.86861252784729">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            INFO:jbrowse:Processing With menu or index / 1.gffINFO:jbrowse:Processing With menu or index / 1.gff
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="jbrowse (Test #6)" name="5" time="34.23962187767029">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            INFO:jbrowse:Processing With canvas config / 1.gffWARNING: No feature names found for indexing, only reference sequence names will be indexed.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="jbrowse (Test #7)" name="6" time="32.37332463264465">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            INFO:jbrowse:Processing With custom track config / 1.gffWARNING: No feature names found for indexing, only reference sequence names will be indexed.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="jbrowse (Test #8)" name="7" time="36.00930714607239">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            INFO:jbrowse:Processing Auto Coloured / merlin-sample.bamWARNING: No feature names found for indexing, only reference sequence names will be indexed.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="jbrowse (Test #9)" name="8" time="75.45126080513">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "gencode": "1",  "reference_genome|genome_type_select": "indexed",  "standalone": "data",  "uglyTestingHack": "enabled" }, "job": {  "command_line": "mkdir -p /galaxy/server/database/objects/4/5/a/dataset_45a8b011-2ae4-4f49-9409-6b66dc0c67f2_files \u0026\u0026  cp /galaxy/server/database/jobs_directory/000/169/configs/tmpcd1tg_l3 /galaxy/server/database/objects/4/5/a/dataset_45a8b011-2ae4-4f49-9409-6b66dc0c67f2_files/galaxy.xml \u0026\u0026  export JBROWSE_SOURCE_DIR=$(dirname $(which prepare-refseqs.pl))/../opt/jbrowse  \u0026\u0026  python \u0027/cvmfs/cloud.galaxyproject.org/tools/toolshed.g2.bx.psu.edu/repos/iuc/jbrowse/a6e57ff585c0/jbrowse/jbrowse.py\u0027  --jbrowse ${JBROWSE_SOURCE_DIR} --standalone \u0027data\u0027  --outdir /galaxy/server/database/objects/4/5/a/dataset_45a8b011-2ae4-4f49-9409-6b66dc0c67f2_files /galaxy/server/database/jobs_directory/000/169/configs/tmpcd1tg_l3 \u0026\u0026  cp /galaxy/server/database/jobs_directory/000/169/configs/tmp9xvk3lik /galaxy/server/database/objects/4/5/a/dataset_45a8b011-2ae4-4f49-9409-6b66dc0c67f2.dat;  cp /galaxy/server/database/jobs_directory/000/169/configs/tmpcd1tg_l3 /galaxy/server/database/objects/4/5/a/dataset_45a8b011-2ae4-4f49-9409-6b66dc0c67f2.dat",  "command_version": "jbrowse.py 0.8.0",  "copied_from_job_id": null,  "create_time": "2025-11-27T13:32:29.703849",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-6fjc8",  "galaxy_version": "24.1",  "handler": null,  "history_id": "69db2497628f7e95",  "id": "6215215b9908b275",  "inputs": {},  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "56.0000000",    "title": "Job Runtime (Wall Clock)",    "value": "56 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1764250407.0000000",    "title": "Job End Time",    "value": "2025-11-27 13:33:27"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1764250351.0000000",    "title": "Job Start Time",    "value": "2025-11-27 13:32:31"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "12240.0000000",    "title": "Memory Allocated (MB)",    "value": "12240"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "1.0000000",    "title": "Cores Allocated",    "value": "1"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "output": {    "id": "e7320847c911f043",    "src": "hda",    "uuid": "45a8b011-2ae4-4f49-9409-6b66dc0c67f2"   }  },  "params": {   "__input_ext": "\"data\"",   "action": "{\"__current_case__\": 0, \"action_select\": \"create\"}",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "gencode": "\"1\"",   "jbgen": "{\"aboutDescription\": \"\", \"defaultLocation\": \"\", \"hideGenomeOptions\": false, \"shareLink\": true, \"show_menu\": true, \"show_nav\": true, \"show_overview\": true, \"show_tracklist\": true, \"trackPadding\": \"20\"}",   "plugins": "{\"BlastView\": true, \"ComboTrackSelector\": false, \"GCContent\": false}",   "reference_genome": "{\"__current_case__\": 0, \"genome_type_select\": \"indexed\", \"genomes\": \"apiMel4\"}",   "standalone": "\"data\"",   "track_groups": "[]",   "uglyTestingHack": "\"enabled\""  },  "state": "ok",  "stderr": "WARNING: No feature names found for indexing, only reference sequence names will be indexed.\n",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/jbrowse/jbrowse/1.16.11+galaxy1",  "tool_stderr": "WARNING: No feature names found for indexing, only reference sequence names will be indexed.\n",  "tool_stdout": "",  "update_time": "2025-11-27T13:33:44.643025",  "user_email": "tests@fake.org" }, "output_problems": [  "Output output:  different than expected\nExpected text \u0027merlin.fa\u0027 in output (\u0027\u003c?xml version=\"1.0\"?\u003e\n\u003croot\u003e\n    \u003cmetadata\u003e\n        \u003cgencode\u003e1\u003c/gencode\u003e\n        \u003cgenomes\u003e\n              \u003cgenome path=\"/cvmfs/data.galaxyproject.org/managed/seq/apiMel4.fa\"\u003e\n                  \u003cmetadata /\u003e\n              \u003c/genome\u003es\n        \u003c/genomes\u003e\n        \u003cgeneral\u003e\n            \u003cdefaultLocation\u003e\u003c/defaultLocation\u003e\n            \u003ctrackPadding\u003e20\u003c/trackPadding\u003e\n\n            \u003cshareLink\u003etrue\u003c/shareLink\u003e\n            \u003caboutDescription\u003e\u003c/aboutDescription\u003e\n            \u003cshow_tracklist\u003etrue\u003c/show_tracklist\u003e\n            \u003cshow_nav\u003etrue\u003c/show_nav\u003e\n            \u003cshow_overview\u003etrue\u003c/show_overview\u003e\n            \u003cshow_menu\u003etrue\u003c/show_menu\u003e\n            \u003chideGenomeOptions\u003efalse\u003c/hideGenomeOptions\u003e\n        \u003c/general\u003e\n        \u003cgalaxyUrl\u003ehttp://localhost:8080\u003c/galaxyUrl\u003e\n    \u003c/metadata\u003e\n    \u003ctracks\u003e\n    \u003c/tracks\u003e\n    \u003cplugins\n        ComboTrackSelector=\"\"\n        Bookmarks=\"\"\n        GCContent=\"\"\n        BlastView=\"True\"\n        theme=\"\"\n        /\u003e\n\u003c/root\u003e\n\u0027)" ], "status": "failure", "test_index": 8, "time_seconds": 75.45126080513, "tool_id": "jbrowse", "tool_version": "1.16.11+galaxy1"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            WARNING: No feature names found for indexing, only reference sequence names will be indexed.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="jbrowse (Test #10)" name="9" time="32.80059623718262">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            INFO:jbrowse:Processing External endpoints / Rest apiINFO:jbrowse:Processing External endpoints / Sparql endpointWARNING: No feature names found for indexing, only reference sequence names will be indexed.
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="lofreq_call (Test #1)" name="0" time="43.44525074958801">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "reads": {   "id": "a6ba5c86237cf45e",   "src": "hda"  },  "reference_source|ref": {   "id": "60f727d5fd565da9",   "src": "hda"  },  "reference_source|ref_selector": "history" }, "job": {  "command_line": "ln -s \u0027/galaxy/server/database/objects/d/2/4/dataset_d246f42a-af8c-44c5-97e6-acf373f068aa.dat\u0027 reference.fa \u0026\u0026 lofreq faidx reference.fa 2\u003e\u00261 || echo \"Error running samtools faidx for indexing fasta reference for lofreq\" \u003e\u00262 \u0026\u0026  ln -s \u0027/galaxy/server/database/objects/3/e/2/dataset_3e27fa95-4988-4e7f-9424-33b09e5b18bc.dat\u0027 reads.bam \u0026\u0026 ln -s -f \u0027/galaxy/server/database/objects/_metadata_files/0/9/9/metadata_099b788f-8875-45a6-be68-9341f5fcec48.dat\u0027 reads.bam.bai \u0026\u0026   lofreq call-parallel --pp-threads ${GALAXY_SLOTS:-1} --verbose  --ref \u0027reference.fa\u0027 --out variants.vcf    --sig 0.01 --bonf dynamic   reads.bam 2\u003e\u00261  || (tool_exit_code=$? \u0026\u0026 cat \"$TMPDIR\"/lofreq2_call_parallel*/*.log 1\u003e\u00262 \u0026\u0026 exit $tool_exit_code)  \u0026\u0026 echo set_lofreq_standard",  "command_version": "2.1.5",  "copied_from_job_id": null,  "create_time": "2025-11-27T13:23:48.740335",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-nzxnl",  "galaxy_version": "24.1",  "handler": null,  "history_id": "69db2497628f7e95",  "id": "2223632ce024228c",  "inputs": {   "reads": {    "id": "a6ba5c86237cf45e",    "src": "hda",    "uuid": "3e27fa95-4988-4e7f-9424-33b09e5b18bc"   },   "reference_source|ref": {    "id": "60f727d5fd565da9",    "src": "hda",    "uuid": "d246f42a-af8c-44c5-97e6-acf373f068aa"   }  },  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "4.0000000",    "title": "Job Runtime (Wall Clock)",    "value": "4 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1764249840.0000000",    "title": "Job End Time",    "value": "2025-11-27 13:24:00"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1764249836.0000000",    "title": "Job Start Time",    "value": "2025-11-27 13:23:56"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "8589.0000000",    "title": "Memory Allocated (MB)",    "value": "8589"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "2.0000000",    "title": "Cores Allocated",    "value": "2"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "variants": {    "id": "f71b346e4e7f6cb1",    "src": "hda",    "uuid": "83c4744b-88a1-4b43-8e69-3f4608082151"   }  },  "params": {   "__input_ext": "\"input\"",   "call_control": "{\"__current_case__\": 0, \"set_call_options\": \"no\"}",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "filter_control": "{\"__current_case__\": 2, \"bonf\": \"dynamic\", \"filter_type\": \"set_lofreq_standard\", \"others\": \"\", \"sig\": \"0.01\"}",   "reference_source": "{\"__current_case__\": 1, \"ref\": {\"values\": [{\"id\": 191, \"src\": \"hda\"}]}, \"ref_selector\": \"history\"}",   "regions": "{\"__current_case__\": 0, \"restrict_to_region\": \"genome\"}",   "variant_types": "\"\""  },  "state": "ok",  "stderr": "",  "stdout": "INFO [2025-11-27 13:23:56,819]: Using 2 threads with following basic args: lofreq call --verbose --ref reference.fa --sig 0.01 --bonf dynamic reads.bam\n\nINFO [2025-11-27 13:23:56,839]: Adding 5 commands to mp-pool\nChecking the headers and starting positions of 5 files\nNumber of substitution tests performed: 66\nNumber of indel tests performed: 0\nINFO [2025-11-27 13:23:59,997]: Executing lofreq filter -i /galaxy/server/database/jobs_directory/000/123/tmp/lofreq2_call_parallelcz3aua7y/concat.vcf.gz -o variants.vcf --snvqual-thresh 38 --indelqual-thresh 20\n\nset_lofreq_standard\n",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/lofreq_call/lofreq_call/2.1.5+galaxy3",  "tool_stderr": "",  "tool_stdout": "INFO [2025-11-27 13:23:56,819]: Using 2 threads with following basic args: lofreq call --verbose --ref reference.fa --sig 0.01 --bonf dynamic reads.bam\n\nINFO [2025-11-27 13:23:56,839]: Adding 5 commands to mp-pool\nChecking the headers and starting positions of 5 files\nNumber of substitution tests performed: 66\nNumber of indel tests performed: 0\nINFO [2025-11-27 13:23:59,997]: Executing lofreq filter -i /galaxy/server/database/jobs_directory/000/123/tmp/lofreq2_call_parallelcz3aua7y/concat.vcf.gz -o variants.vcf --snvqual-thresh 38 --indelqual-thresh 20\n\nset_lofreq_standard\n",  "update_time": "2025-11-27T13:24:12.583331",  "user_email": "tests@fake.org" }, "output_problems": [  "Output variants:  different than expected, difference (using diff):\n( /tmp/tmpysg0099ecall-out1.vcf v. /tmp/tmpfn9sg0m_call-out1.vcf )\n--- local_file\n+++ history_data\n@@ -1,6 +1,7 @@\n ##fileformat=VCFv4.0\n-##fileDate=20200615\n-##source=lofreq call --verbose --ref reference.fa --sig 1 --bonf 1 --no-default-filter --no-default-filter -r pBR322:1-2180 -o /tmp/tmpe0171355/job_working_directory/000/28/working/pp-tmp/lofreq2_call_parallell2yprl2k/0.vcf.gz reads.bam \n+##FILTER=\u003cID=PASS,Description=\"All filters passed\"\u003e\n+##fileDate=20251127\n+##source=lofreq call --verbose --ref reference.fa --sig 0.01 --bonf dynamic --no-default-filter -r pBR322:1-1090 -o /galaxy/server/database/jobs_directory/000/123/tmp/lofreq2_call_parallelcz3aua7y/0.vcf.gz reads.bam \n ##reference=reference.fa\n ##INFO=\u003cID=DP,Number=1,Type=Integer,Description=\"Raw Depth\"\u003e\n ##INFO=\u003cID=AF,Number=1,Type=Float,Description=\"Allele Frequency\"\u003e\n@@ -9,11 +10,16 @@\n ##INFO=\u003cID=INDEL,Number=0,Type=Flag,Description=\"Indicates that the variant is an INDEL.\"\u003e\n ##INFO=\u003cID=CONSVAR,Number=0,Type=Flag,Description=\"Indicates that the variant is a consensus variant (as opposed to a low frequency variant).\"\u003e\n ##INFO=\u003cID=HRUN,Number=1,Type=Integer,Description=\"Homopolymer length to the right of report indel position\"\u003e\n-##FILTER=\u003cID=min_snvqual_38,Description=\"Minimum SNV Quality (Phred) 38\"\u003e\n+##FILTER=\u003cID=min_snvqual_33,Description=\"Minimum SNV Quality (Phred) 33\"\u003e\n ##FILTER=\u003cID=min_indelqual_20,Description=\"Minimum Indel Quality (Phred) 20\"\u003e\n+##FILTER=\u003cID=min_snvqual_36,Description=\"Minimum SNV Quality (Phred) 36\"\u003e\n+##contig=\u003cID=pBR322\u003e\n+##FILTER=\u003cID=min_snvqual_20,Description=\"Minimum SNV Quality (Phred) 20\"\u003e\n+##bcftools_concatVersion=1.21+htslib-1.21\n+##bcftools_concatCommand=concat -a -O z -o /galaxy/server/database/jobs_directory/000/123/tmp/lofreq2_call_parallelcz3aua7y/concat.vcf.gz /galaxy/server/database/jobs_directory/000/123/tmp/lofreq2_call_parallelcz3aua7y/0.vcf.gz /galaxy/server/database/jobs_directory/000/123/tmp/lofreq2_call_parallelcz3aua7y/1.vcf.gz /galaxy/server/database/jobs_directory/000/123/tmp/lofreq2_call_parallelcz3aua7y/2.vcf.gz /galaxy/server/database/jobs_directory/000/123/tmp/lofreq2_call_parallelcz3aua7y/3.vcf.gz /galaxy/server/database/jobs_directory/000/123/tmp/lofreq2_call_parallelcz3aua7y/4.vcf.gz; Date=Thu Nov 27 13:23:59 2025\n ##FILTER=\u003cID=min_dp_10,Description=\"Minimum Coverage 10\"\u003e\n ##FILTER=\u003cID=sb_fdr,Description=\"Strand-Bias Multiple Testing Correction: fdr corr. pvalue \u003e 0.001000\"\u003e\n ##FILTER=\u003cID=min_snvqual_38,Description=\"Minimum SNV Quality (Phred) 38\"\u003e\n ##FILTER=\u003cID=min_indelqual_20,Description=\"Minimum Indel Quality (Phred) 20\"\u003e\n #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n-pBR322\t1134\t.\tC\tT\t49314\tPASS\tDP=1767;AF=1.000000;SB=0;DP4=0,0,910,857\n+pBR322\t1134\t.\tC\tT\t49314\tPASS\tDP=1767;AF=1;SB=0;DP4=0,0,910,857\n" ], "status": "failure", "test_index": 0, "time_seconds": 43.44525074958801, "tool_id": "lofreq_call", "tool_version": "2.1.5+galaxy3"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            INFO [2025-11-27 13:23:56,819]: Using 2 threads with following basic args: lofreq call --verbose --ref reference.fa --sig 0.01 --bonf dynamic reads.bamINFO [2025-11-27 13:23:56,839]: Adding 5 commands to mp-poolChecking the headers and starting positions of 5 filesNumber of substitution tests performed: 66Number of indel tests performed: 0INFO [2025-11-27 13:23:59,997]: Executing lofreq filter -i /galaxy/server/database/jobs_directory/000/123/tmp/lofreq2_call_parallelcz3aua7y/concat.vcf.gz -o variants.vcf --snvqual-thresh 38 --indelqual-thresh 20set_lofreq_standard
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="lofreq_call (Test #2)" name="1" time="34.64854168891907">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "call_control|set_call_options": "yes",  "reads": {   "id": "3fe1ff583bc8da14",   "src": "hda"  },  "reference_source|ref": {   "id": "b4b32e67b42dff86",   "src": "hda"  },  "reference_source|ref_selector": "history" }, "job": {  "command_line": "ln -s \u0027/galaxy/server/database/objects/b/8/3/dataset_b83725e5-5031-4a92-9e9f-1bd42181ad7d.dat\u0027 reference.fa \u0026\u0026 lofreq faidx reference.fa 2\u003e\u00261 || echo \"Error running samtools faidx for indexing fasta reference for lofreq\" \u003e\u00262 \u0026\u0026  ln -s \u0027/galaxy/server/database/objects/5/7/b/dataset_57b40e40-f74c-49cf-be49-102028891ee1.dat\u0027 reads.bam \u0026\u0026 ln -s -f \u0027/galaxy/server/database/objects/_metadata_files/8/0/c/metadata_80cdcf85-407c-42c6-82c5-d45904012f4c.dat\u0027 reads.bam.bai \u0026\u0026   lofreq call-parallel --pp-threads ${GALAXY_SLOTS:-1} --verbose  --ref \u0027reference.fa\u0027 --out variants.vcf   --min-cov 1 --max-depth 1000000  --min-bq 6 --min-alt-bq 6    --min-mq 0 --max-mq 255 --min-jq 0 --min-alt-jq 0 --def-alt-jq 0  --sig 0.01 --bonf dynamic   reads.bam 2\u003e\u00261  || (tool_exit_code=$? \u0026\u0026 cat \"$TMPDIR\"/lofreq2_call_parallel*/*.log 1\u003e\u00262 \u0026\u0026 exit $tool_exit_code)  \u0026\u0026 echo set_lofreq_standard",  "command_version": "2.1.5",  "copied_from_job_id": null,  "create_time": "2025-11-27T13:24:31.898277",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-7frt2",  "galaxy_version": "24.1",  "handler": null,  "history_id": "69db2497628f7e95",  "id": "996b23f88c2a8723",  "inputs": {   "reads": {    "id": "3fe1ff583bc8da14",    "src": "hda",    "uuid": "57b40e40-f74c-49cf-be49-102028891ee1"   },   "reference_source|ref": {    "id": "b4b32e67b42dff86",    "src": "hda",    "uuid": "b83725e5-5031-4a92-9e9f-1bd42181ad7d"   }  },  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "4.0000000",    "title": "Job Runtime (Wall Clock)",    "value": "4 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1764249877.0000000",    "title": "Job End Time",    "value": "2025-11-27 13:24:37"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1764249873.0000000",    "title": "Job Start Time",    "value": "2025-11-27 13:24:33"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "8589.0000000",    "title": "Memory Allocated (MB)",    "value": "8589"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "2.0000000",    "title": "Cores Allocated",    "value": "2"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "variants": {    "id": "6b090607abea9665",    "src": "hda",    "uuid": "930d6117-e2ef-4fc2-a4e9-22c3f6e96d66"   }  },  "params": {   "__input_ext": "\"input\"",   "call_control": "{\"__current_case__\": 1, \"align_quals\": {\"alnqual\": {\"__current_case__\": 0, \"alnqual_choice\": {\"__current_case__\": 1, \"alnquals_to_use\": \"\", \"extended_baq\": true}, \"use_alnqual\": \"\"}}, \"bc_quals\": {\"alt_bq\": {\"__current_case__\": 0, \"modify\": \"\"}, \"min_alt_bq\": \"6\", \"min_bq\": \"6\"}, \"coverage\": {\"max_depth\": \"1000000\", \"min_cov\": \"1\"}, \"joint_qual\": {\"def_alt_jq\": \"0\", \"min_alt_jq\": \"0\", \"min_jq\": \"0\"}, \"map_quals\": {\"min_mq\": \"0\", \"use_mq\": {\"__current_case__\": 0, \"max_mq\": \"255\", \"no_mq\": \"\"}}, \"pe\": {\"use_orphan\": false}, \"set_call_options\": \"yes\", \"source_qual\": {\"use_src_qual\": {\"__current_case__\": 0, \"src_qual\": \"\"}}}",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "filter_control": "{\"__current_case__\": 2, \"bonf\": \"dynamic\", \"filter_type\": \"set_lofreq_standard\", \"others\": \"\", \"sig\": \"0.01\"}",   "reference_source": "{\"__current_case__\": 1, \"ref\": {\"values\": [{\"id\": 194, \"src\": \"hda\"}]}, \"ref_selector\": \"history\"}",   "regions": "{\"__current_case__\": 0, \"restrict_to_region\": \"genome\"}",   "variant_types": "\"\""  },  "state": "ok",  "stderr": "",  "stdout": "INFO [2025-11-27 13:24:33,698]: Using 2 threads with following basic args: lofreq call --verbose --ref reference.fa --min-cov 1 --max-depth 1000000 --min-bq 6 --min-alt-bq 6 --min-mq 0 --max-mq 255 --min-jq 0 --min-alt-jq 0 --def-alt-jq 0 --sig 0.01 --bonf dynamic reads.bam\n\nINFO [2025-11-27 13:24:33,830]: Adding 5 commands to mp-pool\nChecking the headers and starting positions of 5 files\nNumber of substitution tests performed: 66\nNumber of indel tests performed: 0\nINFO [2025-11-27 13:24:37,139]: Executing lofreq filter -i /galaxy/server/database/jobs_directory/000/126/tmp/lofreq2_call_parallel8q31scg6/concat.vcf.gz -o variants.vcf --snvqual-thresh 38 --indelqual-thresh 20\n\nset_lofreq_standard\n",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/lofreq_call/lofreq_call/2.1.5+galaxy3",  "tool_stderr": "",  "tool_stdout": "INFO [2025-11-27 13:24:33,698]: Using 2 threads with following basic args: lofreq call --verbose --ref reference.fa --min-cov 1 --max-depth 1000000 --min-bq 6 --min-alt-bq 6 --min-mq 0 --max-mq 255 --min-jq 0 --min-alt-jq 0 --def-alt-jq 0 --sig 0.01 --bonf dynamic reads.bam\n\nINFO [2025-11-27 13:24:33,830]: Adding 5 commands to mp-pool\nChecking the headers and starting positions of 5 files\nNumber of substitution tests performed: 66\nNumber of indel tests performed: 0\nINFO [2025-11-27 13:24:37,139]: Executing lofreq filter -i /galaxy/server/database/jobs_directory/000/126/tmp/lofreq2_call_parallel8q31scg6/concat.vcf.gz -o variants.vcf --snvqual-thresh 38 --indelqual-thresh 20\n\nset_lofreq_standard\n",  "update_time": "2025-11-27T13:24:47.452246",  "user_email": "tests@fake.org" }, "output_problems": [  "Output variants:  different than expected, difference (using diff):\n( /tmp/tmphlpbbkf8call-out1.vcf v. /tmp/tmp7v9jw1j1call-out1.vcf )\n--- local_file\n+++ history_data\n@@ -1,6 +1,7 @@\n ##fileformat=VCFv4.0\n-##fileDate=20200615\n-##source=lofreq call --verbose --ref reference.fa --sig 1 --bonf 1 --no-default-filter --no-default-filter -r pBR322:1-2180 -o /tmp/tmpe0171355/job_working_directory/000/28/working/pp-tmp/lofreq2_call_parallell2yprl2k/0.vcf.gz reads.bam \n+##FILTER=\u003cID=PASS,Description=\"All filters passed\"\u003e\n+##fileDate=20251127\n+##source=lofreq call --verbose --ref reference.fa --min-cov 1 --max-depth 1000000 --min-bq 6 --min-alt-bq 6 --min-mq 0 --max-mq 255 --min-jq 0 --min-alt-jq 0 --def-alt-jq 0 --sig 0.01 --bonf dynamic --no-default-filter -r pBR322:1-1090 -o /galaxy/server/database/jobs_directory/000/126/tmp/lofreq2_call_parallel8q31scg6/0.vcf.gz reads.bam \n ##reference=reference.fa\n ##INFO=\u003cID=DP,Number=1,Type=Integer,Description=\"Raw Depth\"\u003e\n ##INFO=\u003cID=AF,Number=1,Type=Float,Description=\"Allele Frequency\"\u003e\n@@ -9,11 +10,16 @@\n ##INFO=\u003cID=INDEL,Number=0,Type=Flag,Description=\"Indicates that the variant is an INDEL.\"\u003e\n ##INFO=\u003cID=CONSVAR,Number=0,Type=Flag,Description=\"Indicates that the variant is a consensus variant (as opposed to a low frequency variant).\"\u003e\n ##INFO=\u003cID=HRUN,Number=1,Type=Integer,Description=\"Homopolymer length to the right of report indel position\"\u003e\n-##FILTER=\u003cID=min_snvqual_38,Description=\"Minimum SNV Quality (Phred) 38\"\u003e\n+##FILTER=\u003cID=min_snvqual_33,Description=\"Minimum SNV Quality (Phred) 33\"\u003e\n ##FILTER=\u003cID=min_indelqual_20,Description=\"Minimum Indel Quality (Phred) 20\"\u003e\n+##FILTER=\u003cID=min_snvqual_36,Description=\"Minimum SNV Quality (Phred) 36\"\u003e\n+##contig=\u003cID=pBR322\u003e\n+##FILTER=\u003cID=min_snvqual_20,Description=\"Minimum SNV Quality (Phred) 20\"\u003e\n+##bcftools_concatVersion=1.21+htslib-1.21\n+##bcftools_concatCommand=concat -a -O z -o /galaxy/server/database/jobs_directory/000/126/tmp/lofreq2_call_parallel8q31scg6/concat.vcf.gz /galaxy/server/database/jobs_directory/000/126/tmp/lofreq2_call_parallel8q31scg6/0.vcf.gz /galaxy/server/database/jobs_directory/000/126/tmp/lofreq2_call_parallel8q31scg6/1.vcf.gz /galaxy/server/database/jobs_directory/000/126/tmp/lofreq2_call_parallel8q31scg6/2.vcf.gz /galaxy/server/database/jobs_directory/000/126/tmp/lofreq2_call_parallel8q31scg6/3.vcf.gz /galaxy/server/database/jobs_directory/000/126/tmp/lofreq2_call_parallel8q31scg6/4.vcf.gz; Date=Thu Nov 27 13:24:36 2025\n ##FILTER=\u003cID=min_dp_10,Description=\"Minimum Coverage 10\"\u003e\n ##FILTER=\u003cID=sb_fdr,Description=\"Strand-Bias Multiple Testing Correction: fdr corr. pvalue \u003e 0.001000\"\u003e\n ##FILTER=\u003cID=min_snvqual_38,Description=\"Minimum SNV Quality (Phred) 38\"\u003e\n ##FILTER=\u003cID=min_indelqual_20,Description=\"Minimum Indel Quality (Phred) 20\"\u003e\n #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n-pBR322\t1134\t.\tC\tT\t49314\tPASS\tDP=1767;AF=1.000000;SB=0;DP4=0,0,910,857\n+pBR322\t1134\t.\tC\tT\t49314\tPASS\tDP=1767;AF=1;SB=0;DP4=0,0,910,857\n" ], "status": "failure", "test_index": 1, "time_seconds": 34.64854168891907, "tool_id": "lofreq_call", "tool_version": "2.1.5+galaxy3"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            INFO [2025-11-27 13:24:33,698]: Using 2 threads with following basic args: lofreq call --verbose --ref reference.fa --min-cov 1 --max-depth 1000000 --min-bq 6 --min-alt-bq 6 --min-mq 0 --max-mq 255 --min-jq 0 --min-alt-jq 0 --def-alt-jq 0 --sig 0.01 --bonf dynamic reads.bamINFO [2025-11-27 13:24:33,830]: Adding 5 commands to mp-poolChecking the headers and starting positions of 5 filesNumber of substitution tests performed: 66Number of indel tests performed: 0INFO [2025-11-27 13:24:37,139]: Executing lofreq filter -i /galaxy/server/database/jobs_directory/000/126/tmp/lofreq2_call_parallel8q31scg6/concat.vcf.gz -o variants.vcf --snvqual-thresh 38 --indelqual-thresh 20set_lofreq_standard
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="lofreq_call (Test #3)" name="2" time="19.485316276550293">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 2, "time_seconds": 19.485316276550293, "tool_id": "lofreq_call", "tool_version": "2.1.5+galaxy3"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="lofreq_call (Test #4)" name="3" time="33.740551471710205">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "filter_control|filter_type": "set_all_off",  "reads": {   "id": "77dcd28cd0d584d8",   "src": "hda"  },  "reference_source|ref": {   "id": "e326aa4bd3c72657",   "src": "hda"  },  "reference_source|ref_selector": "history" }, "job": {  "command_line": "ln -s \u0027/galaxy/server/database/objects/1/c/e/dataset_1ce91ad8-f026-4eef-b364-83d6af7cb1e4.dat\u0027 reference.fa \u0026\u0026 lofreq faidx reference.fa 2\u003e\u00261 || echo \"Error running samtools faidx for indexing fasta reference for lofreq\" \u003e\u00262 \u0026\u0026  ln -s \u0027/galaxy/server/database/objects/b/8/c/dataset_b8c4b324-305a-4174-8beb-c760419a4cef.dat\u0027 reads.bam \u0026\u0026 ln -s -f \u0027/galaxy/server/database/objects/_metadata_files/a/a/4/metadata_aa4ba6bc-cdf8-4e74-9a80-842ff22bbdda.dat\u0027 reads.bam.bai \u0026\u0026   lofreq call-parallel --pp-threads ${GALAXY_SLOTS:-1} --verbose  --ref \u0027reference.fa\u0027 --out variants.vcf    --sig 1 --bonf 1 --no-default-filter  reads.bam 2\u003e\u00261  || (tool_exit_code=$? \u0026\u0026 cat \"$TMPDIR\"/lofreq2_call_parallel*/*.log 1\u003e\u00262 \u0026\u0026 exit $tool_exit_code)  \u0026\u0026 ln -s variants.vcf variants.vcf.gz \u0026\u0026 gzip -df variants.vcf.gz \u0026\u0026 echo set_all_off",  "command_version": "2.1.5",  "copied_from_job_id": null,  "create_time": "2025-11-27T13:25:26.141872",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-h5vhz",  "galaxy_version": "24.1",  "handler": null,  "history_id": "69db2497628f7e95",  "id": "619a194c062fb66d",  "inputs": {   "reads": {    "id": "77dcd28cd0d584d8",    "src": "hda",    "uuid": "b8c4b324-305a-4174-8beb-c760419a4cef"   },   "reference_source|ref": {    "id": "e326aa4bd3c72657",    "src": "hda",    "uuid": "1ce91ad8-f026-4eef-b364-83d6af7cb1e4"   }  },  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "2.0000000",    "title": "Job Runtime (Wall Clock)",    "value": "2 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1764249929.0000000",    "title": "Job End Time",    "value": "2025-11-27 13:25:29"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1764249927.0000000",    "title": "Job Start Time",    "value": "2025-11-27 13:25:27"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "8589.0000000",    "title": "Memory Allocated (MB)",    "value": "8589"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "2.0000000",    "title": "Cores Allocated",    "value": "2"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "variants": {    "id": "904980f04cbf5483",    "src": "hda",    "uuid": "96b36184-7d17-4329-99bb-1f1ddca7a2d4"   }  },  "params": {   "__input_ext": "\"input\"",   "call_control": "{\"__current_case__\": 0, \"set_call_options\": \"no\"}",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "filter_control": "{\"__current_case__\": 0, \"bonf\": \"1\", \"filter_type\": \"set_all_off\", \"others\": \"--no-default-filter\", \"sig\": \"1\"}",   "reference_source": "{\"__current_case__\": 1, \"ref\": {\"values\": [{\"id\": 200, \"src\": \"hda\"}]}, \"ref_selector\": \"history\"}",   "regions": "{\"__current_case__\": 0, \"restrict_to_region\": \"genome\"}",   "variant_types": "\"\""  },  "state": "ok",  "stderr": "",  "stdout": "INFO [2025-11-27 13:25:27,542]: Using 2 threads with following basic args: lofreq call --verbose --ref reference.fa --sig 1 --bonf 1 --no-default-filter reads.bam\n\nINFO [2025-11-27 13:25:27,730]: Adding 5 commands to mp-pool\nChecking the headers and starting positions of 5 files\nNumber of substitution tests performed: 66\nNumber of indel tests performed: 0\nINFO [2025-11-27 13:25:29,933]: Copying concatenated vcf file to final destination\nset_all_off\n",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/lofreq_call/lofreq_call/2.1.5+galaxy3",  "tool_stderr": "",  "tool_stdout": "INFO [2025-11-27 13:25:27,542]: Using 2 threads with following basic args: lofreq call --verbose --ref reference.fa --sig 1 --bonf 1 --no-default-filter reads.bam\n\nINFO [2025-11-27 13:25:27,730]: Adding 5 commands to mp-pool\nChecking the headers and starting positions of 5 files\nNumber of substitution tests performed: 66\nNumber of indel tests performed: 0\nINFO [2025-11-27 13:25:29,933]: Copying concatenated vcf file to final destination\nset_all_off\n",  "update_time": "2025-11-27T13:25:40.817814",  "user_email": "tests@fake.org" }, "output_problems": [  "Output variants:  different than expected, difference (using diff):\n( /tmp/tmppdyypp4bcall-out2.vcf v. /tmp/tmpc1gmw3wdcall-out2.vcf )\n--- local_file\n+++ history_data\n@@ -1,6 +1,7 @@\n ##fileformat=VCFv4.0\n-##fileDate=20200615\n-##source=lofreq call --verbose --ref reference.fa --sig 1 --bonf 1 --no-default-filter --no-default-filter -r pBR322:1-2180 -o /tmp/tmp265htsdc/job_working_directory/000/28/working/pp-tmp/lofreq2_call_parallelg3dmyvln/0.vcf.gz reads.bam \n+##FILTER=\u003cID=PASS,Description=\"All filters passed\"\u003e\n+##fileDate=20251127\n+##source=lofreq call --verbose --ref reference.fa --sig 1 --bonf 1 --no-default-filter --no-default-filter -r pBR322:1-1090 -o /galaxy/server/database/jobs_directory/000/132/tmp/lofreq2_call_parallelohqi5y48/0.vcf.gz reads.bam \n ##reference=reference.fa\n ##INFO=\u003cID=DP,Number=1,Type=Integer,Description=\"Raw Depth\"\u003e\n ##INFO=\u003cID=AF,Number=1,Type=Float,Description=\"Allele Frequency\"\u003e\n@@ -9,6 +10,9 @@\n ##INFO=\u003cID=INDEL,Number=0,Type=Flag,Description=\"Indicates that the variant is an INDEL.\"\u003e\n ##INFO=\u003cID=CONSVAR,Number=0,Type=Flag,Description=\"Indicates that the variant is a consensus variant (as opposed to a low frequency variant).\"\u003e\n ##INFO=\u003cID=HRUN,Number=1,Type=Integer,Description=\"Homopolymer length to the right of report indel position\"\u003e\n+##contig=\u003cID=pBR322\u003e\n+##bcftools_concatVersion=1.21+htslib-1.21\n+##bcftools_concatCommand=concat -a -O z -o /galaxy/server/database/jobs_directory/000/132/tmp/lofreq2_call_parallelohqi5y48/concat.vcf.gz /galaxy/server/database/jobs_directory/000/132/tmp/lofreq2_call_parallelohqi5y48/0.vcf.gz /galaxy/server/database/jobs_directory/000/132/tmp/lofreq2_call_parallelohqi5y48/1.vcf.gz /galaxy/server/database/jobs_directory/000/132/tmp/lofreq2_call_parallelohqi5y48/2.vcf.gz /galaxy/server/database/jobs_directory/000/132/tmp/lofreq2_call_parallelohqi5y48/3.vcf.gz /galaxy/server/database/jobs_directory/000/132/tmp/lofreq2_call_parallelohqi5y48/4.vcf.gz; Date=Thu Nov 27 13:25:29 2025\n #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n pBR322\t815\t.\tA\tG\t0\t.\tDP=665;AF=0.003008;SB=6;DP4=333,311,0,2\n pBR322\t861\t.\tA\tC\t0\t.\tDP=946;AF=0.002114;SB=3;DP4=447,497,0,2\n@@ -17,11 +21,11 @@\n pBR322\t1068\t.\tT\tG\t0\t.\tDP=1774;AF=0.000564;SB=3;DP4=853,920,1,0\n pBR322\t1084\t.\tG\tT\t0\t.\tDP=1789;AF=0.000559;SB=3;DP4=875,913,1,0\n pBR322\t1113\t.\tT\tA\t0\t.\tDP=1784;AF=0.000561;SB=0;DP4=885,898,0,1\n-pBR322\t1134\t.\tC\tT\t49314\t.\tDP=1767;AF=1.000000;SB=0;DP4=0,0,910,857\n+pBR322\t1134\t.\tC\tT\t49314\t.\tDP=1767;AF=1;SB=0;DP4=0,0,910,857\n pBR322\t1193\t.\tG\tA\t0\t.\tDP=1698;AF=0.000589;SB=3;DP4=865,832,0,1\n pBR322\t1218\t.\tA\tC\t0\t.\tDP=1708;AF=0.000585;SB=3;DP4=875,831,0,1\n pBR322\t1230\t.\tT\tC\t0\t.\tDP=1759;AF=0.000569;SB=3;DP4=907,850,0,1\n pBR322\t1256\t.\tA\tG\t0\t.\tDP=1746;AF=0.000573;SB=0;DP4=902,842,1,0\n pBR322\t1498\t.\tC\tG\t0\t.\tDP=1195;AF=0.000837;SB=3;DP4=588,606,1,0\n pBR322\t1503\t.\tT\tG\t0\t.\tDP=1156;AF=0.000865;SB=3;DP4=563,592,1,0\n-pBR322\t1505\t.\tG\tA\t0\t.\tDP=1137;AF=0.000880;SB=0;DP4=560,576,0,1\n+pBR322\t1505\t.\tG\tA\t0\t.\tDP=1137;AF=0.00088;SB=0;DP4=560,576,0,1\n" ], "status": "failure", "test_index": 3, "time_seconds": 33.740551471710205, "tool_id": "lofreq_call", "tool_version": "2.1.5+galaxy3"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            INFO [2025-11-27 13:25:27,542]: Using 2 threads with following basic args: lofreq call --verbose --ref reference.fa --sig 1 --bonf 1 --no-default-filter reads.bamINFO [2025-11-27 13:25:27,730]: Adding 5 commands to mp-poolChecking the headers and starting positions of 5 filesNumber of substitution tests performed: 66Number of indel tests performed: 0INFO [2025-11-27 13:25:29,933]: Copying concatenated vcf file to final destinationset_all_off
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="lofreq_call (Test #5)" name="4" time="34.3953492641449">
+        
+            
+                <error type="error" message="Tool exit code: 0"><![CDATA[
+                    { "inputs": {  "filter_control|filter_type": "set_all_off",  "reads": {   "id": "4d1fc78f3c2d8931",   "src": "hda"  },  "reference_source|ref": {   "id": "66a433ff149986b7",   "src": "hda"  },  "reference_source|ref_selector": "history",  "variant_types": "--call-indels --only-indels" }, "job": {  "command_line": "ln -s \u0027/galaxy/server/database/objects/7/3/3/dataset_73381c13-2255-4048-acb3-c4998394b7e5.dat\u0027 reference.fa \u0026\u0026 lofreq faidx reference.fa 2\u003e\u00261 || echo \"Error running samtools faidx for indexing fasta reference for lofreq\" \u003e\u00262 \u0026\u0026  ln -s \u0027/galaxy/server/database/objects/d/4/b/dataset_d4b594e1-1117-4e69-9965-3942bffced59.dat\u0027 reads.bam \u0026\u0026 ln -s -f \u0027/galaxy/server/database/objects/_metadata_files/c/d/f/metadata_cdf3b34a-acf0-418d-8c75-275799f8262f.dat\u0027 reads.bam.bai \u0026\u0026   lofreq call-parallel --pp-threads ${GALAXY_SLOTS:-1} --verbose  --ref \u0027reference.fa\u0027 --out variants.vcf --call-indels --only-indels    --sig 1 --bonf 1 --no-default-filter  reads.bam 2\u003e\u00261  || (tool_exit_code=$? \u0026\u0026 cat \"$TMPDIR\"/lofreq2_call_parallel*/*.log 1\u003e\u00262 \u0026\u0026 exit $tool_exit_code)  \u0026\u0026 ln -s variants.vcf variants.vcf.gz \u0026\u0026 gzip -df variants.vcf.gz \u0026\u0026 echo set_all_off",  "command_version": "2.1.5",  "copied_from_job_id": null,  "create_time": "2025-11-27T13:26:00.578577",  "dependencies": [],  "exit_code": 0,  "external_id": "gxy-m6r2s",  "galaxy_version": "24.1",  "handler": null,  "history_id": "69db2497628f7e95",  "id": "99fa35ff7bcc34c6",  "inputs": {   "reads": {    "id": "4d1fc78f3c2d8931",    "src": "hda",    "uuid": "d4b594e1-1117-4e69-9965-3942bffced59"   },   "reference_source|ref": {    "id": "66a433ff149986b7",    "src": "hda",    "uuid": "73381c13-2255-4048-acb3-c4998394b7e5"   }  },  "job_messages": [],  "job_metrics": [   {    "name": "runtime_seconds",    "plugin": "core",    "raw_value": "3.0000000",    "title": "Job Runtime (Wall Clock)",    "value": "3 seconds"   },   {    "name": "end_epoch",    "plugin": "core",    "raw_value": "1764249965.0000000",    "title": "Job End Time",    "value": "2025-11-27 13:26:05"   },   {    "name": "start_epoch",    "plugin": "core",    "raw_value": "1764249962.0000000",    "title": "Job Start Time",    "value": "2025-11-27 13:26:02"   },   {    "name": "galaxy_memory_mb",    "plugin": "core",    "raw_value": "8589.0000000",    "title": "Memory Allocated (MB)",    "value": "8589"   },   {    "name": "galaxy_slots",    "plugin": "core",    "raw_value": "2.0000000",    "title": "Cores Allocated",    "value": "2"   }  ],  "job_runner_name": null,  "job_stderr": "",  "job_stdout": "",  "model_class": "Job",  "output_collections": {},  "outputs": {   "variants": {    "id": "67f4dd2375555175",    "src": "hda",    "uuid": "b8d1eea2-7fc3-4df3-9272-7904396be289"   }  },  "params": {   "__input_ext": "\"input\"",   "call_control": "{\"__current_case__\": 0, \"set_call_options\": \"no\"}",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "filter_control": "{\"__current_case__\": 0, \"bonf\": \"1\", \"filter_type\": \"set_all_off\", \"others\": \"--no-default-filter\", \"sig\": \"1\"}",   "reference_source": "{\"__current_case__\": 1, \"ref\": {\"values\": [{\"id\": 203, \"src\": \"hda\"}]}, \"ref_selector\": \"history\"}",   "regions": "{\"__current_case__\": 0, \"restrict_to_region\": \"genome\"}",   "variant_types": "\"--call-indels --only-indels\""  },  "state": "ok",  "stderr": "",  "stdout": "INFO [2025-11-27 13:26:02,365]: Using 2 threads with following basic args: lofreq call --verbose --ref reference.fa --call-indels --only-indels --sig 1 --bonf 1 --no-default-filter reads.bam\n\nINFO [2025-11-27 13:26:02,466]: Adding 5 commands to mp-pool\nChecking the headers and starting positions of 5 files\nNumber of substitution tests performed: 0\nNumber of indel tests performed: 9\nINFO [2025-11-27 13:26:05,771]: Copying concatenated vcf file to final destination\nset_all_off\n",  "tool_id": "toolshed.g2.bx.psu.edu/repos/iuc/lofreq_call/lofreq_call/2.1.5+galaxy3",  "tool_stderr": "",  "tool_stdout": "INFO [2025-11-27 13:26:02,365]: Using 2 threads with following basic args: lofreq call --verbose --ref reference.fa --call-indels --only-indels --sig 1 --bonf 1 --no-default-filter reads.bam\n\nINFO [2025-11-27 13:26:02,466]: Adding 5 commands to mp-pool\nChecking the headers and starting positions of 5 files\nNumber of substitution tests performed: 0\nNumber of indel tests performed: 9\nINFO [2025-11-27 13:26:05,771]: Copying concatenated vcf file to final destination\nset_all_off\n",  "update_time": "2025-11-27T13:26:15.126016",  "user_email": "tests@fake.org" }, "output_problems": [  "Output variants:  different than expected, difference (using diff):\n( /tmp/tmpm7okkwnrindel-call-out.vcf v. /tmp/tmpsiaej037indel-call-out.vcf )\n--- local_file\n+++ history_data\n@@ -1,6 +1,7 @@\n ##fileformat=VCFv4.0\n-##fileDate=20200615\n-##source=lofreq call --verbose --ref reference.fa --call-indels --only-indels --sig 1 --bonf 1 --no-default-filter --no-default-filter -r pBR322:1-2180 -o /tmp/tmp265htsdc/job_working_directory/000/31/working/pp-tmp/lofreq2_call_parallel4gfado3q/0.vcf.gz reads.bam \n+##FILTER=\u003cID=PASS,Description=\"All filters passed\"\u003e\n+##fileDate=20251127\n+##source=lofreq call --verbose --ref reference.fa --call-indels --only-indels --sig 1 --bonf 1 --no-default-filter --no-default-filter -r pBR322:1-1090 -o /galaxy/server/database/jobs_directory/000/135/tmp/lofreq2_call_parallelqntogsna/0.vcf.gz reads.bam \n ##reference=reference.fa\n ##INFO=\u003cID=DP,Number=1,Type=Integer,Description=\"Raw Depth\"\u003e\n ##INFO=\u003cID=AF,Number=1,Type=Float,Description=\"Allele Frequency\"\u003e\n@@ -9,13 +10,16 @@\n ##INFO=\u003cID=INDEL,Number=0,Type=Flag,Description=\"Indicates that the variant is an INDEL.\"\u003e\n ##INFO=\u003cID=CONSVAR,Number=0,Type=Flag,Description=\"Indicates that the variant is a consensus variant (as opposed to a low frequency variant).\"\u003e\n ##INFO=\u003cID=HRUN,Number=1,Type=Integer,Description=\"Homopolymer length to the right of report indel position\"\u003e\n+##contig=\u003cID=pBR322\u003e\n+##bcftools_concatVersion=1.21+htslib-1.21\n+##bcftools_concatCommand=concat -a -O z -o /galaxy/server/database/jobs_directory/000/135/tmp/lofreq2_call_parallelqntogsna/concat.vcf.gz /galaxy/server/database/jobs_directory/000/135/tmp/lofreq2_call_parallelqntogsna/0.vcf.gz /galaxy/server/database/jobs_directory/000/135/tmp/lofreq2_call_parallelqntogsna/1.vcf.gz /galaxy/server/database/jobs_directory/000/135/tmp/lofreq2_call_parallelqntogsna/2.vcf.gz /galaxy/server/database/jobs_directory/000/135/tmp/lofreq2_call_parallelqntogsna/3.vcf.gz /galaxy/server/database/jobs_directory/000/135/tmp/lofreq2_call_parallelqntogsna/4.vcf.gz; Date=Thu Nov 27 13:26:05 2025\n #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n pBR322\t725\t.\tG\tGN\t0\t.\tDP=46;AF=0.021739;SB=0;DP4=22,23,0,1;INDEL;HRUN=1\n pBR322\t746\t.\tA\tAN\t0\t.\tDP=225;AF=0.004444;SB=3;DP4=116,108,0,1;INDEL;HRUN=1\n pBR322\t747\t.\tT\tTN\t0\t.\tDP=230;AF=0.004348;SB=3;DP4=118,111,0,1;INDEL;HRUN=1\n pBR322\t751\t.\tG\tGN\t0\t.\tDP=255;AF=0.003922;SB=3;DP4=128,126,0,1;INDEL;HRUN=1\n-pBR322\t807\t.\tT\tTN\t0\t.\tDP=606;AF=0.001650;SB=0;DP4=300,305,0,1;INDEL;HRUN=3\n+pBR322\t807\t.\tT\tTN\t0\t.\tDP=606;AF=0.00165;SB=0;DP4=300,305,0,1;INDEL;HRUN=3\n pBR322\t943\t.\tC\tCCG\t0\t.\tDP=1465;AF=0.000683;SB=0;DP4=709,755,0,1;INDEL;HRUN=1\n-pBR322\t1152\t.\tC\tCN\t0\t.\tDP=1754;AF=0.000570;SB=0;DP4=926,830,1,0;INDEL;HRUN=2\n+pBR322\t1152\t.\tC\tCN\t0\t.\tDP=1754;AF=0.00057;SB=0;DP4=926,830,1,0;INDEL;HRUN=2\n pBR322\t1271\t.\tA\tAN\t0\t.\tDP=1743;AF=0.000574;SB=0;DP4=890,855,1,0;INDEL;HRUN=2\n pBR322\t1376\t.\tA\tANN\t0\t.\tDP=1691;AF=0.000591;SB=3;DP4=849,843,0,1;INDEL;HRUN=1\n" ], "status": "failure", "test_index": 4, "time_seconds": 34.3953492641449, "tool_id": "lofreq_call", "tool_version": "2.1.5+galaxy3"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            INFO [2025-11-27 13:26:02,365]: Using 2 threads with following basic args: lofreq call --verbose --ref reference.fa --call-indels --only-indels --sig 1 --bonf 1 --no-default-filter reads.bamINFO [2025-11-27 13:26:02,466]: Adding 5 commands to mp-poolChecking the headers and starting positions of 5 filesNumber of substitution tests performed: 0Number of indel tests performed: 9INFO [2025-11-27 13:26:05,771]: Copying concatenated vcf file to final destinationset_all_off
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="multiqc (Test #1)" name="0" time="114.3528528213501">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [WARNING]         multiqc : MultiQC Version v1.32 now available![INFO   ]         multiqc : This is MultiQC v1.9[INFO   ]         multiqc : Template    : default[INFO   ]         multiqc : Report title: Title of the report[INFO   ]         multiqc : Searching   : /galaxy/server/database/jobs_directory/000/16/working/multiqc_WDir[INFO   ]        slamdunk : Found 2 reports[INFO   ]        cutadapt : Found 1 reports[WARNING]        bargraph : Tried to make bar plot, but had no data[INFO   ]         flexbar : Found 1 logs[INFO   ]     trimmomatic : Found 1 logs[INFO   ]       sortmerna : Found 1 logs[INFO   ]           fastp : Found 2 reports[INFO   ]          fastqc : Found 2 reports[INFO   ]         multiqc : Compressing plot data[INFO   ]         multiqc : Report      : report.html[INFO   ]         multiqc : Data        : report_data[INFO   ]         multiqc : Plots       : report_plots[INFO   ]         multiqc : MultiQC complete
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="multiqc (Test #2)" name="1" time="14.521708488464355">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 1, "time_seconds": 14.521708488464355, "tool_id": "multiqc", "tool_version": "1.9+galaxy1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="multiqc (Test #3)" name="2" time="137.73845505714417">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 2, "time_seconds": 137.73845505714417, "tool_id": "multiqc", "tool_version": "1.9+galaxy1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="multiqc (Test #4)" name="3" time="23.67257285118103">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 3, "time_seconds": 23.67257285118103, "tool_id": "multiqc", "tool_version": "1.9+galaxy1"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="multiqc (Test #5)" name="4" time="40.87327337265015">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [WARNING]         multiqc : MultiQC Version v1.32 now available![INFO   ]         multiqc : This is MultiQC v1.9[INFO   ]         multiqc : Template    : default[INFO   ]         multiqc : Report title: Title of the report[INFO   ]         multiqc : Searching   : /galaxy/server/database/jobs_directory/000/65/working/multiqc_WDir[INFO   ]          fastqc : Found 2 reports[INFO   ]         multiqc : Compressing plot data[INFO   ]         multiqc : Report      : report.html[INFO   ]         multiqc : Data        : report_data[INFO   ]         multiqc : Plots       : report_plots[INFO   ]         multiqc : MultiQC complete
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="multiqc (Test #6)" name="5" time="35.01467251777649">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [WARNING]         multiqc : MultiQC Version v1.32 now available![INFO   ]         multiqc : This is MultiQC v1.9[INFO   ]         multiqc : Template    : default[INFO   ]         multiqc : Report title: Title of the report[INFO   ]         multiqc : Searching   : /galaxy/server/database/jobs_directory/000/67/working/multiqc_WDir[INFO   ]          pycoqc : Found 1 reports[INFO   ]         multiqc : Compressing plot data[INFO   ]         multiqc : Report      : report.html[INFO   ]         multiqc : Data        : report_data[INFO   ]         multiqc : MultiQC complete
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="nanoplot (Test #1)" name="0" time="64.20621657371521">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="nanoplot (Test #2)" name="1" time="43.74826455116272">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="nanoplot (Test #3)" name="2" time="39.56929850578308">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="poretools_extract (Test #1)" name="0" time="53.25203466415405">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="poretools_extract (Test #2)" name="1" time="31.603873014450073">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="query_tabular (Test #1)" name="0" time="0.09577250480651855">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (customers.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (customers.tsv) cannot be found.\n", "status": "error", "test_index": 0, "time_seconds": 0.09577250480651855, "tool_id": "query_tabular", "tool_version": "3.3.2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="query_tabular (Test #2)" name="1" time="0.050368547439575195">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (customers.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (customers.tsv) cannot be found.\n", "status": "error", "test_index": 1, "time_seconds": 0.050368547439575195, "tool_id": "query_tabular", "tool_version": "3.3.2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="query_tabular (Test #11)" name="10" time="0.051058053970336914">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (netMHC_summary.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (netMHC_summary.tsv) cannot be found.\n", "status": "error", "test_index": 10, "time_seconds": 0.051058053970336914, "tool_id": "query_tabular", "tool_version": "3.3.2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="query_tabular (Test #12)" name="11" time="0.05056452751159668">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (math_input.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (math_input.tsv) cannot be found.\n", "status": "error", "test_index": 11, "time_seconds": 0.05056452751159668, "tool_id": "query_tabular", "tool_version": "3.3.2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="query_tabular (Test #3)" name="2" time="0.05150198936462402">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (customers.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (customers.tsv) cannot be found.\n", "status": "error", "test_index": 2, "time_seconds": 0.05150198936462402, "tool_id": "query_tabular", "tool_version": "3.3.2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="query_tabular (Test #4)" name="3" time="0.051995277404785156">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (IEDB.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (IEDB.tsv) cannot be found.\n", "status": "error", "test_index": 3, "time_seconds": 0.051995277404785156, "tool_id": "query_tabular", "tool_version": "3.3.2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="query_tabular (Test #5)" name="4" time="0.05010104179382324">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (testdb.sqlite) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (testdb.sqlite) cannot be found.\n", "status": "error", "test_index": 4, "time_seconds": 0.05010104179382324, "tool_id": "query_tabular", "tool_version": "3.3.2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="query_tabular (Test #6)" name="5" time="0.052465200424194336">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (pets.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (pets.tsv) cannot be found.\n", "status": "error", "test_index": 5, "time_seconds": 0.052465200424194336, "tool_id": "query_tabular", "tool_version": "3.3.2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="query_tabular (Test #7)" name="6" time="0.05192732810974121">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (psm_report.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (psm_report.tsv) cannot be found.\n", "status": "error", "test_index": 6, "time_seconds": 0.05192732810974121, "tool_id": "query_tabular", "tool_version": "3.3.2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="query_tabular (Test #8)" name="7" time="0.052974700927734375">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (psm_report.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (psm_report.tsv) cannot be found.\n", "status": "error", "test_index": 7, "time_seconds": 0.052974700927734375, "tool_id": "query_tabular", "tool_version": "3.3.2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="query_tabular (Test #9)" name="8" time="0.05163836479187012">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (psm_report.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (psm_report.tsv) cannot be found.\n", "status": "error", "test_index": 8, "time_seconds": 0.05163836479187012, "tool_id": "query_tabular", "tool_version": "3.3.2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="query_tabular (Test #10)" name="9" time="0.051178693771362305">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 163, in stage_data_in_history
+    test_dict = galaxy_interactor.remote_to_input(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 582, in remote_to_input
+    path_or_location = self._get_path_or_location(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 619, in _get_path_or_location
+    path = self.test_data_download(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 525, in test_data_download
+    raise AssertionError(f"Test input file ({filename}) cannot be found.")
+AssertionError: Test input file (netMHC_summary.tsv) cannot be found.
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 163, in stage_data_in_history\n    test_dict = galaxy_interactor.remote_to_input(\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 582, in remote_to_input\n    path_or_location = self._get_path_or_location(\n                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 619, in _get_path_or_location\n    path = self.test_data_download(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 525, in test_data_download\n    raise AssertionError(f\"Test input file ({filename}) cannot be found.\")\nAssertionError: Test input file (netMHC_summary.tsv) cannot be found.\n", "status": "error", "test_index": 9, "time_seconds": 0.051178693771362305, "tool_id": "query_tabular", "tool_version": "3.3.2"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="samtools_mpileup (Test #1)" name="0" time="23.43213200569153">
+        
+            <error type="error" message="Input staging problem: Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 1436, in verify_tool
+    stage_data_in_history(
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 175, in stage_data_in_history
+    staging_interface.handle_jobs()
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 212, in handle_jobs
+    self.galaxy_interactor.wait_for_job(job_response["id"], job_response["history_id"], self.maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in wait_for_job
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 403, in wait_for
+    wait_on(func, what, walltime_exceeded)
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py", line 38, in wait_on
+    value = function()
+            ^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 399, in <lambda>
+    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 749, in __job_ready
+    return self._state_ready(job_id, error_msg="Job in error state.")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py", line 841, in _state_ready
+    raise Exception(
+Exception: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .
+"><![CDATA[
+                { "execution_problem": "Input staging problem: Traceback (most recent call last):\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 1436, in verify_tool\n    stage_data_in_history(\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 175, in stage_data_in_history\n    staging_interface.handle_jobs()\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 212, in handle_jobs\n    self.galaxy_interactor.wait_for_job(job_response[\"id\"], job_response[\"history_id\"], self.maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in wait_for_job\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 403, in wait_for\n    wait_on(func, what, walltime_exceeded)\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/wait.py\", line 38, in wait_on\n    value = function()\n            ^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 399, in \u003clambda\u003e\n    self.wait_for(lambda: self.__job_ready(job_id, history_id), maxseconds=maxseconds)\n                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 749, in __job_ready\n    return self._state_ready(job_id, error_msg=\"Job in error state.\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/hostedtoolcache/Python/3.12.12/x64/lib/python3.12/site-packages/galaxy/tool_util/verify/interactor.py\", line 841, in _state_ready\n    raise Exception(\nException: Job in error state.. tool_id: __DATA_FETCH__, exit_code: None, stderr: .\n", "status": "error", "test_index": 0, "time_seconds": 23.43213200569153, "tool_id": "samtools_mpileup", "tool_version": "2.2.0"}
+            ]]></error>
+        
+    </testcase>
+    
+    <testcase classname="samtools_mpileup (Test #2)" name="1" time="36.00144839286804">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [mpileup] 1 samples in 1 input files
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_mpileup (Test #3)" name="2" time="33.13526797294617">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [mpileup] 1 samples in 1 input files
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_mpileup (Test #4)" name="3" time="34.740368127822876">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [mpileup] 1 samples in 1 input files
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_mpileup (Test #5)" name="4" time="36.08161020278931">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [mpileup] 1 samples in 1 input files
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_mpileup (Test #6)" name="5" time="34.05322456359863">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            [mpileup] 1 samples in 1 input files
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_phase (Test #1)" name="0" time="38.26859259605408">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_phase (Test #2)" name="1" time="36.764068365097046">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="samtools_phase (Test #3)" name="2" time="33.24002194404602">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="vcfannotate (Test #1)" name="0" time="39.38736581802368">
+        
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+    <testcase classname="vcfrandomsample (Test #1)" name="0" time="24.165644645690918">
+        
+            
+                <error type="error" message="Tool exit code: None"><![CDATA[
+                    { "inputs": {  "adv_options|adv_options_selector": "no",  "random_seed": "1",  "rate": "0.2",  "vcf_input": {   "id": "cf7c6a9ca7ed318e",   "src": "hda"  } }, "job": {  "command_line": "vcfrandomsample -p 1 -r 0.2 \u0027/galaxy/server/database/objects/4/5/3/dataset_45324cc1-013c-494f-a429-5fcd4fe36031.dat\u0027 \u003e \u0027/galaxy/server/database/objects/4/7/f/dataset_47f7a5d3-66f7-4c3d-85c7-58e291c4b58b.dat\u0027",  "command_version": null,  "copied_from_job_id": null,  "create_time": "2025-11-27T13:17:46.213515",  "dependencies": [],  "exit_code": null,  "external_id": "gxy-djhmg",  "galaxy_version": "24.1",  "handler": null,  "history_id": "69db2497628f7e95",  "id": "630962ea6c074a1f",  "inputs": {   "vcf_input": {    "id": "cf7c6a9ca7ed318e",    "src": "hda",    "uuid": "45324cc1-013c-494f-a429-5fcd4fe36031"   }  },  "job_messages": null,  "job_metrics": [],  "job_runner_name": null,  "job_stderr": null,  "job_stdout": null,  "model_class": "Job",  "output_collections": {},  "outputs": {   "out_file1": {    "id": "e6b78eb9545facfc",    "src": "hda",    "uuid": "47f7a5d3-66f7-4c3d-85c7-58e291c4b58b"   }  },  "params": {   "__input_ext": "\"vcf\"",   "adv_options": "{\"__current_case__\": 0, \"adv_options_selector\": \"no\"}",   "chromInfo": "\"/cvmfs/data.galaxyproject.org/managed/len/ucsc/?.len\"",   "dbkey": "\"?\"",   "random_seed": "\"1\"",   "rate": "\"0.2\""  },  "state": "error",  "stderr": "",  "stdout": "",  "tool_id": "toolshed.g2.bx.psu.edu/repos/devteam/vcfrandomsample/vcfrandomsample/1.0.0_rc3+galaxy0",  "tool_stderr": "",  "tool_stdout": "",  "update_time": "2025-11-27T13:17:51.177483",  "user_email": "tests@fake.org" }, "output_problems": [  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/vcfrandomsample/vcfrandomsample/1.0.0_rc3+galaxy0, exit_code: None, stderr: .",  "Job in error state.. tool_id: toolshed.g2.bx.psu.edu/repos/devteam/vcfrandomsample/vcfrandomsample/1.0.0_rc3+galaxy0, exit_code: None, stderr: ." ], "status": "failure", "test_index": 0, "time_seconds": 24.165644645690918, "tool_id": "vcfrandomsample", "tool_version": "1.0.0_rc3+galaxy0"}
+                ]]></error>
+            
+            <system-out><![CDATA[
+            
+            ]]></system-out>
+            <system-err><![CDATA[
+            
+            ]]></system-err>
+        
+    </testcase>
+    
+</testsuite>
