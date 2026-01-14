@@ -24,6 +24,10 @@ jobs:
     outputs:
       prefix: ${{ steps.prefix.outputs.prefix }}
     steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
       - name: Set prefix with date
         id: prefix
         run: echo "prefix=$(echo $PREFIX-$(date +'%y-%m-%d-%H-%M'))" >> $GITHUB_OUTPUT
@@ -295,6 +299,10 @@ jobs:
       contents: 'read'
       id-token: 'write'
     steps:
+      - name: Free Disk Space
+        uses: jlumbroso/free-disk-space@v1.3.1
+        with:
+          tool-cache: false
       - uses: 'actions/checkout@v4'
       - id: 'Auth'
         uses: 'google-github-actions/auth@v2'
