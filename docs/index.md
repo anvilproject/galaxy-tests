@@ -12,7 +12,7 @@ Each row is one tool test (id + version); each column is one of the 1 most recen
   <span class="gx-badge">&mdash; not run this cycle</span>
 </div>
 
-<div class="gx-table-wrap">
+<div class="gx-table-wrap" markdown="1">
 
 | Tool | Version | Run 1 |
 |---|---|---|
