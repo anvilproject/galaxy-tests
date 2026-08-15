@@ -204,9 +204,30 @@
     .gx-cell--mixed { color: #92400e; font-weight: 600; font-size: 0.8rem; background: rgba(217, 119, 6, 0.08); }
     .gx-heatmap__row--detail .gx-cell { font-size: 1rem; font-weight: normal; background: none; color: inherit; }
     .gx-heatmap__version { color: var(--galaxy-grey); font-size: 0.85em; }
+    .gx-heatmap__testnum {
+      color: var(--galaxy-primary);
+      font-size: 0.75em;
+      font-weight: 600;
+      background: rgba(37, 83, 123, 0.08);
+      border-radius: 0.25rem;
+      padding: 0.05em 0.4em;
+    }
 
     .gx-heatmap__group { border-top: 1px solid rgba(37, 83, 123, 0.08); }
     .gx-heatmap__group:first-of-type { border-top: none; }
+    /* Zebra striping so a row stays traceable across many run columns -
+       computed per group (nth-of-type on <details>, all same tag) and per
+       detail row (nth-of-type on the row divs, since <summary> isn't a div
+       and so doesn't offset the count). */
+    .gx-heatmap__group:nth-of-type(even) > summary.gx-heatmap__row {
+      background: rgba(37, 83, 123, 0.035);
+    }
+    .gx-heatmap__group > .gx-heatmap__row--detail:nth-of-type(even) {
+      background: rgba(37, 83, 123, 0.055);
+    }
+    .gx-heatmap__group > .gx-heatmap__row--detail:nth-of-type(odd) {
+      background: rgba(37, 83, 123, 0.02);
+    }
     summary.gx-heatmap__row {
       cursor: pointer;
       list-style: none;
@@ -223,7 +244,6 @@
     }
     summary.gx-heatmap__row:hover { background: rgba(255, 215, 0, 0.06); }
     .gx-heatmap__row--detail {
-      background: rgba(37, 83, 123, 0.02);
       font-size: 0.85rem;
     }
     .gx-heatmap__row--detail .gx-heatmap__label { padding-left: 2.1rem; color: var(--galaxy-grey); }
