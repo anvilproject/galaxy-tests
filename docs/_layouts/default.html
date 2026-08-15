@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title | default: "AnVIL Galaxy Tests" }}</title>
+  <meta name="description" content="{{ page.description | default: 'Automated Galaxy deployment and tool-test results for AnVIL.' }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Galaxy brand tokens - see https://github.com/galaxyproject/galaxy-brand-tokens/blob/main/DESIGN.md */
+    :root {
+      --galaxy-dark: #2c3143;
+      --galaxy-primary: #25537b;
+      --galaxy-gold: #ffd700;
+      --galaxy-gold-dark: #d19e00;
+      --accent-hover: #ffe60d;
+      --galaxy-grey: #58585a;
+      --light-bg: #edf4fa;
+      --medium-bg: #3c435c;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Atkinson Hyperlegible', system-ui, -apple-system, BlinkMacSystemFont,
+        'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--light-bg);
+      color: var(--galaxy-grey);
+      line-height: 1.5;
+    }
+
+    a { color: var(--galaxy-primary); text-decoration-color: rgba(37, 83, 123, 0.4); }
+    a:hover { color: var(--galaxy-gold-dark); text-decoration-color: var(--galaxy-gold-dark); }
+
+    /* Page header: gradient + 24px grid overlay + gold bottom border,
+       mirroring the Hub/IWC <PageHeader> pattern. */
+    header.gx-header {
+      position: relative;
+      overflow: hidden;
+      padding: 2.5rem 2rem 2.25rem;
+      color: #fff;
+      background: linear-gradient(135deg, var(--galaxy-dark) 0%, var(--galaxy-primary) 100%);
+      border-bottom: 4px solid var(--galaxy-gold);
+    }
+    header.gx-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 24px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 24px);
+      pointer-events: none;
+    }
+    .gx-header__inner {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .gx-header__title-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .gx-header__bar {
+      width: 4px;
+      height: 2rem;
+      background: var(--galaxy-gold);
+      flex: none;
+    }
+    .gx-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+    .gx-header p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.05rem;
+      max-width: 42rem;
+      margin: 0;
+    }
+
+    main.gx-content {
+      max-width: 1100px;
+      margin: -1.75rem auto 3rem;
+      padding: 0 1.5rem;
+    }
+
+    .gx-card {
+      background: #fff;
+      border: 1px solid rgba(37, 83, 123, 0.1);
+      border-radius: 0.5rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      padding: 2rem;
+    }
+    .gx-card > *:first-child { margin-top: 0; }
+    .gx-card > *:last-child { margin-bottom: 0; }
+
+    h2 {
+      color: var(--galaxy-dark);
+      font-weight: 700;
+      font-size: 1.4rem;
+      border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+      padding-bottom: 0.5rem;
+    }
+    h3 { color: var(--galaxy-dark); font-weight: 600; font-size: 1.1rem; }
+
+    /* Legend badges - outline-tag pattern from the design guide */
+    .gx-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.9rem;
+    }
+    .gx-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.65rem;
+      border: 1px solid rgba(37, 83, 123, 0.3);
+      border-radius: 0.375rem;
+      color: var(--galaxy-dark);
+    }
+
+    /* Heatmap table */
+    .gx-table-wrap {
+      overflow-x: auto;
+      border: 1px solid rgba(37, 83, 123, 0.1);
+      border-radius: 0.5rem;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+    thead th {
+      position: sticky;
+      top: 0;
+      background: var(--galaxy-primary);
+      color: #fff;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.55rem 0.85rem;
+    }
+    tbody td {
+      padding: 0.4rem 0.85rem;
+      border-bottom: 1px solid rgba(37, 83, 123, 0.08);
+    }
+    tbody tr:nth-child(odd) td { background: rgba(37, 83, 123, 0.035); }
+    tbody tr:hover td { background: rgba(255, 215, 0, 0.06); }
+
+    code, pre { font-family: 'SFMono-Regular', Consolas, Menlo, monospace; }
+    code { background: #f3f4f6; border-radius: 0.25rem; padding: 0.1em 0.35em; font-size: 0.85em; }
+
+    footer.gx-footer {
+      max-width: 1100px;
+      margin: 0 auto 2rem;
+      padding: 0 1.5rem;
+      color: var(--galaxy-grey);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header class="gx-header">
+    <div class="gx-header__inner">
+      <div class="gx-header__title-row">
+        <div class="gx-header__bar"></div>
+        <h1>{{ page.title | default: "AnVIL Galaxy Tests" }}</h1>
+      </div>
+      <p>{{ page.description | default: "Automated Galaxy deployment and tool-test results for AnVIL." }}</p>
+    </div>
+  </header>
+  <main class="gx-content">
+    <div class="gx-card">
+      {{ content }}
+    </div>
+  </main>
+  <footer class="gx-footer">
+    Generated by <a href="https://github.com/anvilproject/galaxy-tests">anvilproject/galaxy-tests</a>.
+  </footer>
+</body>
+</html>

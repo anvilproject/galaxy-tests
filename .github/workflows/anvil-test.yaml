@@ -1,0 +1,207 @@
+# Milestone 1 of v2_plan.md: a manual-only workflow to deploy Galaxy via
+# galaxy-k8s-boot's `anvil` branch (VM + GCP Batch, no GKE/GalaxyKubeMan) and
+# get a real timing number for the full, unchunked AnVIL tool-test suite.
+#
+# Deliberately NOT wired up yet, pending validation (see v2_plan.md §7/§9):
+#   - no `schedule:` trigger — workflow_dispatch only until timings are trusted
+#   - no report generation/commit-back to `main` — results are a workflow
+#     artifact for now, so repeated dry runs don't spam repo history
+#   - no matrix/parallel-job split — single `galaxy-tool-test` process,
+#     scaled via --parallel-tests, to measure whether that alone is enough
+#   - no "expected vs. loaded" toolset check yet
+name: Anvil Deployment and Tool Tests (dry run)
+
+on:
+  workflow_dispatch:
+    inputs:
+      instance-name:
+        description: 'GCE instance name prefix (a timestamp is appended)'
+        default: 'anvil-test-ci'
+        required: true
+      parallel-tests:
+        description: 'galaxy-tool-test --parallel-tests value'
+        default: '4'
+        required: true
+      run-tests:
+        description: 'Run the full tool-test suite (false = time the deploy only)'
+        type: boolean
+        default: true
+
+env:
+  GCP_PROJECT: anvil-and-terra-development
+  GCP_ZONE: us-east4-c
+
+jobs:
+  deploy-and-test:
+    name: Deploy Galaxy (anvil) and run tool tests
+    runs-on: ubuntu-latest
+    # Comfortably under GitHub-hosted runners' 360-minute hard cap, leaving
+    # room for the cleanup step to still run after a timeout cancellation.
+    timeout-minutes: 330
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout galaxy-tests
+        uses: actions/checkout@v4
+
+      - name: Checkout galaxy-k8s-boot (anvil branch)
+        uses: actions/checkout@v4
+        with:
+          repository: galaxyproject/galaxy-k8s-boot
+          ref: anvil
+          path: galaxy-k8s-boot
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/526897014808/locations/global/workloadIdentityPools/galaxy-tests-identity-pool/providers/gxy-tests-provider'
+          service_account: 'galaxy-tests-repo-actions-sa@anvil-and-terra-development.iam.gserviceaccount.com'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Set instance name
+        id: instance
+        run: echo "name=${{ inputs.instance-name }}-$(date -u +'%y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
+
+      - name: Generate ephemeral SSH key for the VM
+        id: ssh-key
+        run: |
+          ssh-keygen -t rsa -b 4096 -f "$RUNNER_TEMP/anvil-ci-key" -N "" -C "github-actions"
+          {
+            echo "public-key=$(cat "$RUNNER_TEMP/anvil-ci-key.pub")"
+            echo "private-key-path=$RUNNER_TEMP/anvil-ci-key"
+          } >> "$GITHUB_OUTPUT"
+
+      # --ephemeral-only: no persistent disks, matching the old "fresh cluster
+      # every run" model. Branch/project/zone/image are all galaxy-k8s-boot's
+      # own `anvil`-branch defaults (verified against anvil-and-terra-development
+      # directly - see v2_plan.md §4) - nothing to override here.
+      - name: Launch Galaxy VM
+        working-directory: galaxy-k8s-boot
+        run: |
+          bin/launch_vm.sh \
+            --ephemeral-only \
+            -k "${{ steps.ssh-key.outputs.public-key }}" \
+            "${{ steps.instance.outputs.name }}"
+
+      - name: Get VM IP address
+        id: vm-ip
+        run: |
+          sleep 10
+          IP=$(gcloud compute instances describe "${{ steps.instance.outputs.name }}" \
+            --project="$GCP_PROJECT" --zone="$GCP_ZONE" \
+            --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
+          echo "ip=$IP" >> "$GITHUB_OUTPUT"
+          echo "Galaxy VM IP: $IP"
+
+      - name: Wait for cloud-init to complete
+        run: |
+          for i in $(seq 1 60); do
+            if gcloud compute ssh "${{ steps.instance.outputs.name }}" \
+              --project="$GCP_PROJECT" --zone="$GCP_ZONE" \
+              --ssh-key-file="${{ steps.ssh-key.outputs.private-key-path }}" \
+              --command="cloud-init status --wait" 2>/dev/null; then
+              echo "cloud-init completed"
+              break
+            fi
+            echo "Attempt $i/60: cloud-init still running or SSH not ready..."
+            sleep 30
+          done
+
+      # kubeconfig lives at /home/debian/.kube/config: the anvil branch's
+      # ansible role copies /etc/rancher/rke2/rke2.yaml there for VM_USER
+      # "debian" (galaxy-k8s-boot/roles/galaxy_k8s_deployment/tasks/rke2_setup.yml).
+      # RKE2's kubeconfig defaults its server to localhost; rewrite it to the
+      # VM's external IP either way (harmless no-op if a pattern isn't present).
+      - name: Copy kubeconfig from VM
+        run: |
+          mkdir -p ~/.kube
+          gcloud compute scp \
+            --project="$GCP_PROJECT" --zone="$GCP_ZONE" \
+            --ssh-key-file="${{ steps.ssh-key.outputs.private-key-path }}" \
+            "debian@${{ steps.instance.outputs.name }}:/home/debian/.kube/config" \
+            ~/.kube/config
+          sed -i "s|https://127.0.0.1:6443|https://${{ steps.vm-ip.outputs.ip }}:6443|" ~/.kube/config
+          sed -i "s|https://0.0.0.0:6443|https://${{ steps.vm-ip.outputs.ip }}:6443|" ~/.kube/config
+
+      - name: Wait for Galaxy deployments to roll out
+        run: |
+          DEPLOYMENTS=$(kubectl get deployments -n galaxy -o jsonpath='{.items[*].metadata.name}')
+          if [ -z "$DEPLOYMENTS" ]; then
+            echo "No deployments found in the galaxy namespace" >&2
+            exit 1
+          fi
+          echo "Found deployments: $DEPLOYMENTS"
+          for d in $DEPLOYMENTS; do
+            kubectl rollout status "deployment/$d" -n galaxy --timeout=15m
+          done
+
+      - name: Wait for Galaxy API to respond
+        id: api
+        run: |
+          URL="http://${{ steps.vm-ip.outputs.ip }}/api/version"
+          for i in $(seq 1 30); do
+            if response=$(curl -sf "$URL"); then
+              echo "Galaxy is up: $response"
+              exit 0
+            fi
+            echo "Attempt $i/30: Galaxy not ready yet..."
+            sleep 10
+          done
+          echo "Galaxy API never became responsive" >&2
+          exit 1
+
+      - name: Record deploy timing
+        run: echo "Deploy finished at $(date -u +%FT%TZ) (job started at ${{ github.event.repository.updated_at }})"
+
+      - name: Set up Python
+        if: ${{ inputs.run-tests == 'true' }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install galaxy-tool-test and planemo
+        if: ${{ inputs.run-tests == 'true' }}
+        run: python -m pip install "galaxy-tool-util>=23.0" planemo
+
+      # No -t/--tool-id filter: -t defaults to ALL_TOOLS
+      # (galaxy/tool_util/verify/script.py), so this tests every tool the
+      # "cloud" toolset loaded via CVMFS at startup - see v2_plan.md §2 step 7.
+      # No chunk selection needed either, per §5.
+      - name: Run tool tests
+        if: ${{ inputs.run-tests == 'true' }}
+        env:
+          GALAXY_TEST_DEFAULT_WAIT: '600'
+        run: |
+          mkdir -p results
+          galaxy-tool-test \
+            -u "http://${{ steps.vm-ip.outputs.ip }}/" \
+            -k galaxypassword -a galaxypassword \
+            --parallel-tests "${{ inputs.parallel-tests }}" \
+            -j results/results.json \
+            --history-name "anvil-test-${{ steps.instance.outputs.name }}" \
+            --no-history-cleanup \
+            --verbose
+
+      - name: Build HTML/xunit report
+        if: ${{ inputs.run-tests == 'true' }}
+        run: |
+          planemo test_reports results/results.json \
+            --test_output results/results.html \
+            --test_output_xunit results/results.xunit
+
+      - name: Upload results as a workflow artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: anvil-test-${{ steps.instance.outputs.name }}
+          path: results/
+          if-no-files-found: ignore
+
+      - name: Delete VM
+        if: always()
+        run: |
+          gcloud compute instances delete "${{ steps.instance.outputs.name }}" \
+            --project="$GCP_PROJECT" --zone="$GCP_ZONE" --quiet || echo "VM already gone"
