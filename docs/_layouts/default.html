@@ -196,6 +196,14 @@
       line-height: 1;
     }
     .gx-cell a, .gx-cell span { text-decoration: none; }
+    /* Aggregate (folded-row) cells show a percentage as text rather than an
+       emoji - color-code the text itself. Harmless on detail-row emoji
+       cells too: CSS color doesn't recolor emoji glyphs. */
+    .gx-cell--pass { color: #0f7a3d; font-weight: 600; font-size: 0.8rem; }
+    .gx-cell--fail { color: #b91c1c; font-weight: 600; font-size: 0.8rem; }
+    .gx-cell--mixed { color: #92400e; font-weight: 600; font-size: 0.8rem; background: rgba(217, 119, 6, 0.08); }
+    .gx-heatmap__row--detail .gx-cell { font-size: 1rem; font-weight: normal; background: none; color: inherit; }
+    .gx-heatmap__version { color: var(--galaxy-grey); font-size: 0.85em; }
 
     .gx-heatmap__group { border-top: 1px solid rgba(37, 83, 123, 0.08); }
     .gx-heatmap__group:first-of-type { border-top: none; }
