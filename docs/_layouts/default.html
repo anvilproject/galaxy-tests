@@ -127,7 +127,7 @@
       color: var(--galaxy-dark);
     }
 
-    /* Heatmap table */
+    /* Heatmap table (plain markdown table, e.g. inside a normal .gx-card) */
     .gx-table-wrap {
       overflow-x: auto;
       border: 1px solid rgba(37, 83, 123, 0.1);
@@ -154,6 +154,72 @@
     }
     tbody tr:nth-child(odd) td { background: rgba(37, 83, 123, 0.035); }
     tbody tr:hover td { background: rgba(255, 215, 0, 0.06); }
+
+    /* Per-tool heatmap: one <details> per tool, folded by default (native
+       disclosure, no JS). Each row is a CSS grid so the label column and a
+       variable number of run-cell columns (--gx-cols) line up between the
+       summary (aggregate) row and its detail (per-test-case) rows. */
+    .gx-heatmap {
+      overflow-x: auto;
+      border: 1px solid rgba(37, 83, 123, 0.1);
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .gx-heatmap__row {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) repeat(var(--gx-cols), 46px);
+      align-items: center;
+      min-width: max-content;
+    }
+    .gx-heatmap__row--header {
+      position: sticky;
+      top: 0;
+      background: var(--galaxy-primary);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .gx-heatmap__row--header .gx-heatmap__label,
+    .gx-heatmap__row--header .gx-cell { padding: 0.55rem 0; }
+    .gx-heatmap__label {
+      padding: 0.45rem 0.85rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: baseline;
+      gap: 0.4rem;
+    }
+    .gx-heatmap__count { color: var(--galaxy-grey); font-size: 0.8rem; }
+    .gx-cell {
+      text-align: center;
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .gx-cell a, .gx-cell span { text-decoration: none; }
+
+    .gx-heatmap__group { border-top: 1px solid rgba(37, 83, 123, 0.08); }
+    .gx-heatmap__group:first-of-type { border-top: none; }
+    summary.gx-heatmap__row {
+      cursor: pointer;
+      list-style: none;
+    }
+    summary.gx-heatmap__row::-webkit-details-marker { display: none; }
+    summary.gx-heatmap__row .gx-heatmap__label::before {
+      content: "\25b8"; /* ▸ */
+      color: var(--galaxy-grey);
+      display: inline-block;
+      width: 0.9em;
+    }
+    details[open] > summary.gx-heatmap__row .gx-heatmap__label::before {
+      content: "\25be"; /* ▾ */
+    }
+    summary.gx-heatmap__row:hover { background: rgba(255, 215, 0, 0.06); }
+    .gx-heatmap__row--detail {
+      background: rgba(37, 83, 123, 0.02);
+      font-size: 0.85rem;
+    }
+    .gx-heatmap__row--detail .gx-heatmap__label { padding-left: 2.1rem; color: var(--galaxy-grey); }
+    .gx-heatmap__row--detail:hover { background: rgba(255, 215, 0, 0.06); }
 
     code, pre { font-family: 'SFMono-Regular', Consolas, Menlo, monospace; }
     code { background: #f3f4f6; border-radius: 0.25rem; padding: 0.1em 0.35em; font-size: 0.85em; }
