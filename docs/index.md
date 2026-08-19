@@ -14,7 +14,7 @@ Each group is one tool, folded by default - click to expand and see every indivi
 </div>
 
 <div class="gx-heatmap" style="--gx-cols: 2;">
-  <div class="gx-heatmap__row gx-heatmap__row--header"><div class="gx-heatmap__label">Tool (3)</div><div class="gx-cell">Run 1</div><div class="gx-cell">Run 2</div></div>
+  <div class="gx-heatmap__row gx-heatmap__row--header"><div class="gx-heatmap__label">Tool (3)</div><div class="gx-cell">Run 2</div><div class="gx-cell">Run 1</div></div>
   <details class="gx-heatmap__group">
     <summary class="gx-heatmap__row"><div class="gx-heatmap__label">fastp <span class="gx-heatmap__count">&times;218</span></div><div class="gx-cell gx-cell--mixed"><span title="207/218 test cases passed in anvil-test-ci-260818-221750">95%</span></div><div class="gx-cell gx-cell--mixed"><span title="161/164 test cases passed in anvil-test-ci-260815-191104">98%</span></div></summary>
     <div class="gx-heatmap__row gx-heatmap__row--detail"><div class="gx-heatmap__label">fastp <span class="gx-heatmap__version">1.3.3+galaxy0</span> <span class="gx-heatmap__testnum">test 1</span></div><div class="gx-cell gx-cell--pass"><a href="https://anvilproject.github.io/galaxy-tests/tool-tests/anvil-test-ci-260818-221750/results.html" title="Success: completed in 153s on anvil-test-ci-260818-221750.">🟩</a></div><div class="gx-cell" title="Not run this cycle">&mdash;</div></div>
