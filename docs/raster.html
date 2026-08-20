@@ -1,0 +1,321 @@
+---
+layout: default
+title: Tool x Run Raster
+description: Compact tool x run heatmap across the AnVIL tool-test history.
+---
+
+<p>
+  Each row is a tool, each column a test run (oldest to latest, left to
+  right). Color shows what happened; intensity shows how much of the tool
+  was affected. Hover a cell for the exact numbers; click it to open that
+  run's full report. Tools appear the first time they're actually tested,
+  so the row list grows over time rather than starting from a fixed list.
+</p>
+
+<div class="gx-legend">
+  <span class="gx-badge"><span class="gx-swatch" style="background:#eef2f6"></span> pass</span>
+  <span class="gx-badge"><span class="gx-swatch" style="background:#d87e55"></span> failures only</span>
+  <span class="gx-badge"><span class="gx-swatch" style="background:#630177"></span> errors only</span>
+  <span class="gx-badge"><span class="gx-swatch" style="background:#150276"></span> both</span>
+  <span class="gx-badge"><span class="gx-swatch" style="background:#d8dbe0"></span> not run</span>
+  <span class="gx-badge">pale &rarr; dark = fraction of that tool's tests affected</span>
+</div>
+
+<div class="gx-raster-controls">
+  <button id="gx-raster-older" type="button">&larr; older</button>
+  <span id="gx-raster-window"></span>
+  <button id="gx-raster-newer" type="button">newer &rarr;</button>
+</div>
+
+<div id="gx-raster-container" class="gx-raster-container">
+  <canvas id="gx-raster-canvas"></canvas>
+</div>
+<div id="gx-raster-tooltip" class="gx-raster-tooltip" hidden></div>
+<p id="gx-raster-empty" hidden>No raster data yet.</p>
+
+<style>
+  .gx-raster-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    color: var(--galaxy-grey);
+  }
+  .gx-raster-controls button {
+    font: inherit;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid rgba(37, 83, 123, 0.3);
+    border-radius: 0.375rem;
+    background: #fff;
+    color: var(--galaxy-primary);
+    cursor: pointer;
+  }
+  .gx-raster-controls button:disabled {
+    color: var(--galaxy-grey);
+    cursor: default;
+    opacity: 0.5;
+  }
+  .gx-raster-controls button:not(:disabled):hover {
+    background: rgba(255, 215, 0, 0.1);
+  }
+  .gx-swatch {
+    display: inline-block;
+    width: 0.85em;
+    height: 0.85em;
+    border-radius: 0.15em;
+    border: 1px solid rgba(37, 83, 123, 0.15);
+    vertical-align: -0.1em;
+  }
+  .gx-raster-container {
+    max-height: 70vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid rgba(37, 83, 123, 0.1);
+    border-radius: 0.5rem;
+  }
+  #gx-raster-canvas {
+    display: block;
+    cursor: pointer;
+  }
+  .gx-raster-tooltip {
+    position: fixed;
+    z-index: 1000;
+    max-width: 22rem;
+    padding: 0.5rem 0.7rem;
+    background: var(--galaxy-dark);
+    color: #fff;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    border-radius: 0.375rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    pointer-events: none;
+  }
+</style>
+
+<script>
+(function () {
+  "use strict";
+
+  var LABEL_WIDTH = 180;
+  var CELL_W = 14;
+  var CELL_H = 14;
+  var CELL_GAP = 1;
+
+  var COLORS = {
+    pass: "#eef2f6",
+    not_run: "#d8dbe0",
+    fail: [216, 126, 85],   // #d87e55
+    error: [99, 1, 119],    // #630177
+    mixed: [21, 2, 118]     // #150276
+  };
+
+  function shade(rgb, factor) {
+    // Blend rgb toward white; factor 1 = full color, 0 = white.
+    var r = Math.round(255 + (rgb[0] - 255) * factor);
+    var g = Math.round(255 + (rgb[1] - 255) * factor);
+    var b = Math.round(255 + (rgb[2] - 255) * factor);
+    return "rgb(" + r + "," + g + "," + b + ")";
+  }
+
+  function intensityFactor(affected) {
+    if (affected <= 1 / 3) return 0.35;
+    if (affected <= 2 / 3) return 0.65;
+    return 1.0;
+  }
+
+  function cellColor(cell) {
+    if (!cell) return COLORS.not_run;
+    if (cell.status === "pass") return COLORS.pass;
+    var base = COLORS[cell.status === "fail" ? "fail" : cell.status === "error" ? "error" : "mixed"];
+    return shade(base, intensityFactor(cell.affected));
+  }
+
+  function shortName(toolId) {
+    var parts = toolId.split("/");
+    return parts[parts.length - 1];
+  }
+
+  function fmtDate(iso) {
+    if (!iso) return "unknown time";
+    return iso.replace("T", " ");
+  }
+
+  function cellTooltip(toolId, runId, cell, manifestByRun) {
+    var name = shortName(toolId);
+    var run = manifestByRun[runId];
+    var when = run ? fmtDate(run.timestamp) : runId;
+    if (!cell) {
+      return name + "\n" + when + "\nNot run this cycle.";
+    }
+    if (cell.status === "pass") {
+      return (
+        name + "\n" + when + "\n" +
+        "All " + cell.tests_attempted + " tests passed across " +
+        cell.versions_total + " version" + (cell.versions_total === 1 ? "" : "s") + "."
+      );
+    }
+    var affectedCount = cell.tests_failed + cell.tests_errored;
+    var parts = [];
+    if (cell.tests_failed) parts.push(cell.tests_failed + " failure" + (cell.tests_failed === 1 ? "" : "s"));
+    if (cell.tests_errored) parts.push(cell.tests_errored + " error" + (cell.tests_errored === 1 ? "" : "s"));
+    return (
+      name + "\n" + when + "\n" +
+      affectedCount + " of " + cell.tests_attempted + " tests affected: " + parts.join(", ") +
+      " across " + cell.versions_affected + " of " + cell.versions_total + " versions."
+    );
+  }
+
+  function init(manifest, matrix) {
+    var container = document.getElementById("gx-raster-container");
+    var canvas = document.getElementById("gx-raster-canvas");
+    var ctx = canvas.getContext("2d");
+    var tooltip = document.getElementById("gx-raster-tooltip");
+    var olderBtn = document.getElementById("gx-raster-older");
+    var newerBtn = document.getElementById("gx-raster-newer");
+    var windowLabel = document.getElementById("gx-raster-window");
+
+    var tools = matrix.tools;
+    var runs = matrix.runs;
+    var manifestByRun = {};
+    manifest.forEach(function (r) { manifestByRun[r.run_id] = r; });
+
+    if (!tools.length || !runs.length) {
+      document.getElementById("gx-raster-empty").hidden = false;
+      container.hidden = true;
+      return;
+    }
+
+    var windowStart = Math.max(0, runs.length - 1);
+    var nCols = 1;
+
+    function computeCols() {
+      var available = container.clientWidth - LABEL_WIDTH;
+      return Math.max(1, Math.min(runs.length, Math.floor(available / CELL_W)));
+    }
+
+    function clampWindow() {
+      windowStart = Math.max(0, Math.min(windowStart, runs.length - nCols));
+    }
+
+    function currentRunIds() {
+      return runs.slice(windowStart, windowStart + nCols);
+    }
+
+    function draw() {
+      nCols = computeCols();
+      clampWindow();
+      var visibleRuns = currentRunIds();
+
+      var dpr = window.devicePixelRatio || 1;
+      var widthCss = LABEL_WIDTH + nCols * CELL_W;
+      var heightCss = tools.length * CELL_H;
+      canvas.style.width = widthCss + "px";
+      canvas.style.height = heightCss + "px";
+      canvas.width = Math.round(widthCss * dpr);
+      canvas.height = Math.round(heightCss * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      ctx.clearRect(0, 0, widthCss, heightCss);
+      ctx.font = "11px 'Atkinson Hyperlegible', sans-serif";
+      ctx.textBaseline = "middle";
+
+      tools.forEach(function (toolId, row) {
+        var y = row * CELL_H;
+
+        ctx.fillStyle = "#2c3143";
+        var label = shortName(toolId);
+        // Cheap ellipsis: trim until it fits rather than measuring per char.
+        var maxWidth = LABEL_WIDTH - 16;
+        while (ctx.measureText(label).width > maxWidth && label.length > 1) {
+          label = label.slice(0, -1);
+        }
+        if (label !== shortName(toolId)) label += "…";
+        ctx.fillText(label, 8, y + CELL_H / 2);
+
+        var cellsForTool = matrix.cells[toolId] || {};
+        visibleRuns.forEach(function (runId, col) {
+          var cell = cellsForTool[runId];
+          ctx.fillStyle = cellColor(cell);
+          ctx.fillRect(
+            LABEL_WIDTH + col * CELL_W,
+            y,
+            CELL_W - CELL_GAP,
+            CELL_H - CELL_GAP
+          );
+        });
+      });
+
+      var firstRun = manifestByRun[visibleRuns[0]];
+      var lastRun = manifestByRun[visibleRuns[visibleRuns.length - 1]];
+      windowLabel.textContent =
+        "Runs " + (windowStart + 1) + "–" + (windowStart + nCols) + " of " + runs.length +
+        (firstRun && lastRun ? " (" + fmtDate(firstRun.timestamp) + " → " + fmtDate(lastRun.timestamp) + ")" : "");
+      olderBtn.disabled = windowStart <= 0;
+      newerBtn.disabled = windowStart + nCols >= runs.length;
+    }
+
+    function cellAt(clientX, clientY) {
+      var rect = canvas.getBoundingClientRect();
+      var x = clientX - rect.left;
+      var y = clientY - rect.top;
+      if (x < LABEL_WIDTH) return null;
+      var row = Math.floor(y / CELL_H);
+      var col = Math.floor((x - LABEL_WIDTH) / CELL_W);
+      var visibleRuns = currentRunIds();
+      if (row < 0 || row >= tools.length || col < 0 || col >= visibleRuns.length) return null;
+      return { toolId: tools[row], runId: visibleRuns[col] };
+    }
+
+    canvas.addEventListener("mousemove", function (evt) {
+      var hit = cellAt(evt.clientX, evt.clientY);
+      if (!hit) {
+        tooltip.hidden = true;
+        return;
+      }
+      var cell = (matrix.cells[hit.toolId] || {})[hit.runId];
+      tooltip.textContent = cellTooltip(hit.toolId, hit.runId, cell, manifestByRun);
+      tooltip.style.whiteSpace = "pre-line";
+      tooltip.hidden = false;
+      var left = evt.clientX + 14;
+      var top = evt.clientY + 14;
+      tooltip.style.left = left + "px";
+      tooltip.style.top = top + "px";
+    });
+    canvas.addEventListener("mouseleave", function () {
+      tooltip.hidden = true;
+    });
+    canvas.addEventListener("click", function (evt) {
+      var hit = cellAt(evt.clientX, evt.clientY);
+      if (!hit) return;
+      var run = manifestByRun[hit.runId];
+      if (run && run.results_html_url) {
+        window.open(run.results_html_url, "_blank", "noopener");
+      }
+    });
+
+    window.addEventListener("resize", draw);
+    olderBtn.addEventListener("click", function () {
+      windowStart -= 1;
+      draw();
+    });
+    newerBtn.addEventListener("click", function () {
+      windowStart += 1;
+      draw();
+    });
+
+    draw();
+  }
+
+  Promise.all([
+    fetch("raster-data/manifest.json").then(function (r) { return r.json(); }),
+    fetch("raster-data/matrix.json").then(function (r) { return r.json(); })
+  ]).then(function (results) {
+    init(results[0], results[1]);
+  }).catch(function (err) {
+    document.getElementById("gx-raster-empty").hidden = false;
+    document.getElementById("gx-raster-empty").textContent = "Failed to load raster data: " + err;
+    document.getElementById("gx-raster-container").hidden = true;
+  });
+})();
+</script>
