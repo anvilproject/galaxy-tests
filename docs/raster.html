@@ -13,11 +13,11 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
 </p>
 
 <div class="gx-legend">
-  <span class="gx-badge"><span class="gx-swatch" style="background:#eef2f6"></span> pass</span>
+  <span class="gx-badge"><span class="gx-swatch" style="background:#61ad90"></span> pass</span>
   <span class="gx-badge"><span class="gx-swatch" style="background:#d87e55"></span> failures only</span>
   <span class="gx-badge"><span class="gx-swatch" style="background:#630177"></span> errors only</span>
   <span class="gx-badge"><span class="gx-swatch" style="background:#150276"></span> both</span>
-  <span class="gx-badge"><span class="gx-swatch" style="background:#d8dbe0"></span> not run</span>
+  <span class="gx-badge"><span class="gx-swatch" style="background:#eef2f6"></span> not run</span>
   <span class="gx-badge">pale &rarr; dark = fraction of that tool's tests affected</span>
 </div>
 
@@ -103,12 +103,13 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
   var CELL_GAP = 1;
 
   var COLORS = {
-    pass: "#eef2f6",
-    not_run: "#d8dbe0",
+    pass: "#61ad90",
+    not_run: "#eef2f6",
     fail: [216, 126, 85],   // #d87e55
     error: [99, 1, 119],    // #630177
     mixed: [21, 2, 118]     // #150276
   };
+  var STRIPE_COLOR = "rgba(37, 83, 123, 0.06)";
 
   function shade(rgb, factor) {
     // Blend rgb toward white; factor 1 = full color, 0 = white.
@@ -222,6 +223,11 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
 
       tools.forEach(function (toolId, row) {
         var y = row * CELL_H;
+
+        if (row % 2 === 1) {
+          ctx.fillStyle = STRIPE_COLOR;
+          ctx.fillRect(0, y, widthCss, CELL_H);
+        }
 
         ctx.fillStyle = "#2c3143";
         var label = shortName(toolId);
