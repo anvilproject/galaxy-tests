@@ -59,6 +59,16 @@
       max-width: 1100px;
       margin: 0 auto;
     }
+    .gx-header__row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+    }
+    .gx-header__nav {
+      flex: none;
+    }
     .gx-header__title-row {
       display: flex;
       align-items: center;
@@ -128,10 +138,8 @@
     }
 
     /* Cross-page nav button, shared by docs/raster.html and
-       docs/deploy-stages.html so each links to the other. */
-    .gx-page-nav {
-      margin: 0 0 1.25rem;
-    }
+       docs/deploy-stages.html so each links to the other from the
+       masthead (page.nav_href/page.nav_label front matter). */
     .gx-nav-button {
       display: inline-flex;
       align-items: center;
@@ -288,11 +296,18 @@
 <body>
   <header class="gx-header">
     <div class="gx-header__inner">
-      <div class="gx-header__title-row">
-        <div class="gx-header__bar"></div>
-        <h1>{{ page.title | default: "AnVIL Galaxy Tests" }}</h1>
+      <div class="gx-header__row">
+        <div>
+          <div class="gx-header__title-row">
+            <div class="gx-header__bar"></div>
+            <h1>{{ page.title | default: "AnVIL Galaxy Tests" }}</h1>
+          </div>
+          <p>{{ page.description | default: "Automated Galaxy deployment and tool-test results for AnVIL." }}</p>
+        </div>
+        {% if page.nav_href %}
+        <a class="gx-nav-button gx-header__nav" href="{{ page.nav_href }}">{{ page.nav_label }}</a>
+        {% endif %}
       </div>
-      <p>{{ page.description | default: "Automated Galaxy deployment and tool-test results for AnVIL." }}</p>
     </div>
   </header>
   <main class="gx-content">
