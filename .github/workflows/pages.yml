@@ -1,0 +1,50 @@
+# Builds and deploys docs/ (Jekyll) to GitHub Pages via GitHub Actions,
+# using current action versions we control - replacing the legacy
+# "Deploy from a branch" build, which runs on GitHub's own auto-generated
+# workflow (not a file in this repo) and was warning that it targets a
+# deprecated Node.js runtime for actions/upload-artifact.
+#
+# This workflow is inert until the repo's Pages source (Settings > Pages)
+# is switched from "Deploy from a branch" to "GitHub Actions" - until then
+# GitHub's legacy build keeps running instead.
+name: Build and deploy GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./docs
+          destination: ./_site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -12,9 +12,10 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
   they're actually tested, so the row list grows over time rather than
   starting from a fixed list. The bar above each run column shows how many
   tools it affected and how much of the toolset it actually covered
-  (click it for that run's full report); the bar to the right of each tool
-  shows how often that tool has had trouble over the runs currently shown.
-  Hover either for details.
+  (click it for a run-wide breakdown); the bar to the right of each tool
+  shows how often that tool has had trouble over the runs currently shown
+  (click it, or the tool's name, for that tool's history). Hover any of
+  them for details.
 </p>
 
 <div class="gx-legend">
@@ -260,6 +261,19 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     font-size: 0.85rem;
     color: var(--galaxy-grey);
   }
+  .gx-tool-link-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+  }
+  .gx-tool-link-row:hover {
+    background: rgba(255, 215, 0, 0.1);
+  }
 </style>
 
 <script>
@@ -489,17 +503,28 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     return 0;
   }
 
-  function toolHistoryStatus(toolId, runId, matrix) {
+  // Walks back to the nearest earlier run where toolId was actually
+  // attempted (skipping runs where it wasn't touched at all), regardless
+  // of the currently visible window - used for both the new-vs-continuing
+  // classification and the run-wide "recovered" list.
+  function previousAttemptedCell(toolId, runId, matrix) {
     var runs = matrix.runs;
     var idx = runs.indexOf(runId);
     var cellsForTool = matrix.cells[toolId] || {};
+    for (var i = idx - 1; i >= 0; i--) {
+      var cell = cellsForTool[runs[i]];
+      if (cell) return cell;
+    }
+    return null;
+  }
+
+  function toolHistoryStatus(toolId, runId, matrix) {
+    var cellsForTool = matrix.cells[toolId] || {};
     var currentCell = cellsForTool[runId];
     if (!currentCell || currentCell.status === "pass") return null;
-    for (var i = idx - 1; i >= 0; i--) {
-      var prevCell = cellsForTool[runs[i]];
-      if (prevCell) return prevCell.status === "pass" ? "new" : "continuing";
-    }
-    return "new";
+    var prevCell = previousAttemptedCell(toolId, runId, matrix);
+    if (!prevCell) return "new";
+    return prevCell.status === "pass" ? "new" : "continuing";
   }
 
   function init(manifest, matrix) {
@@ -532,7 +557,9 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
 
     var windowStart = Math.max(0, runs.length - 1);
     var nCols = 1;
-    var selectedCell = null; // {toolId, runId} - drives the highlight ring
+    // {mode: "cell"|"run"|"tool", toolId, runId} of whichever inspector
+    // view is open - drives the highlight ring and hash routing.
+    var inspectorState = null;
     var detailCache = {}; // runId -> parsed runs/<runId>/detail.json
 
     var maxAttemptedEver = manifest.reduce(function (m, r) {
@@ -606,7 +633,7 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
 
         if (row % 2 === 1) {
           ctx.fillStyle = STRIPE_COLOR;
-          ctx.fillRect(0, y, widthCss, CELL_H);
+          ctx.fillRect(0, y, LABEL_WIDTH, CELL_H);
         }
 
         ctx.fillStyle = "#2c3143";
@@ -657,20 +684,37 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
       ctx.lineTo(gridRight + 0.5, TOP_MARGIN_H + tools.length * CELL_H);
       ctx.stroke();
 
-      // Highlight the cell that opened the inspector, so closing it
-      // returns focus to a visibly obvious spot (v2_raster_plan.md sec 5).
-      if (selectedCell) {
-        var selRow = tools.indexOf(selectedCell.toolId);
-        var selCol = visibleRuns.indexOf(selectedCell.runId);
-        if (selRow >= 0 && selCol >= 0) {
-          ctx.strokeStyle = "#2c3143";
-          ctx.lineWidth = 2;
-          ctx.strokeRect(
-            LABEL_WIDTH + selCol * CELL_W + 1,
-            TOP_MARGIN_H + selRow * CELL_H + 1,
-            CELL_W - CELL_GAP - 1,
-            CELL_H - CELL_GAP - 1
-          );
+      // Highlight whatever opened the inspector, so closing it returns
+      // focus to a visibly obvious spot (v2_raster_plan.md sec 5).
+      if (inspectorState) {
+        ctx.strokeStyle = "#2c3143";
+        ctx.lineWidth = 2;
+        if (inspectorState.mode === "cell") {
+          var selRow = tools.indexOf(inspectorState.toolId);
+          var selCol = visibleRuns.indexOf(inspectorState.runId);
+          if (selRow >= 0 && selCol >= 0) {
+            ctx.strokeRect(
+              LABEL_WIDTH + selCol * CELL_W + 1,
+              TOP_MARGIN_H + selRow * CELL_H + 1,
+              CELL_W - CELL_GAP - 1,
+              CELL_H - CELL_GAP - 1
+            );
+          }
+        } else if (inspectorState.mode === "run") {
+          var runCol = visibleRuns.indexOf(inspectorState.runId);
+          if (runCol >= 0) {
+            ctx.strokeRect(LABEL_WIDTH + runCol * CELL_W + 1, 1, CELL_W - CELL_GAP - 1, TOP_MARGIN_H - TOP_PAD_BOTTOM - 1);
+          }
+        } else if (inspectorState.mode === "tool") {
+          var toolRow = tools.indexOf(inspectorState.toolId);
+          if (toolRow >= 0) {
+            ctx.strokeRect(
+              gridRight + 1,
+              TOP_MARGIN_H + toolRow * CELL_H + 1,
+              RIGHT_MARGIN_W - 2,
+              CELL_H - CELL_GAP - 1
+            );
+          }
         }
       }
 
@@ -705,7 +749,7 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
         return { type: "tool", toolId: tools[row] };
       }
 
-      if (x < LABEL_WIDTH) return null;
+      if (x < LABEL_WIDTH) return { type: "tool", toolId: tools[row] };
       var gridCol = Math.floor((x - LABEL_WIDTH) / CELL_W);
       if (gridCol < 0 || gridCol >= visibleRuns.length) return null;
       return { type: "cell", toolId: tools[row], runId: visibleRuns[gridCol] };
@@ -741,18 +785,9 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     canvas.addEventListener("click", function (evt) {
       var hit = hitTest(evt.clientX, evt.clientY);
       if (!hit) return;
-      if (hit.type === "cell") {
-        openInspector(hit.toolId, hit.runId);
-        return;
-      }
-      // Run-wide and tool-history inspector views are a later step
-      // (v2_raster_plan.md sec 6 step 5) - the run bar still falls back to
-      // the full Planemo report; a tool row's recurrence bar has no single
-      // equivalent link yet.
-      var run = hit.type === "run" && manifestByRun[hit.runId];
-      if (run && run.results_html_url) {
-        window.open(run.results_html_url, "_blank", "noopener");
-      }
+      if (hit.type === "cell") openCellInspector(hit.toolId, hit.runId);
+      else if (hit.type === "run") openRunInspector(hit.runId);
+      else openToolInspector(hit.toolId);
     });
 
     function fetchDetail(runId) {
@@ -763,6 +798,26 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
           detailCache[runId] = data;
           return data;
         });
+    }
+
+    // Shared by all three views: prev/next always step through matrix.runs
+    // (the full history, not just the visible window); tool-history has no
+    // single run to page through, so its nav is hidden instead.
+    function updateNav(state) {
+      var run = state.runId ? manifestByRun[state.runId] || {} : null;
+      if (state.mode === "tool") {
+        inspectorPrev.hidden = true;
+        inspectorNext.hidden = true;
+        inspectorReport.style.visibility = "hidden";
+        return;
+      }
+      var idx = matrix.runs.indexOf(state.runId);
+      inspectorPrev.hidden = false;
+      inspectorNext.hidden = false;
+      inspectorPrev.disabled = idx <= 0;
+      inspectorNext.disabled = idx < 0 || idx >= matrix.runs.length - 1;
+      inspectorReport.href = (run && run.results_html_url) || "#";
+      inspectorReport.style.visibility = run && run.results_html_url ? "visible" : "hidden";
     }
 
     function inspectorSummaryLine(toolId, runId) {
@@ -784,7 +839,7 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
       );
     }
 
-    function renderInspectorHeader(toolId, runId) {
+    function renderCellHeader(toolId, runId) {
       var run = manifestByRun[runId] || {};
       inspectorHeader.innerHTML =
         "<h3>" + escapeHtml(shortName(toolId)) + "</h3>" +
@@ -792,13 +847,7 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
         escapeHtml(fmtDate(run.timestamp)) +
         "<br>" + escapeHtml(inspectorSummaryLine(toolId, runId)) +
         "</div>";
-      inspectorReport.href = run.results_html_url || "#";
-      inspectorReport.style.visibility = run.results_html_url ? "visible" : "hidden";
-
-      var runs = matrix.runs;
-      var idx = runs.indexOf(runId);
-      inspectorPrev.disabled = idx <= 0;
-      inspectorNext.disabled = idx < 0 || idx >= runs.length - 1;
+      updateNav({ mode: "cell", runId: runId });
     }
 
     function versionRowHtml(version, tests) {
@@ -835,7 +884,7 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
       );
     }
 
-    function renderInspectorBody(toolId, runId) {
+    function renderCellBody(toolId, runId) {
       inspectorBody.innerHTML = "<p>Loading test detail…</p>";
       fetchDetail(runId).then(function (detail) {
         var versions = (detail && detail[toolId]) || {};
@@ -873,19 +922,157 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
       });
     }
 
-    function openInspector(toolId, runId) {
-      selectedCell = { toolId: toolId, runId: runId };
-      location.hash = "tool=" + encodeURIComponent(toolId) + "&run=" + encodeURIComponent(runId);
-      renderInspectorHeader(toolId, runId);
-      renderInspectorBody(toolId, runId);
+    function toolLinkRowHtml(toolId, runId, label) {
+      return (
+        '<div class="gx-tool-link-row" data-open-tool="' + escapeHtml(toolId) +
+        '" data-open-run="' + escapeHtml(runId) + '">' +
+        "<span>" + escapeHtml(shortName(toolId)) + "</span>" +
+        '<span class="gx-inspector__badge">' + escapeHtml(label) + "</span>" +
+        "</div>"
+      );
+    }
+
+    function cellBadgeLabel(cell) {
+      var cls = classifyCell(cell);
+      var text = cls === "fail" ? "failures only" : cls === "error" ? "errors only" :
+        cls === "mixed" ? "both" : cls === "pass" ? "pass" : "not run";
+      return cell ? text + " · " + Math.round(cell.affected * 100) + "%" : text;
+    }
+
+    // Run-wide view: everything computable from matrix.json/manifest.json
+    // alone, no detail.json fetch needed.
+    function renderRunHeader(runId) {
+      var run = manifestByRun[runId] || {};
+      var stats = computeTopStats(runId, tools, matrix);
+      var coverage = coverageBucket(run.tools_attempted || 0, maxAttemptedEver);
+      inspectorHeader.innerHTML =
+        "<h3>" + escapeHtml(fmtDate(run.timestamp)) + "</h3>" +
+        '<div class="gx-inspector__summary">' +
+        stats.affected + " of " + (stats.affected + stats.pass) + " attempted tools affected (" +
+        stats.fail + " failure-only, " + stats.error + " error-only, " + stats.mixed + " mixed)<br>" +
+        "Tests: " + (run.tests_passed || 0) + " passed, " + (run.tests_failed || 0) + " failed, " +
+        (run.tests_errored || 0) + " errored, " + (run.tests_skipped || 0) + " skipped<br>" +
+        "Coverage: " + escapeHtml(coverage) + " (" + (run.tools_attempted || 0) + " tools attempted)" +
+        "</div>";
+      updateNav({ mode: "run", runId: runId });
+    }
+
+    function renderRunBody(runId) {
+      var newProblems = [], continuingProblems = [], recovered = [];
+      tools.forEach(function (toolId) {
+        var cell = (matrix.cells[toolId] || {})[runId];
+        if (cell && cell.status !== "pass") {
+          var hist = toolHistoryStatus(toolId, runId, matrix);
+          (hist === "new" ? newProblems : continuingProblems).push(toolId);
+        } else if (cell && cell.status === "pass") {
+          var prevCell = previousAttemptedCell(toolId, runId, matrix);
+          if (prevCell && prevCell.status !== "pass") recovered.push(toolId);
+        }
+      });
+      newProblems.sort();
+      continuingProblems.sort();
+      recovered.sort();
+
+      function section(title, list) {
+        return (
+          "<h4>" + escapeHtml(title) + " (" + list.length + ")</h4>" +
+          (list.length
+            ? list.map(function (t) {
+                var cell = (matrix.cells[t] || {})[runId];
+                return toolLinkRowHtml(t, runId, cellBadgeLabel(cell));
+              }).join("")
+            : "<p>None.</p>")
+        );
+      }
+
+      inspectorBody.innerHTML =
+        section("New problems", newProblems) +
+        section("Continuing problems", continuingProblems) +
+        section("Recovered since previous run", recovered);
+    }
+
+    // Tool-history view: recurrence stats over the currently visible
+    // window (same scope as the right-margin bar itself), plus a per-run
+    // timeline for drill-down - no cross-run version/signature rollup yet
+    // (v2_raster_plan.md sec 1 tables that with the rest of the signature
+    // work).
+    function renderToolHeader(toolId) {
+      var stats = computeRightStats(toolId, currentRunIds(), matrix);
+      inspectorHeader.innerHTML =
+        "<h3>" + escapeHtml(shortName(toolId)) + "</h3>" +
+        '<div class="gx-inspector__summary">' +
+        "Unhealthy in " + stats.unhealthy + " of " + stats.attempted + " attempted runs shown<br>" +
+        "Current streak: " + stats.currentStreak + " · longest in this window: " + stats.longestStreak + "<br>" +
+        "Median affected: " + pct(stats.medianAffected) + " · max affected: " + pct(stats.maxAffected) +
+        "</div>";
+      updateNav({ mode: "tool", toolId: toolId });
+    }
+
+    function renderToolBody(toolId) {
+      var rows = currentRunIds().slice().reverse().map(function (runId) {
+        var cell = (matrix.cells[toolId] || {})[runId];
+        var run = manifestByRun[runId] || {};
+        return (
+          '<div class="gx-tool-link-row" data-open-tool="' + escapeHtml(toolId) +
+          '" data-open-run="' + escapeHtml(runId) + '">' +
+          "<span>" + escapeHtml(fmtDate(run.timestamp)) + "</span>" +
+          '<span class="gx-inspector__badge">' + escapeHtml(cellBadgeLabel(cell)) + "</span>" +
+          "</div>"
+        );
+      }).join("");
+      inspectorBody.innerHTML = "<h4>History over the runs currently shown</h4>" + rows;
+    }
+
+    inspectorBody.addEventListener("click", function (evt) {
+      var target = evt.target;
+      while (target && target !== inspectorBody && !target.getAttribute("data-open-tool")) {
+        target = target.parentElement;
+      }
+      if (!target || target === inspectorBody) return;
+      openCellInspector(target.getAttribute("data-open-tool"), target.getAttribute("data-open-run"));
+    });
+
+    function showInspector() {
       backdrop.hidden = false;
       inspector.hidden = false;
       draw();
     }
 
+    function updateHash() {
+      var s = inspectorState;
+      if (!s) return;
+      if (s.mode === "cell") location.hash = "tool=" + encodeURIComponent(s.toolId) + "&run=" + encodeURIComponent(s.runId);
+      else if (s.mode === "run") location.hash = "run=" + encodeURIComponent(s.runId);
+      else location.hash = "tool=" + encodeURIComponent(s.toolId);
+    }
+
+    function openCellInspector(toolId, runId) {
+      inspectorState = { mode: "cell", toolId: toolId, runId: runId };
+      updateHash();
+      renderCellHeader(toolId, runId);
+      renderCellBody(toolId, runId);
+      showInspector();
+    }
+
+    function openRunInspector(runId) {
+      inspectorState = { mode: "run", runId: runId };
+      updateHash();
+      renderRunHeader(runId);
+      renderRunBody(runId);
+      showInspector();
+    }
+
+    function openToolInspector(toolId) {
+      inspectorState = { mode: "tool", toolId: toolId };
+      updateHash();
+      renderToolHeader(toolId);
+      renderToolBody(toolId);
+      showInspector();
+    }
+
     function closeInspector() {
       if (inspector.hidden) return;
-      selectedCell = null;
+      inspectorState = null;
       inspector.hidden = true;
       backdrop.hidden = true;
       if (location.hash) history.replaceState(null, "", location.pathname + location.search);
@@ -899,22 +1086,35 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
       if (evt.key === "Escape") closeInspector();
     });
     inspectorPrev.addEventListener("click", function () {
-      if (!selectedCell) return;
-      var idx = matrix.runs.indexOf(selectedCell.runId);
-      if (idx > 0) openInspector(selectedCell.toolId, matrix.runs[idx - 1]);
+      if (!inspectorState) return;
+      var idx = matrix.runs.indexOf(inspectorState.runId);
+      if (idx <= 0) return;
+      if (inspectorState.mode === "cell") openCellInspector(inspectorState.toolId, matrix.runs[idx - 1]);
+      else if (inspectorState.mode === "run") openRunInspector(matrix.runs[idx - 1]);
     });
     inspectorNext.addEventListener("click", function () {
-      if (!selectedCell) return;
-      var idx = matrix.runs.indexOf(selectedCell.runId);
-      if (idx >= 0 && idx < matrix.runs.length - 1) openInspector(selectedCell.toolId, matrix.runs[idx + 1]);
+      if (!inspectorState) return;
+      var idx = matrix.runs.indexOf(inspectorState.runId);
+      if (idx < 0 || idx >= matrix.runs.length - 1) return;
+      if (inspectorState.mode === "cell") openCellInspector(inspectorState.toolId, matrix.runs[idx + 1]);
+      else if (inspectorState.mode === "run") openRunInspector(matrix.runs[idx + 1]);
     });
 
     function openFromHash() {
-      var m = /tool=([^&]+)&run=([^&]+)/.exec(location.hash);
-      if (!m) return;
-      var toolId = decodeURIComponent(m[1]);
-      var runId = decodeURIComponent(m[2]);
-      if (tools.indexOf(toolId) >= 0 && runs.indexOf(runId) >= 0) openInspector(toolId, runId);
+      var hash = location.hash.replace(/^#/, "");
+      var params = {};
+      hash.split("&").forEach(function (kv) {
+        var eq = kv.indexOf("=");
+        if (eq < 0) return;
+        params[kv.slice(0, eq)] = decodeURIComponent(kv.slice(eq + 1));
+      });
+      if (params.tool && params.run) {
+        if (tools.indexOf(params.tool) >= 0 && runs.indexOf(params.run) >= 0) openCellInspector(params.tool, params.run);
+      } else if (params.run) {
+        if (runs.indexOf(params.run) >= 0) openRunInspector(params.run);
+      } else if (params.tool) {
+        if (tools.indexOf(params.tool) >= 0) openToolInspector(params.tool);
+      }
     }
 
     window.addEventListener("resize", draw);
