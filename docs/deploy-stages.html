@@ -4,14 +4,21 @@ title: Deployment Stage Timing
 description: Per-task ansible-pull timing across deployment runs, as a stacked bar chart.
 ---
 
+<div class="gx-page-nav">
+  <a class="gx-nav-button" href="raster.html">Tool x run raster &rarr;</a>
+</div>
+
 <p>
-  Each bar is one deployment run (oldest to latest, left to right); each
-  colored segment is one ansible task from that run's <code>ansible-pull</code>
-  playbook, stacked by duration. The same task keeps the same color across
-  runs, so a task that's grown slower (or newly appeared) is easy to spot.
-  Small/rare tasks are grouped into a single gray "Other tasks" segment so
-  the chart stays legible. Hover a segment for the exact numbers; click a
-  bar to open that run's full <code>ansible-pull</code> log.
+  Deployment-timing breakdown for the
+  <a href="https://github.com/anvilproject/galaxy-tests">anvilproject/galaxy-tests</a>
+  CI pipeline. Each bar is one deployment run (oldest to latest, left to
+  right); each colored segment is one ansible task from that run's
+  <code>ansible-pull</code> playbook, stacked by duration. The same task
+  keeps the same color across runs, so a task that's grown slower (or
+  newly appeared) is easy to spot. Small/rare tasks are grouped into a
+  single gray "Other tasks" segment so the chart stays legible. Hover a
+  segment for the exact numbers; click a bar to open that run's full
+  <code>ansible-pull</code> log.
 </p>
 
 <div class="gx-raster-controls">
