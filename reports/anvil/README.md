@@ -27,6 +27,8 @@ not just that it deploys.
 
 ### Longitudinal per-tool history
 
-The [full per-tool test history](https://anvilproject.github.io/galaxy-tests/) shows pass/fail for each tool
-test across the most recent runs, so a tool that starts failing (or a fix
-that starts passing) is easy to spot over time.
+The [tool x run raster](https://anvilproject.github.io/galaxy-tests/raster.html) shows pass/fail/error for every tool
+across the run history, so a tool that starts failing (or a fix that
+starts passing) is easy to spot over time. Click a cell for that tool's
+failing tests and tracebacks, the bar above a run column for a run-wide
+breakdown, or a tool's name/recurrence bar for its history.
