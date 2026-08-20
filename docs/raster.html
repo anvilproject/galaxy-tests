@@ -10,6 +10,10 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
   was affected. Hover a cell for the exact numbers; click it to open that
   run's full report. Tools appear the first time they're actually tested,
   so the row list grows over time rather than starting from a fixed list.
+  The bar above each run column shows how many tools it affected and how
+  much of the toolset it actually covered; the bar to the right of each
+  tool shows how often that tool has had trouble over the runs currently
+  shown. Hover either for details.
 </p>
 
 <div class="gx-legend">
@@ -19,6 +23,11 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
   <span class="gx-badge"><span class="gx-swatch" style="background:#150276"></span> both</span>
   <span class="gx-badge"><span class="gx-swatch" style="background:#eef2f6"></span> not run</span>
   <span class="gx-badge">pale &rarr; dark = fraction of that tool's tests affected</span>
+</div>
+<div class="gx-legend">
+  <span class="gx-badge"><span class="gx-swatch" style="background:#9aa5b1"></span> normal coverage</span>
+  <span class="gx-badge"><span class="gx-swatch" style="background:#d19e00"></span> partial run</span>
+  <span class="gx-badge"><span class="gx-swatch" style="background:#b91c1c"></span> most of the toolset not run</span>
 </div>
 
 <div class="gx-raster-controls">
@@ -101,6 +110,12 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
   var CELL_W = 14;
   var CELL_H = 14;
   var CELL_GAP = 1;
+  var RIGHT_MARGIN_W = 130;
+  var BAR_MAX_H = 30;
+  var BAR_GAP = 2;
+  var STRIP_H = 5;
+  var TOP_PAD_BOTTOM = 4;
+  var TOP_MARGIN_H = BAR_MAX_H + BAR_GAP + STRIP_H + TOP_PAD_BOTTOM;
 
   var COLORS = {
     pass: "#61ad90",
@@ -110,6 +125,9 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     mixed: [21, 2, 118]     // #150276
   };
   var STRIPE_COLOR = "rgba(37, 83, 123, 0.06)";
+  var COVERAGE_COLORS = { normal: "#9aa5b1", partial: "#d19e00", sparse: "#b91c1c" };
+
+  function rgbStr(rgb) { return "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")"; }
 
   function shade(rgb, factor) {
     // Blend rgb toward white; factor 1 = full color, 0 = white.
@@ -167,6 +185,119 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     );
   }
 
+  function classifyCell(cell) {
+    if (!cell) return "not_run";
+    if (cell.status === "pass") return "pass";
+    if (cell.status === "fail") return "fail";
+    if (cell.status === "error") return "error";
+    return "mixed";
+  }
+
+  // Per-run counts across ALL tools (not just the visible rows - there's
+  // no row filtering yet, but this stays correct once there is), used for
+  // the top run-impact bar. Tool-weighted, not test-weighted, per
+  // v2_raster.md: one heavily-tested tool shouldn't outweigh a small
+  // infrastructure incident touching many tools a little.
+  function computeTopStats(runId, tools, matrix) {
+    var counts = { pass: 0, fail: 0, error: 0, mixed: 0, not_run: 0 };
+    tools.forEach(function (toolId) {
+      var cell = (matrix.cells[toolId] || {})[runId];
+      counts[classifyCell(cell)] += 1;
+    });
+    counts.affected = counts.fail + counts.error + counts.mixed;
+    return counts;
+  }
+
+  function coverageBucket(attempted, maxAttemptedEver) {
+    if (!maxAttemptedEver) return "normal";
+    var ratio = attempted / maxAttemptedEver;
+    if (ratio >= 0.8) return "normal";
+    if (ratio >= 0.3) return "partial";
+    return "sparse";
+  }
+
+  // Per-tool counts + streaks across the currently visible run window only
+  // (per v2_raster.md: "over the visible time window"), used for the
+  // right tool-recurrence bar. Not-run runs are skipped when computing
+  // streaks - they're neither healthy nor unhealthy occurrences.
+  function computeRightStats(toolId, visibleRuns, matrix) {
+    var counts = { pass: 0, fail: 0, error: 0, mixed: 0, not_run: 0 };
+    var affectedFractions = [];
+    var attemptedInOrder = [];
+    visibleRuns.forEach(function (runId, idx) {
+      var cell = (matrix.cells[toolId] || {})[runId];
+      var cls = classifyCell(cell);
+      counts[cls] += 1;
+      if (cls !== "not_run") {
+        attemptedInOrder.push({ runId: runId, idx: idx, unhealthy: cls !== "pass", affected: cell.affected });
+        if (cls !== "pass") affectedFractions.push(cell.affected);
+      }
+    });
+
+    var currentStreak = 0;
+    for (var i = attemptedInOrder.length - 1; i >= 0; i--) {
+      if (attemptedInOrder[i].unhealthy) currentStreak += 1;
+      else break;
+    }
+    var longestStreak = 0, running = 0;
+    attemptedInOrder.forEach(function (a) {
+      running = a.unhealthy ? running + 1 : 0;
+      longestStreak = Math.max(longestStreak, running);
+    });
+    var firstUnhealthy = attemptedInOrder.filter(function (a) { return a.unhealthy; })[0];
+    var lastUnhealthy = attemptedInOrder.filter(function (a) { return a.unhealthy; }).slice(-1)[0];
+    var sortedAffected = affectedFractions.slice().sort(function (a, b) { return a - b; });
+    var median = sortedAffected.length
+      ? sortedAffected[Math.floor((sortedAffected.length - 1) / 2)]
+      : null;
+    var max = sortedAffected.length ? sortedAffected[sortedAffected.length - 1] : null;
+
+    return {
+      counts: counts,
+      attempted: attemptedInOrder.length,
+      unhealthy: attemptedInOrder.filter(function (a) { return a.unhealthy; }).length,
+      currentStreak: currentStreak,
+      longestStreak: longestStreak,
+      medianAffected: median,
+      maxAffected: max,
+      firstUnhealthyRunId: firstUnhealthy ? firstUnhealthy.runId : null,
+      lastUnhealthyRunId: lastUnhealthy ? lastUnhealthy.runId : null
+    };
+  }
+
+  function pct(fraction) {
+    return fraction === null ? "n/a" : Math.round(fraction * 100) + "%";
+  }
+
+  function topBarTooltip(runId, stats, manifestByRun, coverage) {
+    var run = manifestByRun[runId] || {};
+    var lines = [
+      fmtDate(run.timestamp),
+      stats.affected + " of " + (stats.affected + stats.pass) + " attempted tools affected " +
+        "(" + stats.fail + " failure-only, " + stats.error + " error-only, " + stats.mixed + " mixed)",
+      "Tests: " + (run.tests_passed || 0) + " passed, " + (run.tests_failed || 0) + " failed, " +
+        (run.tests_errored || 0) + " errored, " + (run.tests_skipped || 0) + " skipped",
+      "Coverage: " + coverage + " (" + run.tools_attempted + " tools attempted)",
+      run.duration_seconds ? "Duration: " + Math.round(run.duration_seconds / 60) + " min" : null,
+      "Click to open the full report."
+    ];
+    return lines.filter(Boolean).join("\n");
+  }
+
+  function rightBarTooltip(toolId, stats) {
+    var name = shortName(toolId);
+    var lines = [
+      name,
+      "Unhealthy attempted runs: " + stats.unhealthy + "/" + stats.attempted,
+      "Current unhealthy streak: " + stats.currentStreak,
+      "Longest streak in this window: " + stats.longestStreak,
+      "Runs - failures only: " + stats.counts.fail + ", errors only: " + stats.counts.error +
+        ", mixed: " + stats.counts.mixed,
+      "Median affected: " + pct(stats.medianAffected) + ", max affected: " + pct(stats.maxAffected)
+    ];
+    return lines.join("\n");
+  }
+
   function init(manifest, matrix) {
     var container = document.getElementById("gx-raster-container");
     var canvas = document.getElementById("gx-raster-canvas");
@@ -190,8 +321,12 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     var windowStart = Math.max(0, runs.length - 1);
     var nCols = 1;
 
+    var maxAttemptedEver = manifest.reduce(function (m, r) {
+      return Math.max(m, r.tools_attempted || 0);
+    }, 0);
+
     function computeCols() {
-      var available = container.clientWidth - LABEL_WIDTH;
+      var available = container.clientWidth - LABEL_WIDTH - RIGHT_MARGIN_W;
       return Math.max(1, Math.min(runs.length, Math.floor(available / CELL_W)));
     }
 
@@ -209,8 +344,8 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
       var visibleRuns = currentRunIds();
 
       var dpr = window.devicePixelRatio || 1;
-      var widthCss = LABEL_WIDTH + nCols * CELL_W;
-      var heightCss = tools.length * CELL_H;
+      var widthCss = LABEL_WIDTH + nCols * CELL_W + RIGHT_MARGIN_W;
+      var heightCss = TOP_MARGIN_H + tools.length * CELL_H;
       canvas.style.width = widthCss + "px";
       canvas.style.height = heightCss + "px";
       canvas.width = Math.round(widthCss * dpr);
@@ -221,8 +356,39 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
       ctx.font = "11px 'Atkinson Hyperlegible', sans-serif";
       ctx.textBaseline = "middle";
 
+      // Top margin: one stacked tool-count bar + coverage strip per
+      // visible run column. Tool-weighted (v2_raster.md), scaled linearly
+      // against the tallest bar in the visible window - percentile/sqrt
+      // scaling is tabled (v2_raster_plan.md sec 7).
+      var topStatsByRun = {};
+      var maxAffected = 0;
+      visibleRuns.forEach(function (runId) {
+        var stats = computeTopStats(runId, tools, matrix);
+        topStatsByRun[runId] = stats;
+        maxAffected = Math.max(maxAffected, stats.affected);
+      });
+
+      visibleRuns.forEach(function (runId, col) {
+        var x = LABEL_WIDTH + col * CELL_W;
+        var stats = topStatsByRun[runId];
+        var run = manifestByRun[runId] || {};
+        var barH = maxAffected ? Math.round((stats.affected / maxAffected) * BAR_MAX_H) : 0;
+        var segY = BAR_MAX_H - barH;
+        ["fail", "error", "mixed"].forEach(function (cls) {
+          var segH = maxAffected ? Math.round((stats[cls] / maxAffected) * BAR_MAX_H) : 0;
+          if (!segH) return;
+          ctx.fillStyle = rgbStr(COLORS[cls]);
+          ctx.fillRect(x, segY, CELL_W - CELL_GAP, segH);
+          segY += segH;
+        });
+
+        var coverage = coverageBucket(run.tools_attempted || 0, maxAttemptedEver);
+        ctx.fillStyle = COVERAGE_COLORS[coverage];
+        ctx.fillRect(x, BAR_MAX_H + BAR_GAP, CELL_W - CELL_GAP, STRIP_H);
+      });
+
       tools.forEach(function (toolId, row) {
-        var y = row * CELL_H;
+        var y = TOP_MARGIN_H + row * CELL_H;
 
         if (row % 2 === 1) {
           ctx.fillStyle = STRIPE_COLOR;
@@ -250,6 +416,21 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
             CELL_H - CELL_GAP
           );
         });
+
+        // Right margin: fixed-width 100% stacked recurrence bar over the
+        // visible window, problem categories first (v2_raster.md).
+        var rightStats = computeRightStats(toolId, visibleRuns, matrix);
+        var barX = LABEL_WIDTH + nCols * CELL_W + 8;
+        var barW = RIGHT_MARGIN_W - 16;
+        var total = visibleRuns.length;
+        var cursor = barX;
+        ["fail", "error", "mixed", "pass", "not_run"].forEach(function (cls) {
+          var segW = total ? Math.round((rightStats.counts[cls] / total) * barW) : 0;
+          if (!segW) return;
+          ctx.fillStyle = cls === "pass" ? COLORS.pass : cls === "not_run" ? COLORS.not_run : rgbStr(COLORS[cls]);
+          ctx.fillRect(cursor, y, segW, CELL_H - CELL_GAP);
+          cursor += segW;
+        });
       });
 
       var firstRun = manifestByRun[visibleRuns[0]];
@@ -261,26 +442,51 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
       newerBtn.disabled = windowStart + nCols >= runs.length;
     }
 
-    function cellAt(clientX, clientY) {
+    function hitTest(clientX, clientY) {
       var rect = canvas.getBoundingClientRect();
       var x = clientX - rect.left;
       var y = clientY - rect.top;
-      if (x < LABEL_WIDTH) return null;
-      var row = Math.floor(y / CELL_H);
-      var col = Math.floor((x - LABEL_WIDTH) / CELL_W);
       var visibleRuns = currentRunIds();
-      if (row < 0 || row >= tools.length || col < 0 || col >= visibleRuns.length) return null;
-      return { toolId: tools[row], runId: visibleRuns[col] };
+      var gridRight = LABEL_WIDTH + nCols * CELL_W;
+
+      if (y < TOP_MARGIN_H) {
+        if (x < LABEL_WIDTH || x >= gridRight) return null;
+        var col = Math.floor((x - LABEL_WIDTH) / CELL_W);
+        if (col < 0 || col >= visibleRuns.length) return null;
+        return { type: "run", runId: visibleRuns[col] };
+      }
+
+      var row = Math.floor((y - TOP_MARGIN_H) / CELL_H);
+      if (row < 0 || row >= tools.length) return null;
+
+      if (x >= gridRight) {
+        if (x >= gridRight + RIGHT_MARGIN_W) return null;
+        return { type: "tool", toolId: tools[row] };
+      }
+
+      if (x < LABEL_WIDTH) return null;
+      var gridCol = Math.floor((x - LABEL_WIDTH) / CELL_W);
+      if (gridCol < 0 || gridCol >= visibleRuns.length) return null;
+      return { type: "cell", toolId: tools[row], runId: visibleRuns[gridCol] };
     }
 
     canvas.addEventListener("mousemove", function (evt) {
-      var hit = cellAt(evt.clientX, evt.clientY);
+      var hit = hitTest(evt.clientX, evt.clientY);
       if (!hit) {
         tooltip.hidden = true;
         return;
       }
-      var cell = (matrix.cells[hit.toolId] || {})[hit.runId];
-      tooltip.textContent = cellTooltip(hit.toolId, hit.runId, cell, manifestByRun);
+      if (hit.type === "cell") {
+        var cell = (matrix.cells[hit.toolId] || {})[hit.runId];
+        tooltip.textContent = cellTooltip(hit.toolId, hit.runId, cell, manifestByRun);
+      } else if (hit.type === "run") {
+        var stats = computeTopStats(hit.runId, tools, matrix);
+        var run = manifestByRun[hit.runId] || {};
+        var coverage = coverageBucket(run.tools_attempted || 0, maxAttemptedEver);
+        tooltip.textContent = topBarTooltip(hit.runId, stats, manifestByRun, coverage);
+      } else {
+        tooltip.textContent = rightBarTooltip(hit.toolId, computeRightStats(hit.toolId, currentRunIds(), matrix));
+      }
       tooltip.style.whiteSpace = "pre-line";
       tooltip.hidden = false;
       var left = evt.clientX + 14;
@@ -292,9 +498,13 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
       tooltip.hidden = true;
     });
     canvas.addEventListener("click", function (evt) {
-      var hit = cellAt(evt.clientX, evt.clientY);
+      var hit = hitTest(evt.clientX, evt.clientY);
       if (!hit) return;
-      var run = manifestByRun[hit.runId];
+      // No inspector panel yet (v2_raster_plan.md sec 6 step 4) - cell and
+      // run-bar clicks fall back to the run's full Planemo report; a tool
+      // row's recurrence bar has no single equivalent link yet.
+      var runId = hit.type === "tool" ? null : hit.runId;
+      var run = runId && manifestByRun[runId];
       if (run && run.results_html_url) {
         window.open(run.results_html_url, "_blank", "noopener");
       }
