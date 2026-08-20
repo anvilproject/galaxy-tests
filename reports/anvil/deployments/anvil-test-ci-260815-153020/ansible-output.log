@@ -1,0 +1,603 @@
+status: done
+boot_status_code: enabled-by-generator
+last_update: Sat, 15 Aug 2026 15:42:02 +0000
+detail:
+DataSourceGCELocal
+--- tail of cloud-init-output.log ---
+Cloud-init v. 22.4.2 running 'init-local' at Sat, 15 Aug 2026 15:30:39 +0000. Up 3.56 seconds.
+Cloud-init v. 22.4.2 running 'init' at Sat, 15 Aug 2026 15:30:41 +0000. Up 5.93 seconds.
+ci-info: ++++++++++++++++++++++++++++++++++++++Net device info+++++++++++++++++++++++++++++++++++++++
+ci-info: +--------+------+---------------------------+-----------------+--------+-------------------+
+ci-info: | Device |  Up  |          Address          |       Mask      | Scope  |     Hw-Address    |
+ci-info: +--------+------+---------------------------+-----------------+--------+-------------------+
+ci-info: |  ens4  | True |        10.150.0.104       | 255.255.255.255 | global | 42:01:0a:96:00:68 |
+ci-info: |  ens4  | True | fe80::4001:aff:fe96:68/64 |        .        |  link  | 42:01:0a:96:00:68 |
+ci-info: |   lo   | True |         127.0.0.1         |    255.0.0.0    |  host  |         .         |
+ci-info: |   lo   | True |          ::1/128          |        .        |  host  |         .         |
+ci-info: +--------+------+---------------------------+-----------------+--------+-------------------+
+ci-info: +++++++++++++++++++++++++++++++Route IPv4 info++++++++++++++++++++++++++++++++
+ci-info: +-------+-----------------+------------+-----------------+-----------+-------+
+ci-info: | Route |   Destination   |  Gateway   |     Genmask     | Interface | Flags |
+ci-info: +-------+-----------------+------------+-----------------+-----------+-------+
+ci-info: |   0   |     0.0.0.0     | 10.150.0.1 |     0.0.0.0     |    ens4   |   UG  |
+ci-info: |   1   |    10.150.0.1   |  0.0.0.0   | 255.255.255.255 |    ens4   |   UH  |
+ci-info: |   2   | 169.254.169.254 | 10.150.0.1 | 255.255.255.255 |    ens4   |  UGH  |
+ci-info: +-------+-----------------+------------+-----------------+-----------+-------+
+ci-info: +++++++++++++++++++Route IPv6 info+++++++++++++++++++
+ci-info: +-------+-------------+---------+-----------+-------+
+ci-info: | Route | Destination | Gateway | Interface | Flags |
+ci-info: +-------+-------------+---------+-----------+-------+
+ci-info: |   0   |  fe80::/64  |    ::   |    ens4   |   U   |
+ci-info: |   2   |    local    |    ::   |    ens4   |   U   |
+ci-info: |   3   |  multicast  |    ::   |    ens4   |   U   |
+ci-info: +-------+-------------+---------+-----------+-------+
+Generating public/private rsa key pair.
+Your identification has been saved in /etc/ssh/ssh_host_rsa_key
+Your public key has been saved in /etc/ssh/ssh_host_rsa_key.pub
+The key fingerprint is:
+SHA256:TCKmUX2qfRxPJ5YcHdxcQmUCSvq6w2iKtRcvNx7qO4o root@anvil-test-ci-260815-153020
+The key's randomart image is:
++---[RSA 3072]----+
+|    ..    .oo*+o+|
+|   .  . .o..o o+ |
+|  . o .oo..o     |
+|   + ..+..* .    |
+|  .  o .S=.o     |
+|    . o o..      |
+|    .  *o        |
+|   + .*.*o       |
+|  E +*+*oo       |
++----[SHA256]-----+
+Generating public/private dsa key pair.
+Your identification has been saved in /etc/ssh/ssh_host_dsa_key
+Your public key has been saved in /etc/ssh/ssh_host_dsa_key.pub
+The key fingerprint is:
+SHA256:fhqB620+QCKYjXABIic/rJ0e3aKs3LnWIa4EiLkzuYI root@anvil-test-ci-260815-153020
+The key's randomart image is:
++---[DSA 1024]----+
+|=.o.             |
+|+=.              |
+|.*+              |
+|*+o+....         |
+|* +.ooo S        |
+|.= + o.o .       |
+|*.= o o.o .      |
+|E=.o.o .o+       |
+|+oo+. .o+.       |
++----[SHA256]-----+
+Generating public/private ecdsa key pair.
+Your identification has been saved in /etc/ssh/ssh_host_ecdsa_key
+Your public key has been saved in /etc/ssh/ssh_host_ecdsa_key.pub
+The key fingerprint is:
+SHA256:8SxpIrNlRQsMGDXGCjj2OrLcO8Oa8t5xwSeMh4B27No root@anvil-test-ci-260815-153020
+The key's randomart image is:
++---[ECDSA 256]---+
+|. .==o. .        |
+|+oo....o .       |
+|o+o+    +        |
+|. +o = . =       |
+|  ..= X S o      |
+|.oo  B * .       |
+|oo+Eo .          |
+|o..* o           |
+|.=+.=            |
++----[SHA256]-----+
+Generating public/private ed25519 key pair.
+Your identification has been saved in /etc/ssh/ssh_host_ed25519_key
+Your public key has been saved in /etc/ssh/ssh_host_ed25519_key.pub
+The key fingerprint is:
+SHA256:6Zmu3d2TxM7sRN06QXZ02CDZ423cwdLbALv/eBJupjI root@anvil-test-ci-260815-153020
+The key's randomart image is:
++--[ED25519 256]--+
+|            o+++o|
+|            .+==o|
+|            ..+=*|
+|         .   +.+B|
+|        S   ..o.o|
+|       . o   o+o |
+|        +    *=o |
+|       o .E. o@+.|
+|      ..o .oo=++.|
++----[SHA256]-----+
+Cloud-init v. 22.4.2 running 'modules:config' at Sat, 15 Aug 2026 15:30:43 +0000. Up 7.56 seconds.
+Cloud-init v. 22.4.2 running 'modules:final' at Sat, 15 Aug 2026 15:30:52 +0000. Up 16.87 seconds.
+[Sat Aug 15 15:30:52 UTC 2026] - No persistent disk found. Galaxy will use ephemeral storage.
+[Sat Aug 15 15:30:52 UTC 2026] - No PostgreSQL disk found. PostgreSQL will use ephemeral storage.
+[Sat Aug 15 15:30:52 UTC 2026] - NFS storage size for Galaxy: 20Gi
+[Sat Aug 15 15:30:52 UTC 2026] - Git Repository: https://github.com/galaxyproject/galaxy-k8s-boot.git
+[Sat Aug 15 15:30:52 UTC 2026] - Git Branch: dev
+[Sat Aug 15 15:30:52 UTC 2026] - Galaxy Chart: cloudve/galaxy
+[Sat Aug 15 15:30:52 UTC 2026] - Galaxy Chart Version: 6.8.2
+[Sat Aug 15 15:30:52 UTC 2026] - Galaxy Deps Version: 1.1.1
+[Sat Aug 15 15:30:52 UTC 2026] - Galaxy Values Files: ["values/values.yml","mixins/testing.yml"]
+[Sat Aug 15 15:30:52 UTC 2026] - Galaxy Import Profile: (role default)
+[Sat Aug 15 15:30:52 UTC 2026] - Inventory file created at /tmp/ansible-inventory/localhost; running ansible-pull...
+127.0.0.1 | CHANGED => {
+    "after": "bdd5aba48e82740f8968d72d8c2928290e6a32b1",
+    "before": null,
+    "changed": true
+}
+
+PLAY [Deploy Galaxy/Pulsar on Kubernetes] **************************************
+
+TASK [Gathering Facts] *********************************************************
+Saturday 15 August 2026  15:30:55 +0000 (0:00:00.010)       0:00:00.010 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxyproject.cvmfs : Set OS-specific variables] *************************
+Saturday 15 August 2026  15:30:55 +0000 (0:00:00.822)       0:00:00.832 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxyproject.cvmfs : Set facts for Galaxy CVMFS config repository, if enabled] ***
+Saturday 15 August 2026  15:30:55 +0000 (0:00:00.030)       0:00:00.863 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxyproject.cvmfs : Set facts for Galaxy CVMFS static repositories, if enabled] ***
+Saturday 15 August 2026  15:30:55 +0000 (0:00:00.024)       0:00:00.887 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxyproject.cvmfs : Set facts for CVMFS config repository, if enabled] ***
+Saturday 15 August 2026  15:30:56 +0000 (0:00:00.024)       0:00:00.912 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxyproject.cvmfs : Include Client Tasks] ******************************
+Saturday 15 August 2026  15:30:56 +0000 (0:00:00.026)       0:00:00.938 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxyproject.cvmfs : Include Stratum1 Tasks] ****************************
+Saturday 15 August 2026  15:30:56 +0000 (0:00:00.024)       0:00:00.962 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxyproject.cvmfs : Include Stratum0 Tasks] ****************************
+Saturday 15 August 2026  15:30:56 +0000 (0:00:00.024)       0:00:00.987 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxyproject.cvmfs : Include localproxy Tasks] **************************
+Saturday 15 August 2026  15:30:56 +0000 (0:00:00.024)       0:00:01.011 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Include system setup tasks] **********************
+Saturday 15 August 2026  15:30:56 +0000 (0:00:00.027)       0:00:01.039 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Include RKE2 cluster setup tasks] ****************
+Saturday 15 August 2026  15:30:56 +0000 (0:00:00.024)       0:00:01.064 ******* 
+included: /home/debian/ansible/roles/galaxy_k8s_deployment/tasks/rke2_setup.yml for 127.0.0.1
+
+TASK [galaxy_k8s_deployment : Create RKE2 configuration directory] *************
+Saturday 15 August 2026  15:30:56 +0000 (0:00:00.032)       0:00:01.096 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Create RKE2 server configuration for single-node cluster] ***
+Saturday 15 August 2026  15:30:56 +0000 (0:00:00.261)       0:00:01.358 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Start and enable RKE2 server] ********************
+Saturday 15 August 2026  15:30:56 +0000 (0:00:00.469)       0:00:01.827 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Remove master node taint to allow workload scheduling] ***
+Saturday 15 August 2026  15:32:02 +0000 (0:01:05.999)       0:01:07.827 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Set kubeconfig path fact] ************************
+Saturday 15 August 2026  15:32:03 +0000 (0:00:00.662)       0:01:08.489 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Create .kube directory for login user] ***********
+Saturday 15 August 2026  15:32:03 +0000 (0:00:00.015)       0:01:08.505 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Copy kubeconfig to login user home directory] ****
+Saturday 15 August 2026  15:32:03 +0000 (0:00:00.174)       0:01:08.679 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Include Helm repository setup tasks] *************
+Saturday 15 August 2026  15:32:03 +0000 (0:00:00.167)       0:01:08.846 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Include NFS storage setup tasks] *****************
+Saturday 15 August 2026  15:32:03 +0000 (0:00:00.024)       0:01:08.871 ******* 
+included: /home/debian/ansible/roles/galaxy_k8s_deployment/tasks/nfs_setup.yml for 127.0.0.1
+
+TASK [galaxy_k8s_deployment : Stop conflicting host NFS services] **************
+Saturday 15 August 2026  15:32:04 +0000 (0:00:00.038)       0:01:08.910 ******* 
+changed: [127.0.0.1] => (item=rpc-statd.service)
+changed: [127.0.0.1] => (item=rpcbind.service)
+
+TASK [galaxy_k8s_deployment : Create the NFS namespace] ************************
+Saturday 15 August 2026  15:32:06 +0000 (0:00:02.924)       0:01:11.835 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Create static PV for NFS backing storage] ********
+Saturday 15 August 2026  15:32:07 +0000 (0:00:01.014)       0:01:12.849 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Create static PVC for NFS backing storage] *******
+Saturday 15 August 2026  15:32:08 +0000 (0:00:00.489)       0:01:13.338 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Wait for NFS backing PVC to bind] ****************
+Saturday 15 August 2026  15:32:08 +0000 (0:00:00.494)       0:01:13.833 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Install the Ganesha NFS Helm repository] *********
+Saturday 15 August 2026  15:32:09 +0000 (0:00:00.647)       0:01:14.481 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Helm install Ganesha NFS] ************************
+Saturday 15 August 2026  15:32:10 +0000 (0:00:00.610)       0:01:15.091 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Patch NFS service for GCP Batch (internal LoadBalancer with source IP restrictions)] ***
+Saturday 15 August 2026  15:32:11 +0000 (0:00:00.905)       0:01:15.997 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Include Kubernetes storage setup tasks] **********
+Saturday 15 August 2026  15:32:11 +0000 (0:00:00.507)       0:01:16.505 ******* 
+included: /home/debian/ansible/roles/galaxy_k8s_deployment/tasks/storage_setup.yml for 127.0.0.1
+
+TASK [galaxy_k8s_deployment : Render the hostpath storage class template] ******
+Saturday 15 August 2026  15:32:11 +0000 (0:00:00.035)       0:01:16.540 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Render the elastic block storage class] **********
+Saturday 15 August 2026  15:32:12 +0000 (0:00:00.557)       0:01:17.097 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Render the postgres storage class] ***************
+Saturday 15 August 2026  15:32:12 +0000 (0:00:00.512)       0:01:17.610 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Install cert-manager for CNPG plugin TLS certificates] ***
+Saturday 15 August 2026  15:32:13 +0000 (0:00:00.553)       0:01:18.163 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Wait for cert-manager deployment to be available] ***
+Saturday 15 August 2026  15:32:14 +0000 (0:00:01.729)       0:01:19.893 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Wait for cert-manager-webhook deployment to be available] ***
+Saturday 15 August 2026  15:32:50 +0000 (0:00:35.528)       0:01:55.422 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Include Kubernetes ingress setup tasks] **********
+Saturday 15 August 2026  15:32:56 +0000 (0:00:05.497)       0:02:00.919 ******* 
+included: /home/debian/ansible/roles/galaxy_k8s_deployment/tasks/ingress_setup.yml for 127.0.0.1
+
+TASK [galaxy_k8s_deployment : Create namespace for nginx ingress] **************
+Saturday 15 August 2026  15:32:56 +0000 (0:00:00.036)       0:02:00.956 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Add helm repo for nginx ingress] *****************
+Saturday 15 August 2026  15:32:56 +0000 (0:00:00.492)       0:02:01.448 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Helm install nginx ingress controller] ***********
+Saturday 15 August 2026  15:32:56 +0000 (0:00:00.307)       0:02:01.756 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Fix for issue https://github.com/kubernetes/ingress-nginx/issues/5401] ***
+Saturday 15 August 2026  15:33:10 +0000 (0:00:13.303)       0:02:15.059 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Include Galaxy application setup tasks] **********
+Saturday 15 August 2026  15:33:10 +0000 (0:00:00.544)       0:02:15.604 ******* 
+included: /home/debian/ansible/roles/galaxy_k8s_deployment/tasks/galaxy_application.yml for 127.0.0.1
+
+TASK [galaxy_k8s_deployment : Ensure Helm repositories are available] **********
+Saturday 15 August 2026  15:33:10 +0000 (0:00:00.059)       0:02:15.664 ******* 
+changed: [127.0.0.1] => (item={'name': 'stable', 'url': 'https://charts.helm.sh/stable'})
+changed: [127.0.0.1] => (item={'name': 'cloudve', 'url': 'https://raw.githubusercontent.com/CloudVE/helm-charts/master/'})
+changed: [127.0.0.1] => (item={'name': 'ksuderman', 'url': 'https://ksuderman.github.io/helm_charts'})
+
+TASK [galaxy_k8s_deployment : Create the galaxy-deps namespace] ****************
+Saturday 15 August 2026  15:33:12 +0000 (0:00:01.986)       0:02:17.650 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Create the galaxy namespace] *********************
+Saturday 15 August 2026  15:33:13 +0000 (0:00:00.498)       0:02:18.149 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Display restoration mode] ************************
+Saturday 15 August 2026  15:33:13 +0000 (0:00:00.497)       0:02:18.646 ******* 
+ok: [127.0.0.1] => {
+    "msg": "Galaxy restoration mode: Auto-detect and restore"
+}
+
+TASK [galaxy_k8s_deployment : Deploy CNPG skip-initdb plugin for database restoration] ***
+Saturday 15 August 2026  15:33:13 +0000 (0:00:00.019)       0:02:18.665 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Wait for CNPG plugin pod to be ready] ************
+Saturday 15 August 2026  15:33:14 +0000 (0:00:00.589)       0:02:19.254 ******* 
+FAILED - RETRYING: [127.0.0.1]: Wait for CNPG plugin pod to be ready (10 retries left).
+FAILED - RETRYING: [127.0.0.1]: Wait for CNPG plugin pod to be ready (9 retries left).
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Display CNPG plugin status] **********************
+Saturday 15 August 2026  15:33:21 +0000 (0:00:07.535)       0:02:26.790 ******* 
+ok: [127.0.0.1] => {
+    "msg": "CNPG skip-initdb plugin deployed. Plugin will skip initdb."
+}
+
+TASK [galaxy_k8s_deployment : Ensure CNPG plugin is NOT deployed in fresh install mode] ***
+Saturday 15 August 2026  15:33:21 +0000 (0:00:00.019)       0:02:26.809 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Helm install galaxy-deps] ************************
+Saturday 15 August 2026  15:33:21 +0000 (0:00:00.015)       0:02:26.824 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Auto-detect Galaxy PVC UUID from NFS exports] ****
+Saturday 15 August 2026  15:34:07 +0000 (0:00:45.468)       0:03:12.293 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Set auto-detected PVC UUID] **********************
+Saturday 15 August 2026  15:34:07 +0000 (0:00:00.284)       0:03:12.577 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Display determined PVC UUID] *********************
+Saturday 15 August 2026  15:34:07 +0000 (0:00:00.033)       0:03:12.611 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Warn if auto-detection failed] *******************
+Saturday 15 August 2026  15:34:07 +0000 (0:00:00.021)       0:03:12.632 ******* 
+ok: [127.0.0.1] => {
+    "msg": "WARNING: restore_galaxy=true but no existing PVC found in NFS exports. Falling back to fresh installation."
+}
+
+TASK [galaxy_k8s_deployment : Set restore_galaxy_pvc_uuid for include] *********
+Saturday 15 August 2026  15:34:07 +0000 (0:00:00.023)       0:03:12.656 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Include Galaxy PVC restoration tasks] ************
+Saturday 15 August 2026  15:34:07 +0000 (0:00:00.020)       0:03:12.677 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Set Galaxy Helm values for restore mode] *********
+Saturday 15 August 2026  15:34:07 +0000 (0:00:00.019)       0:03:12.696 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Set Galaxy Helm values for fresh deployment] *****
+Saturday 15 August 2026  15:34:07 +0000 (0:00:00.019)       0:03:12.716 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Get node internal IP for NFS access] *************
+Saturday 15 August 2026  15:34:07 +0000 (0:00:00.028)       0:03:12.745 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Verify NFS service exists] ***********************
+Saturday 15 August 2026  15:34:07 +0000 (0:00:00.029)       0:03:12.775 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Fail if NFS service not found] *******************
+Saturday 15 August 2026  15:34:08 +0000 (0:00:00.515)       0:03:13.290 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Patch NFS service with node internal IP as externalIP] ***
+Saturday 15 August 2026  15:34:08 +0000 (0:00:00.031)       0:03:13.322 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Display NFS server access method] ****************
+Saturday 15 August 2026  15:34:08 +0000 (0:00:00.534)       0:03:13.856 ******* 
+ok: [127.0.0.1] => {
+    "msg": "Using node internal IP for NFS: 10.150.0.104 (accessible from GCP Batch VMs in same VPC)"
+}
+
+TASK [galaxy_k8s_deployment : Create ConfigMap for Galaxy static images] *******
+Saturday 15 August 2026  15:34:08 +0000 (0:00:00.031)       0:03:13.887 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Prepare Galaxy values files list] ****************
+Saturday 15 August 2026  15:34:09 +0000 (0:00:00.513)       0:03:14.401 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Display Galaxy values files being used] **********
+Saturday 15 August 2026  15:34:09 +0000 (0:00:00.034)       0:03:14.436 ******* 
+ok: [127.0.0.1] => {
+    "msg": "Using Galaxy Helm values files: ['/home/debian/ansible/roles/galaxy_k8s_deployment/files/profiles/anvil.yaml', 'values/values.yml', 'mixins/testing.yml']"
+}
+
+TASK [galaxy_k8s_deployment : Copy Galaxy values files to the remote host] *****
+Saturday 15 August 2026  15:34:09 +0000 (0:00:00.017)       0:03:14.454 ******* 
+changed: [127.0.0.1] => (item=/home/debian/ansible/roles/galaxy_k8s_deployment/files/profiles/anvil.yaml)
+changed: [127.0.0.1] => (item=values/values.yml)
+changed: [127.0.0.1] => (item=mixins/testing.yml)
+
+TASK [galaxy_k8s_deployment : Copy packaged local Galaxy chart to the remote host] ***
+Saturday 15 August 2026  15:34:10 +0000 (0:00:00.864)       0:03:15.318 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Detect GCP zone from the metadata server] ********
+Saturday 15 August 2026  15:34:10 +0000 (0:00:00.027)       0:03:15.346 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Derive gcp_batch_region from the detected zone] ***
+Saturday 15 August 2026  15:34:10 +0000 (0:00:00.379)       0:03:15.726 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Display GCP Batch region in use] *****************
+Saturday 15 August 2026  15:34:10 +0000 (0:00:00.041)       0:03:15.767 ******* 
+ok: [127.0.0.1] => {
+    "msg": "GCP Batch region: us-east4 (from zone us-east4-c reported by the metadata server)"
+}
+
+TASK [galaxy_k8s_deployment : Warn that the GCP Batch region could not be determined] ***
+Saturday 15 August 2026  15:34:10 +0000 (0:00:00.032)       0:03:15.799 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Detect the GCP project id from the metadata server] ***
+Saturday 15 August 2026  15:34:10 +0000 (0:00:00.030)       0:03:15.830 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Set gcp_project_id from the detected project] ****
+Saturday 15 August 2026  15:34:11 +0000 (0:00:00.270)       0:03:16.100 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Fail if the GCP project id is unknown] ***********
+Saturday 15 August 2026  15:34:11 +0000 (0:00:00.035)       0:03:16.135 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : DEBUG: resolved Batch custom_vm_image (must exist + be shared with the job project)] ***
+Saturday 15 August 2026  15:34:11 +0000 (0:00:00.030)       0:03:16.165 ******* 
+ok: [127.0.0.1] => {
+    "msg": "custom_vm_image -> projects/anvil-and-terra-development/global/images/galaxy-k8s-boot-v2026-06-30"
+}
+
+TASK [galaxy_k8s_deployment : DEBUG: galaxy_infrastructure_url passed to galaxy.yml] ***
+Saturday 15 August 2026  15:34:11 +0000 (0:00:00.029)       0:03:16.195 ******* 
+ok: [127.0.0.1] => {
+    "msg": "galaxy_infrastructure_url -> '(empty: omitted from galaxy.yml)'"
+}
+
+TASK [galaxy_k8s_deployment : Probe the gcp-network instance metadata attribute] ***
+Saturday 15 August 2026  15:34:11 +0000 (0:00:00.027)       0:03:16.223 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Probe the gcp-subnet instance metadata attribute] ***
+Saturday 15 August 2026  15:34:11 +0000 (0:00:00.270)       0:03:16.493 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : DEBUG: Batch network/subnet metadata lookup] *****
+Saturday 15 August 2026  15:34:11 +0000 (0:00:00.269)       0:03:16.763 ******* 
+ok: [127.0.0.1] => {
+    "msg": [
+        "incoming gcp_batch_network (extra-vars/default): ''",
+        "incoming gcp_batch_subnet  (extra-vars/default): ''",
+        "metadata gcp-network -> status=404 content='<!DOCTYPE html>\n<html lang=en>\n  <meta charset=utf-8>\n  <meta name=viewport content=\"initial-scale=1, minimum-scale=1, width=device-width\">\n  <title>Error 404 (Not Found)!!1</title>\n  <style>\n    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}\n  </style>\n  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>\n  <p><b>404.</b> <ins>That’s an error.</ins>\n  <p>The requested URL <code>/computeMetadata/v1/instance/attributes/gcp-network</code> was not found on this server.  <ins>That’s all we know.</ins>'",
+        "metadata gcp-subnet  -> status=404 content='<!DOCTYPE html>\n<html lang=en>\n  <meta charset=utf-8>\n  <meta name=viewport content=\"initial-scale=1, minimum-scale=1, width=device-width\">\n  <title>Error 404 (Not Found)!!1</title>\n  <style>\n    *{margin:0;padding:0}html,code{font:15px/22px arial,sans-serif}html{background:#fff;color:#222;padding:15px}body{margin:7% auto 0;max-width:390px;min-height:180px;padding:30px 0 15px}* > body{background:url(//www.google.com/images/errors/robot.png) 100% 5px no-repeat;padding-right:205px}p{margin:11px 0 22px;overflow:hidden}ins{color:#777;text-decoration:none}a img{border:0}@media screen and (max-width:772px){body{background:none;margin-top:0;max-width:none;padding-right:0}}#logo{background:url(//www.google.com/images/branding/googlelogo/1x/googlelogo_color_150x54dp.png) no-repeat;margin-left:-5px}@media only screen and (min-resolution:192dpi){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat 0% 0%/100% 100%;-moz-border-image:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) 0}}@media only screen and (-webkit-min-device-pixel-ratio:2){#logo{background:url(//www.google.com/images/branding/googlelogo/2x/googlelogo_color_150x54dp.png) no-repeat;-webkit-background-size:100% 100%}}#logo{display:inline-block;height:54px;width:150px}\n  </style>\n  <a href=//www.google.com/><span id=logo aria-label=Google></span></a>\n  <p><b>404.</b> <ins>That’s an error.</ins>\n  <p>The requested URL <code>/computeMetadata/v1/instance/attributes/gcp-subnet</code> was not found on this server.  <ins>That’s all we know.</ins>'"
+    ]
+}
+
+TASK [galaxy_k8s_deployment : Set gcp_batch_network from the instance metadata] ***
+Saturday 15 August 2026  15:34:11 +0000 (0:00:00.033)       0:03:16.796 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Set gcp_batch_subnet from the instance metadata] ***
+Saturday 15 August 2026  15:34:11 +0000 (0:00:00.029)       0:03:16.825 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : DEBUG: resolved Batch network/subnet (empty = values-file default is used)] ***
+Saturday 15 August 2026  15:34:11 +0000 (0:00:00.030)       0:03:16.856 ******* 
+ok: [127.0.0.1] => {
+    "msg": "Resolved GCP Batch network/subnet -> network: '(values-file default)' subnet: '(values-file default)'"
+}
+
+TASK [galaxy_k8s_deployment : Helm install Galaxy] *****************************
+Saturday 15 August 2026  15:34:11 +0000 (0:00:00.030)       0:03:16.886 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Wait for Galaxy PVC to be bound] *****************
+Saturday 15 August 2026  15:40:35 +0000 (0:06:23.687)       0:09:40.573 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Detect NFS export path for Galaxy PVC] ***********
+Saturday 15 August 2026  15:40:36 +0000 (0:00:00.651)       0:09:41.225 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Set NFS export path for Galaxy database] *********
+Saturday 15 August 2026  15:40:46 +0000 (0:00:10.193)       0:09:51.418 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Display detected NFS export path] ****************
+Saturday 15 August 2026  15:40:46 +0000 (0:00:00.037)       0:09:51.456 ******* 
+ok: [127.0.0.1] => {
+    "msg": "Detected NFS export path for Galaxy PVC: /export/pvc-0743a11f-13be-4cec-aec9-c049e685a9f8"
+}
+
+TASK [galaxy_k8s_deployment : Fail if NFS export path not detected] ************
+Saturday 15 August 2026  15:40:46 +0000 (0:00:00.037)       0:09:51.494 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Get current job_conf.yml from ConfigMap] *********
+Saturday 15 August 2026  15:40:46 +0000 (0:00:00.032)       0:09:51.526 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Update job_conf.yml with gcp_batch_volumes for NFS access] ***
+Saturday 15 August 2026  15:40:47 +0000 (0:00:00.512)       0:09:52.039 ******* 
+changed: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : List Galaxy deployments] *************************
+Saturday 15 August 2026  15:40:47 +0000 (0:00:00.547)       0:09:52.587 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Fail if no job handler deployments were found] ***
+Saturday 15 August 2026  15:40:48 +0000 (0:00:00.573)       0:09:53.161 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Restart Galaxy job handlers to pick up configuration changes] ***
+Saturday 15 August 2026  15:40:48 +0000 (0:00:00.066)       0:09:53.228 ******* 
+changed: [127.0.0.1] => (item=galaxy-job-0)
+
+TASK [galaxy_k8s_deployment : Wait for restarted job handlers to finish rolling out] ***
+Saturday 15 August 2026  15:40:48 +0000 (0:00:00.313)       0:09:53.541 ******* 
+ok: [127.0.0.1] => (item=galaxy-job-0)
+
+TASK [galaxy_k8s_deployment : Verify job handlers picked up gcp_batch_volumes] ***
+Saturday 15 August 2026  15:41:59 +0000 (0:01:10.852)       0:11:04.394 ******* 
+ok: [127.0.0.1] => (item=galaxy-job-0)
+
+TASK [galaxy_k8s_deployment : Wait for the Galaxy API before setting the quota] ***
+Saturday 15 August 2026  15:41:59 +0000 (0:00:00.302)       0:11:04.696 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Look up the existing default user quota] *********
+Saturday 15 August 2026  15:42:00 +0000 (0:00:00.306)       0:11:05.002 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Create the default user quota] *******************
+Saturday 15 August 2026  15:42:00 +0000 (0:00:00.296)       0:11:05.299 ******* 
+ok: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Update the existing default user quota] **********
+Saturday 15 August 2026  15:42:00 +0000 (0:00:00.317)       0:11:05.616 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Display the configured quota] ********************
+Saturday 15 August 2026  15:42:00 +0000 (0:00:00.044)       0:11:05.660 ******* 
+ok: [127.0.0.1] => {
+    "msg": "Default user disk quota: 18.0 GiB (from 90% of 20Gi)"
+}
+
+TASK [galaxy_k8s_deployment : Include Pulsar application setup tasks] **********
+Saturday 15 August 2026  15:42:00 +0000 (0:00:00.047)       0:11:05.708 ******* 
+skipping: [127.0.0.1]
+
+TASK [galaxy_k8s_deployment : Include Galaxy K8s Monitor setup tasks] **********
+Saturday 15 August 2026  15:42:00 +0000 (0:00:00.028)       0:11:05.737 ******* 
+included: /home/debian/ansible/roles/galaxy_k8s_deployment/tasks/monitor_application.yml for 127.0.0.1
+
+TASK [galaxy_k8s_deployment : Helm install galaxy-k8s-monitor] *****************
+Saturday 15 August 2026  15:42:00 +0000 (0:00:00.046)       0:11:05.783 ******* 
+changed: [127.0.0.1]
+
+PLAY RECAP *********************************************************************
+127.0.0.1                  : ok=78   changed=34   unreachable=0    failed=0    skipped=26   rescued=0    ignored=0   
+
+Saturday 15 August 2026  15:42:01 +0000 (0:00:00.938)       0:11:06.722 ******* 
+=============================================================================== 
+galaxy_k8s_deployment : Helm install Galaxy --------------------------- 383.69s
+galaxy_k8s_deployment : Wait for restarted job handlers to finish rolling out -- 70.85s
+galaxy_k8s_deployment : Start and enable RKE2 server ------------------- 66.00s
+galaxy_k8s_deployment : Helm install galaxy-deps ----------------------- 45.47s
+galaxy_k8s_deployment : Wait for cert-manager deployment to be available -- 35.53s
+galaxy_k8s_deployment : Helm install nginx ingress controller ---------- 13.30s
+galaxy_k8s_deployment : Detect NFS export path for Galaxy PVC ---------- 10.19s
+galaxy_k8s_deployment : Wait for CNPG plugin pod to be ready ------------ 7.54s
+galaxy_k8s_deployment : Wait for cert-manager-webhook deployment to be available --- 5.50s
+galaxy_k8s_deployment : Stop conflicting host NFS services -------------- 2.92s
+galaxy_k8s_deployment : Ensure Helm repositories are available ---------- 1.99s
+galaxy_k8s_deployment : Install cert-manager for CNPG plugin TLS certificates --- 1.73s
+galaxy_k8s_deployment : Create the NFS namespace ------------------------ 1.01s
+galaxy_k8s_deployment : Helm install galaxy-k8s-monitor ----------------- 0.94s
+galaxy_k8s_deployment : Helm install Ganesha NFS ------------------------ 0.91s
+galaxy_k8s_deployment : Copy Galaxy values files to the remote host ----- 0.86s
+Gathering Facts --------------------------------------------------------- 0.82s
+galaxy_k8s_deployment : Remove master node taint to allow workload scheduling --- 0.66s
+galaxy_k8s_deployment : Wait for Galaxy PVC to be bound ----------------- 0.65s
+galaxy_k8s_deployment : Wait for NFS backing PVC to bind ---------------- 0.65s
+Starting Ansible Pull at 2026-08-15 15:30:53
+/usr/bin/ansible-pull -U https://github.com/galaxyproject/galaxy-k8s-boot.git -C dev -d /home/debian/ansible -i /tmp/ansible-inventory/localhost --accept-host-key --limit 127.0.0.1 --extra-vars {"enable_gcp_batch": true, "galaxy_chart": "cloudve/galaxy", "galaxy_chart_version": "6.8.2", "galaxy_deps_chart": "cloudve/galaxy-deps", "galaxy_deps_version": "1.1.1", "galaxy_values_files": ["values/values.yml","mixins/testing.yml"]} playbook.yml
+[Sat Aug 15 15:42:01 UTC 2026] - User data script completed.
+Cloud-init v. 22.4.2 finished at Sat, 15 Aug 2026 15:42:02 +0000. Datasource DataSourceGCELocal.  Up 686.84 seconds
