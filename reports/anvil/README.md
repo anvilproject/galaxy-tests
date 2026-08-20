@@ -22,8 +22,8 @@ instance using the AnVIL "cloud" tool set (loaded automatically via CVMFS at
 startup). This is an end-to-end test of Galaxy's actual tool-execution path,
 not just that it deploys.
 
-**Latest run:** 499 tool tests run (15 error, 102 failure, 24 skip, 358 success).
-[Full HTML report](https://anvilproject.github.io/galaxy-tests/tool-tests/anvil-test-ci-260819-030926/results.html) &middot; [Tool list](https://github.com/anvilproject/galaxy-tests/blob/main/reports/anvil/tool-tests/anvil-test-ci-260819-030926/tools.yml)
+**Latest run:** 499 tool tests run (9 error, 116 failure, 24 skip, 350 success).
+[Full HTML report](https://anvilproject.github.io/galaxy-tests/tool-tests/anvil-test-ci-260820-032904/results.html) &middot; [Tool list](https://github.com/anvilproject/galaxy-tests/blob/main/reports/anvil/tool-tests/anvil-test-ci-260820-032904/tools.yml)
 
 ### Longitudinal per-tool history
 
