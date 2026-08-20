@@ -110,7 +110,7 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
   var CELL_W = 14;
   var CELL_H = 14;
   var CELL_GAP = 1;
-  var RIGHT_MARGIN_W = 130;
+  var RIGHT_MARGIN_W = CELL_W * 3;
   var BAR_MAX_H = 30;
   var BAR_GAP = 2;
   var STRIP_H = 5;
@@ -420,8 +420,8 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
         // Right margin: fixed-width 100% stacked recurrence bar over the
         // visible window, problem categories first (v2_raster.md).
         var rightStats = computeRightStats(toolId, visibleRuns, matrix);
-        var barX = LABEL_WIDTH + nCols * CELL_W + 8;
-        var barW = RIGHT_MARGIN_W - 16;
+        var barX = LABEL_WIDTH + nCols * CELL_W + 3;
+        var barW = RIGHT_MARGIN_W - 6;
         var total = visibleRuns.length;
         var cursor = barX;
         ["fail", "error", "mixed", "pass", "not_run"].forEach(function (cls) {
@@ -432,6 +432,16 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
           cursor += segW;
         });
       });
+
+      // Divider between the grid and the recurrence margin - without it,
+      // an adjacent same-colored segment reads as an extra run column.
+      var gridRight = LABEL_WIDTH + nCols * CELL_W;
+      ctx.strokeStyle = "rgba(37, 83, 123, 0.3)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(gridRight + 0.5, TOP_MARGIN_H);
+      ctx.lineTo(gridRight + 0.5, TOP_MARGIN_H + tools.length * CELL_H);
+      ctx.stroke();
 
       var firstRun = manifestByRun[visibleRuns[0]];
       var lastRun = manifestByRun[visibleRuns[visibleRuns.length - 1]];
