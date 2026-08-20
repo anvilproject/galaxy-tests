@@ -38,6 +38,12 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
   <button id="gx-raster-newer" type="button">newer &rarr;</button>
 </div>
 
+<div class="gx-raster-controls">
+  <input id="gx-raster-search" type="text" placeholder="Find a tool…" class="gx-raster-search">
+  <div id="gx-raster-jump" class="gx-raster-jump"></div>
+  <button id="gx-raster-density" type="button">Compact rows</button>
+</div>
+
 <div id="gx-raster-container" class="gx-raster-container">
   <canvas id="gx-raster-canvas" tabindex="0"></canvas>
 </div>
@@ -60,6 +66,7 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
   .gx-raster-controls {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.75rem;
     margin: 1rem 0;
     font-size: 0.9rem;
@@ -89,6 +96,37 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     border-radius: 0.15em;
     border: 1px solid rgba(37, 83, 123, 0.15);
     vertical-align: -0.1em;
+  }
+  .gx-raster-search {
+    font: inherit;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid rgba(37, 83, 123, 0.3);
+    border-radius: 0.375rem;
+    width: 12rem;
+  }
+  .gx-raster-jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem;
+  }
+  .gx-raster-jump button {
+    font: inherit;
+    font-size: 0.75rem;
+    width: 1.6rem;
+    height: 1.6rem;
+    padding: 0;
+    border: 1px solid rgba(37, 83, 123, 0.2);
+    border-radius: 0.25rem;
+    background: #fff;
+    color: var(--galaxy-primary);
+    cursor: pointer;
+  }
+  .gx-raster-jump button:hover {
+    background: rgba(255, 215, 0, 0.1);
+  }
+  #gx-raster-density {
+    margin-left: auto;
   }
   .gx-raster-container {
     max-height: 70vh;
@@ -295,7 +333,9 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
 
   var LABEL_WIDTH = 180;
   var CELL_W = 14;
-  var CELL_H = 14;
+  var READABLE_CELL_H = 14;
+  var OVERVIEW_CELL_H = 6;
+  var CELL_H = READABLE_CELL_H; // mutated by the density toggle
   var CELL_GAP = 1;
   var RIGHT_MARGIN_W = CELL_W * 3;
   var BAR_MAX_H = 30;
@@ -556,6 +596,9 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     var inspectorPrev = document.getElementById("gx-inspector-prev");
     var inspectorNext = document.getElementById("gx-inspector-next");
     var inspectorReport = document.getElementById("gx-inspector-report");
+    var searchInput = document.getElementById("gx-raster-search");
+    var jumpIndex = document.getElementById("gx-raster-jump");
+    var densityBtn = document.getElementById("gx-raster-density");
 
     var tools = matrix.tools;
     var runs = matrix.runs;
@@ -573,6 +616,9 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     // {mode: "cell"|"run"|"tool", toolId, runId} of whichever inspector
     // view is open - drives the highlight ring and hash routing.
     var inspectorState = null;
+    var density = "readable"; // "readable" | "overview" - toggled by gx-raster-density
+    var searchHighlightRow = null;
+    var searchHighlightTimer = null;
     var detailCache = {}; // runId -> parsed runs/<runId>/detail.json
 
     var maxAttemptedEver = manifest.reduce(function (m, r) {
@@ -649,15 +695,17 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
           ctx.fillRect(0, y, LABEL_WIDTH, CELL_H);
         }
 
-        ctx.fillStyle = "#2c3143";
-        var label = shortName(toolId);
-        // Cheap ellipsis: trim until it fits rather than measuring per char.
-        var maxWidth = LABEL_WIDTH - 16;
-        while (ctx.measureText(label).width > maxWidth && label.length > 1) {
-          label = label.slice(0, -1);
+        if (density !== "overview") {
+          ctx.fillStyle = "#2c3143";
+          var label = shortName(toolId);
+          // Cheap ellipsis: trim until it fits rather than measuring per char.
+          var maxWidth = LABEL_WIDTH - 16;
+          while (ctx.measureText(label).width > maxWidth && label.length > 1) {
+            label = label.slice(0, -1);
+          }
+          if (label !== shortName(toolId)) label += "…";
+          ctx.fillText(label, 8, y + CELL_H / 2);
         }
-        if (label !== shortName(toolId)) label += "…";
-        ctx.fillText(label, 8, y + CELL_H / 2);
 
         var cellsForTool = matrix.cells[toolId] || {};
         visibleRuns.forEach(function (runId, col) {
@@ -729,6 +777,14 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
             );
           }
         }
+      }
+
+      // Transient highlight for search/jump-index results (v2_raster_plan.md
+      // sec 4/7 "Handling 700 rows" - navigation aid, cleared after a beat).
+      if (searchHighlightRow !== null) {
+        ctx.strokeStyle = "#d19e00";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(1, TOP_MARGIN_H + searchHighlightRow * CELL_H + 1, LABEL_WIDTH - 2, CELL_H - 2);
       }
 
       var firstRun = manifestByRun[visibleRuns[0]];
@@ -1159,6 +1215,51 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     });
     newerBtn.addEventListener("click", function () {
       windowStart += 1;
+      draw();
+    });
+
+    function scrollToRow(idx) {
+      var target = TOP_MARGIN_H + idx * CELL_H - container.clientHeight / 2;
+      container.scrollTop = Math.max(0, target);
+      searchHighlightRow = idx;
+      draw();
+      clearTimeout(searchHighlightTimer);
+      searchHighlightTimer = setTimeout(function () {
+        searchHighlightRow = null;
+        draw();
+      }, 1500);
+    }
+
+    function runSearch() {
+      var query = searchInput.value.trim().toLowerCase();
+      if (!query) return;
+      var idx = tools.findIndex(function (t) { return shortName(t).toLowerCase().indexOf(query) >= 0; });
+      if (idx >= 0) scrollToRow(idx);
+    }
+
+    searchInput.addEventListener("keydown", function (evt) {
+      if (evt.key === "Enter") runSearch();
+    });
+
+    // One button per first letter actually present among the (already
+    // alphabetical) tool names - jumps to that letter's first row.
+    var firstRowForLetter = {};
+    tools.forEach(function (toolId, idx) {
+      var letter = shortName(toolId).charAt(0).toUpperCase();
+      if (!(letter in firstRowForLetter)) firstRowForLetter[letter] = idx;
+    });
+    jumpIndex.innerHTML = Object.keys(firstRowForLetter).sort().map(function (letter) {
+      return '<button type="button" data-letter="' + escapeHtml(letter) + '">' + escapeHtml(letter) + "</button>";
+    }).join("");
+    jumpIndex.addEventListener("click", function (evt) {
+      var letter = evt.target.getAttribute && evt.target.getAttribute("data-letter");
+      if (letter && letter in firstRowForLetter) scrollToRow(firstRowForLetter[letter]);
+    });
+
+    densityBtn.addEventListener("click", function () {
+      density = density === "readable" ? "overview" : "readable";
+      CELL_H = density === "readable" ? READABLE_CELL_H : OVERVIEW_CELL_H;
+      densityBtn.textContent = density === "readable" ? "Compact rows" : "Comfortable rows";
       draw();
     });
 
