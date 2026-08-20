@@ -274,6 +274,19 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
   .gx-tool-link-row:hover {
     background: rgba(255, 215, 0, 0.1);
   }
+  .gx-subgroup {
+    margin: 0.35rem 0 0.75rem;
+    padding-left: 0.6rem;
+    border-left: 2px solid rgba(37, 83, 123, 0.15);
+  }
+  .gx-subgroup h5 {
+    margin: 0 0 0.2rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--galaxy-grey);
+  }
 </style>
 
 <script>
@@ -973,22 +986,44 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
       continuingProblems.sort();
       recovered.sort();
 
-      function section(title, list) {
-        return (
-          "<h4>" + escapeHtml(title) + " (" + list.length + ")</h4>" +
-          (list.length
-            ? list.map(function (t) {
-                var cell = (matrix.cells[t] || {})[runId];
-                return toolLinkRowHtml(t, runId, cellBadgeLabel(cell));
-              }).join("")
-            : "<p>None.</p>")
-        );
+      var SUBGROUP_LABELS = { fail: "Failures only", error: "Errors only", mixed: "Both" };
+
+      // Secondary grouping by failure type within each section, so
+      // e.g. "which of these are error-only" doesn't require scanning the
+      // whole list. classifyFn decides which cell each tool is grouped by -
+      // for new/continuing that's the current run's cell; for recovered
+      // (always "pass" now) it's what they recovered from instead.
+      function section(title, list, classifyFn) {
+        if (!list.length) return "<h4>" + escapeHtml(title) + " (0)</h4><p>None.</p>";
+        var buckets = { fail: [], error: [], mixed: [] };
+        list.forEach(function (t) {
+          var cls = classifyFn(t);
+          if (buckets[cls]) buckets[cls].push(t);
+        });
+        var subgroups = ["fail", "error", "mixed"].map(function (cls) {
+          if (!buckets[cls].length) return "";
+          return (
+            '<div class="gx-subgroup"><h5>' + escapeHtml(SUBGROUP_LABELS[cls]) + " (" + buckets[cls].length + ")</h5>" +
+            buckets[cls].map(function (t) {
+              var cell = (matrix.cells[t] || {})[runId];
+              return toolLinkRowHtml(t, runId, cellBadgeLabel(cell));
+            }).join("") +
+            "</div>"
+          );
+        }).join("");
+        return "<h4>" + escapeHtml(title) + " (" + list.length + ")</h4>" + subgroups;
       }
 
       inspectorBody.innerHTML =
-        section("New problems", newProblems) +
-        section("Continuing problems", continuingProblems) +
-        section("Recovered since previous run", recovered);
+        section("New problems", newProblems, function (t) {
+          return classifyCell((matrix.cells[t] || {})[runId]);
+        }) +
+        section("Continuing problems", continuingProblems, function (t) {
+          return classifyCell((matrix.cells[t] || {})[runId]);
+        }) +
+        section("Recovered since previous run", recovered, function (t) {
+          return classifyCell(previousAttemptedCell(t, runId, matrix));
+        });
     }
 
     // Tool-history view: recurrence stats over the currently visible
