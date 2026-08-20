@@ -7,13 +7,14 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
 <p>
   Each row is a tool, each column a test run (oldest to latest, left to
   right). Color shows what happened; intensity shows how much of the tool
-  was affected. Hover a cell for the exact numbers; click it to open that
-  run's full report. Tools appear the first time they're actually tested,
-  so the row list grows over time rather than starting from a fixed list.
-  The bar above each run column shows how many tools it affected and how
-  much of the toolset it actually covered; the bar to the right of each
-  tool shows how often that tool has had trouble over the runs currently
-  shown. Hover either for details.
+  was affected. Hover a cell for the exact numbers; click it to see that
+  tool's failing tests and their tracebacks. Tools appear the first time
+  they're actually tested, so the row list grows over time rather than
+  starting from a fixed list. The bar above each run column shows how many
+  tools it affected and how much of the toolset it actually covered
+  (click it for that run's full report); the bar to the right of each tool
+  shows how often that tool has had trouble over the runs currently shown.
+  Hover either for details.
 </p>
 
 <div class="gx-legend">
@@ -37,10 +38,22 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
 </div>
 
 <div id="gx-raster-container" class="gx-raster-container">
-  <canvas id="gx-raster-canvas"></canvas>
+  <canvas id="gx-raster-canvas" tabindex="0"></canvas>
 </div>
 <div id="gx-raster-tooltip" class="gx-raster-tooltip" hidden></div>
 <p id="gx-raster-empty" hidden>No raster data yet.</p>
+
+<div id="gx-inspector-backdrop" class="gx-inspector-backdrop" hidden></div>
+<aside id="gx-inspector" class="gx-inspector" hidden aria-label="Tool run detail">
+  <button id="gx-inspector-close" class="gx-inspector__close" type="button" aria-label="Close">&times;</button>
+  <div id="gx-inspector-header" class="gx-inspector__header"></div>
+  <div class="gx-inspector__nav">
+    <button id="gx-inspector-prev" type="button">&larr; prev run</button>
+    <button id="gx-inspector-next" type="button">next run &rarr;</button>
+    <a id="gx-inspector-report" class="gx-inspector__report-link" target="_blank" rel="noopener">Full report &#8599;</a>
+  </div>
+  <div id="gx-inspector-body" class="gx-inspector__body"></div>
+</aside>
 
 <style>
   .gx-raster-controls {
@@ -99,6 +112,153 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     border-radius: 0.375rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     pointer-events: none;
+  }
+
+  .gx-inspector-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(44, 49, 67, 0.35);
+    z-index: 1090;
+  }
+  .gx-inspector {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(40rem, 92vw);
+    background: #fff;
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.2);
+    z-index: 1100;
+    overflow-y: auto;
+    padding: 1.5rem;
+  }
+  .gx-inspector__close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    background: transparent;
+    color: var(--galaxy-grey);
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 0.375rem;
+  }
+  .gx-inspector__close:hover {
+    background: rgba(37, 83, 123, 0.08);
+  }
+  .gx-inspector__header {
+    padding-right: 2rem;
+    margin-bottom: 0.75rem;
+  }
+  .gx-inspector__header h3 {
+    margin: 0 0 0.35rem;
+    color: var(--galaxy-dark);
+  }
+  .gx-inspector__summary {
+    font-size: 0.9rem;
+    color: var(--galaxy-grey);
+    line-height: 1.5;
+  }
+  .gx-inspector__badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.1rem 0.5rem;
+    border-radius: 1rem;
+    margin-left: 0.4rem;
+    background: rgba(37, 83, 123, 0.1);
+    color: var(--galaxy-primary);
+  }
+  .gx-inspector__nav {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.75rem 0 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(37, 83, 123, 0.1);
+  }
+  .gx-inspector__nav button {
+    font: inherit;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid rgba(37, 83, 123, 0.3);
+    border-radius: 0.375rem;
+    background: #fff;
+    color: var(--galaxy-primary);
+    cursor: pointer;
+  }
+  .gx-inspector__nav button:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .gx-inspector__report-link {
+    margin-left: auto;
+    font-size: 0.85rem;
+  }
+  .gx-inspector__body h4 {
+    margin: 1.25rem 0 0.5rem;
+    font-size: 0.95rem;
+    color: var(--galaxy-dark);
+  }
+  .gx-inspector__body h4:first-child {
+    margin-top: 0;
+  }
+  .gx-version-row {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid rgba(37, 83, 123, 0.06);
+  }
+  .gx-version-row__version {
+    flex: 1;
+    font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
+    font-size: 0.8rem;
+  }
+  .gx-test-item {
+    border: 1px solid rgba(37, 83, 123, 0.12);
+    border-radius: 0.375rem;
+    margin-bottom: 0.4rem;
+  }
+  .gx-test-item summary {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.82rem;
+    cursor: pointer;
+    display: flex;
+    gap: 0.5rem;
+    align-items: baseline;
+  }
+  .gx-test-item summary::-webkit-details-marker { display: none; }
+  .gx-test-item summary::before {
+    content: "\25b8";
+    color: var(--galaxy-grey);
+    width: 0.9em;
+    display: inline-block;
+  }
+  .gx-test-item[open] summary::before { content: "\25be"; }
+  .gx-test-item pre {
+    margin: 0;
+    padding: 0.6rem;
+    background: #f7f8fa;
+    border-top: 1px solid rgba(37, 83, 123, 0.12);
+    font-size: 0.75rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 20rem;
+    overflow-y: auto;
+  }
+  .gx-test-item__status {
+    font-weight: 600;
+  }
+  .gx-test-item__status--fail { color: #b91c1c; }
+  .gx-test-item__status--error { color: #630177; }
+  .gx-inspector__passing summary {
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--galaxy-grey);
   }
 </style>
 
@@ -298,6 +458,50 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     return lines.join("\n");
   }
 
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  // Cheap history classification from matrix.json alone (no detail.json
+  // needed): was this tool already broken in its last attempted run before
+  // this one? "Intermittent" (has it flip-flopped repeatedly) is tabled
+  // for a later iteration along with signature work (v2_raster_plan.md).
+  function naturalTokens(s) {
+    return (s || "").match(/\d+|\D+/g) || [];
+  }
+
+  function compareNatural(a, b) {
+    var ta = naturalTokens(a), tb = naturalTokens(b);
+    var len = Math.max(ta.length, tb.length);
+    for (var i = 0; i < len; i++) {
+      var pa = ta[i], pb = tb[i];
+      if (pa === undefined) return -1;
+      if (pb === undefined) return 1;
+      if (/^\d+$/.test(pa) && /^\d+$/.test(pb)) {
+        var diff = parseInt(pa, 10) - parseInt(pb, 10);
+        if (diff) return diff;
+      } else if (pa !== pb) {
+        return pa < pb ? -1 : 1;
+      }
+    }
+    return 0;
+  }
+
+  function toolHistoryStatus(toolId, runId, matrix) {
+    var runs = matrix.runs;
+    var idx = runs.indexOf(runId);
+    var cellsForTool = matrix.cells[toolId] || {};
+    var currentCell = cellsForTool[runId];
+    if (!currentCell || currentCell.status === "pass") return null;
+    for (var i = idx - 1; i >= 0; i--) {
+      var prevCell = cellsForTool[runs[i]];
+      if (prevCell) return prevCell.status === "pass" ? "new" : "continuing";
+    }
+    return "new";
+  }
+
   function init(manifest, matrix) {
     var container = document.getElementById("gx-raster-container");
     var canvas = document.getElementById("gx-raster-canvas");
@@ -306,6 +510,14 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     var olderBtn = document.getElementById("gx-raster-older");
     var newerBtn = document.getElementById("gx-raster-newer");
     var windowLabel = document.getElementById("gx-raster-window");
+    var backdrop = document.getElementById("gx-inspector-backdrop");
+    var inspector = document.getElementById("gx-inspector");
+    var inspectorClose = document.getElementById("gx-inspector-close");
+    var inspectorHeader = document.getElementById("gx-inspector-header");
+    var inspectorBody = document.getElementById("gx-inspector-body");
+    var inspectorPrev = document.getElementById("gx-inspector-prev");
+    var inspectorNext = document.getElementById("gx-inspector-next");
+    var inspectorReport = document.getElementById("gx-inspector-report");
 
     var tools = matrix.tools;
     var runs = matrix.runs;
@@ -320,6 +532,8 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
 
     var windowStart = Math.max(0, runs.length - 1);
     var nCols = 1;
+    var selectedCell = null; // {toolId, runId} - drives the highlight ring
+    var detailCache = {}; // runId -> parsed runs/<runId>/detail.json
 
     var maxAttemptedEver = manifest.reduce(function (m, r) {
       return Math.max(m, r.tools_attempted || 0);
@@ -443,6 +657,23 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
       ctx.lineTo(gridRight + 0.5, TOP_MARGIN_H + tools.length * CELL_H);
       ctx.stroke();
 
+      // Highlight the cell that opened the inspector, so closing it
+      // returns focus to a visibly obvious spot (v2_raster_plan.md sec 5).
+      if (selectedCell) {
+        var selRow = tools.indexOf(selectedCell.toolId);
+        var selCol = visibleRuns.indexOf(selectedCell.runId);
+        if (selRow >= 0 && selCol >= 0) {
+          ctx.strokeStyle = "#2c3143";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(
+            LABEL_WIDTH + selCol * CELL_W + 1,
+            TOP_MARGIN_H + selRow * CELL_H + 1,
+            CELL_W - CELL_GAP - 1,
+            CELL_H - CELL_GAP - 1
+          );
+        }
+      }
+
       var firstRun = manifestByRun[visibleRuns[0]];
       var lastRun = manifestByRun[visibleRuns[visibleRuns.length - 1]];
       windowLabel.textContent =
@@ -510,15 +741,181 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     canvas.addEventListener("click", function (evt) {
       var hit = hitTest(evt.clientX, evt.clientY);
       if (!hit) return;
-      // No inspector panel yet (v2_raster_plan.md sec 6 step 4) - cell and
-      // run-bar clicks fall back to the run's full Planemo report; a tool
-      // row's recurrence bar has no single equivalent link yet.
-      var runId = hit.type === "tool" ? null : hit.runId;
-      var run = runId && manifestByRun[runId];
+      if (hit.type === "cell") {
+        openInspector(hit.toolId, hit.runId);
+        return;
+      }
+      // Run-wide and tool-history inspector views are a later step
+      // (v2_raster_plan.md sec 6 step 5) - the run bar still falls back to
+      // the full Planemo report; a tool row's recurrence bar has no single
+      // equivalent link yet.
+      var run = hit.type === "run" && manifestByRun[hit.runId];
       if (run && run.results_html_url) {
         window.open(run.results_html_url, "_blank", "noopener");
       }
     });
+
+    function fetchDetail(runId) {
+      if (detailCache[runId]) return Promise.resolve(detailCache[runId]);
+      return fetch("raster-data/runs/" + encodeURIComponent(runId) + "/detail.json")
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          detailCache[runId] = data;
+          return data;
+        });
+    }
+
+    function inspectorSummaryLine(toolId, runId) {
+      var cell = (matrix.cells[toolId] || {})[runId];
+      if (!cell) return "Not run in this cycle.";
+      if (cell.status === "pass") {
+        return "All " + cell.tests_attempted + " tests passed across " + cell.versions_total +
+          " version" + (cell.versions_total === 1 ? "" : "s") + ".";
+      }
+      var affectedCount = cell.tests_failed + cell.tests_errored;
+      var parts = [];
+      if (cell.tests_failed) parts.push(cell.tests_failed + " failure" + (cell.tests_failed === 1 ? "" : "s"));
+      if (cell.tests_errored) parts.push(cell.tests_errored + " error" + (cell.tests_errored === 1 ? "" : "s"));
+      var history = toolHistoryStatus(toolId, runId, matrix);
+      return (
+        affectedCount + " of " + cell.tests_attempted + " tests affected: " + parts.join(", ") +
+        " across " + cell.versions_affected + " of " + cell.versions_total + " versions." +
+        (history ? " (" + history + " problem)" : "")
+      );
+    }
+
+    function renderInspectorHeader(toolId, runId) {
+      var run = manifestByRun[runId] || {};
+      inspectorHeader.innerHTML =
+        "<h3>" + escapeHtml(shortName(toolId)) + "</h3>" +
+        "<div class=\"gx-inspector__summary\">" +
+        escapeHtml(fmtDate(run.timestamp)) +
+        "<br>" + escapeHtml(inspectorSummaryLine(toolId, runId)) +
+        "</div>";
+      inspectorReport.href = run.results_html_url || "#";
+      inspectorReport.style.visibility = run.results_html_url ? "visible" : "hidden";
+
+      var runs = matrix.runs;
+      var idx = runs.indexOf(runId);
+      inspectorPrev.disabled = idx <= 0;
+      inspectorNext.disabled = idx < 0 || idx >= runs.length - 1;
+    }
+
+    function versionRowHtml(version, tests) {
+      var passed = tests.filter(function (t) { return t.status === "success"; }).length;
+      var failed = tests.filter(function (t) { return t.status === "failure"; }).length;
+      var errored = tests.filter(function (t) { return t.status === "error"; }).length;
+      var attempted = passed + failed + errored;
+      var affectedPct = attempted ? Math.round(((failed + errored) / attempted) * 100) : 0;
+      return (
+        '<div class="gx-version-row">' +
+        '<span class="gx-version-row__version">' + escapeHtml(version || "(unversioned)") + "</span>" +
+        "<span>" + attempted + " attempted</span>" +
+        "<span>" + passed + " passed</span>" +
+        "<span>" + failed + " failed</span>" +
+        "<span>" + errored + " errored</span>" +
+        "<span>" + affectedPct + "% affected</span>" +
+        "</div>"
+      );
+    }
+
+    function testItemHtml(toolId, version, test) {
+      var statusClass = test.status === "error" ? "gx-test-item__status--error" : "gx-test-item__status--fail";
+      var duration = typeof test.time_seconds === "number" ? Math.round(test.time_seconds) + "s" : "unknown duration";
+      var raw = test.execution_problem || (test.output_problems || []).join("\n") || "(no detail recorded)";
+      return (
+        '<details class="gx-test-item">' +
+        "<summary>" +
+        '<span class="gx-test-item__status ' + statusClass + '">' + escapeHtml(test.status) + "</span>" +
+        "<span>" + escapeHtml(version || "(unversioned)") + " &middot; test " + (test.test_index + 1) + "</span>" +
+        "<span>" + escapeHtml(duration) + "</span>" +
+        "</summary>" +
+        "<pre>" + escapeHtml(raw) + "</pre>" +
+        "</details>"
+      );
+    }
+
+    function renderInspectorBody(toolId, runId) {
+      inspectorBody.innerHTML = "<p>Loading test detail…</p>";
+      fetchDetail(runId).then(function (detail) {
+        var versions = (detail && detail[toolId]) || {};
+        var versionNames = Object.keys(versions);
+        if (!versionNames.length) {
+          inspectorBody.innerHTML = "<p>No test detail recorded for this tool in this run.</p>";
+          return;
+        }
+        versionNames.sort(compareNatural).reverse();
+
+        var versionRows = versionNames.map(function (v) { return versionRowHtml(v, versions[v]); }).join("");
+
+        var affectedItems = [];
+        var passingCount = 0;
+        versionNames.forEach(function (v) {
+          versions[v].forEach(function (t) {
+            if (t.status === "failure" || t.status === "error") {
+              affectedItems.push(testItemHtml(toolId, v, t));
+            } else if (t.status === "success") {
+              passingCount += 1;
+            }
+          });
+        });
+
+        inspectorBody.innerHTML =
+          "<h4>Versions</h4>" + versionRows +
+          "<h4>Affected tests" + (affectedItems.length ? " (" + affectedItems.length + ")" : "") + "</h4>" +
+          (affectedItems.length ? affectedItems.join("") : "<p>None in this run.</p>") +
+          (passingCount
+            ? '<details class="gx-inspector__passing"><summary>' + passingCount +
+              " passing test" + (passingCount === 1 ? "" : "s") + "</summary></details>"
+            : "");
+      }).catch(function (err) {
+        inspectorBody.innerHTML = "<p>Failed to load test detail: " + escapeHtml(String(err)) + "</p>";
+      });
+    }
+
+    function openInspector(toolId, runId) {
+      selectedCell = { toolId: toolId, runId: runId };
+      location.hash = "tool=" + encodeURIComponent(toolId) + "&run=" + encodeURIComponent(runId);
+      renderInspectorHeader(toolId, runId);
+      renderInspectorBody(toolId, runId);
+      backdrop.hidden = false;
+      inspector.hidden = false;
+      draw();
+    }
+
+    function closeInspector() {
+      if (inspector.hidden) return;
+      selectedCell = null;
+      inspector.hidden = true;
+      backdrop.hidden = true;
+      if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+      canvas.focus();
+      draw();
+    }
+
+    inspectorClose.addEventListener("click", closeInspector);
+    backdrop.addEventListener("click", closeInspector);
+    document.addEventListener("keydown", function (evt) {
+      if (evt.key === "Escape") closeInspector();
+    });
+    inspectorPrev.addEventListener("click", function () {
+      if (!selectedCell) return;
+      var idx = matrix.runs.indexOf(selectedCell.runId);
+      if (idx > 0) openInspector(selectedCell.toolId, matrix.runs[idx - 1]);
+    });
+    inspectorNext.addEventListener("click", function () {
+      if (!selectedCell) return;
+      var idx = matrix.runs.indexOf(selectedCell.runId);
+      if (idx >= 0 && idx < matrix.runs.length - 1) openInspector(selectedCell.toolId, matrix.runs[idx + 1]);
+    });
+
+    function openFromHash() {
+      var m = /tool=([^&]+)&run=([^&]+)/.exec(location.hash);
+      if (!m) return;
+      var toolId = decodeURIComponent(m[1]);
+      var runId = decodeURIComponent(m[2]);
+      if (tools.indexOf(toolId) >= 0 && runs.indexOf(runId) >= 0) openInspector(toolId, runId);
+    }
 
     window.addEventListener("resize", draw);
     olderBtn.addEventListener("click", function () {
@@ -531,6 +928,7 @@ description: Compact tool x run heatmap across the AnVIL tool-test history.
     });
 
     draw();
+    openFromHash();
   }
 
   Promise.all([
