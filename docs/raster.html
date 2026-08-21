@@ -62,7 +62,7 @@ nav_label: Deployment stage timing
     Density:
     <span class="gx-density-toggle__group">
       <button type="button" id="gx-density-comfortable" class="gx-density-toggle__option is-active">Comfortable</button>
-      <button type="button" id="gx-density-compact" class="gx-density-toggle__option">Compact</button>
+      <button type="button" id="gx-density-compact" class="gx-density-toggle__option">Overview</button>
     </span>
   </span>
 </div>
@@ -459,7 +459,7 @@ nav_label: Deployment stage timing
   var CELL_H = READABLE_CELL_H; // mutated by the density toggle
   var CELL_GAP = 1;
   var RIGHT_MARGIN_W = CELL_W * 3;
-  var GRID_MARGIN_GAP = 6; // breathing room before the recurrence margin/History
+  var GRID_MARGIN_GAP = 9; // breathing room before the recurrence margin/History
   var DATE_LABEL_H = 14; // sparse "8/15"-style run labels above the bars
   var DATE_BAR_GAP = 8; // extra header height so bars read as a small chart
   var BAR_MAX_H = 30;
@@ -468,6 +468,10 @@ nav_label: Deployment stage timing
   var TOP_PAD_BOTTOM = 10; // gap between the coverage strip and the rows
   var TOP_MARGIN_H = DATE_LABEL_H + DATE_BAR_GAP + BAR_MAX_H + BAR_GAP + STRIP_H + TOP_PAD_BOTTOM;
   var MAX_DATE_LABELS = 6; // sparse - not one per column
+  // Scroll headroom so the sticky header (see repaintHeader) never lands on
+  // top of the final rows once scrolled all the way down (v2_raster_ui.md
+  // round 3 sec 2).
+  var BOTTOM_PAD_H = TOP_MARGIN_H;
 
   var COLORS = {
     pass: "#61ad90",
@@ -768,8 +772,10 @@ nav_label: Deployment stage timing
     var searchHighlightRow = null;
     var searchHighlightTimer = null;
     var detailCache = {}; // runId -> parsed runs/<runId>/detail.json
-    var hoveredRow = null; // tool index under the cursor - drives the crosshair overlay
-    var hoveredCol = null; // visible-run index under the cursor
+    var hoveredRow = null; // tool index under the cursor/keyboard focus/selection - drives the crosshair overlay
+    var hoveredCol = null; // visible-run index under the cursor/keyboard focus/selection
+    var focusSource = null; // "mouse" | "keyboard" | null - who last set hoveredRow/hoveredCol
+    var lastHeaderCtx = null; // per-draw() snapshot consumed by repaintHeader() on every scroll tick
 
     var maxAttemptedEver = manifest.reduce(function (m, r) {
       return Math.max(m, r.tools_attempted || 0);
@@ -803,7 +809,7 @@ nav_label: Deployment stage timing
 
       var dpr = window.devicePixelRatio || 1;
       var widthCss = LABEL_WIDTH + nCols * CELL_W + RIGHT_MARGIN_W;
-      var heightCss = TOP_MARGIN_H + tools.length * CELL_H;
+      var heightCss = TOP_MARGIN_H + tools.length * CELL_H + BOTTOM_PAD_H;
       sizeCanvas(canvas, ctx, widthCss, heightCss, dpr);
       sizeCanvas(overlay, overlayCtx, widthCss, heightCss, dpr);
 
@@ -812,15 +818,14 @@ nav_label: Deployment stage timing
       ctx.textBaseline = "middle";
 
       var gridRight = LABEL_WIDTH + nCols * CELL_W;
-      var barsTop = DATE_LABEL_H + DATE_BAR_GAP;
-      var stripTop = barsTop + BAR_MAX_H + BAR_GAP;
 
-      // Top margin: sparse date labels, then one stacked tool-count bar +
-      // coverage strip per visible run column (bottom-aligned to a shared
-      // baseline), then a divider before the rows start. Tool-weighted
-      // (v2_raster.md), scaled linearly against the tallest bar in the
+      // Top-margin stats: one stacked tool-count bar + coverage strip per
+      // visible run column, scaled linearly against the tallest bar in the
       // visible window - percentile/sqrt scaling is tabled
-      // (v2_raster_plan.md sec 7).
+      // (v2_raster_plan.md sec 7). Tool-weighted (v2_raster.md). The actual
+      // drawing happens in repaintHeader() below, since it also needs to
+      // re-run on every scroll tick to stay stuck to the viewport
+      // (v2_raster_ui.md round 3 sec 2).
       var topStatsByRun = {};
       var maxAffected = 0;
       visibleRuns.forEach(function (runId) {
@@ -835,66 +840,14 @@ nav_label: Deployment stage timing
       var labelCount = Math.max(1, Math.min(MAX_DATE_LABELS, maxLabelsByWidth));
       var labelStep = Math.max(1, Math.ceil(visibleRuns.length / labelCount));
 
-      visibleRuns.forEach(function (runId, col) {
-        var x = LABEL_WIDTH + col * CELL_W;
-        var stats = topStatsByRun[runId];
-        var run = manifestByRun[runId] || {};
-
-        var isLastCol = col === visibleRuns.length - 1;
-        if (col % labelStep === 0 || isLastCol) {
-          ctx.save();
-          ctx.font = "9px 'Atkinson Hyperlegible', sans-serif";
-          ctx.textAlign = "center";
-          ctx.textBaseline = "top";
-          ctx.fillStyle = "#58585a";
-          ctx.fillText(fmtAxisDate(run.timestamp), x + (CELL_W - CELL_GAP) / 2, 0);
-          ctx.restore();
-        }
-
-        var barH = maxAffected ? Math.round((stats.affected / maxAffected) * BAR_MAX_H) : 0;
-        var segY = barsTop + BAR_MAX_H - barH;
-        ["fail", "error", "mixed"].forEach(function (cls) {
-          var segH = maxAffected ? Math.round((stats[cls] / maxAffected) * BAR_MAX_H) : 0;
-          if (!segH) return;
-          ctx.fillStyle = rgbStr(COLORS[cls]);
-          ctx.fillRect(x, segY, CELL_W - CELL_GAP, segH);
-          segY += segH;
-        });
-
-        var coverage = coverageBucket(run.tools_attempted || 0, maxAttemptedEver);
-        ctx.fillStyle = COVERAGE_COLORS[coverage];
-        ctx.fillRect(x, stripTop, CELL_W - CELL_GAP, STRIP_H);
-      });
-
-      // "History" label once, above the recurrence margin - it reads as
-      // one more run column otherwise (v2_raster_ui.md sec 5).
-      ctx.save();
-      ctx.font = "9px 'Atkinson Hyperlegible', sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "top";
-      ctx.fillStyle = "#58585a";
-      ctx.fillText("History", gridRight + RIGHT_MARGIN_W / 2, 0);
-      ctx.restore();
-
-      // Baseline the bars themselves sit on, grid width only - makes them
-      // read as a small bar chart rather than floating blocks
-      // (v2_raster_ui.md round 2 sec 1).
-      ctx.strokeStyle = "rgba(37, 83, 123, 0.25)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(LABEL_WIDTH, barsTop + BAR_MAX_H + 0.5);
-      ctx.lineTo(gridRight, barsTop + BAR_MAX_H + 0.5);
-      ctx.stroke();
-
-      // Second divider separating the whole summary area from the rows -
-      // full width, more spacing now via TOP_PAD_BOTTOM so the summary
-      // doesn't read as fused to the data (v2_raster_ui.md round 2 sec 6).
-      ctx.strokeStyle = "rgba(37, 83, 123, 0.2)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(0, TOP_MARGIN_H - 0.5);
-      ctx.lineTo(widthCss, TOP_MARGIN_H - 0.5);
-      ctx.stroke();
+      lastHeaderCtx = {
+        widthCss: widthCss,
+        gridRight: gridRight,
+        visibleRuns: visibleRuns,
+        topStatsByRun: topStatsByRun,
+        maxAffected: maxAffected,
+        labelStep: labelStep
+      };
 
       tools.forEach(function (toolId, row) {
         var y = TOP_MARGIN_H + row * CELL_H;
@@ -914,6 +867,12 @@ nav_label: Deployment stage timing
           }
           if (label !== shortName(toolId)) label += "…";
           ctx.fillText(label, LABEL_PAD_LEFT, y + CELL_H / 2);
+        } else if (firstRowLetters[row]) {
+          // Alphabet landmark for the otherwise-blank label column in
+          // overview mode - the exact name still appears on hover/keyboard
+          // focus via the floating label (v2_raster_ui.md round 3 sec 1).
+          ctx.fillStyle = "#58585a";
+          ctx.fillText(firstRowLetters[row], LABEL_PAD_LEFT, y + CELL_H / 2);
         }
 
         var cellsForTool = matrix.cells[toolId] || {};
@@ -953,6 +912,10 @@ nav_label: Deployment stage timing
       ctx.lineTo(gridRight + 0.5, TOP_MARGIN_H + tools.length * CELL_H);
       ctx.stroke();
 
+      // Paints the sticky header on top of whatever rows are currently
+      // scrolled beneath it (v2_raster_ui.md round 3 sec 2).
+      repaintHeader();
+
       // Highlight whatever opened the inspector, so closing it returns
       // focus to a visibly obvious spot (v2_raster_plan.md sec 5). Outline
       // only, fill left untouched, per v2_raster_ui.md sec 7.
@@ -973,7 +936,10 @@ nav_label: Deployment stage timing
         } else if (inspectorState.mode === "run") {
           var runCol = visibleRuns.indexOf(inspectorState.runId);
           if (runCol >= 0) {
-            ctx.strokeRect(LABEL_WIDTH + runCol * CELL_W + 1, barsTop + 1, CELL_W - CELL_GAP - 1, BAR_MAX_H + BAR_GAP + STRIP_H - 1);
+            // Sticky-aware: the bar itself now redraws at the header's
+            // current on-screen position, not a fixed y=0 (round 3 sec 2).
+            var stickyBarsTop = container.scrollTop + DATE_LABEL_H + DATE_BAR_GAP;
+            ctx.strokeRect(LABEL_WIDTH + runCol * CELL_W + 1, stickyBarsTop + 1, CELL_W - CELL_GAP - 1, BAR_MAX_H + BAR_GAP + STRIP_H - 1);
           }
         } else if (inspectorState.mode === "tool") {
           var toolRow = tools.indexOf(inspectorState.toolId);
@@ -1008,14 +974,120 @@ nav_label: Deployment stage timing
       drawOverlay(widthCss, gridRight);
     }
 
-    // Cheap, mouse-driven crosshair on a separate canvas layered on top -
-    // redrawn on every mousemove without re-running the expensive stats
-    // pass above (v2_raster_ui.md sec 7).
+    // Redraws just the top-margin strip at the viewport's current scroll
+    // position, painting over whatever rows happen to be there - a cheap
+    // stand-in for CSS position:sticky that works with a single canvas.
+    // Reuses the stats/labelStep snapshot draw() leaves in lastHeaderCtx
+    // rather than recomputing anything on every scroll tick
+    // (v2_raster_ui.md round 3 sec 2).
+    function repaintHeader() {
+      if (!lastHeaderCtx) return;
+      var c = lastHeaderCtx;
+      var offsetY = container.scrollTop;
+      var barsTop = offsetY + DATE_LABEL_H + DATE_BAR_GAP;
+      var stripTop = barsTop + BAR_MAX_H + BAR_GAP;
+
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, offsetY, c.widthCss, TOP_MARGIN_H);
+
+      c.visibleRuns.forEach(function (runId, col) {
+        var x = LABEL_WIDTH + col * CELL_W;
+        var stats = c.topStatsByRun[runId];
+        var run = manifestByRun[runId] || {};
+        var isLastCol = col === c.visibleRuns.length - 1;
+        if (col % c.labelStep === 0 || isLastCol) {
+          ctx.save();
+          ctx.font = "9px 'Atkinson Hyperlegible', sans-serif";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.fillStyle = "#58585a";
+          ctx.fillText(fmtAxisDate(run.timestamp), x + (CELL_W - CELL_GAP) / 2, offsetY);
+          ctx.restore();
+        }
+
+        var barH = c.maxAffected ? Math.round((stats.affected / c.maxAffected) * BAR_MAX_H) : 0;
+        var segY = barsTop + BAR_MAX_H - barH;
+        ["fail", "error", "mixed"].forEach(function (cls) {
+          var segH = c.maxAffected ? Math.round((stats[cls] / c.maxAffected) * BAR_MAX_H) : 0;
+          if (!segH) return;
+          ctx.fillStyle = rgbStr(COLORS[cls]);
+          ctx.fillRect(x, segY, CELL_W - CELL_GAP, segH);
+          segY += segH;
+        });
+
+        var coverage = coverageBucket(run.tools_attempted || 0, maxAttemptedEver);
+        ctx.fillStyle = COVERAGE_COLORS[coverage];
+        ctx.fillRect(x, stripTop, CELL_W - CELL_GAP, STRIP_H);
+      });
+
+      // "History" label once, above the recurrence margin - it reads as
+      // one more run column otherwise (v2_raster_ui.md sec 5).
+      ctx.save();
+      ctx.font = "9px 'Atkinson Hyperlegible', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.fillStyle = "#58585a";
+      ctx.fillText("History", c.gridRight + RIGHT_MARGIN_W / 2, offsetY);
+      ctx.restore();
+
+      // Baseline the bars themselves sit on, grid width only - makes them
+      // read as a small bar chart rather than floating blocks
+      // (v2_raster_ui.md round 2 sec 1).
+      ctx.strokeStyle = "rgba(37, 83, 123, 0.25)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(LABEL_WIDTH, barsTop + BAR_MAX_H + 0.5);
+      ctx.lineTo(c.gridRight, barsTop + BAR_MAX_H + 0.5);
+      ctx.stroke();
+
+      // Second divider separating the whole summary area from the rows -
+      // full width, more spacing now via TOP_PAD_BOTTOM so the summary
+      // doesn't read as fused to the data (v2_raster_ui.md round 2 sec 6).
+      ctx.strokeStyle = "rgba(37, 83, 123, 0.2)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, offsetY + TOP_MARGIN_H - 0.5);
+      ctx.lineTo(c.widthCss, offsetY + TOP_MARGIN_H - 0.5);
+      ctx.stroke();
+
+      // Divider through the header's own height, mirroring the rows'
+      // grid/History divider, so the boundary stays visually continuous
+      // while stuck to the top (v2_raster_ui.md round 3 sec 2).
+      ctx.strokeStyle = "rgba(37, 83, 123, 0.3)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(c.gridRight + 0.5, offsetY);
+      ctx.lineTo(c.gridRight + 0.5, offsetY + TOP_MARGIN_H);
+      ctx.stroke();
+
+      // Emphasized run date for the hovered/focused/selected column, next
+      // to the header rather than only in the mouse tooltip - needs to be
+      // here (not the overlay) so it re-anchors on scroll too
+      // (v2_raster_ui.md round 3 sec 3).
+      if (hoveredCol !== null && c.visibleRuns[hoveredCol]) {
+        var hRun = manifestByRun[c.visibleRuns[hoveredCol]] || {};
+        var hLabel = fmtShort(hRun.timestamp);
+        var hx = LABEL_WIDTH + hoveredCol * CELL_W + (CELL_W - CELL_GAP) / 2;
+        ctx.font = "10px 'Atkinson Hyperlegible', sans-serif";
+        var hw = ctx.measureText(hLabel).width;
+        ctx.fillStyle = "#2c3143";
+        ctx.fillRect(hx - hw / 2 - 4, offsetY, hw + 8, DATE_LABEL_H);
+        ctx.fillStyle = "#fff";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(hLabel, hx, offsetY + 1);
+      }
+    }
+
+    // Cheap, mouse/keyboard-driven crosshair on a separate canvas layered
+    // on top - redrawn on every mousemove/keydown without re-running the
+    // expensive stats pass above (v2_raster_ui.md sec 7).
     function drawOverlay(widthCss, gridRight) {
-      overlayCtx.clearRect(0, 0, widthCss, TOP_MARGIN_H + tools.length * CELL_H);
+      var fullH = TOP_MARGIN_H + tools.length * CELL_H + BOTTOM_PAD_H;
+      overlayCtx.clearRect(0, 0, widthCss, fullH);
       if (hoveredCol !== null) {
         overlayCtx.fillStyle = "rgba(37, 83, 123, 0.07)";
-        overlayCtx.fillRect(LABEL_WIDTH + hoveredCol * CELL_W, 0, CELL_W - CELL_GAP, TOP_MARGIN_H + tools.length * CELL_H);
+        overlayCtx.fillRect(LABEL_WIDTH + hoveredCol * CELL_W, 0, CELL_W - CELL_GAP, fullH);
       }
       if (hoveredRow !== null) {
         overlayCtx.fillStyle = "rgba(37, 83, 123, 0.07)";
@@ -1034,6 +1106,43 @@ nav_label: Deployment stage timing
           CELL_H - CELL_GAP - 1
         );
       }
+
+      // Floating tool-name label: always on in overview mode (rows carry
+      // no visible name there), and in comfortable mode too when the
+      // static label is actually ellipsis-truncated and the trigger is
+      // keyboard focus rather than mouse hover - mouse hover already
+      // exposes the full name via the DOM tooltip
+      // (v2_raster_ui.md round 3 sec 1 & 4).
+      if (hoveredRow !== null) {
+        var flabel = shortName(tools[hoveredRow]);
+        var truncatedInReadable = false;
+        if (density !== "overview") {
+          overlayCtx.font = READABLE_FONT_PX + "px 'Atkinson Hyperlegible', sans-serif";
+          truncatedInReadable = overlayCtx.measureText(flabel).width > (LABEL_WIDTH - LABEL_PAD_LEFT - 8);
+        }
+        if (density === "overview" || (focusSource === "keyboard" && truncatedInReadable)) {
+          overlayCtx.font = "11px 'Atkinson Hyperlegible', sans-serif";
+          overlayCtx.textAlign = "left";
+          overlayCtx.textBaseline = "middle";
+          var ftextW = overlayCtx.measureText(flabel).width;
+          var fboxH = 18;
+          var fboxW = Math.min(widthCss - LABEL_PAD_LEFT - 4, ftextW + 12);
+          var rowCenterY = TOP_MARGIN_H + hoveredRow * CELL_H + CELL_H / 2;
+          var fboxY = Math.max(0, Math.min(rowCenterY - fboxH / 2, fullH - fboxH));
+          overlayCtx.fillStyle = "#2c3143";
+          overlayCtx.fillRect(LABEL_PAD_LEFT - 6, fboxY, fboxW, fboxH);
+          overlayCtx.fillStyle = "#fff";
+          overlayCtx.fillText(flabel, LABEL_PAD_LEFT, fboxY + fboxH / 2);
+        }
+      }
+    }
+
+    // Shared by mouse/keyboard/selection handlers - repaints both the
+    // sticky header (for the hovered-column date) and the crosshair
+    // overlay without re-running the expensive draw() stats pass.
+    function refreshCrosshair() {
+      repaintHeader();
+      drawOverlay(canvas.clientWidth, LABEL_WIDTH + nCols * CELL_W);
     }
 
     function hitTest(clientX, clientY) {
@@ -1042,8 +1151,13 @@ nav_label: Deployment stage timing
       var y = clientY - rect.top;
       var visibleRuns = currentRunIds();
       var gridRight = LABEL_WIDTH + nCols * CELL_W;
+      // The sticky header repaints at the current scroll offset, not a
+      // fixed y=0 - a click can only ever land at y >= scrollTop (that's
+      // all the viewport can show), so this is the only header-vs-row
+      // split that needs to account for it (v2_raster_ui.md round 3 sec 2).
+      var stickyBottom = container.scrollTop + TOP_MARGIN_H;
 
-      if (y < TOP_MARGIN_H) {
+      if (y < stickyBottom) {
         if (x < LABEL_WIDTH || x >= gridRight) return null;
         var col = Math.floor((x - LABEL_WIDTH) / CELL_W);
         if (col < 0 || col >= visibleRuns.length) return null;
@@ -1068,20 +1182,22 @@ nav_label: Deployment stage timing
       var hit = hitTest(evt.clientX, evt.clientY);
       if (!hit) {
         tooltip.hidden = true;
-        if (hoveredRow !== null || hoveredCol !== null) {
+        if (focusSource === "mouse") {
           hoveredRow = null;
           hoveredCol = null;
-          drawOverlay(canvas.clientWidth, LABEL_WIDTH + nCols * CELL_W);
+          focusSource = null;
+          refreshCrosshair();
         }
         return;
       }
       var visibleRuns = currentRunIds();
       var newRow = hit.type === "cell" || hit.type === "tool" ? tools.indexOf(hit.toolId) : null;
       var newCol = hit.type === "cell" || hit.type === "run" ? visibleRuns.indexOf(hit.runId) : null;
-      if (newRow !== hoveredRow || newCol !== hoveredCol) {
+      if (newRow !== hoveredRow || newCol !== hoveredCol || focusSource !== "mouse") {
         hoveredRow = newRow;
         hoveredCol = newCol;
-        drawOverlay(canvas.clientWidth, LABEL_WIDTH + nCols * CELL_W);
+        focusSource = "mouse";
+        refreshCrosshair();
       }
       if (hit.type === "cell") {
         var cell = (matrix.cells[hit.toolId] || {})[hit.runId];
@@ -1103,10 +1219,11 @@ nav_label: Deployment stage timing
     });
     canvas.addEventListener("mouseleave", function () {
       tooltip.hidden = true;
-      if (hoveredRow !== null || hoveredCol !== null) {
+      if (focusSource === "mouse") {
         hoveredRow = null;
         hoveredCol = null;
-        drawOverlay(canvas.clientWidth, LABEL_WIDTH + nCols * CELL_W);
+        focusSource = null;
+        refreshCrosshair();
       }
     });
     canvas.addEventListener("click", function (evt) {
@@ -1116,6 +1233,49 @@ nav_label: Deployment stage timing
       else if (hit.type === "run") openRunInspector(hit.runId);
       else openToolInspector(hit.toolId);
     });
+    canvas.addEventListener("blur", function () {
+      if (focusSource === "keyboard") {
+        hoveredRow = null;
+        hoveredCol = null;
+        focusSource = null;
+        refreshCrosshair();
+      }
+    });
+    // Arrow-key navigation moves the same hoveredRow/hoveredCol crosshair
+    // state mouse hover drives, so orientation (row/column bands, cell
+    // outline, floating name label, header date) works identically for
+    // keyboard focus (v2_raster_ui.md round 3 secs 1, 3, 4).
+    canvas.addEventListener("keydown", function (evt) {
+      var key = evt.key;
+      var visibleRuns = currentRunIds();
+      var isArrow = key === "ArrowUp" || key === "ArrowDown" || key === "ArrowLeft" || key === "ArrowRight";
+      if (isArrow) {
+        evt.preventDefault();
+        if (hoveredRow === null) hoveredRow = 0;
+        if (hoveredCol === null) hoveredCol = 0;
+        if (key === "ArrowUp") hoveredRow = Math.max(0, hoveredRow - 1);
+        else if (key === "ArrowDown") hoveredRow = Math.min(tools.length - 1, hoveredRow + 1);
+        else if (key === "ArrowLeft") hoveredCol = Math.max(0, hoveredCol - 1);
+        else hoveredCol = Math.min(visibleRuns.length - 1, hoveredCol + 1);
+        focusSource = "keyboard";
+        tooltip.hidden = true; // no cursor position to anchor a DOM tooltip to - the floating label covers this
+        refreshCrosshair();
+        var rowTop = TOP_MARGIN_H + hoveredRow * CELL_H;
+        if (rowTop < container.scrollTop + TOP_MARGIN_H) {
+          container.scrollTop = Math.max(0, rowTop - TOP_MARGIN_H);
+        } else if (rowTop + CELL_H > container.scrollTop + container.clientHeight) {
+          container.scrollTop = rowTop + CELL_H - container.clientHeight;
+        }
+      } else if ((key === "Enter" || key === " ") && focusSource === "keyboard" && hoveredRow !== null) {
+        evt.preventDefault();
+        if (hoveredCol !== null && visibleRuns[hoveredCol]) {
+          openCellInspector(tools[hoveredRow], visibleRuns[hoveredCol]);
+        } else {
+          openToolInspector(tools[hoveredRow]);
+        }
+      }
+    });
+    container.addEventListener("scroll", repaintHeader);
 
     function fetchDetail(runId) {
       if (detailCache[runId]) return Promise.resolve(detailCache[runId]);
@@ -1395,8 +1555,17 @@ nav_label: Deployment stage timing
       else location.hash = "tool=" + encodeURIComponent(s.toolId);
     }
 
+    // Selection reuses the same hoveredRow/hoveredCol the mouse/keyboard
+    // crosshair draws from, so a selected cell keeps its full row/column
+    // band + name + header date even once the inspector's backdrop blocks
+    // further hover/keydown events (v2_raster_ui.md round 3 sec 3).
     function openCellInspector(toolId, runId) {
       inspectorState = { mode: "cell", toolId: toolId, runId: runId };
+      var visibleRuns = currentRunIds();
+      var rowIdx = tools.indexOf(toolId);
+      var colIdx = visibleRuns.indexOf(runId);
+      hoveredRow = rowIdx >= 0 ? rowIdx : null;
+      hoveredCol = colIdx >= 0 ? colIdx : null;
       updateHash();
       renderCellHeader(toolId, runId);
       renderCellBody(toolId, runId);
@@ -1405,6 +1574,9 @@ nav_label: Deployment stage timing
 
     function openRunInspector(runId) {
       inspectorState = { mode: "run", runId: runId };
+      var colIdx = currentRunIds().indexOf(runId);
+      hoveredRow = null;
+      hoveredCol = colIdx >= 0 ? colIdx : null;
       updateHash();
       renderRunHeader(runId);
       renderRunBody(runId);
@@ -1413,6 +1585,9 @@ nav_label: Deployment stage timing
 
     function openToolInspector(toolId) {
       inspectorState = { mode: "tool", toolId: toolId };
+      var rowIdx = tools.indexOf(toolId);
+      hoveredRow = rowIdx >= 0 ? rowIdx : null;
+      hoveredCol = null;
       updateHash();
       renderToolHeader(toolId);
       renderToolBody(toolId);
@@ -1422,6 +1597,8 @@ nav_label: Deployment stage timing
     function closeInspector() {
       if (inspector.hidden) return;
       inspectorState = null;
+      hoveredRow = null;
+      hoveredCol = null;
       inspector.hidden = true;
       backdrop.hidden = true;
       if (location.hash) history.replaceState(null, "", location.pathname + location.search);
@@ -1476,14 +1653,20 @@ nav_label: Deployment stage timing
       draw();
     });
 
+    // Scrolls to the row and leaves a persistent outline briefly - the
+    // amber label-column stroke plus the same full row-band the crosshair
+    // uses, rather than just repositioning the viewport
+    // (v2_raster_ui.md round 3 sec 3).
     function scrollToRow(idx) {
       var target = TOP_MARGIN_H + idx * CELL_H - container.clientHeight / 2;
       container.scrollTop = Math.max(0, target);
       searchHighlightRow = idx;
+      hoveredRow = idx;
       draw();
       clearTimeout(searchHighlightTimer);
       searchHighlightTimer = setTimeout(function () {
         searchHighlightRow = null;
+        if (hoveredRow === idx) hoveredRow = null;
         draw();
       }, 1500);
     }
@@ -1501,10 +1684,17 @@ nav_label: Deployment stage timing
 
     // One button per first letter actually present among the (already
     // alphabetical) tool names - jumps to that letter's first row.
+    // firstRowLetters is the reverse lookup (row -> letter), used to mark
+    // section landmarks in the otherwise-blank overview-mode label column
+    // (v2_raster_ui.md round 3 sec 1).
     var firstRowForLetter = {};
+    var firstRowLetters = {};
     tools.forEach(function (toolId, idx) {
       var letter = shortName(toolId).charAt(0).toUpperCase();
-      if (!(letter in firstRowForLetter)) firstRowForLetter[letter] = idx;
+      if (!(letter in firstRowForLetter)) {
+        firstRowForLetter[letter] = idx;
+        firstRowLetters[idx] = letter;
+      }
     });
     jumpIndex.innerHTML = Object.keys(firstRowForLetter).sort().map(function (letter) {
       return '<button type="button" data-letter="' + escapeHtml(letter) + '">' + escapeHtml(letter) + "</button>";
