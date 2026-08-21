@@ -151,26 +151,38 @@
     .gx-prose {
       max-width: 46rem;
     }
-    .gx-disclosure {
-      margin: 0 0 1.25rem;
-    }
-    .gx-disclosure summary {
-      cursor: pointer;
+    /* Inline "More" toggle after a brief description, rather than a
+       <details> block below it - keeps whatever sits below the intro
+       sentence at a fixed position, so toggling the expanded text never
+       shifts it (v2_startup_ui.md: a <details> disclosure used to visibly
+       jump the controls next to it when it changed height). */
+    .gx-more-toggle {
+      font: inherit;
+      font-size: 0.85rem;
       font-weight: 600;
-      font-size: 0.9rem;
       color: var(--galaxy-primary);
-      list-style: none;
+      background: none;
+      border: none;
+      padding: 0;
+      margin-left: 0.4rem;
+      cursor: pointer;
+      white-space: nowrap;
     }
-    .gx-disclosure summary::-webkit-details-marker { display: none; }
-    .gx-disclosure summary::before {
+    .gx-more-toggle:hover {
+      color: var(--galaxy-gold-dark);
+    }
+    .gx-more-toggle::after {
       content: "\25b8";
       display: inline-block;
       width: 0.9em;
+      margin-left: 0.15rem;
       color: var(--galaxy-grey);
     }
-    .gx-disclosure[open] summary::before { content: "\25be"; }
-    .gx-disclosure .gx-prose {
-      margin: 0.5rem 0 0;
+    .gx-more-toggle.is-open::after {
+      content: "\25be";
+    }
+    .gx-more-text {
+      margin-top: -0.5rem;
     }
 
     /* Legend badges - outline-tag pattern from the design guide */

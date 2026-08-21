@@ -3,7 +3,7 @@ layout: default
 title: Deployment Stage Timing
 description: Per-task deployment and Galaxy startup timing across scheduled runs.
 nav_href: raster.html
-nav_label: Tool x run raster
+nav_label: Tool tests
 ---
 
 <div id="gx-summary" class="gx-summary" hidden>
@@ -59,7 +59,7 @@ nav_label: Tool x run raster
 
 <h2>Galaxy startup timing</h2>
 <p class="gx-prose">
-  Each bar is a run; colored segments show time spent in each phase of Galaxy's own startup sequence.
+  Each bar is a run; segments show time spent in each phase of Galaxy's startup sequence.
   <button type="button" class="gx-more-toggle" id="gx-startup-more-toggle" aria-expanded="false">More</button>
 </p>
 <p class="gx-prose gx-more-text" id="gx-startup-more-text" hidden>
@@ -84,6 +84,15 @@ nav_label: Tool x run raster
 <p id="gx-startup-empty" hidden>No Galaxy-startup timing data yet.</p>
 
 <style>
+  /* This page's charts need real horizontal room to show 10 runs per
+     window without paginating (computeBars is width-driven, not a fixed
+     count) - default.html's shared 1100px main/header width leaves only
+     ~8. Overridden here (and matched in raster.html for consistency
+     between the two) rather than raised in default.html since
+     docs/index.md doesn't need the extra width. */
+  main.gx-content, .gx-header__inner {
+    max-width: 1300px;
+  }
   .gx-summary {
     display: flex;
     flex-wrap: wrap;
@@ -112,40 +121,6 @@ nav_label: Tool x run raster
   }
   .gx-summary__value--faster { color: #2f7a4f; }
   .gx-summary__value--slower { color: #b5502f; }
-
-  /* Inline "More" toggle rather than a raster.html-style <details> block
-     below the intro sentence - keeps the older/newer controls in their
-     own div, at a fixed position, so toggling the expanded text never
-     shifts them (v2_startup_ui.md: they used to visibly jump when the
-     disclosure shared a flex row with them and changed height). */
-  .gx-more-toggle {
-    font: inherit;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--galaxy-primary);
-    background: none;
-    border: none;
-    padding: 0;
-    margin-left: 0.4rem;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  .gx-more-toggle:hover {
-    color: var(--galaxy-gold-dark);
-  }
-  .gx-more-toggle::after {
-    content: "\25b8";
-    display: inline-block;
-    width: 0.9em;
-    margin-left: 0.15rem;
-    color: var(--galaxy-grey);
-  }
-  .gx-more-toggle.is-open::after {
-    content: "\25be";
-  }
-  .gx-more-text {
-    margin-top: -0.5rem;
-  }
 
   .gx-chart-row {
     display: flex;
@@ -249,7 +224,6 @@ nav_label: Tool x run raster
   .gx-chart-legend__item.is-isolated {
     background: rgba(37, 83, 123, 0.1);
     color: var(--galaxy-dark);
-    font-weight: 600;
   }
   .gx-chart-legend__swatch {
     display: inline-block;
@@ -492,7 +466,15 @@ nav_label: Tool x run raster
         applyLegendClass();
         redraw();
       },
-      isPinned: function () { return pinnedStage !== null; }
+      clearIsolated: function () {
+        if (!isolatedStage) return;
+        isolatedStage = null;
+        hoveredStage = null; // see setIsolated's comment on the same line
+        applyLegendClass();
+        redraw();
+      },
+      isPinned: function () { return pinnedStage !== null; },
+      isIsolated: function () { return isolatedStage !== null; }
     };
   }
 
@@ -702,6 +684,81 @@ nav_label: Tool x run raster
     return html;
   }
 
+  // A stage's own seconds across whatever runs are currently on the
+  // plot - null if it didn't occur in any of them (e.g. a conditional
+  // Ansible task, or a phase this Galaxy version skipped).
+  function computeStageStats(stageName, visRuns) {
+    var vals = [];
+    visRuns.forEach(function (run) {
+      for (var i = 0; i < run.stages.length; i++) {
+        if (run.stages[i].name === stageName) {
+          vals.push(run.stages[i].seconds);
+          break;
+        }
+      }
+    });
+    if (!vals.length) return null;
+    var sorted = vals.slice().sort(function (a, b) { return a - b; });
+    var sum = 0;
+    vals.forEach(function (v) { sum += v; });
+    return {
+      count: vals.length,
+      total: visRuns.length,
+      avg: sum / vals.length,
+      median: median(vals),
+      min: sorted[0],
+      max: sorted[sorted.length - 1]
+    };
+  }
+
+  // Clicking a legend entry isolates that stage across every bar
+  // (existing behavior) - this renders the matching aggregate summary in
+  // the details panel, since there's no single run/segment to show
+  // (v2_startup_ui.md round 4 "legend click details").
+  function legendStatsHtml(stageName, visRuns) {
+    var stats = computeStageStats(stageName, visRuns);
+    var html = '<div class="gx-chart-details__body">';
+    html += '<div class="gx-chart-details__stage">' + escapeHtml(shortStageName(stageName)) + "</div>";
+    html += '<hr class="gx-chart-details__rule">';
+    if (!stats) {
+      html += "<div>Not present in the runs currently shown.</div>";
+    } else {
+      html += '<div class="gx-chart-details__label">Average</div>';
+      html += "<div>" + fmtSeconds(stats.avg) + "</div>";
+      html += '<div class="gx-chart-details__label">Median</div>';
+      html += "<div>" + fmtSeconds(stats.median) + "</div>";
+      html += '<div class="gx-chart-details__label">Max</div>';
+      html += "<div>" + fmtSeconds(stats.max) + "</div>";
+      html += '<div class="gx-chart-details__label">Min</div>';
+      html += "<div>" + fmtSeconds(stats.min) + "</div>";
+      if (stats.count !== stats.total) {
+        html += "<div>Present in " + stats.count + " of " + stats.total + " runs shown.</div>";
+      }
+    }
+    html += "</div>";
+    return html;
+  }
+
+  function showLegendStats(detailsEl, stageName, visRuns) {
+    detailsEl.innerHTML = legendStatsHtml(stageName, visRuns);
+    detailsEl.classList.add("gx-chart-details--active");
+  }
+
+  // getVisibleRuns is called lazily at click time (not passed as a plain
+  // array) since both charts' "currently visible" set changes as their
+  // window/alignment moves after this listener is wired.
+  function wireLegendStats(legendEl, highlight, detailsEl, getVisibleRuns) {
+    legendEl.addEventListener("click", function (evt) {
+      var item = closestLegendItem(evt.target);
+      if (!item) return;
+      if (highlight.isIsolated()) {
+        showLegendStats(detailsEl, item.getAttribute("data-stage"), getVisibleRuns());
+      } else {
+        clearDetails(detailsEl);
+      }
+    });
+  }
+
   // A fixed-position, fixed-size panel rather than a cursor-following
   // tooltip: only its content changes on hover, so hovering a chart never
   // shifts the rest of the page (v2_startup_ui.md).
@@ -781,6 +838,7 @@ nav_label: Tool x run raster
     var series = buildStageSeries(runs);
     renderLegend(legendEl, order, colors);
     var highlight = makeHighlightState(legendEl, draw);
+    wireLegendStats(legendEl, highlight, detailsEl, visibleRuns);
 
     var windowStart = Math.max(0, runs.length - 1);
     var nBars = 1;
@@ -879,7 +937,7 @@ nav_label: Tool x run raster
     }
 
     canvas.addEventListener("mousemove", function (evt) {
-      if (pinned) return; // details/outline are locked until unpinned
+      if (pinned || highlight.isIsolated()) return; // details/outline are locked until unpinned/deselected
       var hit = hitTest(evt.clientX, evt.clientY);
       var stageName = hit && hit.segment ? hit.segment.stage.name : null;
       var stageChanged = highlight.setHovered(stageName);
@@ -893,7 +951,7 @@ nav_label: Tool x run raster
       if (stageChanged || hitChanged) draw();
     });
     canvas.addEventListener("mouseleave", function () {
-      if (pinned) return;
+      if (pinned || highlight.isIsolated()) return;
       hoveredHit = null;
       clearDetails(detailsEl);
       highlight.setHovered(null);
@@ -917,10 +975,18 @@ nav_label: Tool x run raster
       showDetails(detailsEl, hit.run, hit.segment, series);
       draw();
     });
+    // A legend isolation is otherwise only released by clicking that same
+    // legend entry again - unintuitive once the details panel is showing
+    // its aggregate stats, so any click outside the chart/legend/details
+    // releases it too, same as pinning already works.
     document.addEventListener("click", function (evt) {
-      if (!pinned) return;
-      if (canvas.contains(evt.target) || detailsEl.contains(evt.target)) return;
-      unpin();
+      if (!pinned && !highlight.isIsolated()) return;
+      if (canvas.contains(evt.target) || detailsEl.contains(evt.target) || legendEl.contains(evt.target)) return;
+      if (pinned) unpin();
+      if (highlight.isIsolated()) {
+        highlight.clearIsolated();
+        clearDetails(detailsEl);
+      }
     });
 
     window.addEventListener("resize", draw);
@@ -952,9 +1018,11 @@ nav_label: Tool x run raster
     var series = buildStageSeries(runs);
     if (runs.length) renderLegend(legendEl, order, colors);
     var highlight = makeHighlightState(legendEl, draw);
+    wireLegendStats(legendEl, highlight, detailsEl, function () { return currentVisible; });
 
     var currentDeployRuns = [];
     var currentLabel = "";
+    var currentVisible = []; // this dataset's own runs aligned to the deploy chart's window, minus blanks - what legend-click stats aggregate over
     var layout = [];
     var pinned = null;
     var hoveredHit = null;
@@ -986,6 +1054,7 @@ nav_label: Tool x run raster
       if (!currentDeployRuns.length) {
         emptyEl.hidden = runs.length > 0;
         container.hidden = runs.length === 0;
+        currentVisible = [];
         return;
       }
       emptyEl.hidden = true;
@@ -994,6 +1063,7 @@ nav_label: Tool x run raster
       var nBars = currentDeployRuns.length;
       var entries = currentDeployRuns.map(function (dRun) { return runsById[dRun.run_id] || null; });
       var present = entries.filter(Boolean);
+      currentVisible = present;
       var maxTotal = present.reduce(function (m, r) { return Math.max(m, r.total_seconds); }, 1);
       present.forEach(function (r) { r._maxTotal = maxTotal; });
 
@@ -1049,7 +1119,7 @@ nav_label: Tool x run raster
     }
 
     canvas.addEventListener("mousemove", function (evt) {
-      if (pinned) return;
+      if (pinned || highlight.isIsolated()) return;
       var hit = hitTest(evt.clientX, evt.clientY);
       var stageName = hit && hit.segment ? hit.segment.stage.name : null;
       var stageChanged = highlight.setHovered(stageName);
@@ -1063,7 +1133,7 @@ nav_label: Tool x run raster
       if (stageChanged || hitChanged) draw();
     });
     canvas.addEventListener("mouseleave", function () {
-      if (pinned) return;
+      if (pinned || highlight.isIsolated()) return;
       hoveredHit = null;
       clearDetails(detailsEl);
       highlight.setHovered(null);
@@ -1084,10 +1154,18 @@ nav_label: Tool x run raster
       showDetails(detailsEl, hit.run, hit.segment, series);
       draw();
     });
+    // A legend isolation is otherwise only released by clicking that same
+    // legend entry again - unintuitive once the details panel is showing
+    // its aggregate stats, so any click outside the chart/legend/details
+    // releases it too, same as pinning already works.
     document.addEventListener("click", function (evt) {
-      if (!pinned) return;
-      if (canvas.contains(evt.target) || detailsEl.contains(evt.target)) return;
-      unpin();
+      if (!pinned && !highlight.isIsolated()) return;
+      if (canvas.contains(evt.target) || detailsEl.contains(evt.target) || legendEl.contains(evt.target)) return;
+      if (pinned) unpin();
+      if (highlight.isIsolated()) {
+        highlight.clearIsolated();
+        clearDetails(detailsEl);
+      }
     });
     window.addEventListener("resize", draw);
 

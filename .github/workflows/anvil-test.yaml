@@ -1,11 +1,11 @@
-# Milestone 1 of v2_plan.md: a manual-only workflow to deploy Galaxy via
-# galaxy-k8s-boot's `anvil` branch (VM + GCP Batch, no GKE/GalaxyKubeMan) and
-# get a real timing number for the full, unchunked AnVIL tool-test suite.
+# Milestone 1/4 of v2_plan.md: deploy Galaxy via galaxy-k8s-boot's `anvil`
+# branch (VM + GCP Batch, no GKE/GalaxyKubeMan), run the AnVIL tool-test
+# suite, and commit deployment/tool-test reports back to `main`.
 #
 # Deliberately NOT wired up yet, pending validation (see v2_plan.md §7/§9):
-#   - no `schedule:` trigger — workflow_dispatch only until timings are trusted
-#   - no report generation/commit-back to `main` — results are a workflow
-#     artifact for now, so repeated dry runs don't spam repo history
+#   - no `schedule:` trigger — workflow_dispatch only until timings are
+#     trusted at full scale (test-page-size lets us validate on a slice
+#     first; see §7 risk 1 on whether the full suite fits in one job)
 #   - no matrix/parallel-job split — single `galaxy-tool-test` process,
 #     scaled via --parallel-tests, to measure whether that alone is enough
 #   - no "expected vs. loaded" toolset check yet
@@ -20,12 +20,24 @@ on:
         required: true
       parallel-tests:
         description: 'galaxy-tool-test --parallel-tests value'
-        default: '4'
+        default: '16'
         required: true
       run-tests:
         description: 'Run the full tool-test suite (false = time the deploy only)'
         type: boolean
         default: true
+      test-page-size:
+        description: 'galaxy-tool-test --page-size (0 = disabled, run everything)'
+        default: '0'
+        required: true
+      test-page-number:
+        description: 'galaxy-tool-test --page-number (only used if test-page-size != 0)'
+        default: '0'
+        required: true
+      random-tool-count:
+        description: 'Test a random sample of this many tools instead (0 = disabled; takes priority over test-page-size/number)'
+        default: '0'
+        required: true
 
 env:
   GCP_PROJECT: anvil-and-terra-development
@@ -45,11 +57,33 @@ jobs:
       - name: Checkout galaxy-tests
         uses: actions/checkout@v4
 
-      - name: Checkout galaxy-k8s-boot (anvil branch)
+      # A separate, plain clone of `main` that every report-generation step
+      # below operates in directly (via working-directory), rather than the
+      # checkout above: this workflow runs from whatever ref it was
+      # dispatched against, which won't always be main (e.g. a feature
+      # branch mid-review), so committing/pushing from that checkout could
+      # drag unrelated branch history into main. This also means the
+      # deploy-history/heatmap scripts see main's actual accumulated
+      # history to append to, instead of starting from an empty state every
+      # run. if: always() so it's ready for the final commit step even if a
+      # later step fails.
+      - name: Clone main for report generation
+        if: always()
+        run: |
+          rm -rf /tmp/main-clone
+          git clone --depth 1 --branch main \
+            "https://${GITHUB_ACTOR}:${{ secrets.GIT_TOKEN }}@github.com/${{ github.repository }}.git" \
+            /tmp/main-clone
+
+      # Temporarily tracking `dev`, not `anvil`: the quote-escaping fix for
+      # launch_vm.sh's generated cloud-init script has landed on `dev` but
+      # not yet on `anvil`, and more changes may follow while this is being
+      # shaken out. Switch back to `anvil` once the fix is merged there.
+      - name: Checkout galaxy-k8s-boot (dev branch)
         uses: actions/checkout@v4
         with:
           repository: galaxyproject/galaxy-k8s-boot
-          ref: anvil
+          ref: dev
           path: galaxy-k8s-boot
 
       - name: Authenticate to Google Cloud
@@ -75,14 +109,49 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       # --ephemeral-only: no persistent disks, matching the old "fresh cluster
-      # every run" model. Branch/project/zone/image are all galaxy-k8s-boot's
-      # own `anvil`-branch defaults (verified against anvil-and-terra-development
-      # directly - see v2_plan.md §4) - nothing to override here.
+      # every run" model. Project/zone/image are all galaxy-k8s-boot's own
+      # `anvil`-branch defaults (verified against anvil-and-terra-development
+      # directly - see v2_plan.md §4). --git-branch dev is NOT just about
+      # which copy of this script we're running (that's the checkout step
+      # above) - launch_vm.sh's own GIT_BRANCH default is still "anvil"
+      # regardless of which branch's copy of the script executes, so without
+      # this flag the VM's ansible-pull would still pull the (unfixed)
+      # anvil branch. Drop this flag once dev's fix is merged to anvil.
+      #
+      # -f values/values.yml -f mixins/testing.yml -f mixins/ci-concurrency.yml:
+      # passing any -f replaces launch_vm.sh's own default (values/values.yml
+      # alone), so all three are needed. mixins/testing.yml sets
+      # allow_path_paste: true, needed for --force_path_paste below (see
+      # "Run tool tests"). mixins/ci-concurrency.yml raises the gcp_batch
+      # runner's workers from Galaxy's default of 4 to 16 - confirmed via
+      # `kubectl get configmap galaxy-configs -o jsonpath='{.data.job_conf\.yml}'`
+      # that Batch-routed jobs were capped there (not by Batch/quota itself,
+      # and not by node CPU - `kubectl top node` showed the node mostly idle
+      # even with jobs trickling in one at a time) - PR galaxyproject/
+      # galaxy-k8s-boot#97 merged this to dev, but nothing here was passing
+      # the extra -f to actually use it.
+      #
+      # -m t2d-standard-8: the default t2d-standard-4 leaves under 1 free
+      # CPU once Galaxy's own service pods (web, job handler, celery x2,
+      # rabbitmq, postgres, nginx, tusd, workflow, k8s-monitor) claim their
+      # requests (~76% of 4 vCPUs) - confirmed via `kubectl describe node`/
+      # `describe pod` showing "Insufficient cpu" FailedScheduling events,
+      # so none of TPV's k8s-routed (<=1 core, small-job) test jobs could
+      # ever be scheduled. This is intended job routing, not a bug in it -
+      # small jobs are meant to run on the local k8s runner - just not
+      # enough spare node capacity to do so.
+      - name: Record deploy start time
+        id: deploy-start
+        run: echo "epoch=$(date -u +%s)" >> "$GITHUB_OUTPUT"
+
       - name: Launch Galaxy VM
         working-directory: galaxy-k8s-boot
         run: |
           bin/launch_vm.sh \
             --ephemeral-only \
+            --git-branch dev \
+            -f values/values.yml -f mixins/testing.yml -f mixins/ci-concurrency.yml \
+            -m t2d-standard-8 \
             -k "${{ steps.ssh-key.outputs.public-key }}" \
             "${{ steps.instance.outputs.name }}"
 
@@ -96,12 +165,26 @@ jobs:
           echo "ip=$IP" >> "$GITHUB_OUTPUT"
           echo "Galaxy VM IP: $IP"
 
+      # --strict-host-key-checking=no on every gcloud compute ssh/scp call
+      # below: gcloud manages host keys itself (a separate layer in front of
+      # raw ssh -o flags - passing -o StrictHostKeyChecking/UserKnownHostsFile
+      # via --ssh-flag does NOT override it). Its own documented default is
+      # lenient on the FIRST connection to an instance name and strict on
+      # every one after - so when the pre-baked VM image regenerates its SSH
+      # host keys on first boot (standard practice so VMs cloned from the
+      # same snapshot don't all share identical host keys), gcloud caches
+      # whatever key this job's first successful connection saw, then
+      # rejects every later connection once the real key has rotated. This
+      # flag makes gcloud treat every connection as the lenient "first" one,
+      # which is fine here: a real key rotation, not a spoofed host, on an
+      # ephemeral VM this job deletes at the end regardless.
       - name: Wait for cloud-init to complete
         run: |
           for i in $(seq 1 60); do
             if gcloud compute ssh "${{ steps.instance.outputs.name }}" \
               --project="$GCP_PROJECT" --zone="$GCP_ZONE" \
               --ssh-key-file="${{ steps.ssh-key.outputs.private-key-path }}" \
+              --strict-host-key-checking=no \
               --command="cloud-init status --wait" 2>/dev/null; then
               echo "cloud-init completed"
               break
@@ -110,19 +193,75 @@ jobs:
             sleep 30
           done
 
+      # galaxy-k8s-boot's cloud-init script runs `ansible-pull` in the
+      # foreground inside a `bash -c '...'` block with no `set -e` of its own
+      # (only launch_vm.sh itself, which runs on this runner, sets that) and
+      # that block's last command is an `echo`. So if ansible-pull fails
+      # partway through, the block still exits 0 and cloud-init reports
+      # "done" regardless - `cloud-init status --wait` is NOT proof the
+      # deployment actually succeeded. Always pull the real log so failures
+      # are diagnosable instead of a bare "file not found" further down.
+      # Kept in the repo (not just a workflow artifact) so per-task deploy
+      # timing survives past the artifact's retention window - see
+      # anvil_generate_deploy_stages.py, which parses this into the stacked
+      # deploy-stage-timing chart. No more tail truncation: that risked
+      # cutting off the earliest tasks (and thus corrupting the TASK/timing
+      # pairing that script relies on) once this was more than a diagnostic
+      # dump - the whole file has been well under a resource concern
+      # (tens of KB) in every run seen so far.
+      - name: Fetch cloud-init/ansible-pull output
+        if: always()
+        continue-on-error: true
+        run: |
+          mkdir -p logs
+          gcloud compute ssh "${{ steps.instance.outputs.name }}" \
+            --project="$GCP_PROJECT" --zone="$GCP_ZONE" \
+            --ssh-key-file="${{ steps.ssh-key.outputs.private-key-path }}" \
+            --strict-host-key-checking=no \
+            --command="sudo cloud-init status --long; echo '--- cloud-init-output.log ---'; sudo cat /var/log/cloud-init-output.log" \
+            > logs/cloud-init-output.log 2>&1 || echo "Could not fetch cloud-init log (see step output)" | tee -a logs/cloud-init-output.log
+
+      - name: Save ansible-pull output under reports/anvil
+        if: always()
+        continue-on-error: true
+        working-directory: /tmp/main-clone
+        run: |
+          DIR="reports/anvil/deployments/${{ steps.instance.outputs.name }}"
+          mkdir -p "$DIR"
+          cp "${{ github.workspace }}/logs/cloud-init-output.log" "$DIR/ansible-output.log"
+
+      # Stdlib only (re/json/os) - no pip install needed, so this can run
+      # this early, well before "Set up Python" below installs anything.
+      - name: Generate deploy-stage timing data
+        if: always()
+        continue-on-error: true
+        working-directory: /tmp/main-clone
+        run: python3 "${{ github.workspace }}/.github/scripts/anvil_generate_deploy_stages.py"
+
       # kubeconfig lives at /home/debian/.kube/config: the anvil branch's
       # ansible role copies /etc/rancher/rke2/rke2.yaml there for VM_USER
       # "debian" (galaxy-k8s-boot/roles/galaxy_k8s_deployment/tasks/rke2_setup.yml).
       # RKE2's kubeconfig defaults its server to localhost; rewrite it to the
       # VM's external IP either way (harmless no-op if a pattern isn't present).
+      # Retry a few times: cloud-init "done" (above) doesn't guarantee the
+      # ansible-pull deployment actually finished successfully.
       - name: Copy kubeconfig from VM
         run: |
           mkdir -p ~/.kube
-          gcloud compute scp \
-            --project="$GCP_PROJECT" --zone="$GCP_ZONE" \
-            --ssh-key-file="${{ steps.ssh-key.outputs.private-key-path }}" \
-            "debian@${{ steps.instance.outputs.name }}:/home/debian/.kube/config" \
-            ~/.kube/config
+          for i in $(seq 1 10); do
+            if gcloud compute scp \
+              --project="$GCP_PROJECT" --zone="$GCP_ZONE" \
+              --ssh-key-file="${{ steps.ssh-key.outputs.private-key-path }}" \
+              --strict-host-key-checking=no \
+              "debian@${{ steps.instance.outputs.name }}:/home/debian/.kube/config" \
+              ~/.kube/config 2>/dev/null; then
+              echo "kubeconfig copied"
+              break
+            fi
+            echo "Attempt $i/10: kubeconfig not present yet..."
+            sleep 30
+          done
+          test -s ~/.kube/config || { echo "kubeconfig never appeared - see the cloud-init/ansible-pull log artifact" >&2; exit 1; }
           sed -i "s|https://127.0.0.1:6443|https://${{ steps.vm-ip.outputs.ip }}:6443|" ~/.kube/config
           sed -i "s|https://0.0.0.0:6443|https://${{ steps.vm-ip.outputs.ip }}:6443|" ~/.kube/config
 
@@ -138,10 +277,12 @@ jobs:
             kubectl rollout status "deployment/$d" -n galaxy --timeout=15m
           done
 
+      # Galaxy is served under /galaxy (roles/galaxy_k8s_deployment/defaults/main.yml
+      # galaxy_prefix), not at the VM's root path.
       - name: Wait for Galaxy API to respond
         id: api
         run: |
-          URL="http://${{ steps.vm-ip.outputs.ip }}/api/version"
+          URL="http://${{ steps.vm-ip.outputs.ip }}/galaxy/api/version"
           for i in $(seq 1 30); do
             if response=$(curl -sf "$URL"); then
               echo "Galaxy is up: $response"
@@ -153,51 +294,373 @@ jobs:
           echo "Galaxy API never became responsive" >&2
           exit 1
 
-      - name: Record deploy timing
-        run: echo "Deploy finished at $(date -u +%FT%TZ) (job started at ${{ github.event.repository.updated_at }})"
+      # Captured here (before any tool-test traffic exists) specifically to
+      # dissect Galaxy's own startup sequence - waiting until the end of the
+      # job (see "Fetch Galaxy web handler pod logs" below) is too late: a
+      # first attempt showed the container's log had already rotated past
+      # its retention limit under tool-test request volume, losing the
+      # entire startup sequence (a ~1h39m gap between the wait-db init
+      # container finishing and the earliest surviving galaxy-web line).
+      - name: Fetch Galaxy web handler startup log
+        if: always()
+        continue-on-error: true
+        run: |
+          mkdir -p logs
+          kubectl logs -n galaxy deployment/galaxy-web --all-containers=true --prefix=true --tail=-1 \
+            > logs/galaxy-web-startup.log 2>&1 || echo "Could not fetch galaxy-web startup log (see step output)" | tee -a logs/galaxy-web-startup.log
 
+      - name: Save Galaxy web handler startup log under reports/anvil
+        if: always()
+        continue-on-error: true
+        working-directory: /tmp/main-clone
+        run: |
+          DIR="reports/anvil/deployments/${{ steps.instance.outputs.name }}"
+          mkdir -p "$DIR"
+          cp "${{ github.workspace }}/logs/galaxy-web-startup.log" "$DIR/galaxy-web-startup.log"
+
+      # Stdlib only, same as "Generate deploy-stage timing data" above.
+      - name: Generate Galaxy startup timing data
+        if: always()
+        continue-on-error: true
+        working-directory: /tmp/main-clone
+        run: python3 "${{ github.workspace }}/.github/scripts/anvil_generate_galaxy_startup_stages.py"
+
+      # Unconditional (not gated on inputs.run-tests): deploy health is
+      # tracked on every run, deploy-only or not.
       - name: Set up Python
-        if: ${{ inputs.run-tests == 'true' }}
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Install galaxy-tool-test and planemo
-        if: ${{ inputs.run-tests == 'true' }}
-        run: python -m pip install "galaxy-tool-util>=23.0" planemo
+      - name: Install reporting dependencies
+        run: python -m pip install matplotlib jinja2
 
-      # No -t/--tool-id filter: -t defaults to ALL_TOOLS
-      # (galaxy/tool_util/verify/script.py), so this tests every tool the
-      # "cloud" toolset loaded via CVMFS at startup - see v2_plan.md §2 step 7.
-      # No chunk selection needed either, per §5.
+      - name: Record deploy timing
+        working-directory: /tmp/main-clone
+        run: |
+          DURATION=$(( $(date -u +%s) - ${{ steps.deploy-start.outputs.epoch }} ))
+          echo "Deploy took ${DURATION}s"
+          python "${{ github.workspace }}/.github/scripts/anvil_record_deployment.py" success "$DURATION" \
+            "https://github.com/anvilproject/galaxy-tests/actions/runs/${{ github.run_id }}"
+
+      - name: Install galaxy-tool-test and planemo
+        if: ${{ inputs.run-tests }}
+        run: python -m pip install "galaxy-tool-util>=23.0" planemo bioblend
+
+      # Upstream bug in galaxy-tool-util (confirmed present from 25.1.1
+      # through the latest 26.1.1, so not a regression to just pin around):
+      # remote_to_input()'s non-composite-data branch never forwards
+      # force_path_paste to _get_path_or_location, so --force_path_paste is
+      # silently ignored for ordinary file inputs and every test falls
+      # through to the client-upload path, which fails since we have no
+      # local test-data. Patch the installed package directly rather than
+      # wait on an upstream fix - the assert fails loudly if the expected
+      # text isn't found, e.g. once this is actually fixed upstream.
+      - name: Patch galaxy-tool-util force_path_paste bug
+        if: ${{ inputs.run-tests }}
+        run: |
+          cat > /tmp/patch_force_path_paste.py << 'PYEOF'
+          import galaxy.tool_util.verify.interactor as m
+
+          path = m.__file__
+          with open(path) as f:
+              content = f.read()
+
+          old = (
+              '            path_or_location = self._get_path_or_location(\n'
+              '                fname,\n'
+              '                test_data,\n'
+              '                tool_id,\n'
+              '                tool_version=tool_version,\n'
+              '                mode="file" if tool_input["class"].lower() == "file" else "directory",\n'
+              '            )'
+          )
+          new = old.replace(
+              "tool_version=tool_version,\n",
+              "tool_version=tool_version,\n                force_path_paste=force_path_paste,\n",
+              1,
+          )
+          assert old in content, "Expected force_path_paste bug text not found - has this been fixed upstream?"
+          content = content.replace(old, new, 1)
+          with open(path, "w") as f:
+              f.write(content)
+          print(f"Patched {path}")
+          PYEOF
+          python /tmp/patch_force_path_paste.py
+
+      # galaxypassword is the bootstrap_admin_api_key baked in by
+      # galaxy-k8s-boot - per Galaxy's own config docs, it's meant only to
+      # "bootstrap Galaxy, in particular to create a real admin user account
+      # via API", not as a general-purpose key. Using it directly as -k/-a
+      # for galaxy-tool-test failed with a JSON-decode error on the first
+      # real API call (run 6) - it authenticates as a virtual
+      # BootstrapAdminUser with no real DB user id, which breaks
+      # history-backed operations. Mint a real API key for the actual
+      # `default-user@galaxyproject.org` user instead - same thing
+      # galaxy-helm's own (disabled-by-default) post-install job does for a
+      # single_user instance (templates/configmap-post-install.yaml): hit the
+      # root URL once to make the web handler auto-create the user record,
+      # then fetch/create their API key via bioblend (what `abm galaxy user
+      # key` itself calls under the hood).
+      - name: Create real API key
+        if: ${{ inputs.run-tests }}
+        id: api-key
+        run: |
+          curl -fsSL "http://${{ steps.vm-ip.outputs.ip }}/galaxy/" > /dev/null
+          KEY=$(python -c "
+          from bioblend import galaxy
+          gi = galaxy.GalaxyInstance(url='http://${{ steps.vm-ip.outputs.ip }}/galaxy/', key='galaxypassword')
+          user = gi.users.get_users()[0]
+          key = gi.users.get_user_apikey(user['id'])
+          if key is None or key == 'Not available.':
+              key = gi.users.create_user_apikey(user['id'])
+          print(key)
+          ")
+          echo "::add-mask::$KEY"
+          echo "key=$KEY" >> "$GITHUB_OUTPUT"
+
+      # Three selection modes, in priority order:
+      #   1. random-tool-count != 0: sample that many tool IDs from the
+      #      server's own tests_summary (the full testable set, including
+      #      Galaxy's internal double-underscore utility tools). There's no
+      #      single-invocation way to hand galaxy-tool-test a specific list
+      #      of tool IDs (-t/--tool-id takes exactly one, per
+      #      galaxy/tool_util/verify/script.py), so this fans one process
+      #      per sampled tool out across --parallel-tests concurrent
+      #      workers - a first attempt ran all 200 sequentially (one
+      #      process at a time, each paying its own auth/history overhead
+      #      and none of them benefiting from --parallel-tests, since that
+      #      only parallelizes test cases *within* one process) and blew
+      #      well past GitHub Actions' 5h30m job timeout before finishing.
+      #   2. test-page-size != 0: existing deterministic pagination through
+      #      the full toolset, in whatever order the server returns it.
+      #   3. neither: -t defaults to ALL_TOOLS, one process tests everything
+      #      the "cloud" toolset loaded via CVMFS at startup - see
+      #      v2_plan.md §2 step 7. No chunk selection needed either, per §5.
+      #
+      # continue-on-error: ALL_TOOLS (and, incidentally, a random sample
+      # drawn from the same tests_summary) always includes those internal
+      # utility tools alongside real ones. Those 404 from the server-side
+      # test_data_path lookup force_path_paste relies on - another
+      # galaxy-tool-util bug: test_data_path() returns response.json()
+      # unconditionally on both 200 and 404, so a 404 yields a JSON error
+      # dict instead of a path string, crashing os.path.exists() downstream.
+      # Individual tests degrade gracefully (recorded as "Errored", not a
+      # hard stop), but this crashes the whole process with a non-zero exit
+      # right after the results are already written - don't let that abort
+      # the report-building step.
       - name: Run tool tests
-        if: ${{ inputs.run-tests == 'true' }}
+        if: ${{ inputs.run-tests }}
+        continue-on-error: true
         env:
           GALAXY_TEST_DEFAULT_WAIT: '600'
         run: |
-          mkdir -p results
-          galaxy-tool-test \
-            -u "http://${{ steps.vm-ip.outputs.ip }}/" \
-            -k galaxypassword -a galaxypassword \
-            --parallel-tests "${{ inputs.parallel-tests }}" \
-            -j results/results.json \
-            --history-name "anvil-test-${{ steps.instance.outputs.name }}" \
-            --no-history-cleanup \
-            --verbose
+          mkdir -p results logs
+          GALAXY_URL="http://${{ steps.vm-ip.outputs.ip }}/galaxy/"
+          KEY="${{ steps.api-key.outputs.key }}"
+          INSTANCE_NAME="${{ steps.instance.outputs.name }}"
+          export GALAXY_URL KEY INSTANCE_NAME
+
+          if [ "${{ inputs.random-tool-count }}" != "0" ]; then
+            echo "Fetching the full testable tool list to sample ${{ inputs.random-tool-count }} from..."
+            curl -sf -H "x-api-key: $KEY" "${GALAXY_URL}api/tools/tests_summary" \
+              | python3 -c "import json, sys; print('\n'.join(json.load(sys.stdin).keys()))" \
+              > /tmp/all_tool_ids.txt
+            echo "Found $(wc -l < /tmp/all_tool_ids.txt) testable tool IDs"
+            shuf -n "${{ inputs.random-tool-count }}" /tmp/all_tool_ids.txt > /tmp/sampled_tool_ids.txt
+            cp /tmp/sampled_tool_ids.txt logs/sampled-tool-ids.txt
+            echo "Sampled $(wc -l < /tmp/sampled_tool_ids.txt) tool IDs - see logs/sampled-tool-ids.txt"
+
+            # Each worker gets its own results file and history name (both
+            # keyed by line number) instead of sharing one - concurrent
+            # processes appending to the same results.json would race, and
+            # concurrently creating a history with the same name for the
+            # first time is a similar TOCTOU race in galaxy-tool-test's own
+            # get-or-create logic. --parallel-tests is 1 per worker since
+            # each only tests one tool's handful of test cases; the real
+            # concurrency now comes from running many tools' processes at
+            # once (capped below), not from that flag.
+            #
+            # A `while read` loop with manual job-count capping, not `xargs
+            # -n 2`: some real tool IDs contain embedded spaces (e.g.
+            # ".../EMBOSS: compseq14/5.0.0.1"), and xargs's default
+            # whitespace tokenization doesn't know an (index, tool_id)
+            # pair is supposed to stop at a newline - one such tool desyncs
+            # every pairing after it. A first attempt (random-tool-count=200,
+            # run 32485958305) silently dropped 120 of 200 sampled tools
+            # this way - `read` preserves each line, spaces and all.
+            mkdir -p results/by-tool
+            run_one() {
+              local idx="$1" tool_id="$2"
+              galaxy-tool-test \
+                -u "$GALAXY_URL" -k "$KEY" -a "$KEY" \
+                --parallel-tests 1 \
+                --force_path_paste \
+                -t "$tool_id" \
+                -j "results/by-tool/$idx.json" \
+                --history-name "anvil-test-$INSTANCE_NAME-$idx" \
+                --no-history-cleanup \
+                --verbose || true
+            }
+            idx=0
+            while IFS= read -r tool_id; do
+              idx=$((idx + 1))
+              run_one "$idx" "$tool_id" &
+              while [ "$(jobs -r -p | wc -l)" -ge "${{ inputs.parallel-tests }}" ]; do
+                wait -n
+              done
+            done < /tmp/sampled_tool_ids.txt
+            wait
+
+            python3 -c "
+          import json, glob
+          tests = []
+          for path in glob.glob('results/by-tool/*.json'):
+              with open(path) as f:
+                  data = json.load(f)
+              tests.extend(data.get('tests', []))
+          counts = {'success': 0, 'error': 0, 'skip': 0, 'failure': 0}
+          for t in tests:
+              if t.get('has_data'):
+                  status = t.get('data', {}).get('status')
+                  if status in counts:
+                      counts[status] += 1
+          report = {
+              'version': '0.1',
+              'suitename': 'Galaxy Tool Tests',
+              'results': {
+                  'total': sum(counts.values()),
+                  'errors': counts['error'],
+                  'failures': counts['failure'],
+                  'skips': counts['skip'],
+              },
+              'tests': sorted(tests, key=lambda el: el['id']),
+          }
+          with open('results/results.json', 'w') as f:
+              json.dump(report, f)
+          print(f'Merged {len(tests)} test results from {len(glob.glob(\"results/by-tool/*.json\"))} tool-test files')
+          "
+          else
+            PAGE_ARGS=()
+            if [ "${{ inputs.test-page-size }}" != "0" ]; then
+              PAGE_ARGS=(--page-size "${{ inputs.test-page-size }}" --page-number "${{ inputs.test-page-number }}")
+            fi
+            galaxy-tool-test \
+              -u "$GALAXY_URL" -k "$KEY" -a "$KEY" \
+              --parallel-tests "${{ inputs.parallel-tests }}" \
+              --force_path_paste \
+              "${PAGE_ARGS[@]}" \
+              -j results/results.json \
+              --history-name "anvil-test-$INSTANCE_NAME" \
+              --no-history-cleanup \
+              --verbose
+          fi
 
       - name: Build HTML/xunit report
-        if: ${{ inputs.run-tests == 'true' }}
+        if: ${{ inputs.run-tests }}
         run: |
           planemo test_reports results/results.json \
             --test_output results/results.html \
             --test_output_xunit results/results.xunit
+
+      # A second, later snapshot - distinct purpose from the startup-log
+      # capture above. This one covers the fullest window (through however
+      # much of the tool-test run happened) for general end-of-run
+      # diagnostics; if: always() so a failed deploy or a failed/skipped
+      # test run still gets whatever the web handler logged before cleanup
+      # deletes the VM (and the cluster with it). Not reliable for startup
+      # timing specifically - see the note above the earlier capture.
+      # Limited to the web handler deployment (not job handlers/celery/etc)
+      # per request - `kubectl get deployments -n galaxy` (see "Wait for
+      # Galaxy deployments to roll out" above) confirmed its name is
+      # `galaxy-web`.
+      - name: Fetch Galaxy web handler pod logs
+        if: always()
+        continue-on-error: true
+        run: |
+          mkdir -p logs
+          kubectl logs -n galaxy deployment/galaxy-web --all-containers=true --prefix=true --tail=-1 \
+            > logs/galaxy-web.log 2>&1 || echo "Could not fetch galaxy-web logs (see step output)" | tee -a logs/galaxy-web.log
+
+      - name: Save Galaxy web handler logs under reports/anvil
+        if: always()
+        continue-on-error: true
+        working-directory: /tmp/main-clone
+        run: |
+          DIR="reports/anvil/deployments/${{ steps.instance.outputs.name }}"
+          mkdir -p "$DIR"
+          cp "${{ github.workspace }}/logs/galaxy-web.log" "$DIR/galaxy-web.log"
+
+      - name: Save results under reports/anvil
+        if: ${{ inputs.run-tests }}
+        working-directory: /tmp/main-clone
+        run: |
+          DIR="reports/anvil/tool-tests/${{ steps.instance.outputs.name }}"
+          mkdir -p "$DIR"
+          cp "${{ github.workspace }}/results/results.json" \
+             "${{ github.workspace }}/results/results.html" \
+             "${{ github.workspace }}/results/results.xunit" \
+             "$DIR/"
+
+      # Full run history, no window cap - the renderer (docs/raster.html)
+      # decides how much to show and how far prev/next/deep-links can
+      # reach. Also copies each run's results.html into docs/tool-tests/,
+      # which the README step below links to directly.
+      - name: Generate tool x run raster data
+        if: ${{ inputs.run-tests }}
+        working-directory: /tmp/main-clone
+        run: python "${{ github.workspace }}/.github/scripts/anvil_generate_raster_data.py"
+
+      - name: Update reports/anvil/README.md
+        if: ${{ inputs.run-tests }}
+        working-directory: /tmp/main-clone
+        run: |
+          RUN_HTML_URL="https://anvilproject.github.io/galaxy-tests/tool-tests/${{ steps.instance.outputs.name }}/results.html"
+          python "${{ github.workspace }}/.github/scripts/anvil_update_readme.py" "${{ steps.instance.outputs.name }}" "$RUN_HTML_URL"
+
+      # if: always() so deploy-health metrics (from "Record deploy timing"
+      # above) still get committed even when tests were skipped or failed -
+      # deployments.json/svg/html are already written by that point
+      # regardless of inputs.run-tests. All prior report-generation steps
+      # above wrote directly into /tmp/main-clone, so this just commits
+      # whatever's there.
+      - name: Commit and push reports to main
+        if: always()
+        working-directory: /tmp/main-clone
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add reports/anvil docs/tool-tests docs/raster-data docs/deploy-data 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No report changes to commit"
+            exit 0
+          fi
+          git commit -m "Update anvil reports from run ${{ github.run_id }}"
+          # This job runs for hours, so by the time it pushes, main has
+          # often moved (other CI report commits, unrelated human commits).
+          # A plain push then gets rejected as non-fast-forward - rebase
+          # onto the current main and retry rather than losing the run's
+          # reports outright.
+          for attempt in 1 2 3 4 5; do
+            if git push origin main; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5) - main moved during this run; rebasing and retrying"
+            git fetch origin main
+            git rebase origin/main
+            sleep 5
+          done
+          echo "::error::Failed to push reports to main after 5 attempts"
+          exit 1
 
       - name: Upload results as a workflow artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: anvil-test-${{ steps.instance.outputs.name }}
-          path: results/
+          path: |
+            results/
+            logs/
           if-no-files-found: ignore
 
       - name: Delete VM

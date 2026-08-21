@@ -1,31 +1,28 @@
 ---
 layout: default
-title: Tool x Run Raster
-description: Compact tool x run heatmap across the AnVIL tool-test history.
+title: Tool tests
+description: Heatmap of AnVIL tool-test results.
 nav_href: deploy-stages.html
 nav_label: Deployment stage timing
 ---
 
 <p class="gx-prose">
+  Each row is a tool; each column is a scheduled run.
+  <button type="button" class="gx-more-toggle" id="gx-raster-more-toggle" aria-expanded="false">More</button>
+</p>
+<p class="gx-prose gx-more-text" id="gx-raster-more-text" hidden>
   Longitudinal tool-test results for the
   <a href="https://github.com/anvilproject/galaxy-tests">anvilproject/galaxy-tests</a>
-  CI pipeline. Each row is a tool; each column is a scheduled run. Color
-  shows result type and intensity shows the fraction of tests affected.
+  CI pipeline. Color shows result type and intensity shows the fraction of
+  tests affected. Hover a cell for the exact numbers; click it to see that
+  tool's failing tests and their tracebacks. Tools appear the first time
+  they're actually tested, so the row list grows over time rather than
+  starting from a fixed list. The bar above each run column shows how many
+  tools it affected and how much of the toolset it actually covered (click
+  it for a run-wide breakdown); the bar to the right of each tool shows how
+  often that tool has had trouble over the runs currently shown (click it,
+  or the tool's name, for that tool's history).
 </p>
-
-<details class="gx-disclosure">
-  <summary>How to read this</summary>
-  <p class="gx-prose">
-    Hover a cell for the exact numbers; click it to see that tool's failing
-    tests and their tracebacks. Tools appear the first time they're
-    actually tested, so the row list grows over time rather than starting
-    from a fixed list. The bar above each run column shows how many tools
-    it affected and how much of the toolset it actually covered (click it
-    for a run-wide breakdown); the bar to the right of each tool shows how
-    often that tool has had trouble over the runs currently shown (click
-    it, or the tool's name, for that tool's history).
-  </p>
-</details>
 
 <div class="gx-legend2">
   <span class="gx-legend2__group">
@@ -52,12 +49,6 @@ nav_label: Deployment stage timing
   <button id="gx-raster-older" type="button">&larr; older</button>
   <span id="gx-raster-window"></span>
   <button id="gx-raster-newer" type="button">newer &rarr;</button>
-</div>
-
-<div class="gx-raster-controls">
-  <input id="gx-raster-search" type="text" placeholder="Find a tool…" class="gx-raster-search">
-  <span class="gx-jump-label">Jump to</span>
-  <div id="gx-raster-jump" class="gx-raster-jump"></div>
   <span class="gx-density-toggle">
     Density:
     <span class="gx-density-toggle__group">
@@ -65,6 +56,12 @@ nav_label: Deployment stage timing
       <button type="button" id="gx-density-compact" class="gx-density-toggle__option">Overview</button>
     </span>
   </span>
+</div>
+
+<div class="gx-raster-controls">
+  <input id="gx-raster-search" type="text" placeholder="Find a tool…" class="gx-raster-search">
+  <span class="gx-jump-label">Jump to</span>
+  <div id="gx-raster-jump" class="gx-raster-jump"></div>
 </div>
 
 <div id="gx-raster-container" class="gx-raster-container">
@@ -87,6 +84,12 @@ nav_label: Deployment stage timing
 </aside>
 
 <style>
+  /* Matches deploy-stages.html's width override, kept consistent across
+     both pages rather than raised in default.html since docs/index.md
+     doesn't need the extra room. */
+  main.gx-content, .gx-header__inner {
+    max-width: 1300px;
+  }
   .gx-legend2 {
     display: flex;
     flex-wrap: wrap;
@@ -194,8 +197,6 @@ nav_label: Deployment stage timing
   }
   .gx-raster-container {
     position: relative;
-    max-height: 70vh;
-    overflow-y: auto;
     overflow-x: hidden;
   }
   #gx-raster-canvas {
@@ -408,7 +409,7 @@ nav_label: Deployment stage timing
   var OVERVIEW_CELL_H = 6;
   var CELL_H = READABLE_CELL_H; // mutated by the density toggle
   var CELL_GAP = 1;
-  var RIGHT_MARGIN_W = CELL_W * 3;
+  var RIGHT_MARGIN_W = CELL_W * 5;
   var GRID_MARGIN_GAP = 9; // breathing room before the recurrence margin/History
   var DATE_LABEL_H = 14; // sparse "8/15"-style run labels above the bars
   var DATE_BAR_GAP = 8; // extra header height so bars read as a small chart
@@ -418,10 +419,7 @@ nav_label: Deployment stage timing
   var TOP_PAD_BOTTOM = 10; // gap between the coverage strip and the rows
   var TOP_MARGIN_H = DATE_LABEL_H + DATE_BAR_GAP + BAR_MAX_H + BAR_GAP + STRIP_H + TOP_PAD_BOTTOM;
   var MAX_DATE_LABELS = 6; // sparse - not one per column
-  // Scroll headroom so the sticky header (see repaintHeader) never lands on
-  // top of the final rows once scrolled all the way down (v2_raster_ui.md
-  // round 3 sec 2).
-  var BOTTOM_PAD_H = TOP_MARGIN_H;
+  var BOTTOM_PAD_H = 24; // breathing room below the last row
 
   var COLORS = {
     pass: "#61ad90",
@@ -679,6 +677,18 @@ nav_label: Deployment stage timing
     return prevCell.status === "pass" ? "new" : "continuing";
   }
 
+  function wireMoreToggle(toggleId, textId) {
+    var toggle = document.getElementById(toggleId);
+    var text = document.getElementById(textId);
+    toggle.addEventListener("click", function () {
+      var opening = text.hidden;
+      text.hidden = !opening;
+      toggle.classList.toggle("is-open", opening);
+      toggle.setAttribute("aria-expanded", String(opening));
+    });
+  }
+  wireMoreToggle("gx-raster-more-toggle", "gx-raster-more-text");
+
   function init(manifest, matrix) {
     var container = document.getElementById("gx-raster-container");
     var canvas = document.getElementById("gx-raster-canvas");
@@ -725,7 +735,7 @@ nav_label: Deployment stage timing
     var hoveredRow = null; // tool index under the cursor/keyboard focus/selection - drives the crosshair overlay
     var hoveredCol = null; // visible-run index under the cursor/keyboard focus/selection
     var focusSource = null; // "mouse" | "keyboard" | null - who last set hoveredRow/hoveredCol
-    var lastHeaderCtx = null; // per-draw() snapshot consumed by repaintHeader() on every scroll tick
+    var lastHeaderCtx = null; // per-draw() snapshot reused by repaintHeader() for cheap hover-driven repaints
 
     var maxAttemptedEver = manifest.reduce(function (m, r) {
       return Math.max(m, r.tools_attempted || 0);
@@ -773,9 +783,8 @@ nav_label: Deployment stage timing
       // visible run column, scaled linearly against the tallest bar in the
       // visible window - percentile/sqrt scaling is tabled
       // (v2_raster_plan.md sec 7). Tool-weighted (v2_raster.md). The actual
-      // drawing happens in repaintHeader() below, since it also needs to
-      // re-run on every scroll tick to stay stuck to the viewport
-      // (v2_raster_ui.md round 3 sec 2).
+      // drawing happens in repaintHeader() below, which also gets reused
+      // for cheap hover-driven repaints (refreshCrosshair).
       var topStatsByRun = {};
       var maxAffected = 0;
       visibleRuns.forEach(function (runId) {
@@ -862,8 +871,6 @@ nav_label: Deployment stage timing
       ctx.lineTo(gridRight + 0.5, TOP_MARGIN_H + tools.length * CELL_H);
       ctx.stroke();
 
-      // Paints the sticky header on top of whatever rows are currently
-      // scrolled beneath it (v2_raster_ui.md round 3 sec 2).
       repaintHeader();
 
       // Highlight whatever opened the inspector, so closing it returns
@@ -886,10 +893,8 @@ nav_label: Deployment stage timing
         } else if (inspectorState.mode === "run") {
           var runCol = visibleRuns.indexOf(inspectorState.runId);
           if (runCol >= 0) {
-            // Sticky-aware: the bar itself now redraws at the header's
-            // current on-screen position, not a fixed y=0 (round 3 sec 2).
-            var stickyBarsTop = container.scrollTop + DATE_LABEL_H + DATE_BAR_GAP;
-            ctx.strokeRect(LABEL_WIDTH + runCol * CELL_W + 1, stickyBarsTop + 1, CELL_W - CELL_GAP - 1, BAR_MAX_H + BAR_GAP + STRIP_H - 1);
+            var barsTopOutline = DATE_LABEL_H + DATE_BAR_GAP;
+            ctx.strokeRect(LABEL_WIDTH + runCol * CELL_W + 1, barsTopOutline + 1, CELL_W - CELL_GAP - 1, BAR_MAX_H + BAR_GAP + STRIP_H - 1);
           }
         } else if (inspectorState.mode === "tool") {
           var toolRow = tools.indexOf(inspectorState.toolId);
@@ -924,16 +929,15 @@ nav_label: Deployment stage timing
       drawOverlay(widthCss, gridRight);
     }
 
-    // Redraws just the top-margin strip at the viewport's current scroll
-    // position, painting over whatever rows happen to be there - a cheap
-    // stand-in for CSS position:sticky that works with a single canvas.
-    // Reuses the stats/labelStep snapshot draw() leaves in lastHeaderCtx
-    // rather than recomputing anything on every scroll tick
-    // (v2_raster_ui.md round 3 sec 2).
+    // The header is a fixed, non-floating strip at the top of the canvas -
+    // no longer stuck to the viewport while scrolling (dropped: it fought
+    // with row rendering once there were enough tools for a real scroll).
+    // Reuses the stats/labelStep snapshot draw() leaves in lastHeaderCtx so
+    // hover-driven repaints (refreshCrosshair) don't redo that work.
     function repaintHeader() {
       if (!lastHeaderCtx) return;
       var c = lastHeaderCtx;
-      var offsetY = container.scrollTop;
+      var offsetY = 0;
       var barsTop = offsetY + DATE_LABEL_H + DATE_BAR_GAP;
       var stripTop = barsTop + BAR_MAX_H + BAR_GAP;
 
@@ -1088,8 +1092,8 @@ nav_label: Deployment stage timing
     }
 
     // Shared by mouse/keyboard/selection handlers - repaints both the
-    // sticky header (for the hovered-column date) and the crosshair
-    // overlay without re-running the expensive draw() stats pass.
+    // header (for the hovered-column date) and the crosshair overlay
+    // without re-running the expensive draw() stats pass.
     function refreshCrosshair() {
       repaintHeader();
       drawOverlay(canvas.clientWidth, LABEL_WIDTH + nCols * CELL_W);
@@ -1101,13 +1105,8 @@ nav_label: Deployment stage timing
       var y = clientY - rect.top;
       var visibleRuns = currentRunIds();
       var gridRight = LABEL_WIDTH + nCols * CELL_W;
-      // The sticky header repaints at the current scroll offset, not a
-      // fixed y=0 - a click can only ever land at y >= scrollTop (that's
-      // all the viewport can show), so this is the only header-vs-row
-      // split that needs to account for it (v2_raster_ui.md round 3 sec 2).
-      var stickyBottom = container.scrollTop + TOP_MARGIN_H;
 
-      if (y < stickyBottom) {
+      if (y < TOP_MARGIN_H) {
         if (x < LABEL_WIDTH || x >= gridRight) return null;
         var col = Math.floor((x - LABEL_WIDTH) / CELL_W);
         if (col < 0 || col >= visibleRuns.length) return null;
@@ -1210,11 +1209,18 @@ nav_label: Deployment stage timing
         focusSource = "keyboard";
         tooltip.hidden = true; // no cursor position to anchor a DOM tooltip to - the floating label covers this
         refreshCrosshair();
+        // The page scrolls now, not this container, so bring the focused
+        // row into view with window.scrollBy against its current
+        // viewport-relative position rather than container.scrollTop
+        // (v2_raster_ui.md).
         var rowTop = TOP_MARGIN_H + hoveredRow * CELL_H;
-        if (rowTop < container.scrollTop + TOP_MARGIN_H) {
-          container.scrollTop = Math.max(0, rowTop - TOP_MARGIN_H);
-        } else if (rowTop + CELL_H > container.scrollTop + container.clientHeight) {
-          container.scrollTop = rowTop + CELL_H - container.clientHeight;
+        var rect = container.getBoundingClientRect();
+        var rowViewportTop = rect.top + rowTop;
+        var rowViewportBottom = rowViewportTop + CELL_H;
+        if (rowViewportTop < 0) {
+          window.scrollBy(0, rowViewportTop);
+        } else if (rowViewportBottom > window.innerHeight) {
+          window.scrollBy(0, rowViewportBottom - window.innerHeight);
         }
       } else if ((key === "Enter" || key === " ") && focusSource === "keyboard" && hoveredRow !== null) {
         evt.preventDefault();
@@ -1225,7 +1231,6 @@ nav_label: Deployment stage timing
         }
       }
     });
-    container.addEventListener("scroll", repaintHeader);
 
     function fetchDetail(runId) {
       if (detailCache[runId]) return Promise.resolve(detailCache[runId]);
@@ -1608,8 +1613,14 @@ nav_label: Deployment stage timing
     // uses, rather than just repositioning the viewport
     // (v2_raster_ui.md round 3 sec 3).
     function scrollToRow(idx) {
-      var target = TOP_MARGIN_H + idx * CELL_H - container.clientHeight / 2;
-      container.scrollTop = Math.max(0, target);
+      // The page scrolls now, not this container: convert the row's
+      // canvas-local position to a page-absolute one via the container's
+      // current viewport offset, then center it in the window instead of
+      // container.clientHeight (v2_raster_ui.md).
+      var containerPageTop = window.scrollY + container.getBoundingClientRect().top;
+      var rowPageY = containerPageTop + TOP_MARGIN_H + idx * CELL_H;
+      var target = rowPageY - window.innerHeight / 2;
+      window.scrollTo(0, Math.max(0, target));
       searchHighlightRow = idx;
       hoveredRow = idx;
       draw();
