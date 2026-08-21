@@ -49,6 +49,14 @@ nav_label: Deployment stage timing
   <button id="gx-raster-older" type="button">&larr; older</button>
   <span id="gx-raster-window"></span>
   <button id="gx-raster-newer" type="button">newer &rarr;</button>
+  <span class="gx-filter-toggle">
+    Show:
+    <span class="gx-filter-toggle__group">
+      <button type="button" id="gx-raster-filter-error" class="gx-filter-toggle__option">Errors</button>
+      <button type="button" id="gx-raster-filter-failure" class="gx-filter-toggle__option">Failures</button>
+      <button type="button" id="gx-raster-filter-both" class="gx-filter-toggle__option">Errors or Failures</button>
+    </span>
+  </span>
   <span class="gx-density-toggle">
     Density:
     <span class="gx-density-toggle__group">
@@ -191,6 +199,52 @@ nav_label: Deployment stage timing
     border-radius: 0 0.375rem 0.375rem 0;
   }
   .gx-density-toggle__option.is-active {
+    background: rgba(37, 83, 123, 0.1);
+    color: var(--galaxy-primary);
+    font-weight: 500;
+  }
+  .gx-filter-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--galaxy-grey);
+  }
+  .gx-filter-toggle__group {
+    display: inline-flex;
+  }
+  /* Prefixed with the .gx-filter-toggle__group ancestor (not just
+     .gx-filter-toggle__option alone) so every rule here outranks
+     default.html's ".gx-raster-controls button" - these buttons sit
+     inside a .gx-raster-controls div, and a bare single-class selector
+     (specificity 0,1,0) loses to that element+class one (0,1,1). Without
+     this, the middle pill (unreached by the :first-of-type/:last-of-type
+     overrides below, which already clear that bar) falls back to the
+     generic rule's rounded corners and blue text instead of this one's. */
+  .gx-filter-toggle__group .gx-filter-toggle__option {
+    font: inherit;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid rgba(37, 83, 123, 0.25);
+    border-radius: 0;
+    background: #fff;
+    color: var(--galaxy-grey);
+    cursor: pointer;
+  }
+  /* :not(:last-of-type), not just :first-of-type, so the internal seams
+     stay single-width regardless of how many pills there are (density's
+     two-button version above only needs the simpler first/last rule). */
+  .gx-filter-toggle__group .gx-filter-toggle__option:not(:last-of-type) {
+    border-right: none;
+  }
+  .gx-filter-toggle__group .gx-filter-toggle__option:first-of-type {
+    border-radius: 0.375rem 0 0 0.375rem;
+  }
+  .gx-filter-toggle__group .gx-filter-toggle__option:last-of-type {
+    border-radius: 0 0.375rem 0.375rem 0;
+  }
+  .gx-filter-toggle__group .gx-filter-toggle__option.is-active {
     background: rgba(37, 83, 123, 0.1);
     color: var(--galaxy-primary);
     font-weight: 500;
@@ -517,11 +571,30 @@ nav_label: Deployment stage timing
     return "mixed";
   }
 
-  // Per-run counts across ALL tools (not just the visible rows - there's
-  // no row filtering yet, but this stays correct once there is), used for
-  // the top run-impact bar. Tool-weighted, not test-weighted, per
-  // v2_raster.md: one heavily-tested tool shouldn't outweigh a small
-  // infrastructure incident touching many tools a little.
+  // Row-filter predicate for the Errors/Failures/Errors or Failures pill -
+  // based on the single latest run overall (not whatever window happens to
+  // be paged into view, and not "ever, across any visible run"), so a
+  // tool's category reflects its current status rather than accumulating
+  // every kind of trouble it's ever had. Errors and Failures are each an
+  // exact match (a "mixed" cell - both a failure and an error in the same
+  // run - is neither) so the three pills actually partition the unhealthy
+  // tools instead of overlapping; "Errors or Failures" is the union of
+  // all three problem classifications, mixed included.
+  function toolMatchesFilter(toolId, filter, matrix) {
+    if (filter === "all") return true;
+    var latestRun = matrix.runs[matrix.runs.length - 1];
+    var cls = classifyCell((matrix.cells[toolId] || {})[latestRun]);
+    if (filter === "error") return cls === "error";
+    if (filter === "failure") return cls === "fail";
+    return cls === "error" || cls === "fail" || cls === "mixed"; // "either"
+  }
+
+  // Per-run counts across ALL tools, not just the currently filtered rows
+  // (the "Errors & failures only" toggle only affects which rows draw() and
+  // hitTest() see - v2_raster.md's top run-impact bar and every history/
+  // run-wide inspector view still reason about the whole toolset). Tool-
+  // weighted, not test-weighted: one heavily-tested tool shouldn't outweigh
+  // a small infrastructure incident touching many tools a little.
   function computeTopStats(runId, tools, matrix) {
     var counts = { pass: 0, fail: 0, error: 0, mixed: 0, not_run: 0 };
     tools.forEach(function (toolId) {
@@ -593,15 +666,31 @@ nav_label: Deployment stage timing
     return fraction === null ? "n/a" : Math.round(fraction * 100) + "%";
   }
 
+  // Shared by the run tooltip and the run inspector drawer - plain text,
+  // no HTML escaping needed since every value here is a number.
+  function testCountsLine(run) {
+    var passed = run.tests_passed || 0;
+    var failed = run.tests_failed || 0;
+    var errored = run.tests_errored || 0;
+    var skipped = run.tests_skipped || 0;
+    var total = passed + failed + errored + skipped;
+    function pctOf(n) { return total ? Math.round((n / total) * 100) : 0; }
+    return "Tests run: " + total +
+      ", passed (" + passed + " · " + pctOf(passed) + "%)" +
+      ", failed (" + failed + " · " + pctOf(failed) + "%)" +
+      ", errored (" + errored + " · " + pctOf(errored) + "%)" +
+      ", skipped (" + skipped + " · " + pctOf(skipped) + "%)";
+  }
+
   function topBarTooltip(runId, stats, manifestByRun, coverage) {
     var run = manifestByRun[runId] || {};
     var lines = [
       fmtDate(run.timestamp),
-      stats.affected + " of " + (stats.affected + stats.pass) + " attempted tools affected " +
+      "Tools tested: " + (run.tools_attempted || 0),
+      testCountsLine(run),
+      "Summary: " + stats.affected + " of " + (stats.affected + stats.pass) + " attempted tools affected " +
         "(" + stats.fail + " failure-only, " + stats.error + " error-only, " + stats.mixed + " mixed)",
-      "Tests: " + (run.tests_passed || 0) + " passed, " + (run.tests_failed || 0) + " failed, " +
-        (run.tests_errored || 0) + " errored, " + (run.tests_skipped || 0) + " skipped",
-      "Coverage: " + coverage + " (" + run.tools_attempted + " tools attempted)",
+      "Coverage: " + coverage,
       run.duration_seconds ? "Duration: " + Math.round(run.duration_seconds / 60) + " min" : null,
       "Click to open the full report."
     ];
@@ -711,6 +800,9 @@ nav_label: Deployment stage timing
     var jumpIndex = document.getElementById("gx-raster-jump");
     var densityComfortableBtn = document.getElementById("gx-density-comfortable");
     var densityCompactBtn = document.getElementById("gx-density-compact");
+    var filterErrorBtn = document.getElementById("gx-raster-filter-error");
+    var filterFailureBtn = document.getElementById("gx-raster-filter-failure");
+    var filterBothBtn = document.getElementById("gx-raster-filter-both");
 
     var tools = matrix.tools;
     var runs = matrix.runs;
@@ -729,6 +821,8 @@ nav_label: Deployment stage timing
     // view is open - drives the highlight ring and hash routing.
     var inspectorState = null;
     var density = "readable"; // "readable" | "overview" - toggled by the density buttons
+    var toolFilter = "all"; // "all" | "error" | "failure" | "both" - toggled by the Errors/Failures/Errors or Failures pill
+    var visibleTools = tools; // recomputed at the top of every draw() - the filtered row set
     var searchHighlightRow = null;
     var searchHighlightTimer = null;
     var detailCache = {}; // runId -> parsed runs/<runId>/detail.json
@@ -766,10 +860,14 @@ nav_label: Deployment stage timing
       nCols = computeCols();
       clampWindow();
       var visibleRuns = currentRunIds();
+      visibleTools = toolFilter === "all"
+        ? tools
+        : tools.filter(function (toolId) { return toolMatchesFilter(toolId, toolFilter, matrix); });
+      rebuildJumpIndex();
 
       var dpr = window.devicePixelRatio || 1;
       var widthCss = LABEL_WIDTH + nCols * CELL_W + RIGHT_MARGIN_W;
-      var heightCss = TOP_MARGIN_H + tools.length * CELL_H + BOTTOM_PAD_H;
+      var heightCss = TOP_MARGIN_H + visibleTools.length * CELL_H + BOTTOM_PAD_H;
       sizeCanvas(canvas, ctx, widthCss, heightCss, dpr);
       sizeCanvas(overlay, overlayCtx, widthCss, heightCss, dpr);
 
@@ -808,7 +906,7 @@ nav_label: Deployment stage timing
         labelStep: labelStep
       };
 
-      tools.forEach(function (toolId, row) {
+      visibleTools.forEach(function (toolId, row) {
         var y = TOP_MARGIN_H + row * CELL_H;
 
         if (row % 2 === 1) {
@@ -868,7 +966,7 @@ nav_label: Deployment stage timing
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(gridRight + 0.5, TOP_MARGIN_H);
-      ctx.lineTo(gridRight + 0.5, TOP_MARGIN_H + tools.length * CELL_H);
+      ctx.lineTo(gridRight + 0.5, TOP_MARGIN_H + visibleTools.length * CELL_H);
       ctx.stroke();
 
       repaintHeader();
@@ -880,7 +978,7 @@ nav_label: Deployment stage timing
         ctx.strokeStyle = "#2c3143";
         ctx.lineWidth = 2;
         if (inspectorState.mode === "cell") {
-          var selRow = tools.indexOf(inspectorState.toolId);
+          var selRow = visibleTools.indexOf(inspectorState.toolId);
           var selCol = visibleRuns.indexOf(inspectorState.runId);
           if (selRow >= 0 && selCol >= 0) {
             ctx.strokeRect(
@@ -897,7 +995,7 @@ nav_label: Deployment stage timing
             ctx.strokeRect(LABEL_WIDTH + runCol * CELL_W + 1, barsTopOutline + 1, CELL_W - CELL_GAP - 1, BAR_MAX_H + BAR_GAP + STRIP_H - 1);
           }
         } else if (inspectorState.mode === "tool") {
-          var toolRow = tools.indexOf(inspectorState.toolId);
+          var toolRow = visibleTools.indexOf(inspectorState.toolId);
           if (toolRow >= 0) {
             ctx.strokeRect(
               gridRight + 1,
@@ -1037,7 +1135,7 @@ nav_label: Deployment stage timing
     // on top - redrawn on every mousemove/keydown without re-running the
     // expensive stats pass above (v2_raster_ui.md sec 7).
     function drawOverlay(widthCss, gridRight) {
-      var fullH = TOP_MARGIN_H + tools.length * CELL_H + BOTTOM_PAD_H;
+      var fullH = TOP_MARGIN_H + visibleTools.length * CELL_H + BOTTOM_PAD_H;
       overlayCtx.clearRect(0, 0, widthCss, fullH);
       if (hoveredCol !== null) {
         overlayCtx.fillStyle = "rgba(37, 83, 123, 0.07)";
@@ -1068,7 +1166,7 @@ nav_label: Deployment stage timing
       // exposes the full name via the DOM tooltip
       // (v2_raster_ui.md round 3 sec 1 & 4).
       if (hoveredRow !== null) {
-        var flabel = shortName(tools[hoveredRow]);
+        var flabel = shortName(visibleTools[hoveredRow]);
         var truncatedInReadable = false;
         if (density !== "overview") {
           overlayCtx.font = READABLE_FONT_PX + "px 'Atkinson Hyperlegible', sans-serif";
@@ -1114,17 +1212,17 @@ nav_label: Deployment stage timing
       }
 
       var row = Math.floor((y - TOP_MARGIN_H) / CELL_H);
-      if (row < 0 || row >= tools.length) return null;
+      if (row < 0 || row >= visibleTools.length) return null;
 
       if (x >= gridRight) {
         if (x >= gridRight + RIGHT_MARGIN_W) return null;
-        return { type: "tool", toolId: tools[row] };
+        return { type: "tool", toolId: visibleTools[row] };
       }
 
-      if (x < LABEL_WIDTH) return { type: "tool", toolId: tools[row] };
+      if (x < LABEL_WIDTH) return { type: "tool", toolId: visibleTools[row] };
       var gridCol = Math.floor((x - LABEL_WIDTH) / CELL_W);
       if (gridCol < 0 || gridCol >= visibleRuns.length) return null;
-      return { type: "cell", toolId: tools[row], runId: visibleRuns[gridCol] };
+      return { type: "cell", toolId: visibleTools[row], runId: visibleRuns[gridCol] };
     }
 
     canvas.addEventListener("mousemove", function (evt) {
@@ -1140,7 +1238,7 @@ nav_label: Deployment stage timing
         return;
       }
       var visibleRuns = currentRunIds();
-      var newRow = hit.type === "cell" || hit.type === "tool" ? tools.indexOf(hit.toolId) : null;
+      var newRow = hit.type === "cell" || hit.type === "tool" ? visibleTools.indexOf(hit.toolId) : null;
       var newCol = hit.type === "cell" || hit.type === "run" ? visibleRuns.indexOf(hit.runId) : null;
       if (newRow !== hoveredRow || newCol !== hoveredCol || focusSource !== "mouse") {
         hoveredRow = newRow;
@@ -1203,7 +1301,7 @@ nav_label: Deployment stage timing
         if (hoveredRow === null) hoveredRow = 0;
         if (hoveredCol === null) hoveredCol = 0;
         if (key === "ArrowUp") hoveredRow = Math.max(0, hoveredRow - 1);
-        else if (key === "ArrowDown") hoveredRow = Math.min(tools.length - 1, hoveredRow + 1);
+        else if (key === "ArrowDown") hoveredRow = Math.min(visibleTools.length - 1, hoveredRow + 1);
         else if (key === "ArrowLeft") hoveredCol = Math.max(0, hoveredCol - 1);
         else hoveredCol = Math.min(visibleRuns.length - 1, hoveredCol + 1);
         focusSource = "keyboard";
@@ -1225,9 +1323,9 @@ nav_label: Deployment stage timing
       } else if ((key === "Enter" || key === " ") && focusSource === "keyboard" && hoveredRow !== null) {
         evt.preventDefault();
         if (hoveredCol !== null && visibleRuns[hoveredCol]) {
-          openCellInspector(tools[hoveredRow], visibleRuns[hoveredCol]);
+          openCellInspector(visibleTools[hoveredRow], visibleRuns[hoveredCol]);
         } else {
-          openToolInspector(tools[hoveredRow]);
+          openToolInspector(visibleTools[hoveredRow]);
         }
       }
     });
@@ -1390,11 +1488,11 @@ nav_label: Deployment stage timing
       inspectorHeader.innerHTML =
         "<h3>" + escapeHtml(fmtDate(run.timestamp)) + "</h3>" +
         '<div class="gx-inspector__summary">' +
-        stats.affected + " of " + (stats.affected + stats.pass) + " attempted tools affected (" +
+        "Tools tested: " + (run.tools_attempted || 0) + "<br>" +
+        testCountsLine(run) + "<br>" +
+        "Summary: " + stats.affected + " of " + (stats.affected + stats.pass) + " attempted tools affected (" +
         stats.fail + " failure-only, " + stats.error + " error-only, " + stats.mixed + " mixed)<br>" +
-        "Tests: " + (run.tests_passed || 0) + " passed, " + (run.tests_failed || 0) + " failed, " +
-        (run.tests_errored || 0) + " errored, " + (run.tests_skipped || 0) + " skipped<br>" +
-        "Coverage: " + escapeHtml(coverage) + " (" + (run.tools_attempted || 0) + " tools attempted)" +
+        "Coverage: " + escapeHtml(coverage) +
         "</div>";
       updateNav({ mode: "run", runId: runId });
     }
@@ -1517,7 +1615,7 @@ nav_label: Deployment stage timing
     function openCellInspector(toolId, runId) {
       inspectorState = { mode: "cell", toolId: toolId, runId: runId };
       var visibleRuns = currentRunIds();
-      var rowIdx = tools.indexOf(toolId);
+      var rowIdx = visibleTools.indexOf(toolId);
       var colIdx = visibleRuns.indexOf(runId);
       hoveredRow = rowIdx >= 0 ? rowIdx : null;
       hoveredCol = colIdx >= 0 ? colIdx : null;
@@ -1540,7 +1638,7 @@ nav_label: Deployment stage timing
 
     function openToolInspector(toolId) {
       inspectorState = { mode: "tool", toolId: toolId };
-      var rowIdx = tools.indexOf(toolId);
+      var rowIdx = visibleTools.indexOf(toolId);
       hoveredRow = rowIdx >= 0 ? rowIdx : null;
       hoveredCol = null;
       updateHash();
@@ -1635,7 +1733,7 @@ nav_label: Deployment stage timing
     function runSearch() {
       var query = searchInput.value.trim().toLowerCase();
       if (!query) return;
-      var idx = tools.findIndex(function (t) { return shortName(t).toLowerCase().indexOf(query) >= 0; });
+      var idx = visibleTools.findIndex(function (t) { return shortName(t).toLowerCase().indexOf(query) >= 0; });
       if (idx >= 0) scrollToRow(idx);
     }
 
@@ -1644,22 +1742,28 @@ nav_label: Deployment stage timing
     });
 
     // One button per first letter actually present among the (already
-    // alphabetical) tool names - jumps to that letter's first row.
+    // alphabetical) visible tool names - jumps to that letter's first row.
     // firstRowLetters is the reverse lookup (row -> letter), used to mark
     // section landmarks in the otherwise-blank overview-mode label column
-    // (v2_raster_ui.md round 3 sec 1).
+    // (v2_raster_ui.md round 3 sec 1). Rebuilt on every draw(), not just
+    // once at startup, since the "Errors & failures only" filter changes
+    // which tools occupy which row.
     var firstRowForLetter = {};
     var firstRowLetters = {};
-    tools.forEach(function (toolId, idx) {
-      var letter = shortName(toolId).charAt(0).toUpperCase();
-      if (!(letter in firstRowForLetter)) {
-        firstRowForLetter[letter] = idx;
-        firstRowLetters[idx] = letter;
-      }
-    });
-    jumpIndex.innerHTML = Object.keys(firstRowForLetter).sort().map(function (letter) {
-      return '<button type="button" data-letter="' + escapeHtml(letter) + '">' + escapeHtml(letter) + "</button>";
-    }).join("");
+    function rebuildJumpIndex() {
+      firstRowForLetter = {};
+      firstRowLetters = {};
+      visibleTools.forEach(function (toolId, idx) {
+        var letter = shortName(toolId).charAt(0).toUpperCase();
+        if (!(letter in firstRowForLetter)) {
+          firstRowForLetter[letter] = idx;
+          firstRowLetters[idx] = letter;
+        }
+      });
+      jumpIndex.innerHTML = Object.keys(firstRowForLetter).sort().map(function (letter) {
+        return '<button type="button" data-letter="' + escapeHtml(letter) + '">' + escapeHtml(letter) + "</button>";
+      }).join("");
+    }
     jumpIndex.addEventListener("click", function (evt) {
       var letter = evt.target.getAttribute && evt.target.getAttribute("data-letter");
       if (letter && letter in firstRowForLetter) scrollToRow(firstRowForLetter[letter]);
@@ -1675,6 +1779,20 @@ nav_label: Deployment stage timing
     }
     densityComfortableBtn.addEventListener("click", function () { setDensity("readable"); });
     densityCompactBtn.addEventListener("click", function () { setDensity("overview"); });
+
+    // Clicking the active pill again clears back to "all" - clicking a
+    // different one switches directly, same toggle-vs-switch behavior as
+    // the legend isolate on deploy-stages.html.
+    function setToolFilter(next) {
+      toolFilter = toolFilter === next ? "all" : next;
+      filterErrorBtn.classList.toggle("is-active", toolFilter === "error");
+      filterFailureBtn.classList.toggle("is-active", toolFilter === "failure");
+      filterBothBtn.classList.toggle("is-active", toolFilter === "both");
+      draw();
+    }
+    filterErrorBtn.addEventListener("click", function () { setToolFilter("error"); });
+    filterFailureBtn.addEventListener("click", function () { setToolFilter("failure"); });
+    filterBothBtn.addEventListener("click", function () { setToolFilter("both"); });
 
     draw();
     openFromHash();

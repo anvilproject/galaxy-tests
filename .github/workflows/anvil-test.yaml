@@ -2,16 +2,19 @@
 # branch (VM + GCP Batch, no GKE/GalaxyKubeMan), run the AnVIL tool-test
 # suite, and commit deployment/tool-test reports back to `main`.
 #
-# Deliberately NOT wired up yet, pending validation (see v2_plan.md §7/§9):
-#   - no `schedule:` trigger — workflow_dispatch only until timings are
-#     trusted at full scale (test-page-size lets us validate on a slice
-#     first; see §7 risk 1 on whether the full suite fits in one job)
+# Not yet fully wired up (see v2_plan.md §7/§9):
 #   - no matrix/parallel-job split — single `galaxy-tool-test` process,
 #     scaled via --parallel-tests, to measure whether that alone is enough
 #   - no "expected vs. loaded" toolset check yet
 name: Anvil Deployment and Tool Tests (dry run)
 
 on:
+  # 1am US Eastern. cron is UTC-only and doesn't shift with daylight
+  # saving, so this is 1am EST (winter) but 2am EDT (summer, roughly
+  # mid-March to early November) - there's no single cron expression that
+  # tracks the DST-adjusted local time exactly.
+  schedule:
+    - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       instance-name:
@@ -95,9 +98,13 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
 
+      # inputs.* is only populated for workflow_dispatch - a schedule
+      # trigger sees an empty inputs context, so every reference below
+      # falls back to that input's own declared default (`|| '...'`),
+      # keeping a scheduled run identical to an un-overridden manual one.
       - name: Set instance name
         id: instance
-        run: echo "name=${{ inputs.instance-name }}-$(date -u +'%y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
+        run: echo "name=${{ inputs.instance-name || 'anvil-test-ci' }}-$(date -u +'%y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
 
       - name: Generate ephemeral SSH key for the VM
         id: ssh-key
@@ -344,7 +351,7 @@ jobs:
             "https://github.com/anvilproject/galaxy-tests/actions/runs/${{ github.run_id }}"
 
       - name: Install galaxy-tool-test and planemo
-        if: ${{ inputs.run-tests }}
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         run: python -m pip install "galaxy-tool-util>=23.0" planemo bioblend
 
       # Upstream bug in galaxy-tool-util (confirmed present from 25.1.1
@@ -357,7 +364,7 @@ jobs:
       # wait on an upstream fix - the assert fails loudly if the expected
       # text isn't found, e.g. once this is actually fixed upstream.
       - name: Patch galaxy-tool-util force_path_paste bug
-        if: ${{ inputs.run-tests }}
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         run: |
           cat > /tmp/patch_force_path_paste.py << 'PYEOF'
           import galaxy.tool_util.verify.interactor as m
@@ -403,7 +410,7 @@ jobs:
       # then fetch/create their API key via bioblend (what `abm galaxy user
       # key` itself calls under the hood).
       - name: Create real API key
-        if: ${{ inputs.run-tests }}
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         id: api-key
         run: |
           curl -fsSL "http://${{ steps.vm-ip.outputs.ip }}/galaxy/" > /dev/null
@@ -419,24 +426,42 @@ jobs:
           echo "::add-mask::$KEY"
           echo "key=$KEY" >> "$GITHUB_OUTPUT"
 
-      # Three selection modes, in priority order:
-      #   1. random-tool-count != 0: sample that many tool IDs from the
-      #      server's own tests_summary (the full testable set, including
-      #      Galaxy's internal double-underscore utility tools). There's no
-      #      single-invocation way to hand galaxy-tool-test a specific list
-      #      of tool IDs (-t/--tool-id takes exactly one, per
-      #      galaxy/tool_util/verify/script.py), so this fans one process
-      #      per sampled tool out across --parallel-tests concurrent
-      #      workers - a first attempt ran all 200 sequentially (one
-      #      process at a time, each paying its own auth/history overhead
-      #      and none of them benefiting from --parallel-tests, since that
-      #      only parallelizes test cases *within* one process) and blew
-      #      well past GitHub Actions' 5h30m job timeout before finishing.
-      #   2. test-page-size != 0: existing deterministic pagination through
+      # Four selection modes, in priority order:
+      #   1. Scheduled run: always the fixed 200 tool IDs pinned in
+      #      .github/scheduled-tool-ids.txt (the exact sample from run
+      #      32498376715, the first one confirmed not to silently drop
+      #      tools - see the xargs-desync note below), not a fresh random
+      #      sample each night. The point of a nightly run right now is to
+      #      build confidence in a stable set before widening it, so a
+      #      different random 200 each night would defeat that - two
+      #      failures a week apart wouldn't tell you whether the tool
+      #      regressed or you just got unlucky with the sample. Once
+      #      confidence is established, widen coverage by regenerating this
+      #      file with more tool IDs (same tests_summary + shuf approach as
+      #      mode 2 below) and committing it - not by switching to mode 2,
+      #      which would bring back the night-to-night sample churn.
+      #   2. random-tool-count != 0 (manual dispatch only): sample that many
+      #      tool IDs from the server's own tests_summary (the full testable
+      #      set, including Galaxy's internal double-underscore utility
+      #      tools).
+      #   3. test-page-size != 0: existing deterministic pagination through
       #      the full toolset, in whatever order the server returns it.
-      #   3. neither: -t defaults to ALL_TOOLS, one process tests everything
-      #      the "cloud" toolset loaded via CVMFS at startup - see
-      #      v2_plan.md §2 step 7. No chunk selection needed either, per §5.
+      #   4. none of the above: -t defaults to ALL_TOOLS, one process tests
+      #      everything the "cloud" toolset loaded via CVMFS at startup -
+      #      see v2_plan.md §2 step 7. No chunk selection needed either,
+      #      per §5.
+      #
+      # Modes 1 and 2 both end up with a plain list of tool IDs to test
+      # individually rather than one single galaxy-tool-test invocation:
+      # there's no single-invocation way to hand it a specific list
+      # (-t/--tool-id takes exactly one, per
+      # galaxy/tool_util/verify/script.py), so this fans one process per
+      # tool out across --parallel-tests concurrent workers - a first
+      # attempt ran all 200 sequentially (one process at a time, each
+      # paying its own auth/history overhead and none of them benefiting
+      # from --parallel-tests, since that only parallelizes test cases
+      # *within* one process) and blew well past GitHub Actions' 5h30m job
+      # timeout before finishing.
       #
       # continue-on-error: ALL_TOOLS (and, incidentally, a random sample
       # drawn from the same tests_summary) always includes those internal
@@ -450,7 +475,7 @@ jobs:
       # right after the results are already written - don't let that abort
       # the report-building step.
       - name: Run tool tests
-        if: ${{ inputs.run-tests }}
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         continue-on-error: true
         env:
           GALAXY_TEST_DEFAULT_WAIT: '600'
@@ -459,17 +484,34 @@ jobs:
           GALAXY_URL="http://${{ steps.vm-ip.outputs.ip }}/galaxy/"
           KEY="${{ steps.api-key.outputs.key }}"
           INSTANCE_NAME="${{ steps.instance.outputs.name }}"
+          # inputs.* is empty on a schedule trigger - fall back to each
+          # input's own declared default so a scheduled run behaves like
+          # an un-overridden manual one (see "Set instance name" above).
+          RANDOM_TOOL_COUNT="${{ inputs.random-tool-count || '0' }}"
+          PARALLEL_TESTS="${{ inputs.parallel-tests || '16' }}"
+          TEST_PAGE_SIZE="${{ inputs.test-page-size || '0' }}"
+          TEST_PAGE_NUMBER="${{ inputs.test-page-number || '0' }}"
           export GALAXY_URL KEY INSTANCE_NAME
 
-          if [ "${{ inputs.random-tool-count }}" != "0" ]; then
-            echo "Fetching the full testable tool list to sample ${{ inputs.random-tool-count }} from..."
+          # Resolve which tool IDs (if any) to test individually - modes 1
+          # and 2 from the comment above. /tmp/sampled_tool_ids.txt staying
+          # absent/empty means neither applies, falling through to the
+          # ALL_TOOLS/paged single-process path below.
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            cp .github/scheduled-tool-ids.txt /tmp/sampled_tool_ids.txt
+            echo "Scheduled run: testing the $(wc -l < /tmp/sampled_tool_ids.txt) tool IDs pinned in .github/scheduled-tool-ids.txt"
+          elif [ "$RANDOM_TOOL_COUNT" != "0" ]; then
+            echo "Fetching the full testable tool list to sample $RANDOM_TOOL_COUNT from..."
             curl -sf -H "x-api-key: $KEY" "${GALAXY_URL}api/tools/tests_summary" \
               | python3 -c "import json, sys; print('\n'.join(json.load(sys.stdin).keys()))" \
               > /tmp/all_tool_ids.txt
             echo "Found $(wc -l < /tmp/all_tool_ids.txt) testable tool IDs"
-            shuf -n "${{ inputs.random-tool-count }}" /tmp/all_tool_ids.txt > /tmp/sampled_tool_ids.txt
+            shuf -n "$RANDOM_TOOL_COUNT" /tmp/all_tool_ids.txt > /tmp/sampled_tool_ids.txt
+            echo "Sampled $(wc -l < /tmp/sampled_tool_ids.txt) tool IDs"
+          fi
+
+          if [ -s /tmp/sampled_tool_ids.txt ]; then
             cp /tmp/sampled_tool_ids.txt logs/sampled-tool-ids.txt
-            echo "Sampled $(wc -l < /tmp/sampled_tool_ids.txt) tool IDs - see logs/sampled-tool-ids.txt"
 
             # Each worker gets its own results file and history name (both
             # keyed by line number) instead of sharing one - concurrent
@@ -506,7 +548,7 @@ jobs:
             while IFS= read -r tool_id; do
               idx=$((idx + 1))
               run_one "$idx" "$tool_id" &
-              while [ "$(jobs -r -p | wc -l)" -ge "${{ inputs.parallel-tests }}" ]; do
+              while [ "$(jobs -r -p | wc -l)" -ge "$PARALLEL_TESTS" ]; do
                 wait -n
               done
             done < /tmp/sampled_tool_ids.txt
@@ -542,12 +584,12 @@ jobs:
           "
           else
             PAGE_ARGS=()
-            if [ "${{ inputs.test-page-size }}" != "0" ]; then
-              PAGE_ARGS=(--page-size "${{ inputs.test-page-size }}" --page-number "${{ inputs.test-page-number }}")
+            if [ "$TEST_PAGE_SIZE" != "0" ]; then
+              PAGE_ARGS=(--page-size "$TEST_PAGE_SIZE" --page-number "$TEST_PAGE_NUMBER")
             fi
             galaxy-tool-test \
               -u "$GALAXY_URL" -k "$KEY" -a "$KEY" \
-              --parallel-tests "${{ inputs.parallel-tests }}" \
+              --parallel-tests "$PARALLEL_TESTS" \
               --force_path_paste \
               "${PAGE_ARGS[@]}" \
               -j results/results.json \
@@ -557,7 +599,7 @@ jobs:
           fi
 
       - name: Build HTML/xunit report
-        if: ${{ inputs.run-tests }}
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         run: |
           planemo test_reports results/results.json \
             --test_output results/results.html \
@@ -592,7 +634,7 @@ jobs:
           cp "${{ github.workspace }}/logs/galaxy-web.log" "$DIR/galaxy-web.log"
 
       - name: Save results under reports/anvil
-        if: ${{ inputs.run-tests }}
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         working-directory: /tmp/main-clone
         run: |
           DIR="reports/anvil/tool-tests/${{ steps.instance.outputs.name }}"
@@ -607,12 +649,12 @@ jobs:
       # reach. Also copies each run's results.html into docs/tool-tests/,
       # which the README step below links to directly.
       - name: Generate tool x run raster data
-        if: ${{ inputs.run-tests }}
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         working-directory: /tmp/main-clone
         run: python "${{ github.workspace }}/.github/scripts/anvil_generate_raster_data.py"
 
       - name: Update reports/anvil/README.md
-        if: ${{ inputs.run-tests }}
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         working-directory: /tmp/main-clone
         run: |
           RUN_HTML_URL="https://anvilproject.github.io/galaxy-tests/tool-tests/${{ steps.instance.outputs.name }}/results.html"
