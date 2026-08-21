@@ -6,34 +6,46 @@ nav_href: deploy-stages.html
 nav_label: Deployment stage timing
 ---
 
-<p>
+<p class="gx-prose">
   Longitudinal tool-test results for the
   <a href="https://github.com/anvilproject/galaxy-tests">anvilproject/galaxy-tests</a>
-  CI pipeline. Each row is a tool, each column a test run (oldest to latest,
-  left to right). Color shows what happened; intensity shows how much of the
-  tool was affected. Hover a cell for the exact numbers; click it to see
-  that tool's failing tests and their tracebacks. Tools appear the first
-  time they're actually tested, so the row list grows over time rather than
-  starting from a fixed list. The bar above each run column shows how many
-  tools it affected and how much of the toolset it actually covered
-  (click it for a run-wide breakdown); the bar to the right of each tool
-  shows how often that tool has had trouble over the runs currently shown
-  (click it, or the tool's name, for that tool's history). Hover any of
-  them for details.
+  CI pipeline. Each row is a tool; each column is a scheduled run. Color
+  shows result type and intensity shows the fraction of tests affected.
 </p>
 
-<div class="gx-legend">
-  <span class="gx-badge"><span class="gx-swatch" style="background:#61ad90"></span> pass</span>
-  <span class="gx-badge"><span class="gx-swatch" style="background:#d87e55"></span> failures only</span>
-  <span class="gx-badge"><span class="gx-swatch" style="background:#630177"></span> errors only</span>
-  <span class="gx-badge"><span class="gx-swatch" style="background:#150276"></span> both</span>
-  <span class="gx-badge"><span class="gx-swatch" style="background:#eef2f6"></span> not run</span>
-  <span class="gx-badge">pale &rarr; dark = fraction of that tool's tests affected</span>
-</div>
-<div class="gx-legend">
-  <span class="gx-badge"><span class="gx-swatch" style="background:#9aa5b1"></span> normal coverage</span>
-  <span class="gx-badge"><span class="gx-swatch" style="background:#d19e00"></span> partial run</span>
-  <span class="gx-badge"><span class="gx-swatch" style="background:#b91c1c"></span> most of the toolset not run</span>
+<details class="gx-disclosure">
+  <summary>How to read this</summary>
+  <p class="gx-prose">
+    Hover a cell for the exact numbers; click it to see that tool's failing
+    tests and their tracebacks. Tools appear the first time they're
+    actually tested, so the row list grows over time rather than starting
+    from a fixed list. The bar above each run column shows how many tools
+    it affected and how much of the toolset it actually covered (click it
+    for a run-wide breakdown); the bar to the right of each tool shows how
+    often that tool has had trouble over the runs currently shown (click
+    it, or the tool's name, for that tool's history).
+  </p>
+</details>
+
+<div class="gx-legend2">
+  <span class="gx-legend2__group">
+    <span class="gx-legend2__label">Result</span>
+    <span class="gx-legend2__item"><span class="gx-swatch2" style="background:#61ad90"></span>Pass</span>
+    <span class="gx-legend2__item"><span class="gx-swatch2" style="background:#d87e55"></span>Failure</span>
+    <span class="gx-legend2__item"><span class="gx-swatch2" style="background:#630177"></span>Error</span>
+    <span class="gx-legend2__item"><span class="gx-swatch2" style="background:#150276"></span>Both</span>
+    <span class="gx-legend2__item"><span class="gx-swatch2 gx-swatch2--notrun"></span>Not run</span>
+  </span>
+  <span class="gx-legend2__group">
+    <span class="gx-legend2__label">Impact</span>
+    <span class="gx-legend2__item"><span class="gx-gradient-swatch"></span></span>
+  </span>
+  <span class="gx-legend2__group">
+    <span class="gx-legend2__label">Coverage</span>
+    <span class="gx-legend2__item"><span class="gx-swatch2" style="background:#9aa5b1"></span>Normal</span>
+    <span class="gx-legend2__item"><span class="gx-swatch2" style="background:#d19e00"></span>Partial</span>
+    <span class="gx-legend2__item"><span class="gx-swatch2" style="background:#b91c1c"></span>Mostly not run</span>
+  </span>
 </div>
 
 <div class="gx-raster-controls">
@@ -44,12 +56,18 @@ nav_label: Deployment stage timing
 
 <div class="gx-raster-controls">
   <input id="gx-raster-search" type="text" placeholder="Find a tool…" class="gx-raster-search">
+  <span class="gx-jump-label">Jump to</span>
   <div id="gx-raster-jump" class="gx-raster-jump"></div>
-  <button id="gx-raster-density" type="button">Compact rows</button>
+  <span class="gx-density-toggle">
+    Rows:
+    <button type="button" id="gx-density-comfortable" class="gx-density-toggle__option is-active">Comfortable</button>
+    <button type="button" id="gx-density-compact" class="gx-density-toggle__option">Compact</button>
+  </span>
 </div>
 
 <div id="gx-raster-container" class="gx-raster-container">
   <canvas id="gx-raster-canvas" tabindex="0"></canvas>
+  <canvas id="gx-raster-overlay"></canvas>
 </div>
 <div id="gx-raster-tooltip" class="gx-raster-tooltip" hidden></div>
 <p id="gx-raster-empty" hidden>No raster data yet.</p>
@@ -93,13 +111,71 @@ nav_label: Deployment stage timing
   .gx-raster-controls button:not(:disabled):hover {
     background: rgba(255, 215, 0, 0.1);
   }
-  .gx-swatch {
+  .gx-prose {
+    max-width: 46rem;
+  }
+  .gx-disclosure {
+    margin: 0 0 1.25rem;
+  }
+  .gx-disclosure summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--galaxy-primary);
+    list-style: none;
+  }
+  .gx-disclosure summary::-webkit-details-marker { display: none; }
+  .gx-disclosure summary::before {
+    content: "\25b8";
     display: inline-block;
-    width: 0.85em;
-    height: 0.85em;
+    width: 0.9em;
+    color: var(--galaxy-grey);
+  }
+  .gx-disclosure[open] summary::before { content: "\25be"; }
+  .gx-disclosure .gx-prose {
+    margin: 0.5rem 0 0;
+  }
+  .gx-legend2 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 0 0 1.25rem;
+    font-size: 0.85rem;
+    color: var(--galaxy-grey);
+  }
+  .gx-legend2__group {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .gx-legend2__label {
+    font-weight: 600;
+    color: var(--galaxy-dark);
+    margin-right: 0.1rem;
+  }
+  .gx-legend2__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .gx-swatch2 {
+    display: inline-block;
+    width: 0.75em;
+    height: 0.75em;
     border-radius: 0.15em;
+  }
+  .gx-swatch2--notrun {
+    background: #eef2f6;
+    border: 1px solid rgba(37, 83, 123, 0.25);
+  }
+  .gx-gradient-swatch {
+    display: inline-block;
+    width: 3.5em;
+    height: 0.75em;
+    border-radius: 0.15em;
+    background: linear-gradient(to right, #f3f4f6, #3a3a3a);
     border: 1px solid rgba(37, 83, 123, 0.15);
-    vertical-align: -0.1em;
   }
   .gx-raster-search {
     font: inherit;
@@ -108,6 +184,9 @@ nav_label: Deployment stage timing
     border: 1px solid rgba(37, 83, 123, 0.3);
     border-radius: 0.375rem;
     width: 12rem;
+  }
+  .gx-jump-label {
+    font-size: 0.85rem;
   }
   .gx-raster-jump {
     display: flex;
@@ -129,19 +208,49 @@ nav_label: Deployment stage timing
   .gx-raster-jump button:hover {
     background: rgba(255, 215, 0, 0.1);
   }
-  #gx-raster-density {
+  .gx-density-toggle {
     margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .gx-density-toggle__option {
+    font: inherit;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid rgba(37, 83, 123, 0.3);
+    background: #fff;
+    color: var(--galaxy-grey);
+    cursor: pointer;
+  }
+  .gx-density-toggle__option:first-of-type {
+    border-radius: 0.375rem 0 0 0.375rem;
+    border-right-width: 0.5px;
+  }
+  .gx-density-toggle__option:last-of-type {
+    border-radius: 0 0.375rem 0.375rem 0;
+    border-left-width: 0.5px;
+  }
+  .gx-density-toggle__option.is-active {
+    background: var(--galaxy-primary);
+    color: #fff;
+    font-weight: 600;
   }
   .gx-raster-container {
+    position: relative;
     max-height: 70vh;
     overflow-y: auto;
     overflow-x: hidden;
-    border: 1px solid rgba(37, 83, 123, 0.1);
-    border-radius: 0.5rem;
   }
   #gx-raster-canvas {
     display: block;
     cursor: pointer;
+  }
+  #gx-raster-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
   }
   .gx-raster-tooltip {
     position: fixed;
@@ -336,17 +445,20 @@ nav_label: Deployment stage timing
   "use strict";
 
   var LABEL_WIDTH = 180;
+  var LABEL_PAD_LEFT = 12;
   var CELL_W = 14;
   var READABLE_CELL_H = 14;
   var OVERVIEW_CELL_H = 6;
   var CELL_H = READABLE_CELL_H; // mutated by the density toggle
   var CELL_GAP = 1;
   var RIGHT_MARGIN_W = CELL_W * 3;
+  var DATE_LABEL_H = 14; // sparse "Aug 15"-style run labels above the bars
   var BAR_MAX_H = 30;
   var BAR_GAP = 2;
-  var STRIP_H = 5;
-  var TOP_PAD_BOTTOM = 4;
-  var TOP_MARGIN_H = BAR_MAX_H + BAR_GAP + STRIP_H + TOP_PAD_BOTTOM;
+  var STRIP_H = 3;
+  var TOP_PAD_BOTTOM = 6; // gap between the coverage strip and the baseline
+  var TOP_MARGIN_H = DATE_LABEL_H + BAR_MAX_H + BAR_GAP + STRIP_H + TOP_PAD_BOTTOM;
+  var MAX_DATE_LABELS = 6; // sparse - not one per column
 
   var COLORS = {
     pass: "#61ad90",
@@ -389,6 +501,18 @@ nav_label: Deployment stage timing
   function fmtDate(iso) {
     if (!iso) return "unknown time";
     return iso.replace("T", " ");
+  }
+
+  var MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  // "Aug 15, 19:11" - for compact UI text (window label, axis labels);
+  // full precision stays available via fmtDate() in tooltips/title attrs.
+  function fmtShort(iso, withTime) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(iso || "");
+    if (!m) return "unknown";
+    var mon = MONTH_NAMES[parseInt(m[2], 10) - 1];
+    var date = mon + " " + parseInt(m[3], 10);
+    return withTime === false ? date : date + ", " + m[4] + ":" + m[5];
   }
 
   function cellTooltip(toolId, runId, cell, manifestByRun) {
@@ -588,6 +712,8 @@ nav_label: Deployment stage timing
     var container = document.getElementById("gx-raster-container");
     var canvas = document.getElementById("gx-raster-canvas");
     var ctx = canvas.getContext("2d");
+    var overlay = document.getElementById("gx-raster-overlay");
+    var overlayCtx = overlay.getContext("2d");
     var tooltip = document.getElementById("gx-raster-tooltip");
     var olderBtn = document.getElementById("gx-raster-older");
     var newerBtn = document.getElementById("gx-raster-newer");
@@ -602,7 +728,8 @@ nav_label: Deployment stage timing
     var inspectorReport = document.getElementById("gx-inspector-report");
     var searchInput = document.getElementById("gx-raster-search");
     var jumpIndex = document.getElementById("gx-raster-jump");
-    var densityBtn = document.getElementById("gx-raster-density");
+    var densityComfortableBtn = document.getElementById("gx-density-comfortable");
+    var densityCompactBtn = document.getElementById("gx-density-compact");
 
     var tools = matrix.tools;
     var runs = matrix.runs;
@@ -620,10 +747,12 @@ nav_label: Deployment stage timing
     // {mode: "cell"|"run"|"tool", toolId, runId} of whichever inspector
     // view is open - drives the highlight ring and hash routing.
     var inspectorState = null;
-    var density = "readable"; // "readable" | "overview" - toggled by gx-raster-density
+    var density = "readable"; // "readable" | "overview" - toggled by the density buttons
     var searchHighlightRow = null;
     var searchHighlightTimer = null;
     var detailCache = {}; // runId -> parsed runs/<runId>/detail.json
+    var hoveredRow = null; // tool index under the cursor - drives the crosshair overlay
+    var hoveredCol = null; // visible-run index under the cursor
 
     var maxAttemptedEver = manifest.reduce(function (m, r) {
       return Math.max(m, r.tools_attempted || 0);
@@ -642,6 +771,14 @@ nav_label: Deployment stage timing
       return runs.slice(windowStart, windowStart + nCols);
     }
 
+    function sizeCanvas(c, cctx, widthCss, heightCss, dpr) {
+      c.style.width = widthCss + "px";
+      c.style.height = heightCss + "px";
+      c.width = Math.round(widthCss * dpr);
+      c.height = Math.round(heightCss * dpr);
+      cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
     function draw() {
       nCols = computeCols();
       clampWindow();
@@ -650,20 +787,23 @@ nav_label: Deployment stage timing
       var dpr = window.devicePixelRatio || 1;
       var widthCss = LABEL_WIDTH + nCols * CELL_W + RIGHT_MARGIN_W;
       var heightCss = TOP_MARGIN_H + tools.length * CELL_H;
-      canvas.style.width = widthCss + "px";
-      canvas.style.height = heightCss + "px";
-      canvas.width = Math.round(widthCss * dpr);
-      canvas.height = Math.round(heightCss * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      sizeCanvas(canvas, ctx, widthCss, heightCss, dpr);
+      sizeCanvas(overlay, overlayCtx, widthCss, heightCss, dpr);
 
       ctx.clearRect(0, 0, widthCss, heightCss);
       ctx.font = "11px 'Atkinson Hyperlegible', sans-serif";
       ctx.textBaseline = "middle";
 
-      // Top margin: one stacked tool-count bar + coverage strip per
-      // visible run column. Tool-weighted (v2_raster.md), scaled linearly
-      // against the tallest bar in the visible window - percentile/sqrt
-      // scaling is tabled (v2_raster_plan.md sec 7).
+      var gridRight = LABEL_WIDTH + nCols * CELL_W;
+      var barsTop = DATE_LABEL_H;
+      var stripTop = barsTop + BAR_MAX_H + BAR_GAP;
+
+      // Top margin: sparse date labels, then one stacked tool-count bar +
+      // coverage strip per visible run column (bottom-aligned to a shared
+      // baseline), then a divider before the rows start. Tool-weighted
+      // (v2_raster.md), scaled linearly against the tallest bar in the
+      // visible window - percentile/sqrt scaling is tabled
+      // (v2_raster_plan.md sec 7).
       var topStatsByRun = {};
       var maxAffected = 0;
       visibleRuns.forEach(function (runId) {
@@ -672,12 +812,34 @@ nav_label: Deployment stage timing
         maxAffected = Math.max(maxAffected, stats.affected);
       });
 
+      // Sparse: only as many date labels as comfortably fit, always
+      // including the first and last visible run.
+      var maxLabelsByWidth = Math.max(1, Math.floor((nCols * CELL_W) / 40));
+      var labelCount = Math.max(1, Math.min(MAX_DATE_LABELS, maxLabelsByWidth));
+      var labelStep = Math.max(1, Math.ceil(visibleRuns.length / labelCount));
+
       visibleRuns.forEach(function (runId, col) {
         var x = LABEL_WIDTH + col * CELL_W;
         var stats = topStatsByRun[runId];
         var run = manifestByRun[runId] || {};
+
+        var isLastCol = col === visibleRuns.length - 1;
+        if (col % labelStep === 0 || isLastCol) {
+          ctx.save();
+          ctx.font = "9px 'Atkinson Hyperlegible', sans-serif";
+          // Right-align the last label so it can't overflow rightward into
+          // the "History" label past the grid boundary (v2_raster_ui.md
+          // sec 4/5 - caught by screenshot, not the logic harness).
+          ctx.textAlign = isLastCol ? "right" : "center";
+          ctx.textBaseline = "top";
+          ctx.fillStyle = "#58585a";
+          var labelX = isLastCol ? x + CELL_W - CELL_GAP : x + (CELL_W - CELL_GAP) / 2;
+          ctx.fillText(fmtShort(run.timestamp, false), labelX, 0);
+          ctx.restore();
+        }
+
         var barH = maxAffected ? Math.round((stats.affected / maxAffected) * BAR_MAX_H) : 0;
-        var segY = BAR_MAX_H - barH;
+        var segY = barsTop + BAR_MAX_H - barH;
         ["fail", "error", "mixed"].forEach(function (cls) {
           var segH = maxAffected ? Math.round((stats[cls] / maxAffected) * BAR_MAX_H) : 0;
           if (!segH) return;
@@ -688,27 +850,46 @@ nav_label: Deployment stage timing
 
         var coverage = coverageBucket(run.tools_attempted || 0, maxAttemptedEver);
         ctx.fillStyle = COVERAGE_COLORS[coverage];
-        ctx.fillRect(x, BAR_MAX_H + BAR_GAP, CELL_W - CELL_GAP, STRIP_H);
+        ctx.fillRect(x, stripTop, CELL_W - CELL_GAP, STRIP_H);
       });
+
+      // "History" label once, above the recurrence margin - it reads as
+      // one more run column otherwise (v2_raster_ui.md sec 5).
+      ctx.save();
+      ctx.font = "9px 'Atkinson Hyperlegible', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      ctx.fillStyle = "#58585a";
+      ctx.fillText("History", gridRight + RIGHT_MARGIN_W / 2, 0);
+      ctx.restore();
+
+      // Baseline under the summary area, full width - the bars/strip read
+      // as a small histogram sitting on it rather than floating blocks.
+      ctx.strokeStyle = "rgba(37, 83, 123, 0.2)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, TOP_MARGIN_H - 0.5);
+      ctx.lineTo(widthCss, TOP_MARGIN_H - 0.5);
+      ctx.stroke();
 
       tools.forEach(function (toolId, row) {
         var y = TOP_MARGIN_H + row * CELL_H;
 
         if (row % 2 === 1) {
           ctx.fillStyle = STRIPE_COLOR;
-          ctx.fillRect(0, y, LABEL_WIDTH, CELL_H);
+          ctx.fillRect(0, y, widthCss, CELL_H);
         }
 
         if (density !== "overview") {
           ctx.fillStyle = "#2c3143";
           var label = shortName(toolId);
           // Cheap ellipsis: trim until it fits rather than measuring per char.
-          var maxWidth = LABEL_WIDTH - 16;
+          var maxWidth = LABEL_WIDTH - LABEL_PAD_LEFT - 8;
           while (ctx.measureText(label).width > maxWidth && label.length > 1) {
             label = label.slice(0, -1);
           }
           if (label !== shortName(toolId)) label += "…";
-          ctx.fillText(label, 8, y + CELL_H / 2);
+          ctx.fillText(label, LABEL_PAD_LEFT, y + CELL_H / 2);
         }
 
         var cellsForTool = matrix.cells[toolId] || {};
@@ -741,7 +922,6 @@ nav_label: Deployment stage timing
 
       // Divider between the grid and the recurrence margin - without it,
       // an adjacent same-colored segment reads as an extra run column.
-      var gridRight = LABEL_WIDTH + nCols * CELL_W;
       ctx.strokeStyle = "rgba(37, 83, 123, 0.3)";
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -750,7 +930,8 @@ nav_label: Deployment stage timing
       ctx.stroke();
 
       // Highlight whatever opened the inspector, so closing it returns
-      // focus to a visibly obvious spot (v2_raster_plan.md sec 5).
+      // focus to a visibly obvious spot (v2_raster_plan.md sec 5). Outline
+      // only, fill left untouched, per v2_raster_ui.md sec 7.
       if (inspectorState) {
         ctx.strokeStyle = "#2c3143";
         ctx.lineWidth = 2;
@@ -768,7 +949,7 @@ nav_label: Deployment stage timing
         } else if (inspectorState.mode === "run") {
           var runCol = visibleRuns.indexOf(inspectorState.runId);
           if (runCol >= 0) {
-            ctx.strokeRect(LABEL_WIDTH + runCol * CELL_W + 1, 1, CELL_W - CELL_GAP - 1, TOP_MARGIN_H - TOP_PAD_BOTTOM - 1);
+            ctx.strokeRect(LABEL_WIDTH + runCol * CELL_W + 1, barsTop + 1, CELL_W - CELL_GAP - 1, BAR_MAX_H + BAR_GAP + STRIP_H - 1);
           }
         } else if (inspectorState.mode === "tool") {
           var toolRow = tools.indexOf(inspectorState.toolId);
@@ -795,9 +976,27 @@ nav_label: Deployment stage timing
       var lastRun = manifestByRun[visibleRuns[visibleRuns.length - 1]];
       windowLabel.textContent =
         "Runs " + (windowStart + 1) + "–" + (windowStart + nCols) + " of " + runs.length +
-        (firstRun && lastRun ? " (" + fmtDate(firstRun.timestamp) + " → " + fmtDate(lastRun.timestamp) + ")" : "");
+        (firstRun && lastRun ? " · " + fmtShort(firstRun.timestamp) + " → " + fmtShort(lastRun.timestamp) : "");
+      windowLabel.title = firstRun && lastRun ? fmtDate(firstRun.timestamp) + " → " + fmtDate(lastRun.timestamp) : "";
       olderBtn.disabled = windowStart <= 0;
       newerBtn.disabled = windowStart + nCols >= runs.length;
+
+      drawOverlay(widthCss, gridRight);
+    }
+
+    // Cheap, mouse-driven crosshair on a separate canvas layered on top -
+    // redrawn on every mousemove without re-running the expensive stats
+    // pass above (v2_raster_ui.md sec 7).
+    function drawOverlay(widthCss, gridRight) {
+      overlayCtx.clearRect(0, 0, widthCss, TOP_MARGIN_H + tools.length * CELL_H);
+      if (hoveredCol !== null) {
+        overlayCtx.fillStyle = "rgba(37, 83, 123, 0.07)";
+        overlayCtx.fillRect(LABEL_WIDTH + hoveredCol * CELL_W, 0, CELL_W - CELL_GAP, TOP_MARGIN_H + tools.length * CELL_H);
+      }
+      if (hoveredRow !== null) {
+        overlayCtx.fillStyle = "rgba(37, 83, 123, 0.07)";
+        overlayCtx.fillRect(0, TOP_MARGIN_H + hoveredRow * CELL_H, widthCss, CELL_H);
+      }
     }
 
     function hitTest(clientX, clientY) {
@@ -832,7 +1031,20 @@ nav_label: Deployment stage timing
       var hit = hitTest(evt.clientX, evt.clientY);
       if (!hit) {
         tooltip.hidden = true;
+        if (hoveredRow !== null || hoveredCol !== null) {
+          hoveredRow = null;
+          hoveredCol = null;
+          drawOverlay(canvas.clientWidth, LABEL_WIDTH + nCols * CELL_W);
+        }
         return;
+      }
+      var visibleRuns = currentRunIds();
+      var newRow = hit.type === "cell" || hit.type === "tool" ? tools.indexOf(hit.toolId) : null;
+      var newCol = hit.type === "cell" || hit.type === "run" ? visibleRuns.indexOf(hit.runId) : null;
+      if (newRow !== hoveredRow || newCol !== hoveredCol) {
+        hoveredRow = newRow;
+        hoveredCol = newCol;
+        drawOverlay(canvas.clientWidth, LABEL_WIDTH + nCols * CELL_W);
       }
       if (hit.type === "cell") {
         var cell = (matrix.cells[hit.toolId] || {})[hit.runId];
@@ -854,6 +1066,11 @@ nav_label: Deployment stage timing
     });
     canvas.addEventListener("mouseleave", function () {
       tooltip.hidden = true;
+      if (hoveredRow !== null || hoveredCol !== null) {
+        hoveredRow = null;
+        hoveredCol = null;
+        drawOverlay(canvas.clientWidth, LABEL_WIDTH + nCols * CELL_W);
+      }
     });
     canvas.addEventListener("click", function (evt) {
       var hit = hitTest(evt.clientX, evt.clientY);
@@ -1260,12 +1477,16 @@ nav_label: Deployment stage timing
       if (letter && letter in firstRowForLetter) scrollToRow(firstRowForLetter[letter]);
     });
 
-    densityBtn.addEventListener("click", function () {
-      density = density === "readable" ? "overview" : "readable";
+    function setDensity(next) {
+      if (next === density) return;
+      density = next;
       CELL_H = density === "readable" ? READABLE_CELL_H : OVERVIEW_CELL_H;
-      densityBtn.textContent = density === "readable" ? "Compact rows" : "Comfortable rows";
+      densityComfortableBtn.classList.toggle("is-active", density === "readable");
+      densityCompactBtn.classList.toggle("is-active", density === "overview");
       draw();
-    });
+    }
+    densityComfortableBtn.addEventListener("click", function () { setDensity("readable"); });
+    densityCompactBtn.addEventListener("click", function () { setDensity("overview"); });
 
     draw();
     openFromHash();
