@@ -16,18 +16,31 @@ interval), so the trace is exact and a brief dip or spike is never
 smoothed away - a chart can render each category's breakpoint list directly
 as a step line.
 
+Separately, for gcp_batch and local_k8s, also emits a "queued" step
+function (create_time -> the job's own recorded start_epoch job_metric,
+i.e. submitted but not yet executing) alongside the main "in flight"
+series (create_time -> update_time, i.e. queued+running combined,
+unchanged). This is where the GCP Batch per-job VM-provisioning tax
+actually shows up - jobs sit "queued" for ~100s on average before a
+Batch VM is even up, vs. ~10s for local k8s. Partial coverage only:
+start_epoch comes from a job_metrics entry Galaxy only records for jobs
+that ran through to completion, so early-failing jobs (common in this
+harness - see anvil_generate_analysis_data.py) don't contribute here,
+unlike the main series which counts every job with a create/update time.
+
 Usage: anvil_generate_parallelism_data.py
 """
 
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 TOOL_TESTS_DIR = "reports/anvil/tool-tests"
 PARALLELISM_DATA_DIR = "docs/parallelism-data"
 RUNS_DIR = f"{PARALLELISM_DATA_DIR}/runs"
 
 CATEGORIES = ("gcp_batch", "local_k8s", "other")
+QUEUED_CATEGORIES = ("gcp_batch", "local_k8s")
 
 
 def all_run_dirs() -> list[str]:
@@ -75,6 +88,45 @@ def collect_intervals(tests: list[dict]) -> dict[str, list[tuple]]:
     return intervals
 
 
+def job_start_time(job: dict):
+    """The job_metrics "start_epoch" entry (when the job actually began
+    executing), as a naive UTC datetime matching create_time/update_time's
+    own naive-UTC convention - or None if this job has no job_metrics
+    (never ran to completion)."""
+    for m in job.get("job_metrics", []):
+        if m.get("name") == "start_epoch":
+            try:
+                epoch = float(m["raw_value"])
+            except (TypeError, ValueError):
+                return None
+            return datetime.fromtimestamp(epoch, tz=timezone.utc).replace(tzinfo=None)
+    return None
+
+
+def collect_queued_intervals(tests: list[dict]) -> dict[str, list[tuple]]:
+    """destination -> [(create_time, start_time), ...] - only for jobs with
+    a recorded start_epoch, so coverage is partial (see module docstring)."""
+    intervals: dict[str, list[tuple]] = {c: [] for c in QUEUED_CATEGORIES}
+    for t in tests:
+        job = t.get("data", {}).get("job")
+        if not job:
+            continue
+        dest = classify_destination(job.get("external_id") or "")
+        if dest not in intervals:
+            continue
+        ct = job.get("create_time")
+        if not ct:
+            continue
+        started = job_start_time(job)
+        if started is None:
+            continue
+        created = datetime.fromisoformat(ct)
+        if started < created:
+            continue
+        intervals[dest].append((created, started))
+    return intervals
+
+
 def build_step_function(intervals: list[tuple]) -> list[list]:
     """Exact breakpoints [[iso_timestamp, concurrent_count], ...] of the
     concurrency step function - one entry per job start/end, in
@@ -107,6 +159,10 @@ def main() -> None:
 
         series = {dest: build_step_function(ivs) for dest, ivs in intervals_by_dest.items()}
         series["total"] = build_step_function(all_intervals)
+
+        queued_by_dest = collect_queued_intervals(tests)
+        for dest, ivs in queued_by_dest.items():
+            series[f"{dest}_queued"] = build_step_function(ivs)
 
         peak = {dest: max((level for _, level in bps), default=0) for dest, bps in series.items()}
         run_start = min(start for start, _ in all_intervals)
