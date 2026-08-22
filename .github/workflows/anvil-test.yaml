@@ -340,7 +340,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install reporting dependencies
-        run: python -m pip install matplotlib jinja2
+        run: python -m pip install matplotlib jinja2 pyyaml
 
       - name: Record deploy timing
         working-directory: /tmp/main-clone
@@ -674,6 +674,13 @@ jobs:
         working-directory: /tmp/main-clone
         run: python "${{ github.workspace }}/.github/scripts/anvil_generate_raster_data.py"
 
+      # Reads docs/raster-data/{manifest,matrix}.json and per-run
+      # detail.json written by the step above - must run after it.
+      - name: Generate results-brief incident analysis data
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
+        working-directory: /tmp/main-clone
+        run: python "${{ github.workspace }}/.github/scripts/anvil_generate_analysis_data.py"
+
       - name: Update reports/anvil/README.md
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         working-directory: /tmp/main-clone
@@ -693,7 +700,7 @@ jobs:
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
-          git add reports/anvil docs/tool-tests docs/raster-data docs/deploy-data 2>/dev/null || true
+          git add reports/anvil docs/tool-tests docs/raster-data docs/deploy-data docs/analysis-data 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "No report changes to commit"
             exit 0

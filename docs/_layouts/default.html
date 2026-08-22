@@ -203,16 +203,15 @@
       color: var(--galaxy-dark);
     }
 
-    /* Cross-page nav buttons, shared by docs/raster.html,
-       docs/deploy-stages.html and docs/results-brief.html so each links to
-       the other pages from the masthead (page.nav_links front matter: a
-       list of {href, label}). */
+    /* Masthead tab bar - the same 3 tabs on every page (docs/raster.html,
+       docs/deploy-stages.html, docs/results-brief.html), with the current
+       page's tab highlighted via page.nav_id front matter. */
     .gx-header__nav-group {
       display: flex;
       flex-wrap: wrap;
       gap: 0.6rem;
     }
-    .gx-nav-button {
+    .gx-nav-tab {
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
@@ -225,9 +224,15 @@
       color: var(--galaxy-primary);
       text-decoration: none;
     }
-    .gx-nav-button:hover {
+    a.gx-nav-tab:hover {
       background: rgba(255, 215, 0, 0.1);
       color: var(--galaxy-gold-dark);
+    }
+    .gx-nav-tab.is-active {
+      background: var(--galaxy-gold);
+      border-color: var(--galaxy-gold);
+      color: var(--galaxy-dark);
+      cursor: default;
     }
 
     /* Heatmap table (plain markdown table, e.g. inside a normal .gx-card) */
@@ -376,13 +381,11 @@
           </div>
           <p>{{ page.description | default: "Automated Galaxy deployment and tool-test results for AnVIL." }}</p>
         </div>
-        {% if page.nav_links %}
         <div class="gx-header__nav-group gx-header__nav">
-          {% for link in page.nav_links %}
-          <a class="gx-nav-button" href="{{ link.href }}">{{ link.label }}</a>
-          {% endfor %}
+          {% if page.nav_id == 'raster' %}<span class="gx-nav-tab is-active">Tool tests</span>{% else %}<a class="gx-nav-tab" href="raster.html">Tool tests</a>{% endif %}
+          {% if page.nav_id == 'deploy-stages' %}<span class="gx-nav-tab is-active">Deployment stage timing</span>{% else %}<a class="gx-nav-tab" href="deploy-stages.html">Deployment stage timing</a>{% endif %}
+          {% if page.nav_id == 'results-brief' %}<span class="gx-nav-tab is-active">Results brief</span>{% else %}<a class="gx-nav-tab" href="results-brief.html">Results brief</a>{% endif %}
         </div>
-        {% endif %}
       </div>
     </div>
   </header>
