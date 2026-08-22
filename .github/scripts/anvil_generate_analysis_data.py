@@ -54,6 +54,28 @@ UUID_RE = re.compile(r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f
 HEX_ID_RE = re.compile(r"\b[0-9a-f]{16,}\b", re.IGNORECASE)
 JOB_ERROR_RE = re.compile(r"^(Exception: )?Job in error state")
 
+# A test whose tool produced *nothing* is a different failure from one whose
+# output merely differs, but Planemo reports both as "different than
+# expected" and the difference only shows up below the first line - so it
+# used to land in the generic Test expectation/data bucket. On the
+# 2026-08-22 run that mislabelled 31 of 67 diff failures, masking the GCP
+# Batch metadata write-back defect entirely. These three shapes all mean
+# "actual side is empty": a unified-diff hunk header with a zero-length
+# right side, a text assertion against an empty string, and a collection
+# that came back with no elements.
+EMPTY_DIFF_HUNK_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+\d+,0 @@", re.MULTILINE)
+EMPTY_TEXT_ASSERT_RE = re.compile(r"in output \(''\)")
+EMPTY_COLLECTION_RE = re.compile(r"expected to have \d+ elements, but it had 0\.")
+EMPTY_OUTPUT_SIGNATURE = "Output produced no content (expected data, got an empty dataset)"
+
+
+def indicates_empty_output(problem: str) -> bool:
+    return bool(
+        EMPTY_DIFF_HUNK_RE.search(problem)
+        or EMPTY_TEXT_ASSERT_RE.search(problem)
+        or EMPTY_COLLECTION_RE.search(problem)
+    )
+
 
 def load_rules() -> list[dict]:
     with open(RULES_PATH) as f:
@@ -97,6 +119,12 @@ def extract_signature(execution_problem: str | None, output_problems: list[str] 
         for p in output_problems:
             if p and JOB_ERROR_RE.match(p.strip()):
                 return normalize_signature(p.strip().splitlines()[0])
+        # Checked after the job-in-error wrapper (a job that died explains its
+        # own empty outputs) but before the generic first-line fallback, so
+        # this only reclassifies what would otherwise be grouped by an
+        # uninformative "Output x: different than expected" line.
+        if any(p and indicates_empty_output(p) for p in output_problems):
+            return EMPTY_OUTPUT_SIGNATURE
         first = next((p for p in output_problems if p and p.strip()), None)
         if first:
             return normalize_signature(first.strip().splitlines()[0])

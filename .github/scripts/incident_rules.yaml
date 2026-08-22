@@ -24,6 +24,15 @@
   confidence: Probable
   title: Internal Galaxy utility job failed
 
+# Must precede the generic expectation-mismatch rule below: an empty output
+# is an execution-layer fault (the tool produced nothing), not a stale
+# expectation, and on this deployment it tracks the GCP Batch metadata
+# write-back failure rather than anything about the test itself.
+- pattern: '^Output produced no content'
+  category: Infrastructure
+  confidence: High
+  title: Output produced no content (empty/lost dataset)
+
 - pattern: 'different than expected|Expected text|Expected path|failed to find identifier|expected to have \d+ elements|Test output file .* is missing'
   category: Test expectation/data
   confidence: Probable

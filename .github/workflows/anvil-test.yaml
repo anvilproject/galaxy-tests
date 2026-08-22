@@ -395,16 +395,35 @@ jobs:
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         run: python -m pip install "galaxy-tool-util>=23.0" planemo bioblend
 
-      # Upstream bug in galaxy-tool-util (confirmed present from 25.1.1
-      # through the latest 26.1.1, so not a regression to just pin around):
-      # remote_to_input()'s non-composite-data branch never forwards
-      # force_path_paste to _get_path_or_location, so --force_path_paste is
-      # silently ignored for ordinary file inputs and every test falls
-      # through to the client-upload path, which fails since we have no
-      # local test-data. Patch the installed package directly rather than
-      # wait on an upstream fix - the assert fails loudly if the expected
-      # text isn't found, e.g. once this is actually fixed upstream.
-      - name: Patch galaxy-tool-util force_path_paste bug
+      # Two upstream bugs in galaxy-tool-util (confirmed present from 25.1.1
+      # through the latest 26.1.1, so not regressions to just pin around).
+      # Patch the installed package directly rather than wait on upstream
+      # fixes - each assert fails loudly if the expected text isn't found,
+      # e.g. once it's actually fixed upstream.
+      #
+      # 1. remote_to_input()'s non-composite-data branch never forwards
+      #    force_path_paste to _get_path_or_location, so --force_path_paste
+      #    is silently ignored for ordinary file inputs.
+      #
+      # 2. test_data_path() does `return response.json()` for status 404 as
+      #    well as 200, so a test-data file the server can't resolve comes
+      #    back as an error *dict*. _get_path_or_location() feeds that
+      #    straight into os.path.exists(), which raises
+      #    `TypeError: stat: path should be string, bytes, os.PathLike or
+      #    integer, not dict` - and that propagates out as a non-zero exit
+      #    for the whole process after results are already written. On the
+      #    2026-08-22 run this accounted for 54 of 170 failing tests across
+      #    15 tools, and 61% of failures once superseded tool revisions are
+      #    excluded. Rather than let a 404 crash the run, treat "no
+      #    server-side path" as a miss and fall through to the
+      #    test_data_download branch, which fetches the file over the API
+      #    and, if the server genuinely doesn't have it, fails with the
+      #    actionable `Test input file (<name>) cannot be found.` naming the
+      #    file. Note this is a *fallback*, not a replacement:
+      #    --force_path_paste still wins whenever the server can resolve a
+      #    path, so the fast no-download route is unchanged for the ~90% of
+      #    lookups that already work.
+      - name: Patch galaxy-tool-util force_path_paste bugs
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         run: |
           cat > /tmp/patch_force_path_paste.py << 'PYEOF'
@@ -430,6 +449,39 @@ jobs:
           )
           assert old in content, "Expected force_path_paste bug text not found - has this been fixed upstream?"
           content = content.replace(old, new, 1)
+
+          # Bug 2: a 404 from test_data_path() yields an error dict, not a path.
+          old_404 = (
+              "        if fname and force_path_paste:\n"
+              "            file_name = self.test_data_path(tool_id, fname, tool_version=tool_version)\n"
+              "            file_name_exists = os.path.exists(file_name)\n"
+          )
+          new_404 = (
+              "        if fname and force_path_paste:\n"
+              "            file_name = self.test_data_path(tool_id, fname, tool_version=tool_version)\n"
+              "            # 404 returns the error dict, not a path - treat it as a miss.\n"
+              "            if not isinstance(file_name, str):\n"
+              "                file_name = None\n"
+              "            file_name_exists = file_name is not None and os.path.exists(file_name)\n"
+          )
+          assert old_404 in content, "Expected test_data_path 404 bug text not found - has this been fixed upstream?"
+          content = content.replace(old_404, new_404, 1)
+
+          # ...and without a usable path, fall through to test_data_download
+          # instead of building a bogus `file://None` location.
+          old_paste = (
+              "            if force_path_paste:\n"
+              "                if file_name is None:\n"
+              "                    file_name = self.test_data_path(tool_id, fname, tool_version=tool_version)\n"
+              '                return PathOrLocation(name=fname, location=f"file://{file_name}", path=None)\n'
+          )
+          new_paste = (
+              "            if force_path_paste and isinstance(file_name, str):\n"
+              '                return PathOrLocation(name=fname, location=f"file://{file_name}", path=None)\n'
+          )
+          assert old_paste in content, "Expected force_path_paste fallthrough text not found - has this been fixed upstream?"
+          content = content.replace(old_paste, new_paste, 1)
+
           with open(path, "w") as f:
               f.write(content)
           print(f"Patched {path}")
@@ -519,7 +571,13 @@ jobs:
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         continue-on-error: true
         env:
-          GALAXY_TEST_DEFAULT_WAIT: '600'
+          # Per-test wall-clock ceiling. 900 to match tools-iuc CI's
+          # `test_timeout: 900`; at the previous 600 legitimately slow tools
+          # were failed for being slow rather than wrong - repeatmodeler
+          # test 0 needs ~930s, and image_learner/tabular_learner also
+          # tripped it. Raising this matters more now that the pinned list
+          # is on latest tool revisions, which carry ~1.2x more tests.
+          GALAXY_TEST_DEFAULT_WAIT: '900'
         run: |
           mkdir -p results logs
           GALAXY_URL="http://${{ steps.vm-ip.outputs.ip }}/galaxy/"
@@ -541,6 +599,26 @@ jobs:
           if [ "${{ github.event_name }}" = "schedule" ]; then
             cp .github/scheduled-tool-ids.txt /tmp/sampled_tool_ids.txt
             echo "Scheduled run: testing the $(wc -l < /tmp/sampled_tool_ids.txt) tool IDs pinned in .github/scheduled-tool-ids.txt"
+
+            # Report pinned IDs the server doesn't recognise as testable,
+            # instead of letting them consume a slot in silence. Six data
+            # managers sat in this list for months producing no results at
+            # all: they were pinned without the `data_manager/` path segment
+            # the installed tool ids actually carry, so nothing ever matched
+            # them. Advisory only - never fails the run, and never rewrites
+            # the pinned list (that's a reviewed commit, not a CI side
+            # effect).
+            curl -sf -H "x-api-key: $KEY" "${GALAXY_URL}api/tools/tests_summary" \
+              | python3 -c "import json, sys; print('\n'.join(json.load(sys.stdin).keys()))" \
+              > /tmp/testable_tool_ids.txt || true
+            if [ -s /tmp/testable_tool_ids.txt ]; then
+              cp /tmp/testable_tool_ids.txt logs/testable-tool-ids.txt
+              python3 .github/scripts/anvil_preflight_tool_ids.py \
+                /tmp/sampled_tool_ids.txt /tmp/testable_tool_ids.txt \
+                | tee logs/pinned-list-preflight.txt || true
+            else
+              echo "Could not fetch tests_summary; skipping pinned-list pre-flight."
+            fi
           elif [ "$RANDOM_TOOL_COUNT" != "0" ]; then
             echo "Fetching the full testable tool list to sample $RANDOM_TOOL_COUNT from..."
             curl -sf -H "x-api-key: $KEY" "${GALAXY_URL}api/tools/tests_summary" \
