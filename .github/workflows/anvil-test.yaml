@@ -23,7 +23,7 @@ on:
         required: true
       parallel-tests:
         description: 'galaxy-tool-test --parallel-tests value'
-        default: '16'
+        default: '32'
         required: true
       run-tests:
         description: 'Run the full tool-test suite (false = time the deploy only)'
@@ -130,23 +130,26 @@ jobs:
       # alone), so all three are needed. mixins/testing.yml sets
       # allow_path_paste: true, needed for --force_path_paste below (see
       # "Run tool tests"). mixins/ci-concurrency.yml raises the gcp_batch
-      # runner's workers from Galaxy's default of 4 to 16 - confirmed via
-      # `kubectl get configmap galaxy-configs -o jsonpath='{.data.job_conf\.yml}'`
-      # that Batch-routed jobs were capped there (not by Batch/quota itself,
-      # and not by node CPU - `kubectl top node` showed the node mostly idle
-      # even with jobs trickling in one at a time) - PR galaxyproject/
-      # galaxy-k8s-boot#97 merged this to dev, but nothing here was passing
-      # the extra -f to actually use it.
+      # runner's workers from Galaxy's default of 4 - originally to 16
+      # (confirmed via `kubectl get configmap galaxy-configs -o
+      # jsonpath='{.data.job_conf\.yml}'` that Batch-routed jobs were capped
+      # there, not by Batch/quota itself; PR galaxyproject/
+      # galaxy-k8s-boot#97), then to 32 on galaxy-k8s-boot's dev branch once
+      # a worker-session-level trace (docs/parallelism-data) showed the
+      # 16-slot pool actually hitting its cap ~65% of the time, not sitting
+      # idle. Keep parallel-tests below in sync with whatever this mixin is
+      # currently set to.
       #
-      # -m t2d-standard-8: the default t2d-standard-4 leaves under 1 free
-      # CPU once Galaxy's own service pods (web, job handler, celery x2,
-      # rabbitmq, postgres, nginx, tusd, workflow, k8s-monitor) claim their
-      # requests (~76% of 4 vCPUs) - confirmed via `kubectl describe node`/
-      # `describe pod` showing "Insufficient cpu" FailedScheduling events,
-      # so none of TPV's k8s-routed (<=1 core, small-job) test jobs could
-      # ever be scheduled. This is intended job routing, not a bug in it -
-      # small jobs are meant to run on the local k8s runner - just not
-      # enough spare node capacity to do so.
+      # -m t2d-standard-16: bumped from t2d-standard-8 alongside the above -
+      # local k8s-runner-routed ("small job") jobs share this node's own
+      # CPUs with Galaxy's service pods (web, job handler, celery x2,
+      # rabbitmq, postgres, nginx, tusd, workflow, k8s-monitor), and
+      # raising client/gcp_batch concurrency raises local-runner concurrency
+      # too (they're fed by the same worker pool) - t2d-standard-8 was
+      # already seeing local-runner jobs peak at 7 of 8 vCPUs at only
+      # 16-way parallelism (see docs/parallelism-data), so doubling
+      # concurrency without doubling the node would likely have made the
+      # node itself the new bottleneck instead of gcp_batch.workers.
       - name: Record deploy start time
         id: deploy-start
         run: echo "epoch=$(date -u +%s)" >> "$GITHUB_OUTPUT"
@@ -158,7 +161,7 @@ jobs:
             --ephemeral-only \
             --git-branch dev \
             -f values/values.yml -f mixins/testing.yml -f mixins/ci-concurrency.yml \
-            -m t2d-standard-8 \
+            -m t2d-standard-16 \
             -k "${{ steps.ssh-key.outputs.public-key }}" \
             "${{ steps.instance.outputs.name }}"
 
@@ -526,7 +529,7 @@ jobs:
           # input's own declared default so a scheduled run behaves like
           # an un-overridden manual one (see "Set instance name" above).
           RANDOM_TOOL_COUNT="${{ inputs.random-tool-count || '0' }}"
-          PARALLEL_TESTS="${{ inputs.parallel-tests || '16' }}"
+          PARALLEL_TESTS="${{ inputs.parallel-tests || '32' }}"
           TEST_PAGE_SIZE="${{ inputs.test-page-size || '0' }}"
           TEST_PAGE_NUMBER="${{ inputs.test-page-number || '0' }}"
           export GALAXY_URL KEY INSTANCE_NAME
