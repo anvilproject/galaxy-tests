@@ -14,13 +14,16 @@ paths and encoded IDs scrubbed out - see normalize_signature()). The same
 underlying bug then reads as one incident affecting N tools, instead of N
 unrelated-looking rows.
 
-An incident's lifecycle state (new/continuing/recovered) is computed per
-tool, walking each tool's own attempted-run history exactly like
-raster.html's previousAttemptedCell() does - skipping runs where that tool
-simply wasn't sampled, so a gap in coverage is never confused with a
-recovery. The per-run history strip is coarser (any tool showing the
-signature counts as "present" that run) since it's meant as a quick visual,
-not a precise state machine.
+An incident's lifecycle state (new/continuing/intermittent/recovered) is
+computed per tool, walking each tool's own attempted-run history exactly
+like raster.html's previousAttemptedCell() does - skipping runs where that
+tool simply wasn't sampled, so a gap in coverage is never confused with a
+recovery. A tool whose current occurrence isn't part of an unbroken streak
+but did show the same signature further back (before a gap) is
+"intermittent" rather than "new" - see has_earlier_occurrence(). The
+per-run history strip is coarser (any tool showing the signature counts as
+"present" that run) since it's meant as a quick visual, not a precise state
+machine.
 
 Usage: anvil_generate_analysis_data.py
 """
@@ -162,6 +165,23 @@ def previous_attempted_run(tool_id: str, run_idx: int, runs: list[str], cells: d
     return None
 
 
+def has_earlier_occurrence(
+    tool_id: str, from_idx: int, sid: str, runs: list[str], cells: dict, tool_sig_by_run: dict
+) -> bool:
+    """True if sid shows up for tool_id in some attempted run at or before
+    from_idx - used to tell a genuinely first-time occurrence apart from one
+    that's recurring after a gap (see "Intermittent" state below)."""
+    idx = from_idx
+    while True:
+        run_id = runs[idx]
+        if sid in tool_sig_by_run.get(tool_id, {}).get(run_id, set()):
+            return True
+        prev_run = previous_attempted_run(tool_id, idx, runs, cells)
+        if prev_run is None:
+            return False
+        idx = runs.index(prev_run)
+
+
 def main() -> None:
     manifest = load_json(MANIFEST_PATH)
     matrix = load_json(MATRIX_PATH)
@@ -212,16 +232,18 @@ def main() -> None:
             active_tools_all.update(tools)
             total_tests_affected += tests_affected
 
-            # Per-tool new/continuing classification and streak, from each
-            # tool's own attempted-run history (not run_idx-1 blindly -
-            # that tool may not have been sampled last time).
+            # Per-tool new/continuing/intermittent classification and streak,
+            # from each tool's own attempted-run history (not run_idx-1
+            # blindly - that tool may not have been sampled last time).
             per_tool_new = 0
             per_tool_continuing = 0
+            per_tool_intermittent = 0
             max_streak = 1
             for tool_id in tools:
                 streak = 1
                 cursor_idx = run_idx
                 is_new = True
+                break_idx = None  # first attempted run that broke the streak
                 while True:
                     prev_run = previous_attempted_run(tool_id, cursor_idx, runs, cells)
                     if prev_run is None:
@@ -232,9 +254,18 @@ def main() -> None:
                         streak += 1
                         cursor_idx = runs.index(prev_run)
                     else:
+                        break_idx = runs.index(prev_run)
                         break
                 if is_new:
-                    per_tool_new += 1
+                    # Looks new by unbroken-streak alone, but if this tool
+                    # showed the same signature further back (before the
+                    # gap), it's a recurrence, not a first-time occurrence.
+                    if break_idx is not None and has_earlier_occurrence(
+                        tool_id, break_idx, sid, runs, cells, tool_sig_by_run
+                    ):
+                        per_tool_intermittent += 1
+                    else:
+                        per_tool_new += 1
                 else:
                     per_tool_continuing += 1
                 max_streak = max(max_streak, streak)
@@ -242,6 +273,8 @@ def main() -> None:
             is_shared = tools_affected >= SHARED_TOOL_THRESHOLD
             if per_tool_continuing > 0:
                 state = "Persistent" if max_streak >= PERSISTENT_STREAK_THRESHOLD + 1 else "Continuing"
+            elif per_tool_intermittent > 0:
+                state = "Intermittent"
             else:
                 state = "New"
 
@@ -277,6 +310,11 @@ def main() -> None:
             if versions_affected and is_shared:
                 evidence.append(f"{versions_affected} versions")
 
+            tools_detail = [
+                {"tool_id": tool_id, "versions": sorted(t["versions"]), "tests": t["tests"]}
+                for tool_id, t in sorted(tools.items(), key=lambda kv: short_name(kv[0]))
+            ]
+
             incidents.append(
                 {
                     "id": sid,
@@ -290,7 +328,7 @@ def main() -> None:
                     "tests_affected": tests_affected,
                     "streak": max_streak,
                     "fraction_of_toolset": round(fraction_of_toolset, 4),
-                    "tools": sorted(tools, key=short_name),
+                    "tools_detail": tools_detail,
                     "history": history,
                     "evidence": evidence,
                     "sample": entry["sample"],
@@ -333,7 +371,7 @@ def main() -> None:
         )
         tool_specific = [i for i in incidents if not i["shared"]]
         persistent_tool_issues = sorted(
-            (i for i in tool_specific if i["state"] in ("Continuing", "Persistent")),
+            (i for i in tool_specific if i["state"] in ("Continuing", "Persistent", "Intermittent")),
             key=lambda i: (-i["streak"], -i["fraction_of_toolset"], -i["versions_affected"]),
         )
         new_isolated_issues = sorted(
@@ -342,7 +380,7 @@ def main() -> None:
         )
 
         new_count = sum(1 for i in incidents if i["state"] == "New")
-        continuing_count = sum(1 for i in incidents if i["state"] in ("Continuing", "Persistent"))
+        continuing_count = sum(1 for i in incidents if i["state"] in ("Continuing", "Persistent", "Intermittent"))
         recovered_count = len({(r["tool"]) for r in recovered})
 
         summary_sentence = build_summary_sentence(

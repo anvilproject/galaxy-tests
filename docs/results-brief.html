@@ -203,6 +203,7 @@ nav_id: results-brief
   .gx-badge--state-continuing { background: rgba(37, 83, 123, 0.1); color: var(--galaxy-primary); }
   .gx-badge--state-persistent { background: rgba(37, 83, 123, 0.18); color: var(--galaxy-primary); }
   .gx-badge--state-recovered { background: rgba(97, 173, 144, 0.2); color: #2f7a4f; }
+  .gx-badge--state-intermittent { background: rgba(216, 126, 85, 0.18); color: #a05230; }
 
   .gx-incident__evidence {
     margin-top: 0.35rem;
@@ -356,15 +357,17 @@ nav_id: results-brief
       html += '<a href="' + escapeHtml(resultsHtmlUrl) + '" target="_blank" rel="noopener">Full report &#8599;</a>';
     }
     html += "</div>";
-    incident.tools.forEach(function (toolId) {
+    incident.tools_detail.forEach(function (t) {
+      var versionsLabel = t.versions.join(", ");
+      var testsLabel = t.tests + (t.tests === 1 ? " test" : " tests");
       html += '<div class="gx-incident__tool-row">' +
-        '<a href="' + escapeHtml(toolLink(toolId, runId)) + '">' + escapeHtml(shortName(toolId)) + "</a>" +
-        "<span>" + escapeHtml(toolId) + "</span>" +
+        '<a href="' + escapeHtml(toolLink(t.tool_id, runId)) + '">' + escapeHtml(shortName(t.tool_id)) + "</a>" +
+        "<span>" + escapeHtml(versionsLabel) + " &middot; " + escapeHtml(testsLabel) + "</span>" +
         "</div>";
     });
     var sampleToolName = shortName(incident.sample.tool_id);
-    var note = incident.tools.length > 1
-      ? "Representative example below, from " + sampleToolName + ". All " + incident.tools.length +
+    var note = incident.tools_detail.length > 1
+      ? "Representative example below, from " + sampleToolName + ". All " + incident.tools_detail.length +
         " tools above were clustered here because they produce this same normalized message - exact " +
         "paths, job/dataset IDs, line numbers, and similar volatile details are stripped before " +
         "matching, so each tool's own raw text (not shown per-tool) may differ slightly from this one."
