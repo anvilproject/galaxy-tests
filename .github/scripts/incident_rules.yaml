@@ -1,0 +1,38 @@
+# Curated signature-classification rules for anvil_generate_analysis_data.py
+# (v2_brief.md "Suggested source taxonomy" / "A small curated rules file").
+#
+# Checked in order against each incident's normalized signature text;
+# first match wins. Unmatched signatures fall back to
+# category: Unknown, confidence: Unclassified - that's the expected,
+# honest default for a signature nobody's looked at yet, not a bug.
+#
+# Fields:
+#   pattern: a Python re.search() regex against the normalized signature.
+#   category: one of Infrastructure, Galaxy/test harness, Tool/runtime,
+#     Test expectation/data.
+#   confidence: High, Probable, or Unclassified.
+#   title: optional short human title for the incident. Falls back to a
+#     truncated signature if omitted.
+
+- pattern: 'TypeError: stat: path should be string'
+  category: Galaxy/test harness
+  confidence: High
+  title: Input staging TypeError (test_data_path 404 bug)
+
+- pattern: 'Job in error state\.\. tool_id: __\w+__'
+  category: Galaxy/test harness
+  confidence: Probable
+  title: Internal Galaxy utility job failed
+
+- pattern: 'different than expected|Expected text|Expected path|failed to find identifier|expected to have \d+ elements|Test output file .* is missing'
+  category: Test expectation/data
+  confidence: Probable
+
+- pattern: 'Job in error state'
+  category: Tool/runtime
+  confidence: Probable
+
+- pattern: "Parameter '.*': specify a dataset"
+  category: Test expectation/data
+  confidence: Probable
+  title: Input dataset format/build mismatch

@@ -612,9 +612,8 @@ jobs:
       # test run still gets whatever the web handler logged before cleanup
       # deletes the VM (and the cluster with it). Not reliable for startup
       # timing specifically - see the note above the earlier capture.
-      # Limited to the web handler deployment (not job handlers/celery/etc)
-      # per request - `kubectl get deployments -n galaxy` (see "Wait for
-      # Galaxy deployments to roll out" above) confirmed its name is
+      # `kubectl get deployments -n galaxy` (see "Wait for Galaxy
+      # deployments to roll out" above) confirmed the web handler's name is
       # `galaxy-web`.
       - name: Fetch Galaxy web handler pod logs
         if: always()
@@ -632,6 +631,28 @@ jobs:
           DIR="reports/anvil/deployments/${{ steps.instance.outputs.name }}"
           mkdir -p "$DIR"
           cp "${{ github.workspace }}/logs/galaxy-web.log" "$DIR/galaxy-web.log"
+
+      # Job orchestration/input-staging errors (the source of most
+      # "Galaxy/test harness" incidents on the results-brief page) run in
+      # the job handler, not the web handler - the web log alone doesn't
+      # have them. Deployment name (`galaxy-job-0`) per
+      # galaxy-helm/galaxy/templates/deployment-job.yaml.
+      - name: Fetch Galaxy job handler pod logs
+        if: always()
+        continue-on-error: true
+        run: |
+          mkdir -p logs
+          kubectl logs -n galaxy deployment/galaxy-job-0 --all-containers=true --prefix=true --tail=-1 \
+            > logs/galaxy-job.log 2>&1 || echo "Could not fetch galaxy-job logs (see step output)" | tee -a logs/galaxy-job.log
+
+      - name: Save Galaxy job handler logs under reports/anvil
+        if: always()
+        continue-on-error: true
+        working-directory: /tmp/main-clone
+        run: |
+          DIR="reports/anvil/deployments/${{ steps.instance.outputs.name }}"
+          mkdir -p "$DIR"
+          cp "${{ github.workspace }}/logs/galaxy-job.log" "$DIR/galaxy-job.log"
 
       - name: Save results under reports/anvil
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}

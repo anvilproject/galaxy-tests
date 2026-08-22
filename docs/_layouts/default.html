@@ -203,9 +203,15 @@
       color: var(--galaxy-dark);
     }
 
-    /* Cross-page nav button, shared by docs/raster.html and
-       docs/deploy-stages.html so each links to the other from the
-       masthead (page.nav_href/page.nav_label front matter). */
+    /* Cross-page nav buttons, shared by docs/raster.html,
+       docs/deploy-stages.html and docs/results-brief.html so each links to
+       the other pages from the masthead (page.nav_links front matter: a
+       list of {href, label}). */
+    .gx-header__nav-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
     .gx-nav-button {
       display: inline-flex;
       align-items: center;
@@ -370,8 +376,12 @@
           </div>
           <p>{{ page.description | default: "Automated Galaxy deployment and tool-test results for AnVIL." }}</p>
         </div>
-        {% if page.nav_href %}
-        <a class="gx-nav-button gx-header__nav" href="{{ page.nav_href }}">{{ page.nav_label }}</a>
+        {% if page.nav_links %}
+        <div class="gx-header__nav-group gx-header__nav">
+          {% for link in page.nav_links %}
+          <a class="gx-nav-button" href="{{ link.href }}">{{ link.label }}</a>
+          {% endfor %}
+        </div>
         {% endif %}
       </div>
     </div>
