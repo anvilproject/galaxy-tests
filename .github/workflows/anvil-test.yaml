@@ -302,12 +302,15 @@ jobs:
           exit 1
 
       # Captured here (before any tool-test traffic exists) specifically to
-      # dissect Galaxy's own startup sequence - waiting until the end of the
-      # job (see "Fetch Galaxy web handler pod logs" below) is too late: a
-      # first attempt showed the container's log had already rotated past
-      # its retention limit under tool-test request volume, losing the
-      # entire startup sequence (a ~1h39m gap between the wait-db init
-      # container finishing and the earliest surviving galaxy-web line).
+      # dissect Galaxy's own startup sequence - a one-shot fetch at the end
+      # of the job is too late: a first attempt showed the container's log
+      # had already rotated past its retention limit under tool-test
+      # request volume, losing the entire startup sequence (a ~1h39m gap
+      # between the wait-db init container finishing and the earliest
+      # surviving galaxy-web line). The continuous capture started below
+      # solves this for the rest of the run, but this early one-shot
+      # snapshot is what anvil_generate_galaxy_startup_stages.py actually
+      # reads (LOG_FILENAME) - keep producing it even after that exists.
       - name: Fetch Galaxy web handler startup log
         if: always()
         continue-on-error: true
@@ -324,6 +327,41 @@ jobs:
           DIR="reports/anvil/deployments/${{ steps.instance.outputs.name }}"
           mkdir -p "$DIR"
           cp "${{ github.workspace }}/logs/galaxy-web-startup.log" "$DIR/galaxy-web-startup.log"
+
+      # A one-shot `kubectl logs` (as used for the startup snapshot above,
+      # and previously for the final galaxy-web.log/galaxy-job.log capture
+      # below) only sees whichever pod/container instance exists at the
+      # moment it's invoked, and `-f` stops following - silently, no error
+      # - the instant that instance restarts or the pod gets rescheduled to
+      # a new pod name. A run's test phase spans hours, long enough for
+      # either to happen, and losing the window around a restart is exactly
+      # what made a prior stall un-diagnosable (galaxy-job.log's final
+      # snapshot only covered the run's last ~45 minutes out of ~3 hours).
+      # Wrap `-f` in a retry loop instead: each retry re-resolves
+      # `deployment/<name>` to whatever pod is current right now, and a
+      # small --tail overlap on retries means a restart during the brief
+      # gap between attempts loses nothing (at worst a handful of
+      # duplicate lines, never a gap). Runs for the rest of the GH Actions
+      # job as a background process on the runner itself (not the target
+      # cluster) - nothing to explicitly stop, since the runner VM is
+      # destroyed at job end regardless of what's still running on it.
+      - name: Start continuous Galaxy web/job pod log capture
+        if: always()
+        continue-on-error: true
+        run: |
+          mkdir -p logs
+          stream_pod_logs() {
+            local deployment="$1" outfile="$2" tail="-1"
+            while true; do
+              kubectl logs -f -n galaxy "deployment/$deployment" --all-containers=true --prefix=true --tail="$tail" \
+                >> "$outfile" 2>&1
+              tail=20
+              sleep 2
+            done
+          }
+          stream_pod_logs galaxy-web logs/galaxy-web.log &
+          stream_pod_logs galaxy-job-0 logs/galaxy-job.log &
+          disown -a
 
       # Stdlib only, same as "Generate deploy-stage timing data" above.
       - name: Generate Galaxy startup timing data
@@ -605,24 +643,11 @@ jobs:
             --test_output results/results.html \
             --test_output_xunit results/results.xunit
 
-      # A second, later snapshot - distinct purpose from the startup-log
-      # capture above. This one covers the fullest window (through however
-      # much of the tool-test run happened) for general end-of-run
-      # diagnostics; if: always() so a failed deploy or a failed/skipped
-      # test run still gets whatever the web handler logged before cleanup
-      # deletes the VM (and the cluster with it). Not reliable for startup
-      # timing specifically - see the note above the earlier capture.
-      # `kubectl get deployments -n galaxy` (see "Wait for Galaxy
-      # deployments to roll out" above) confirmed the web handler's name is
-      # `galaxy-web`.
-      - name: Fetch Galaxy web handler pod logs
-        if: always()
-        continue-on-error: true
-        run: |
-          mkdir -p logs
-          kubectl logs -n galaxy deployment/galaxy-web --all-containers=true --prefix=true --tail=-1 \
-            > logs/galaxy-web.log 2>&1 || echo "Could not fetch galaxy-web logs (see step output)" | tee -a logs/galaxy-web.log
-
+      # logs/galaxy-web.log has been accumulating continuously since "Start
+      # continuous Galaxy web/job pod log capture" above - this just copies
+      # whatever's there. if: always() so a failed deploy or a
+      # failed/skipped test run still gets whatever was captured before
+      # cleanup deletes the VM (and the cluster with it).
       - name: Save Galaxy web handler logs under reports/anvil
         if: always()
         continue-on-error: true
@@ -636,15 +661,10 @@ jobs:
       # "Galaxy/test harness" incidents on the results-brief page) run in
       # the job handler, not the web handler - the web log alone doesn't
       # have them. Deployment name (`galaxy-job-0`) per
-      # galaxy-helm/galaxy/templates/deployment-job.yaml.
-      - name: Fetch Galaxy job handler pod logs
-        if: always()
-        continue-on-error: true
-        run: |
-          mkdir -p logs
-          kubectl logs -n galaxy deployment/galaxy-job-0 --all-containers=true --prefix=true --tail=-1 \
-            > logs/galaxy-job.log 2>&1 || echo "Could not fetch galaxy-job logs (see step output)" | tee -a logs/galaxy-job.log
-
+      # galaxy-helm/galaxy/templates/deployment-job.yaml. Like galaxy-web.log
+      # above, logs/galaxy-job.log has been accumulating continuously since
+      # "Start continuous Galaxy web/job pod log capture" - this just
+      # copies whatever's there.
       - name: Save Galaxy job handler logs under reports/anvil
         if: always()
         continue-on-error: true
@@ -664,6 +684,15 @@ jobs:
              "${{ github.workspace }}/results/results.html" \
              "${{ github.workspace }}/results/results.xunit" \
              "$DIR/"
+
+      # Reads the job.create_time/update_time/external_id already present
+      # in the results.json just saved above - no new capture during the
+      # run, and re-derives every historical run's trace too, not just this
+      # one (see anvil_generate_parallelism_data.py's docstring).
+      - name: Generate job-parallelism trace data
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
+        working-directory: /tmp/main-clone
+        run: python "${{ github.workspace }}/.github/scripts/anvil_generate_parallelism_data.py"
 
       # Full run history, no window cap - the renderer (docs/raster.html)
       # decides how much to show and how far prev/next/deep-links can
@@ -700,7 +729,7 @@ jobs:
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
-          git add reports/anvil docs/tool-tests docs/raster-data docs/deploy-data docs/analysis-data 2>/dev/null || true
+          git add reports/anvil docs/tool-tests docs/raster-data docs/deploy-data docs/analysis-data docs/parallelism-data 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "No report changes to commit"
             exit 0
