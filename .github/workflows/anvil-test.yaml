@@ -866,6 +866,14 @@ jobs:
         working-directory: /tmp/main-clone
         run: python "${{ github.workspace }}/.github/scripts/anvil_generate_parallelism_data.py"
 
+      # Same job.job_metrics source as the parallelism trace above, but
+      # per-GCP-Batch-job runtime/resource records for the "Job runtimes"
+      # Gantt chart, instead of a concurrency step function.
+      - name: Generate GCP Batch job runtime data
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
+        working-directory: /tmp/main-clone
+        run: python "${{ github.workspace }}/.github/scripts/anvil_generate_job_runtime_data.py"
+
       # Full run history, no window cap - the renderer (docs/raster.html)
       # decides how much to show and how far prev/next/deep-links can
       # reach. Also copies each run's results.html into docs/tool-tests/,
@@ -901,7 +909,7 @@ jobs:
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
-          git add reports/anvil docs/tool-tests docs/raster-data docs/deploy-data docs/analysis-data docs/parallelism-data 2>/dev/null || true
+          git add reports/anvil docs/tool-tests docs/raster-data docs/deploy-data docs/analysis-data docs/parallelism-data docs/job-runtime-data 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "No report changes to commit"
             exit 0

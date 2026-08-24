@@ -117,6 +117,36 @@ nav_id: deploy-stages
 </div>
 <p id="gx-parallelism-empty" hidden>No parallelism data yet.</p>
 
+<h2>Job runtimes (GCP Batch)</h2>
+<p class="gx-prose">
+  One thin bar per GCP Batch job, positioned at when it actually started running.
+  <button type="button" class="gx-more-toggle" id="gx-job-runtime-more-toggle" aria-expanded="false">More</button>
+</p>
+<p class="gx-prose gx-more-text" id="gx-job-runtime-more-text" hidden>
+  Local k8s runner jobs aren't shown here - they're numerous and mostly
+  short (see the parallelism chart above); this is about spotting which
+  individual Batch jobs run long. Bars are ordered top-to-bottom by start
+  time; sorting/filtering by tool or duration may be added later. Only
+  jobs that ran to completion have the metrics this chart needs, so
+  coverage is partial - typically around 60% of GCP Batch jobs in a run.
+  Hover a row for the tool, version, runtime, and allocated
+  cores/memory/container.
+</p>
+
+<div class="gx-raster-controls">
+  <button id="gx-job-runtime-older" type="button">&larr; older</button>
+  <span id="gx-job-runtime-window"></span>
+  <button id="gx-job-runtime-newer" type="button">newer &rarr;</button>
+</div>
+
+<div class="gx-chart-row">
+  <div id="gx-job-runtime-container" class="gx-deploy-container gx-job-runtime-container">
+    <canvas id="gx-job-runtime-canvas"></canvas>
+  </div>
+  <div id="gx-job-runtime-details" class="gx-chart-details"><span class="gx-chart-details__placeholder">Hover a row for details.</span></div>
+</div>
+<p id="gx-job-runtime-empty" hidden>No GCP Batch job runtime data yet.</p>
+
 <style>
   /* This page's charts need real horizontal room to show 10 runs per
      window without paginating (computeBars is width-driven, not a fixed
@@ -170,6 +200,12 @@ nav_id: deploy-stages
   .gx-deploy-container canvas {
     display: block;
     cursor: pointer;
+  }
+  /* Many thin rows (one per job) easily exceed a comfortable page height -
+     scroll within a fixed-height window instead of growing the page. */
+  .gx-job-runtime-container {
+    max-height: 420px;
+    overflow-y: auto;
   }
   /* Fixed position - only its content changes on hover, so hovering a
      chart never shifts anything else on the page (v2_startup_ui.md: the
@@ -1484,6 +1520,201 @@ nav_id: deploy-stages
     showRun(idx, -1);
   }
 
+  function shortName(toolId) {
+    return String(toolId || "").split("/").pop();
+  }
+
+  function fmtMemory(mb) {
+    if (mb == null) return "unknown";
+    return mb >= 1024 ? (mb / 1024).toFixed(1) + " GB" : Math.round(mb) + " MB";
+  }
+
+  // Gantt-style: one thin horizontal bar per GCP Batch job, positioned at
+  // its actual start time within the run. Own older/newer nav (not tied to
+  // the parallelism chart above), defaulting to the latest run. Rows are
+  // in start-time order for now; sorting/filtering by tool or duration may
+  // be added later without needing different source data.
+  function initJobRuntimeChart(manifestRuns) {
+    var container = document.getElementById("gx-job-runtime-container");
+    var canvas = document.getElementById("gx-job-runtime-canvas");
+    var ctx = canvas.getContext("2d");
+    var detailsEl = document.getElementById("gx-job-runtime-details");
+    var olderBtn = document.getElementById("gx-job-runtime-older");
+    var newerBtn = document.getElementById("gx-job-runtime-newer");
+    var windowLabel = document.getElementById("gx-job-runtime-window");
+    var emptyEl = document.getElementById("gx-job-runtime-empty");
+
+    var LEFT_MARGIN = 10, TOP_PAD = 20, BOTTOM_PAD = 6, RIGHT_PAD = 20;
+    var ROW_H = 4, ROW_GAP = 2, ROW_STEP = ROW_H + ROW_GAP;
+    var BATCH_COLOR = PARALLELISM_COLORS.gcp_batch;
+
+    if (!manifestRuns.length) {
+      emptyEl.hidden = false;
+      olderBtn.disabled = newerBtn.disabled = true;
+      return;
+    }
+
+    var runIds = manifestRuns.map(function (r) { return r.run_id; });
+    var idx = runIds.length - 1;
+    var current = null;
+
+    function fetchTrace(i) {
+      return fetch("job-runtime-data/runs/" + encodeURIComponent(runIds[i]) + ".json")
+        .then(function (r) { if (!r.ok) throw new Error("not found"); return r.json(); });
+    }
+
+    // Some runs have no qualifying job_metrics-covered GCP Batch jobs (or
+    // no trace file at all, e.g. deploy-only runs) - skip over them.
+    function loadNearest(startIdx, step) {
+      var i = startIdx;
+      function attempt() {
+        if (i < 0 || i >= runIds.length) return Promise.reject(new Error("no data in range"));
+        return fetchTrace(i).catch(function () {
+          i += step;
+          return attempt();
+        });
+      }
+      return attempt().then(function (data) { idx = i; return data; });
+    }
+
+    function draw() {
+      if (!current) {
+        var emptyWidthCss = Math.max(300, container.clientWidth);
+        var emptyHeightCss = TOP_PAD + BOTTOM_PAD;
+        sizeCanvas(canvas, ctx, emptyWidthCss, emptyHeightCss);
+        ctx.clearRect(0, 0, emptyWidthCss, emptyHeightCss);
+        return;
+      }
+      var widthCss = Math.max(300, container.clientWidth);
+      var heightCss = TOP_PAD + current.jobs.length * ROW_STEP + BOTTOM_PAD;
+      sizeCanvas(canvas, ctx, widthCss, heightCss);
+      ctx.clearRect(0, 0, widthCss, heightCss);
+
+      var startMs = Date.parse(current.start), endMs = Date.parse(current.end);
+      var span = Math.max(1, endMs - startMs);
+      var rightEdge = widthCss - RIGHT_PAD;
+      var plotW = rightEdge - LEFT_MARGIN;
+      function xFor(ms) { return LEFT_MARGIN + ((ms - startMs) / span) * plotW; }
+
+      // Vertical gridlines spanning the full row height, not just near the
+      // labels, so position is still legible after scrolling past them.
+      ctx.font = "10px 'Atkinson Hyperlegible', sans-serif";
+      ctx.strokeStyle = "rgba(37, 83, 123, 0.1)";
+      ctx.fillStyle = AXIS_LABEL_COLOR;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      [0, 0.25, 0.5, 0.75, 1].forEach(function (f) {
+        var ms = startMs + f * span;
+        var x = xFor(ms);
+        ctx.beginPath();
+        ctx.moveTo(x, TOP_PAD - 4);
+        ctx.lineTo(x, heightCss - BOTTOM_PAD);
+        ctx.stroke();
+        ctx.fillText(fmtElapsed(ms - startMs), x, TOP_PAD - 6);
+      });
+
+      ctx.fillStyle = BATCH_COLOR;
+      current.jobs.forEach(function (job, i) {
+        var x0 = xFor(Date.parse(job.start));
+        var x1 = Math.max(x0 + 1, xFor(Date.parse(job.end)));
+        var y = TOP_PAD + i * ROW_STEP;
+        ctx.fillRect(x0, y, x1 - x0, ROW_H);
+      });
+    }
+
+    function updateWindowLabel() {
+      var m = manifestRuns[idx];
+      var n = current ? current.jobs.length : 0;
+      var total = current ? current.gcp_batch_jobs_total : 0;
+      windowLabel.textContent = "Run " + (idx + 1) + " of " + runIds.length +
+        (m && m.timestamp ? " · " + fmtShort(m.timestamp) : "") +
+        (current ? " · " + n + " of " + total + " GCP Batch jobs shown" : "");
+      olderBtn.disabled = idx <= 0;
+      newerBtn.disabled = idx >= runIds.length - 1;
+    }
+
+    // Default (nothing hovered) details view: aggregate stats across every
+    // shown job, so the panel is never just a dead placeholder.
+    function renderDefaultDetails() {
+      if (!current || !current.jobs.length) {
+        detailsEl.className = "gx-chart-details";
+        detailsEl.innerHTML = '<span class="gx-chart-details__placeholder">Hover a row for details.</span>';
+        return;
+      }
+      var runtimes = current.jobs.map(function (j) { return j.runtime_seconds; });
+      var cores = current.jobs.map(function (j) { return j.cores; }).filter(function (c) { return c != null; });
+      var memory = current.jobs.map(function (j) { return j.memory_mb; }).filter(function (m) { return m != null; });
+      var avgRuntime = runtimes.reduce(function (a, b) { return a + b; }, 0) / runtimes.length;
+
+      detailsEl.className = "gx-chart-details gx-chart-details--active";
+      detailsEl.innerHTML =
+        '<div class="gx-chart-details__label">' + current.jobs.length + " GCP Batch jobs</div>" +
+        '<div class="gx-chart-details__stage">Runtime min ' + fmtSeconds(Math.min.apply(null, runtimes)) +
+          " &middot; max " + fmtSeconds(Math.max.apply(null, runtimes)) + "</div>" +
+        '<div class="gx-chart-details__stage">Runtime avg ' + fmtSeconds(avgRuntime) +
+          " &middot; median " + fmtSeconds(median(runtimes)) + "</div>" +
+        (cores.length
+          ? '<div class="gx-chart-details__stage">Cores ' + Math.min.apply(null, cores) +
+            "–" + Math.max.apply(null, cores) + "</div>"
+          : "") +
+        (memory.length
+          ? '<div class="gx-chart-details__stage">Memory ' + fmtMemory(Math.min.apply(null, memory)) +
+            "–" + fmtMemory(Math.max.apply(null, memory)) + "</div>"
+          : "");
+    }
+
+    function showRun(targetIdx, step) {
+      loadNearest(targetIdx, step).then(function (data) {
+        current = data;
+        emptyEl.hidden = true;
+        updateWindowLabel();
+        draw();
+        renderDefaultDetails();
+      }).catch(function () {
+        current = null;
+        emptyEl.hidden = false;
+        windowLabel.textContent = "";
+        olderBtn.disabled = newerBtn.disabled = true;
+        draw();
+        renderDefaultDetails();
+      });
+    }
+
+    olderBtn.addEventListener("click", function () { showRun(idx - 1, -1); });
+    newerBtn.addEventListener("click", function () { showRun(idx + 1, 1); });
+    window.addEventListener("resize", draw);
+
+    canvas.addEventListener("mousemove", function (evt) {
+      if (!current || !current.jobs.length) return;
+      var rect = canvas.getBoundingClientRect();
+      var y = evt.clientY - rect.top;
+      var row = Math.floor((y - TOP_PAD) / ROW_STEP);
+      if (row < 0 || row >= current.jobs.length) {
+        canvas.style.cursor = "default";
+        renderDefaultDetails();
+        return;
+      }
+      canvas.style.cursor = "pointer";
+      var job = current.jobs[row];
+      detailsEl.className = "gx-chart-details gx-chart-details--active";
+      detailsEl.innerHTML =
+        '<div class="gx-chart-details__time">' + escapeHtml(shortName(job.tool_id)) + "</div>" +
+        '<div class="gx-chart-details__stage">Version: ' + escapeHtml(job.version || "unknown") + "</div>" +
+        '<div class="gx-chart-details__stage">Runtime: ' + fmtSeconds(job.runtime_seconds) + "</div>" +
+        '<div class="gx-chart-details__stage">Started: ' + escapeHtml(fmtElapsed(Date.parse(job.start) - Date.parse(current.start))) + " in</div>" +
+        '<div class="gx-chart-details__stage">Cores: ' + (job.cores == null ? "unknown" : job.cores) + "</div>" +
+        '<div class="gx-chart-details__stage">Memory: ' + fmtMemory(job.memory_mb) + "</div>" +
+        '<div class="gx-chart-details__stage" style="word-break: break-all;">Container: ' +
+          escapeHtml(job.container_id || "unknown") + "</div>";
+    });
+    canvas.addEventListener("mouseleave", function () {
+      canvas.style.cursor = "default";
+      renderDefaultDetails();
+    });
+
+    showRun(idx, -1);
+  }
+
   function renderSummary(deployRuns, startupRuns) {
     var summaryEl = document.getElementById("gx-summary");
     var hasAny = false;
@@ -1511,6 +1742,7 @@ nav_id: deploy-stages
   wireMoreToggle("gx-deploy-more-toggle", "gx-deploy-more-text");
   wireMoreToggle("gx-startup-more-toggle", "gx-startup-more-text");
   wireMoreToggle("gx-parallelism-more-toggle", "gx-parallelism-more-text");
+  wireMoreToggle("gx-job-runtime-more-toggle", "gx-job-runtime-more-text");
 
   Promise.all([
     fetch("deploy-data/stages.json").then(function (r) { return r.json(); }).catch(function () { return { runs: [] }; }),
@@ -1527,6 +1759,7 @@ nav_id: deploy-stages
       function (visibleRuns, labelText) { aligned.setWindow(visibleRuns, labelText); }
     );
     initParallelismChart(manifestRuns);
+    initJobRuntimeChart(manifestRuns);
   });
 })();
 </script>
