@@ -500,6 +500,84 @@ jobs:
       # galaxy-helm's own (disabled-by-default) post-install job does for a
       # single_user instance (templates/configmap-post-install.yaml): hit the
       # root URL once to make the web handler auto-create the user record,
+      # galaxy-tool-test resolves a test input in three stages: ask the server
+      # for a local path (--force_path_paste), else download it from the
+      # server's API, else look in whatever --test-data directories it was
+      # given. Until now that third stage searched an empty list, so any
+      # fixture the deployment could not serve failed outright - 46 tests
+      # across 15 tools on the 2026-08-24 run, dominated by Galaxy's built-in
+      # tools, whose test-data lives in Galaxy's own tree rather than in the
+      # CVMFS toolset the deployment mounts.
+      #
+      # Two sources are needed because they are complementary, not nested.
+      # galaxy's in-repo test-data/ is a trimmed ~3MB set holding the core
+      # fixtures (1.bed, simple_line.txt, ...); galaxy-test-data is a separate
+      # ~190MB repo holding what was moved out of it (ldInput1.txt,
+      # cufflinks_out1.gtf, ...). Of the 22 files those failures ask for, 10
+      # are only in the first and 5 only in the second - none in both. Each
+      # alone fixes 23 and 1 tests respectively; together, 36.
+      #
+      # Not cached deliberately: a shallow clone costs seconds against a
+      # multi-hour run, and a cache would add a stale-content failure mode for
+      # no useful saving.
+      #
+      # Both clones are non-fatal - losing them costs test coverage, not the
+      # run - but the resolved state is echoed into logs/ so a run's results
+      # can always be traced back to which sources were actually available.
+      - name: Fetch Galaxy test-data for client-side fallback
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
+        run: |
+          mkdir -p logs
+          GALAXY_URL="http://${{ steps.vm-ip.outputs.ip }}/galaxy/"
+
+          # Pin to the release the server actually reports, not to the image
+          # tag in values.yml - a mixin can override that tag, and this cannot
+          # then drift from what is deployed.
+          VERSION_MAJOR="$(curl -sf "${GALAXY_URL}api/version" \
+            | python3 -c "import json,sys; print(json.load(sys.stdin).get('version_major',''))" 2>/dev/null || true)"
+
+          clone_retry() {
+            local dest="$1"; shift
+            for attempt in 1 2 3; do
+              rm -rf "$dest"
+              if git clone --quiet "$@" "$dest"; then return 0; fi
+              echo "  clone of $dest failed (attempt $attempt/3)"
+              sleep 5
+            done
+            rm -rf "$dest"
+            return 1
+          }
+
+          if [ -n "$VERSION_MAJOR" ]; then
+            echo "Deployed Galaxy reports version_major=$VERSION_MAJOR"
+            # Partial + sparse: galaxy's history is far too large to clone for
+            # one 3MB directory.
+            if clone_retry /tmp/galaxy-src --depth 1 --filter=blob:none --sparse \
+                 --branch "release_$VERSION_MAJOR" https://github.com/galaxyproject/galaxy \
+               && git -C /tmp/galaxy-src sparse-checkout set test-data; then
+              echo "  got galaxy release_$VERSION_MAJOR test-data ($(ls /tmp/galaxy-src/test-data | wc -l) entries)"
+            else
+              echo "  WARNING: could not fetch galaxy release_$VERSION_MAJOR test-data"
+            fi
+          else
+            echo "WARNING: could not resolve version_major from the API; skipping the galaxy checkout"
+          fi
+
+          # No release branches on this one - it tracks master, so there is no
+          # version correspondence with the deployed release. Fine for the
+          # handful of static fixtures wanted here, but it is a weaker
+          # guarantee than the pinned checkout above.
+          if clone_retry /tmp/galaxy-test-data --depth 1 \
+               https://github.com/galaxyproject/galaxy-test-data; then
+            echo "  got galaxy-test-data ($(ls /tmp/galaxy-test-data | wc -l) entries)"
+          else
+            echo "  WARNING: could not fetch galaxy-test-data"
+          fi
+
+          for d in /tmp/galaxy-src/test-data /tmp/galaxy-test-data; do
+            [ -d "$d" ] && echo "$d"
+          done | tee logs/test-data-sources.txt
+
       # then fetch/create their API key via bioblend (what `abm galaxy user
       # key` itself calls under the hood).
       - name: Create real API key
@@ -581,6 +659,17 @@ jobs:
         run: |
           mkdir -p results logs
           GALAXY_URL="http://${{ steps.vm-ip.outputs.ip }}/galaxy/"
+
+          # Consulted only after the server has already failed to supply a
+          # fixture, so adding these cannot change the outcome of any test
+          # that currently passes - it is strictly a fallback. Built from
+          # whatever the fetch step managed to get, so a failed clone drops
+          # coverage rather than breaking the invocation.
+          TEST_DATA_ARGS=()
+          for d in /tmp/galaxy-src/test-data /tmp/galaxy-test-data; do
+            [ -d "$d" ] && TEST_DATA_ARGS+=(--test-data "$d")
+          done
+          echo "Using ${#TEST_DATA_ARGS[@]} test-data fallback path(s): ${TEST_DATA_ARGS[*]:-none}"
           KEY="${{ steps.api-key.outputs.key }}"
           INSTANCE_NAME="${{ steps.instance.outputs.name }}"
           # inputs.* is empty on a schedule trigger - fall back to each
@@ -657,6 +746,7 @@ jobs:
                 -u "$GALAXY_URL" -k "$KEY" -a "$KEY" \
                 --parallel-tests 1 \
                 --force_path_paste \
+                "${TEST_DATA_ARGS[@]}" \
                 -t "$tool_id" \
                 -j "results/by-tool/$idx.json" \
                 --history-name "anvil-test-$INSTANCE_NAME-$idx" \
@@ -710,6 +800,7 @@ jobs:
               -u "$GALAXY_URL" -k "$KEY" -a "$KEY" \
               --parallel-tests "$PARALLEL_TESTS" \
               --force_path_paste \
+              "${TEST_DATA_ARGS[@]}" \
               "${PAGE_ARGS[@]}" \
               -j results/results.json \
               --history-name "anvil-test-$INSTANCE_NAME" \
