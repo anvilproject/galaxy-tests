@@ -19,6 +19,17 @@
   confidence: High
   title: Input staging TypeError (test_data_path 404 bug)
 
+# The server could not resolve a test input file. Matched against the
+# normalized signature, so the filename is already collapsed to <file> and one
+# deployment-wide test-data gap groups as one incident. Distinct from a stale
+# expectation: nothing was compared, the input never staged. On this
+# deployment it is dominated by Galaxy's built-in tools, whose test-data lives
+# in Galaxy's own tree rather than the CVMFS toolset.
+- pattern: 'Test input file \(<file>\) cannot be found'
+  category: Infrastructure
+  confidence: High
+  title: Test input data unavailable on the server
+
 - pattern: 'Job in error state\.\. tool_id: __\w+__'
   category: Galaxy/test harness
   confidence: Probable

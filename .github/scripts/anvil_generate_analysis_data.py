@@ -54,6 +54,16 @@ UUID_RE = re.compile(r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f
 HEX_ID_RE = re.compile(r"\b[0-9a-f]{16,}\b", re.IGNORECASE)
 JOB_ERROR_RE = re.compile(r"^(Exception: )?Job in error state")
 
+# These two messages name the file they could not resolve, which is exactly
+# what makes them useful per-test and useless per-incident: the filename lands
+# in the signature, so one deployment-wide gap fragments into a separate
+# "incident" per file (46 tests across 22 signatures on the 2026-08-24 run,
+# all of them the same missing-test-data condition). Collapse the filename so
+# they group, and keep input and output distinct - an unresolvable *input* is
+# a staging failure, a missing expected *output* is a comparison failure.
+TEST_INPUT_FILE_RE = re.compile(r"Test input file \([^)]*\) cannot be found")
+TEST_OUTPUT_FILE_RE = re.compile(r"Test output file \([^)]*\) is missing")
+
 # A test whose tool produced *nothing* is a different failure from one whose
 # output merely differs, but Planemo reports both as "different than
 # expected" and the difference only shows up below the first line - so it
@@ -96,6 +106,8 @@ def normalize_signature(text: str) -> str:
     text = TMP_PATH_RE.sub("/tmp/<tmp>", text)
     text = UUID_RE.sub("<uuid>", text)
     text = HEX_ID_RE.sub("<id>", text)
+    text = TEST_INPUT_FILE_RE.sub("Test input file (<file>) cannot be found", text)
+    text = TEST_OUTPUT_FILE_RE.sub("Test output file (<file>) is missing", text)
     return text.strip()
 
 
