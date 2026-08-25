@@ -51,7 +51,15 @@ def load_tests(run_id: str) -> list[dict]:
 
 
 def is_gcp_batch(job: dict) -> bool:
-    return (job.get("external_id") or "").startswith("galaxy-batch-")
+    """Batch jobs are the ones that are neither Kubernetes nor local.
+
+    Not keyed on the Batch id prefix: it is configurable (TPV's
+    gcp_batch job_id_prefix) and a change to it emptied this chart for the
+    2026-08-25 run. The local runner records a bare pid and the Kubernetes
+    runner prefixes "gxy-"; everything else is Batch.
+    """
+    external_id = job.get("external_id") or ""
+    return bool(external_id) and not external_id.startswith("gxy-") and not external_id.isdigit()
 
 
 def get_metric(job: dict, name: str):

@@ -63,11 +63,23 @@ def load_tests(run_id: str) -> list[dict]:
 
 
 def classify_destination(external_id: str) -> str:
-    if external_id.startswith("galaxy-batch-"):
-        return "gcp_batch"
+    """Bucket a job by the shape of its runner-assigned external id.
+
+    Deliberately not keyed on the Batch id prefix. That prefix is
+    configurable - TPV's gcp_batch job_id_prefix - and when it changed from
+    "galaxy-batch" to "anvil-test" (galaxy-k8s-boot#101) every Batch job in
+    the 2026-08-25 run silently reclassified as "other", reporting a peak
+    gcp_batch concurrency of 0 for a run that submitted 345 Batch jobs.
+
+    The three runners are distinguishable without it: the local runner
+    records a bare pid, the Kubernetes runner prefixes "gxy-", and anything
+    else came from Batch, whatever its prefix is set to.
+    """
     if external_id.startswith("gxy-"):
         return "local_k8s"
-    return "other"
+    if external_id.isdigit():
+        return "other"
+    return "gcp_batch" if external_id else "other"
 
 
 def collect_intervals(tests: list[dict]) -> dict[str, list[tuple]]:
