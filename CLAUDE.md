@@ -104,6 +104,17 @@ is expected and by design, not repository noise.
 
 ## Working on this repo
 
+- Analysis output does not belong in the repo. Planning notes, hypotheses,
+  debugging write-ups, investigation summaries and similar working documents
+  go in a personal, locally gitignored directory - not the repo root or
+  `docs/` - and are never committed. This checkout's `.gitignore` names
+  `ea-no-commit/` as that directory, but that's just one contributor's
+  convention, not a repo requirement: a fresh clone doesn't need a folder
+  with that exact name, just its own gitignored equivalent (add an entry
+  for it to `.gitignore`). Only code, config and the CI-generated data
+  under `reports/`/`docs/` belong in version control. `batch-issue.md` in
+  the root predates this rule and will be moved out with the next change
+  that touches it.
 - Every `${{ inputs.* }}` reference in `anvil-test.yaml` needs a
   `|| <default>` fallback (see the top of the "Run tool tests" step):
   `inputs` is only populated for `workflow_dispatch`, so on the `schedule`
@@ -115,6 +126,22 @@ is expected and by design, not repository noise.
   uses) and commit it — don't switch the schedule to `random-tool-count`
   mode itself, which would sample a *different* random set every night and
   defeat the point of building day-over-day confidence in a stable set.
+- `.github/scheduled-tool-ids.txt` is sorted so GCP-Batch-routed tools
+  come first, local/k8s-routed tools after (`anvil_sort_scheduled_tool_ids.py`,
+  using a checkout of https://github.com/galaxyproject/tpv-shared-database
+  as the resource-requirement source of truth) - GCP Batch jobs are
+  individually much slower than local ones, so submitting them first lets
+  their long runtimes overlap the whole run instead of trickling in over
+  the first ~30 minutes (see docs/parallelism-data for the measured
+  effect). The script takes that checkout's `tools.yml` path as an
+  argument - it isn't a submodule or fixed relative path, so a fresh
+  clone needs its own local checkout of tpv-shared-database somewhere
+  (e.g. alongside a personal gitignored directory like `ea-no-commit/`
+  above, or anywhere else convenient) and to pass its own path in. This
+  ordering is a point-in-time classification, not live TPV
+  evaluation, and goes stale as tool versions/resource requirements/the
+  shared DB change - re-run the sort script periodically, and always
+  after regenerating/widening the list per the point above.
 - `docs/raster.html` and `docs/deploy-stages.html` have no build step -
   they're plain HTML/CSS/JS rendered as GitHub Pages Liquid templates. To
   preview locally without Jekyll installed: parse the YAML front matter,
