@@ -130,6 +130,14 @@ is expected and by design, not repository noise.
   uses) and commit it — don't switch the schedule to `random-tool-count`
   mode itself, which would sample a *different* random set every night and
   defeat the point of building day-over-day confidence in a stable set.
+  Exclude Data Manager tools (`data_manager` in the tool path) from
+  whatever you sample from - they don't test cleanly via
+  `galaxy-tool-test` (confirmed live: a generic error with no per-test
+  detail, or no report at all, while the underlying job - a real, often
+  multi-hour index/database build - keeps running with nothing left to
+  poll it, orphaned until GCP Batch's own 24h `max_run_duration` kills
+  it). `random-tool-count`'s own sampling already filters these out for
+  the same reason.
 - `.github/scheduled-tool-ids.txt` is sorted so GCP-Batch-routed tools
   come first, local/k8s-routed tools after (`anvil_sort_scheduled_tool_ids.py`,
   using a checkout of https://github.com/galaxyproject/tpv-shared-database

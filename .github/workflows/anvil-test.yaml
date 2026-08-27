@@ -750,8 +750,18 @@ jobs:
               | python3 -c "import json, sys; print('\n'.join(json.load(sys.stdin).keys()))" \
               > /tmp/all_tool_ids.txt
             echo "Found $(wc -l < /tmp/all_tool_ids.txt) testable tool IDs"
-            shuf -n "$RANDOM_TOOL_COUNT" /tmp/all_tool_ids.txt > /tmp/sampled_tool_ids.txt
-            echo "Sampled $(wc -l < /tmp/sampled_tool_ids.txt) tool IDs"
+            # Data Manager tools (index/database builders) don't test
+            # cleanly via galaxy-tool-test - confirmed live: they report a
+            # generic error with no per-test detail, or no report at all,
+            # while their underlying job (a real, often multi-hour index
+            # build) keeps running with nothing left to poll it once the
+            # client's given up - orphaned until GCP Batch's own 24h
+            # max_run_duration eventually kills it (see "Clean up orphaned
+            # GCP Batch jobs" below, and .github/scheduled-tool-ids.txt's
+            # own exclusion of the same category).
+            grep -v "data_manager" /tmp/all_tool_ids.txt > /tmp/all_tool_ids_filtered.txt
+            shuf -n "$RANDOM_TOOL_COUNT" /tmp/all_tool_ids_filtered.txt > /tmp/sampled_tool_ids.txt
+            echo "Sampled $(wc -l < /tmp/sampled_tool_ids.txt) tool IDs (data managers excluded from the pool)"
           fi
 
           if [ -s /tmp/sampled_tool_ids.txt ]; then
@@ -1020,6 +1030,39 @@ jobs:
             results/
             logs/
           if-no-files-found: ignore
+
+      # Individual GCP Batch jobs run on their own separate VMs, entirely
+      # independent of the cluster's own control-plane instance - deleting
+      # that instance below does nothing to them. A tool whose test
+      # invocation errors in a way galaxy-tool-test doesn't cleanly resolve
+      # can leave its Batch job running for real, with nothing left to
+      # poll it once this workflow finishes - orphaned until GCP Batch's
+      # own 24h max_run_duration eventually kills it (confirmed live:
+      # Galaxy Data Manager tools - index/database builders like
+      # kraken2_build_database - report a generic error with no per-test
+      # detail from galaxy-tool-test, or no report at all, while their
+      # underlying job - a real, often multi-hour index build - keeps
+      # running). Filtered to jobs created since this run's own start, not
+      # by name pattern (job_id_prefix is configurable and has changed
+      # before - see anvil_generate_job_runtime_data.py's is_gcp_batch()),
+      # and deleted via the Batch API rather than the raw VM so Batch's
+      # own job state stays consistent.
+      - name: Clean up orphaned GCP Batch jobs
+        if: always()
+        continue-on-error: true
+        run: |
+          RUN_START="$(date -u -d "@${{ steps.deploy-start.outputs.epoch }}" +%Y-%m-%dT%H:%M:%SZ)"
+          STUCK=$(gcloud batch jobs list --project="$GCP_PROJECT" --location=us-east4 \
+            --filter="createTime>=$RUN_START AND (status.state=RUNNING OR status.state=QUEUED OR status.state=SCHEDULED)" \
+            --format="value(name)" 2>/dev/null)
+          if [ -z "$STUCK" ]; then
+            echo "No orphaned GCP Batch jobs from this run."
+          else
+            echo "$STUCK" | while IFS= read -r job; do
+              echo "Deleting orphaned Batch job: $job"
+              gcloud batch jobs delete "$job" --quiet || true
+            done
+          fi
 
       - name: Delete VM
         if: always()
