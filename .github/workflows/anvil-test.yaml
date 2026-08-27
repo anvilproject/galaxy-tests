@@ -129,20 +129,31 @@ jobs:
       # this flag the VM's ansible-pull would still pull the (unfixed)
       # anvil branch. Drop this flag once dev's fix is merged to anvil.
       #
-      # -f values/values.yml -f mixins/testing.yml -f mixins/ci-concurrency.yml:
-      # passing any -f replaces launch_vm.sh's own default (values/values.yml
-      # alone), so all three are needed. mixins/testing.yml sets
-      # allow_path_paste: true, needed for --force_path_paste below (see
-      # "Run tool tests"). mixins/ci-concurrency.yml raises the gcp_batch
-      # runner's workers from Galaxy's default of 4 - originally to 16
-      # (confirmed via `kubectl get configmap galaxy-configs -o
-      # jsonpath='{.data.job_conf\.yml}'` that Batch-routed jobs were capped
-      # there, not by Batch/quota itself; PR galaxyproject/
+      # -f values/values.yml -f mixins/testing.yml -f mixins/ci-concurrency.yml
+      # -f mixins/debug.yml: passing any -f replaces launch_vm.sh's own
+      # default (values/values.yml alone), so all four are needed.
+      # mixins/testing.yml sets allow_path_paste: true, needed for
+      # --force_path_paste below (see "Run tool tests"). mixins/ci-concurrency.yml
+      # raises the gcp_batch runner's workers from Galaxy's default of 4 -
+      # originally to 16 (confirmed via `kubectl get configmap galaxy-configs
+      # -o jsonpath='{.data.job_conf\.yml}'` that Batch-routed jobs were
+      # capped there, not by Batch/quota itself; PR galaxyproject/
       # galaxy-k8s-boot#97), then to 32 on galaxy-k8s-boot's dev branch once
       # a worker-session-level trace (docs/parallelism-data) showed the
       # 16-slot pool actually hitting its cap ~65% of the time, not sitting
       # idle. Keep parallel-tests below in sync with whatever this mixin is
-      # currently set to.
+      # currently set to. mixins/debug.yml sets cleanup_jobs: never, so job
+      # working directories (outputs, logs, instrumentation files) survive
+      # for live inspection instead of being deleted shortly after each job
+      # finishes - needed while diagnosing the GCP-Batch job_metrics/NFS-
+      # staleness issue (galaxy-k8s-boot#105), where a job's directory
+      # vanished between two consecutive `kubectl exec` checks seconds
+      # apart. Tradeoff: job directories now accumulate for the VM's whole
+      # lifetime instead of being cleaned up as the run progresses, so a
+      # run producing unusually large outputs could get closer to the NFS
+      # PVC's capacity than before - the VM is ephemeral and torn down at
+      # the end of each run regardless, so this doesn't compound run over
+      # run, just within one.
       #
       # -m t2d-standard-16: bumped from t2d-standard-8 alongside the above -
       # local k8s-runner-routed ("small job") jobs share this node's own
@@ -164,7 +175,7 @@ jobs:
           bin/launch_vm.sh \
             --ephemeral-only \
             --git-branch dev \
-            -f values/values.yml -f mixins/testing.yml -f mixins/ci-concurrency.yml \
+            -f values/values.yml -f mixins/testing.yml -f mixins/ci-concurrency.yml -f mixins/debug.yml \
             -m t2d-standard-16 \
             -k "${{ steps.ssh-key.outputs.public-key }}" \
             "${{ steps.instance.outputs.name }}"
