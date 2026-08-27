@@ -87,11 +87,15 @@ below for previewing those locally.
    workflow was dispatched from) so the commit step below never drags
    unrelated branch history in.
 3. Mint a real API key via `bioblend`, then run the tool-test suite - which
-   of four selection modes applies is priority-ordered (see the comment
+   of five selection modes applies is priority-ordered (see the comment
    above the "Run tool tests" step): a scheduled run always uses the fixed
-   list in `.github/scheduled-tool-ids.txt`; manual dispatch can instead
-   request a random sample (`random-tool-count`), a deterministic page
-   (`test-page-size`/`test-page-number`), or default to testing everything.
+   list in `.github/scheduled-tool-ids.txt`; manual dispatch defaults to
+   that same pinned list too (`tool-list-file`, so an unmodified manual
+   dispatch tracks the scheduled set on demand), or can instead be pointed
+   at a different repo-relative tool-list file, request a random sample
+   (`random-tool-count`), a deterministic page (`test-page-size`/
+   `test-page-number`), or default to testing everything if `tool-list-file`
+   is cleared and none of the others are set.
 4. Build the HTML/xunit report (`planemo test_reports`), regenerate the
    raster data and README, and **commit + push straight to `main`** from
    the separate clone.

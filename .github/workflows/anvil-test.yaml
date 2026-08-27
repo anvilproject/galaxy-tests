@@ -37,8 +37,12 @@ on:
         description: 'galaxy-tool-test --page-number (only used if test-page-size != 0)'
         default: '0'
         required: true
+      tool-list-file:
+        description: 'Repo-relative path to a tool-ID list to test (one per line) - takes priority over random-tool-count/test-page-size/number. Defaults to the same pinned list scheduled runs use, so an unmodified manual dispatch tracks the scheduled set; clear it to fall back to random-tool-count instead.'
+        default: '.github/scheduled-tool-ids.txt'
+        required: false
       random-tool-count:
-        description: 'Test a random sample of this many tools instead (0 = disabled; takes priority over test-page-size/number)'
+        description: 'Test a random sample of this many tools instead (0 = disabled; only used if tool-list-file is blank/not found; takes priority over test-page-size/number)'
         default: '0'
         required: true
 
@@ -597,7 +601,7 @@ jobs:
           echo "::add-mask::$KEY"
           echo "key=$KEY" >> "$GITHUB_OUTPUT"
 
-      # Four selection modes, in priority order:
+      # Five selection modes, in priority order:
       #   1. Scheduled run: always the fixed 200 tool IDs pinned in
       #      .github/scheduled-tool-ids.txt (the exact sample from run
       #      32498376715, the first one confirmed not to silently drop
@@ -609,20 +613,27 @@ jobs:
       #      regressed or you just got unlucky with the sample. Once
       #      confidence is established, widen coverage by regenerating this
       #      file with more tool IDs (same tests_summary + shuf approach as
-      #      mode 2 below) and committing it - not by switching to mode 2,
+      #      mode 3 below) and committing it - not by switching to mode 3,
       #      which would bring back the night-to-night sample churn.
-      #   2. random-tool-count != 0 (manual dispatch only): sample that many
+      #   2. tool-list-file non-empty and readable (manual dispatch only):
+      #      test the tool IDs listed in that repo-relative file. Defaults
+      #      to .github/scheduled-tool-ids.txt itself, so an un-modified
+      #      manual dispatch tests the same set the scheduled run does
+      #      (useful for re-verifying a fix on demand rather than waiting
+      #      for the next 6am UTC trigger) - clear the input to fall
+      #      through to mode 3 instead.
+      #   3. random-tool-count != 0 (manual dispatch only): sample that many
       #      tool IDs from the server's own tests_summary (the full testable
       #      set, including Galaxy's internal double-underscore utility
       #      tools).
-      #   3. test-page-size != 0: existing deterministic pagination through
+      #   4. test-page-size != 0: existing deterministic pagination through
       #      the full toolset, in whatever order the server returns it.
-      #   4. none of the above: -t defaults to ALL_TOOLS, one process tests
+      #   5. none of the above: -t defaults to ALL_TOOLS, one process tests
       #      everything the "cloud" toolset loaded via CVMFS at startup -
       #      see v2_plan.md §2 step 7. No chunk selection needed either,
       #      per §5.
       #
-      # Modes 1 and 2 both end up with a plain list of tool IDs to test
+      # Modes 1, 2 and 3 all end up with a plain list of tool IDs to test
       # individually rather than one single galaxy-tool-test invocation:
       # there's no single-invocation way to hand it a specific list
       # (-t/--tool-id takes exactly one, per
@@ -679,24 +690,20 @@ jobs:
           PARALLEL_TESTS="${{ inputs.parallel-tests || '32' }}"
           TEST_PAGE_SIZE="${{ inputs.test-page-size || '0' }}"
           TEST_PAGE_NUMBER="${{ inputs.test-page-number || '0' }}"
+          TOOL_LIST_FILE="${{ inputs.tool-list-file || '' }}"
           export GALAXY_URL KEY INSTANCE_NAME
 
-          # Resolve which tool IDs (if any) to test individually - modes 1
-          # and 2 from the comment above. /tmp/sampled_tool_ids.txt staying
-          # absent/empty means neither applies, falling through to the
-          # ALL_TOOLS/paged single-process path below.
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            cp .github/scheduled-tool-ids.txt /tmp/sampled_tool_ids.txt
-            echo "Scheduled run: testing the $(wc -l < /tmp/sampled_tool_ids.txt) tool IDs pinned in .github/scheduled-tool-ids.txt"
-
-            # Report pinned IDs the server doesn't recognise as testable,
-            # instead of letting them consume a slot in silence. Six data
-            # managers sat in this list for months producing no results at
-            # all: they were pinned without the `data_manager/` path segment
-            # the installed tool ids actually carry, so nothing ever matched
-            # them. Advisory only - never fails the run, and never rewrites
-            # the pinned list (that's a reviewed commit, not a CI side
-            # effect).
+          # Report pinned IDs the server doesn't recognise as testable,
+          # instead of letting them consume a slot in silence. Six data
+          # managers sat in .github/scheduled-tool-ids.txt for months
+          # producing no results at all: they were pinned without the
+          # `data_manager/` path segment the installed tool ids actually
+          # carry, so nothing ever matched them. Advisory only - never fails
+          # the run, and never rewrites the list file itself (that's a
+          # reviewed commit, not a CI side effect). Shared between modes 1
+          # and 2 (see the selection-mode comment above): any pinned-style
+          # list, not just the scheduled one, benefits from this check.
+          run_pinned_list_preflight() {
             curl -sf -H "x-api-key: $KEY" "${GALAXY_URL}api/tools/tests_summary" \
               | python3 -c "import json, sys; print('\n'.join(json.load(sys.stdin).keys()))" \
               > /tmp/testable_tool_ids.txt || true
@@ -708,6 +715,20 @@ jobs:
             else
               echo "Could not fetch tests_summary; skipping pinned-list pre-flight."
             fi
+          }
+
+          # Resolve which tool IDs (if any) to test individually - modes 1,
+          # 2 and 3 from the comment above. /tmp/sampled_tool_ids.txt
+          # staying absent/empty means none applies, falling through to the
+          # ALL_TOOLS/paged single-process path below.
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            cp .github/scheduled-tool-ids.txt /tmp/sampled_tool_ids.txt
+            echo "Scheduled run: testing the $(wc -l < /tmp/sampled_tool_ids.txt) tool IDs pinned in .github/scheduled-tool-ids.txt"
+            run_pinned_list_preflight
+          elif [ -n "$TOOL_LIST_FILE" ] && [ -s "$TOOL_LIST_FILE" ]; then
+            cp "$TOOL_LIST_FILE" /tmp/sampled_tool_ids.txt
+            echo "Manual run: testing the $(wc -l < /tmp/sampled_tool_ids.txt) tool IDs from $TOOL_LIST_FILE"
+            run_pinned_list_preflight
           elif [ "$RANDOM_TOOL_COUNT" != "0" ]; then
             echo "Fetching the full testable tool list to sample $RANDOM_TOOL_COUNT from..."
             curl -sf -H "x-api-key: $KEY" "${GALAXY_URL}api/tools/tests_summary" \
