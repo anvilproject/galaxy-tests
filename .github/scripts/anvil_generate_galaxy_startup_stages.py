@@ -53,6 +53,7 @@ land.
 Usage: anvil_generate_galaxy_startup_stages.py
 """
 
+import gzip
 import json
 import os
 import re
@@ -61,7 +62,11 @@ from datetime import datetime
 DEPLOYMENTS_DIR = "reports/anvil/deployments"
 OUT_PATH = "docs/deploy-data/galaxy-startup-stages.json"
 GITHUB_BASE = "https://github.com/anvilproject/galaxy-tests/blob/main"
-LOG_FILENAME = "galaxy-web-startup.log"
+# Compressed for runs from 2026-08-28 on (see the gzip fix in
+# anvil-test.yaml's "Save Galaxy web handler startup log" step); older
+# committed runs still have the plain, uncompressed filename - check both
+# so historical runs don't silently drop out of the chart.
+LOG_FILENAMES = ("galaxy-web-startup.log.gz", "galaxy-web-startup.log")
 
 RUN_ID_TIMESTAMP_RE = re.compile(r"-(\d{2})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})$")
 
@@ -87,11 +92,18 @@ PHASE_ORDER = [
 ]
 
 
+def startup_log_filename(run_id: str) -> str | None:
+    for name in LOG_FILENAMES:
+        if os.path.isfile(os.path.join(DEPLOYMENTS_DIR, run_id, name)):
+            return name
+    return None
+
+
 def all_run_ids() -> list[str]:
     if not os.path.isdir(DEPLOYMENTS_DIR):
         return []
     names = sorted(os.listdir(DEPLOYMENTS_DIR))
-    return [n for n in names if os.path.isfile(os.path.join(DEPLOYMENTS_DIR, n, LOG_FILENAME))]
+    return [n for n in names if startup_log_filename(n) is not None]
 
 
 def run_timestamp(run_id: str) -> str | None:
@@ -109,7 +121,8 @@ def parse_events(log_path: str) -> list[tuple[datetime, str, str | None, str]]:
     can't anchor a phase boundary and their small number of seconds is
     absorbed into whichever phase is open at the time."""
     events = []
-    with open(log_path, errors="replace") as f:
+    opener = gzip.open if log_path.endswith(".gz") else open
+    with opener(log_path, "rt", errors="replace") as f:
         for line in f:
             m = PREFIX_RE.match(line)
             if not m:
@@ -200,7 +213,8 @@ def main() -> None:
     run_ids = all_run_ids()
     runs = []
     for run_id in run_ids:
-        log_path = os.path.join(DEPLOYMENTS_DIR, run_id, LOG_FILENAME)
+        log_filename = startup_log_filename(run_id)
+        log_path = os.path.join(DEPLOYMENTS_DIR, run_id, log_filename)
         events = parse_events(log_path)
         seconds = build_phase_seconds(events)
         if not seconds:
@@ -216,7 +230,7 @@ def main() -> None:
                 "timestamp": run_timestamp(run_id),
                 "total_seconds": round(sum(seconds.values()), 2),
                 "stages": stages,
-                "log_url": f"{GITHUB_BASE}/{DEPLOYMENTS_DIR}/{run_id}/{LOG_FILENAME}",
+                "log_url": f"{GITHUB_BASE}/{DEPLOYMENTS_DIR}/{run_id}/{log_filename}",
             }
         )
 

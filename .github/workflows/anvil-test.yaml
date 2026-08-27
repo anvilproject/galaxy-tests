@@ -328,7 +328,7 @@ jobs:
       # surviving galaxy-web line). The continuous capture started below
       # solves this for the rest of the run, but this early one-shot
       # snapshot is what anvil_generate_galaxy_startup_stages.py actually
-      # reads (LOG_FILENAME) - keep producing it even after that exists.
+      # reads (LOG_FILENAMES) - keep producing it even after that exists.
       - name: Fetch Galaxy web handler startup log
         if: always()
         continue-on-error: true
@@ -337,6 +337,10 @@ jobs:
           kubectl logs -n galaxy deployment/galaxy-web --all-containers=true --prefix=true --tail=-1 \
             > logs/galaxy-web-startup.log 2>&1 || echo "Could not fetch galaxy-web startup log (see step output)" | tee -a logs/galaxy-web-startup.log
 
+      # gzip'd like the two continuously-captured logs, for the same
+      # repo-size reason - anvil_generate_galaxy_startup_stages.py checks
+      # for both this and the legacy uncompressed filename, so older
+      # committed runs keep working.
       - name: Save Galaxy web handler startup log under reports/anvil
         if: always()
         continue-on-error: true
@@ -344,7 +348,7 @@ jobs:
         run: |
           DIR="reports/anvil/deployments/${{ steps.instance.outputs.name }}"
           mkdir -p "$DIR"
-          cp "${{ github.workspace }}/logs/galaxy-web-startup.log" "$DIR/galaxy-web-startup.log"
+          gzip -c "${{ github.workspace }}/logs/galaxy-web-startup.log" > "$DIR/galaxy-web-startup.log.gz"
 
       # A one-shot `kubectl logs` (as used for the startup snapshot above,
       # and previously for the final galaxy-web.log/galaxy-job.log capture
@@ -886,6 +890,15 @@ jobs:
           mkdir -p "$DIR"
           gzip -c "${{ github.workspace }}/logs/galaxy-job.log" > "$DIR/galaxy-job.log.gz"
 
+      # results.xunit isn't copied here - nothing downstream reads it
+      # (confirmed by grep; only planemo ever generates it), and it's
+      # still fully available via the "Upload results as a workflow
+      # artifact" step below regardless. results.html *is* copied here,
+      # transiently: the raster-data step below still needs to read it
+      # from this path to produce the single copy that actually gets
+      # committed (docs/tool-tests/<run_id>/results.html, the one GitHub
+      # Pages serves) - removed again right after, see "Remove redundant
+      # results.html copy".
       - name: Save results under reports/anvil
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         working-directory: /tmp/main-clone
@@ -894,7 +907,6 @@ jobs:
           mkdir -p "$DIR"
           cp "${{ github.workspace }}/results/results.json" \
              "${{ github.workspace }}/results/results.html" \
-             "${{ github.workspace }}/results/results.xunit" \
              "$DIR/"
 
       # Reads the job.create_time/update_time/external_id already present
@@ -923,6 +935,15 @@ jobs:
         working-directory: /tmp/main-clone
         run: python "${{ github.workspace }}/.github/scripts/anvil_generate_raster_data.py"
 
+      # The step above already copied it to docs/tool-tests/<run_id>/,
+      # which is what actually needs committing (GitHub Pages serves from
+      # docs/). This copy was only ever a relay for that step to read from -
+      # committing both was a byte-identical duplicate every run.
+      - name: Remove redundant results.html copy
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
+        working-directory: /tmp/main-clone
+        run: rm -f "reports/anvil/tool-tests/${{ steps.instance.outputs.name }}/results.html"
+
       # Reads docs/raster-data/{manifest,matrix}.json and per-run
       # detail.json written by the step above - must run after it.
       - name: Generate results-brief incident analysis data
@@ -936,6 +957,24 @@ jobs:
         run: |
           RUN_HTML_URL="https://anvilproject.github.io/galaxy-tests/tool-tests/${{ steps.instance.outputs.name }}/results.html"
           python "${{ github.workspace }}/.github/scripts/anvil_update_readme.py" "${{ steps.instance.outputs.name }}" "$RUN_HTML_URL"
+
+      # Raw per-run artifacts (deployment logs, results.json) are useful
+      # for digging into a specific run shortly after it happens, not
+      # something anyone browses months later - each run's own workflow
+      # artifact upload (below) already covers that need independently of
+      # git, kept by GitHub for 90 days by default. Left uncommitted-
+      # forever, they're what made this repo's clone/checkout slow (see
+      # anvil_prune_old_raw_reports.py's docstring). Deliberately doesn't
+      # touch docs/ (raster-data/analysis-data/parallelism-data/job-
+      # runtime-data) or deployments.{json,html,svg} - those are the small,
+      # derived data that actually power the historical dashboards, kept
+      # forever by design. if: always() - this is repo housekeeping,
+      # unrelated to whether this particular run tested tools.
+      - name: Prune old raw per-run reports
+        if: always()
+        continue-on-error: true
+        working-directory: /tmp/main-clone
+        run: python "${{ github.workspace }}/.github/scripts/anvil_prune_old_raw_reports.py"
 
       # if: always() so deploy-health metrics (from "Record deploy timing"
       # above) still get committed even when tests were skipped or failed -
