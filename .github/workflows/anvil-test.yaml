@@ -510,6 +510,69 @@ jobs:
           with open(path, "w") as f:
               f.write(content)
           print(f"Patched {path}")
+
+          # Bug 3: --force_path_paste makes the client hand the *server* a path to
+          # open (sent as src=url with a file:// URI, which the server normalises
+          # to src=path in services/_fetch_util.py). That is right for a path only
+          # the server can see, e.g. /cvmfs/..., but wrong for one this client
+          # resolved itself - a --test-data fallback file or a test_data_download
+          # temp file. The server has no such path and the fetch fails with
+          # "[Errno 2] No such file or directory", reported only inside the data
+          # fetch tool's own provided metadata, so it surfaces as an opaque
+          # "Job in error state, exit_code: None, stderr: ." Decide per file:
+          # if the path exists on this client, upload the bytes; otherwise leave
+          # it to the server as before.
+          import galaxy.tool_util.client.staging as staging_mod
+
+          staging_path = staging_mod.__file__
+          with open(staging_path) as f:
+              staging = f.read()
+
+          fetch_old = (
+              '                is_path = uri.startswith("file://")\n'
+              '                if not is_path or use_path_paste:\n'
+              '                    return {"src": "url", "url": uri}\n'
+              '                else:\n'
+              '                    path = uri[len("file://") :]\n'
+              '                    upload_payload["__files"][f"files_{index}|file_data"] = self._attach_file(path)\n'
+              '                    return {"src": "files"}\n'
+          )
+          fetch_new = (
+              '                is_path = uri.startswith("file://")\n'
+              '                local_path = uri[len("file://") :] if is_path else None\n'
+              '                server_side = use_path_paste and not (local_path and os.path.exists(local_path))\n'
+              '                if not is_path or server_side:\n'
+              '                    return {"src": "url", "url": uri}\n'
+              '                else:\n'
+              '                    upload_payload["__files"][f"files_{index}|file_data"] = self._attach_file(local_path)\n'
+              '                    return {"src": "files"}\n'
+          )
+          assert fetch_old in staging, "Expected staging fetch _attach_file text not found - fixed upstream?"
+          staging = staging.replace(fetch_old, fetch_new, 1)
+
+          legacy_old = (
+              '                is_path = uri.startswith("file://")\n'
+              '                if not is_path or use_path_paste:\n'
+              '                    upload_payload["inputs"][f"files_{index}|url_paste"] = uri\n'
+              '                else:\n'
+              '                    path = uri[len("file://") :]\n'
+              '                    upload_payload["__files"][f"files_{index}|file_data"] = self._attach_file(path)\n'
+          )
+          legacy_new = (
+              '                is_path = uri.startswith("file://")\n'
+              '                local_path = uri[len("file://") :] if is_path else None\n'
+              '                server_side = use_path_paste and not (local_path and os.path.exists(local_path))\n'
+              '                if not is_path or server_side:\n'
+              '                    upload_payload["inputs"][f"files_{index}|url_paste"] = uri\n'
+              '                else:\n'
+              '                    upload_payload["__files"][f"files_{index}|file_data"] = self._attach_file(local_path)\n'
+          )
+          assert legacy_old in staging, "Expected staging legacy _attach_file text not found - fixed upstream?"
+          staging = staging.replace(legacy_old, legacy_new, 1)
+
+          with open(staging_path, "w") as f:
+              f.write(staging)
+          print(f"Patched {staging_path}")
           PYEOF
           python /tmp/patch_force_path_paste.py
 
@@ -859,6 +922,22 @@ jobs:
               --no-history-cleanup \
               --verbose
           fi
+
+      # galaxy-tool-test snapshots each job's full details (job_metrics
+      # included) the instant it sees state=ok and never looks again -
+      # but metrics collection is a separate step queued behind the same
+      # busy job-handler worker pool, so it routinely lands seconds after
+      # that snapshot already fired (confirmed live: 14ms-12s+ lag,
+      # usually losing the race). Best-effort, so a hiccup here shouldn't
+      # fail the run over metrics completeness.
+      - name: Backfill missing GCP Batch job_metrics
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
+        continue-on-error: true
+        run: |
+          GALAXY_URL="http://${{ steps.vm-ip.outputs.ip }}/galaxy/"
+          KEY="${{ steps.api-key.outputs.key }}"
+          export GALAXY_URL KEY
+          python3 .github/scripts/anvil_backfill_job_metrics.py results/results.json
 
       - name: Build HTML/xunit report
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
