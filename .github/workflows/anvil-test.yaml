@@ -9,12 +9,18 @@
 name: Anvil Deployment and Tool Tests (dry run)
 
 on:
-  # 1am US Eastern. cron is UTC-only and doesn't shift with daylight
-  # saving, so this is 1am EST (winter) but 2am EDT (summer, roughly
+  # ~1am US Eastern. cron is UTC-only and doesn't shift with daylight
+  # saving, so this is ~1am EST (winter) but ~2am EDT (summer, roughly
   # mid-March to early November) - there's no single cron expression that
-  # tracks the DST-adjusted local time exactly.
+  # tracks the DST-adjusted local time exactly. Minute offset from :00 is
+  # deliberate: GitHub Actions explicitly warns that schedule triggers see
+  # more delay right at the top of the hour, since that's when the most
+  # repos' cron schedules fire at once (confirmed live - the 6:00 UTC
+  # trigger was ~11h late on 2026-08-27 during a GitHub Actions incident,
+  # and still hadn't fired by mid-morning UTC on 2026-08-28 with no
+  # incident reported at all).
   schedule:
-    - cron: '0 6 * * *'
+    - cron: '17 6 * * *'
   workflow_dispatch:
     inputs:
       instance-name:
