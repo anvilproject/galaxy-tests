@@ -10,7 +10,12 @@ installed tool ids actually carry.
 Reports, never rewrites: the pinned list is a reviewed commit, not something
 CI should mutate. Always exits 0 - this is information, not a gate.
 
+Also flags pinned ids that appear in `.github/excluded-tool-ids.txt`, since a
+categorically-excluded tool has no business being pinned - it would spend a
+slot to produce a known-red cell every night.
+
 Usage: anvil_preflight_tool_ids.py <pinned-ids-file> <testable-ids-file>
+                                   [excluded-ids-file]
 """
 
 import sys
@@ -25,9 +30,21 @@ def unversioned(tool_id: str) -> str:
     return tool_id.rsplit("/", 1)[0]
 
 
-def main(pinned_path: str, testable_path: str) -> int:
+def read_patterns(path: str) -> list[str]:
+    """Exclusion entries: fixed substrings, `#` comments and blanks ignored."""
+    with open(path) as f:
+        return [
+            line.strip()
+            for line in f
+            if line.strip() and not line.strip().startswith("#")
+        ]
+
+
+def main(pinned_path: str, testable_path: str, excluded_path: str = "") -> int:
     pinned = read_ids(pinned_path)
     testable = set(read_ids(testable_path))
+    patterns = read_patterns(excluded_path) if excluded_path else []
+    excluded = [t for t in pinned if any(p in t for p in patterns)]
     # A pinned id may name a tool the server has at a *different* version;
     # that still runs, so it's worth distinguishing from one it has never
     # heard of. Unversioned ids (Galaxy built-ins like Grep1) match directly.
@@ -48,7 +65,10 @@ def main(pinned_path: str, testable_path: str) -> int:
     print(
         f"pinned {len(pinned)} | testable as pinned {len(exact)} | "
         f"tool known at another version {len(version_miss)} | not testable {len(not_testable)}"
+        + (f" | categorically excluded {len(excluded)}" if patterns else "")
     )
+    for tool_id in excluded:
+        print(f"  EXCLUDED      {tool_id}")
     for tool_id in version_miss:
         print(f"  VERSION-MISS  {tool_id}")
     for tool_id in not_testable:
@@ -57,6 +77,6 @@ def main(pinned_path: str, testable_path: str) -> int:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
+    if len(sys.argv) not in (3, 4):
         sys.exit(__doc__)
-    sys.exit(main(sys.argv[1], sys.argv[2]))
+    sys.exit(main(*sys.argv[1:]))

@@ -1,0 +1,115 @@
+# Tools categorically excluded from AnVIL harness runs.
+#
+# Purpose: as coverage widens from the current pinned 200 toward the full
+# toolset, some tools can never produce a useful result here. Testing them
+# spends a slot to manufacture a red cell every night, which trains everyone
+# to ignore red cells. This file is the single place that decides which.
+#
+# Format: one entry per line, `#` starts a comment. Entries are matched as
+# FIXED SUBSTRINGS against tool IDs (`grep -F -f`), so write them WITHOUT a
+# version so they survive regeneration of scheduled-tool-ids.txt:
+#
+#     /repos/owner/name/tool_id/          <- version-independent, preferred
+#     bare_tool_id                        <- for core tools with no repo path
+#
+# Bar for inclusion: the tool cannot pass in this deployment no matter what
+# we fix on our side, AND that is a property of the tool rather than a bug we
+# are chasing. A tool that is merely failing right now does NOT belong here -
+# exclusion hides it. If in doubt leave it in and let it be red.
+#
+# Every entry states why and, where relevant, what would let it come back.
+# Re-check this file whenever scheduled-tool-ids.txt is regenerated.
+
+
+# --- Data managers -----------------------------------------------------
+# Index/database builders do not test cleanly via galaxy-tool-test: they
+# report a generic error with no per-test detail, or no report at all, while
+# the underlying job (a real, often multi-hour index build) keeps running
+# with nothing left to poll it - orphaned until GCP Batch's 24h
+# max_run_duration kills it. Excluded as a category, not individually.
+data_manager
+
+
+# --- Broken test definition --------------------------------------------
+# bg_uniq ships a single empty placeholder test:
+#     <tests><test></test></tests>
+# Its `input` param is required, galaxy-tool-test gives each case a fresh
+# empty history, so submission is rejected with
+# "Parameter 'input': specify a dataset of the required format / build".
+# The tool itself works fine - verified, exit 0 on real tabular input. The
+# toolshed repo has no linked source repository and exactly one revision
+# (2013), so there is nowhere to send a fix.
+# Revisit if a new revision with a real test is ever published.
+/repos/bgruening/unique/bg_uniq/
+
+
+# --- Container cannot start here ---------------------------------------
+# mgnify_seqprep requests rz9082/seqprep:v1.2-mgnify-v5.0, a personal Docker
+# Hub image with no /bin/bash. Galaxy's k8s runner launches containers with
+# `command: [job_wrapper.shell]`, default /bin/bash, so the container never
+# starts:
+#     runc create failed: exec: "/bin/bash": stat /bin/bash: no such file
+# Not fixable from the deployment: `shell` is a job_conf destination key and
+# TPV has no `shell` attribute, so it cannot be set per-tool.
+# Revisit if the tool moves to a biocontainer.
+/repos/bgruening/mgnify_seqprep/
+
+
+# --- Requirements that no biocontainer satisfies -----------------------
+# These pin packages that were never built for conda, or ancient versions
+# with no build. Container resolution returns nothing, they fall back to the
+# Galaxy image, and fail on a missing binary. No image we could build helps:
+# the package does not exist to install.
+#
+#   rpy 1.0.3   - the Python-2 predecessor of rpy2; no quay.io repo at all
+#   R 2.11/2.15 - 2010-2012 era, no biocontainer build
+#   MINE 1.0.1  - no quay.io repo
+#   pass/gpass/beam/lps_tool - Galaxy-internal legacy binaries, never packaged
+#
+# Note these are NOT deprecated in the toolshed and still show ~2,500
+# downloads each, so upstream has not signalled they are dead - but the
+# packaging is. Only an upstream port (rpy -> rpy2) would revive them.
+/repos/devteam/best_regression_subsets/
+/repos/devteam/canonical_correlation_analysis/
+/repos/devteam/correlation/cor2/
+/repos/devteam/kernel_canonical_correlation_analysis/
+/repos/devteam/kernel_principal_component_analysis/
+/repos/devteam/lda_analysis/
+/repos/devteam/linear_regression/
+/repos/devteam/logistic_regression_vif/
+/repos/devteam/mine/
+/repos/devteam/partialr_square/
+/repos/devteam/plot_from_lda/
+/repos/devteam/principal_component_analysis/
+/repos/devteam/rcve/
+/repos/devteam/t_test_two_samples/
+/repos/ethevenot/heatmap/Heatmap/
+/repos/guru-ananda/karyotype_plot/
+hgv_beam
+hgv_gpass
+hgv_lps
+hgv_pass
+
+
+# --- Deliberately NOT excluded (recorded so nobody adds them) ----------
+#
+# Extract genomic DNA 1
+#   Its history/custom-sequence branch is genuinely unfixable here (needs
+#   faToTwoBit AND Galaxy's Python environment at once, and it is on
+#   GALAXY_LIB_TOOLS_VERSIONED so container resolution is skipped). But 5 of
+#   its 7 tests use the cached branch and now PASS. Excluding the tool would
+#   discard that coverage to hide 2 known failures. The 2 remaining are
+#   fixed by galaxyproject/galaxy#23411 once released.
+#
+# pretext_map
+#   Fails on memory against the k8s destination's 4 GB ceiling. That is the
+#   deployment's intended shape, so the failure is honest signal about what
+#   this VM size can run. Exclude only if the resource shape becomes fixed
+#   policy rather than something under review.
+#
+# amrfinderplus, gtdbtk_classify_wf
+#   Empty reference-data dropdowns. Also broken on usegalaxy.org, so this is
+#   an upstream galaxyproject/idc gap that may well be fixed. Leave visible.
+#
+# Tools with zero tests (4 qiime2, 2 EMBOSS, intermine)
+#   Contribute no coverage but also no failures - nothing to exclude.

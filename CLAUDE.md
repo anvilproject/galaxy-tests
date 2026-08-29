@@ -35,6 +35,26 @@ below for previewing those locally.
   `workflow_dispatch` runs ignore this file — they use the
   `random-tool-count`/`test-page-size` inputs instead, or default to
   testing every tool.
+- `.github/excluded-tool-ids.txt` — tools categorically excluded from runs,
+  with the reason for each. Consulted when sampling the random pool, and
+  reported on (never enforced) by the pinned-list pre-flight. Entries are
+  version-independent fixed substrings so they survive regeneration of
+  `scheduled-tool-ids.txt`. The bar is "cannot pass here no matter what we
+  fix, and that is a property of the tool" — a tool merely failing today does
+  not belong there, because exclusion hides it. The file also records, in
+  comments, tools deliberately *not* excluded and why, so the same arguments
+  are not relitigated.
+
+  **When regenerating `scheduled-tool-ids.txt`** (periodically, at minimum to
+  pick up newer tool versions): filter the candidate pool through this file
+  first, e.g.
+
+      grep -vE '^\s*(#|$)' .github/excluded-tool-ids.txt > /tmp/ex.txt
+      grep -v -F -f /tmp/ex.txt /tmp/all_tool_ids.txt > /tmp/pool.txt
+
+  then sample from `/tmp/pool.txt`. Re-read the exclusion file at the same
+  time — entries name what would let a tool come back, and some are waiting
+  on upstream fixes. Run `anvil_sort_scheduled_tool_ids.py` afterwards.
 - `.github/scripts/anvil_*.py` — the report-generation scripts
   `anvil-test.yaml` calls: `anvil_record_deployment.py` (deploy
   success/duration), `anvil_generate_deploy_stages.py` /
