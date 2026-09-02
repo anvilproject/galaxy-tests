@@ -1070,6 +1070,20 @@ jobs:
         working-directory: /tmp/main-clone
         run: python "${{ github.workspace }}/.github/scripts/anvil_generate_analysis_data.py"
 
+      # Reads the analysis.json just written above and asks Gemini to
+      # prose-ify it into a short, plain-English verdict for the top of
+      # results-brief.html - see anvil_generate_brief_summary.py's own
+      # docstring for why this doesn't have the model do any clustering
+      # or classification itself. Best-effort: an LLM/API hiccup shouldn't
+      # fail the whole run over what's an advisory summary, not source data.
+      - name: Generate LLM summary for results-brief page
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
+        continue-on-error: true
+        working-directory: /tmp/main-clone
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python "${{ github.workspace }}/.github/scripts/anvil_generate_brief_summary.py"
+
       - name: Update reports/anvil/README.md
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         working-directory: /tmp/main-clone

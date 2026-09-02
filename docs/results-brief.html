@@ -28,6 +28,11 @@ nav_id: results-brief
   <button id="gx-brief-newer" type="button">newer &rarr;</button>
 </div>
 
+<div id="gx-brief-ai-summary" class="gx-brief-ai-summary" hidden>
+  <p id="gx-brief-ai-summary-text" class="gx-brief-ai-summary__text"></p>
+  <p id="gx-brief-ai-summary-meta" class="gx-brief-ai-summary__meta"></p>
+</div>
+
 <div id="gx-brief-summary" class="gx-brief-summary">
   <p id="gx-brief-sentence" class="gx-brief-sentence"></p>
   <div class="gx-brief-counts">
@@ -80,6 +85,25 @@ nav_id: results-brief
 <style>
   main.gx-content, .gx-header__inner {
     max-width: 1300px;
+  }
+
+  .gx-brief-ai-summary {
+    margin: 1.25rem 0;
+    padding: 1rem 1.2rem;
+    border-left: 4px solid var(--galaxy-dark);
+    border-radius: 0.25rem;
+    background: #eef4f9;
+  }
+  .gx-brief-ai-summary__text {
+    margin: 0 0 0.4rem;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: var(--galaxy-dark);
+  }
+  .gx-brief-ai-summary__meta {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--galaxy-grey);
   }
 
   .gx-brief-summary {
@@ -309,6 +333,11 @@ nav_id: results-brief
   var recoveredListEl = document.getElementById("gx-brief-recovered");
   var recoveredCountEl = document.getElementById("gx-recovered-count");
   var recoveredToggleBtn = document.getElementById("gx-brief-recovered-toggle");
+  var aiSummaryEl = document.getElementById("gx-brief-ai-summary");
+  var aiSummaryTextEl = document.getElementById("gx-brief-ai-summary-text");
+  var aiSummaryMetaEl = document.getElementById("gx-brief-ai-summary-meta");
+  var aiSummaryData = null;
+  var currentRunId = null;
 
   function escapeHtml(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -433,6 +462,22 @@ nav_id: results-brief
     });
   }
 
+  // The generated summary is a single snapshot from whichever CI run last
+  // produced it (see anvil_generate_brief_summary.py) - not one per
+  // historical run like analysis.json - so it's only shown while the
+  // paginator is on that exact run, not superimposed on older ones.
+  function applyAiSummary() {
+    if (aiSummaryData && aiSummaryData.run_id === currentRunId) {
+      aiSummaryTextEl.textContent = aiSummaryData.summary;
+      aiSummaryMetaEl.textContent =
+        "AI-generated summary · " + (aiSummaryData.model || "unknown model") +
+        (aiSummaryData.generated_at ? " · " + fmtShort(aiSummaryData.generated_at) : "");
+      aiSummaryEl.hidden = false;
+    } else {
+      aiSummaryEl.hidden = true;
+    }
+  }
+
   function init(analysis) {
     var runs = analysis.runs;
     if (!runs.length) {
@@ -444,6 +489,8 @@ nav_id: results-brief
 
     function render() {
       var report = runs[windowStart];
+      currentRunId = report.run_id;
+      applyAiSummary();
       sentenceEl.textContent = report.summary_sentence;
       countNewEl.textContent = report.counts.new;
       countContinuingEl.textContent = report.counts.continuing;
@@ -499,5 +546,17 @@ nav_id: results-brief
       document.getElementById("gx-brief-empty").hidden = false;
       document.getElementById("gx-brief-empty").textContent = "Failed to load analysis data: " + err;
     });
+
+  // Independent of the fetch above: a missing/failed brief-summary.json
+  // (e.g. no run has produced one yet, or the LLM step failed for the
+  // latest run - it's best-effort) just leaves the banner hidden rather
+  // than blocking the rest of the page.
+  fetch("analysis-data/brief-summary.json")
+    .then(function (r) { if (!r.ok) throw new Error("not found"); return r.json(); })
+    .then(function (data) {
+      aiSummaryData = data;
+      applyAiSummary();
+    })
+    .catch(function () {});
 })();
 </script>
