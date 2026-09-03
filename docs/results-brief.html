@@ -52,32 +52,39 @@ nav_id: results-brief
 </div>
 
 <section class="gx-brief-section">
-  <h2>Shared or system-level incidents</h2>
-  <p class="gx-brief-section__hint">Signatures affecting multiple tools - typically suspected infrastructure or Galaxy/test-harness issues.</p>
-  <div id="gx-brief-shared" class="gx-incident-list"></div>
-  <p id="gx-brief-shared-empty" class="gx-brief-empty" hidden>No shared incidents in this run.</p>
-</section>
-
-<section class="gx-brief-section">
-  <h2>Persistent tool issues</h2>
-  <p class="gx-brief-section__hint">Problems restricted to one tool but recurring across runs, versions, or tests.</p>
-  <div id="gx-brief-persistent" class="gx-incident-list"></div>
-  <p id="gx-brief-persistent-empty" class="gx-brief-empty" hidden>No persistent tool-specific issues.</p>
-</section>
-
-<section class="gx-brief-section">
-  <h2>New isolated issues</h2>
-  <p class="gx-brief-section__hint">New problems affecting one tool or a small number of tests.</p>
-  <div id="gx-brief-isolated" class="gx-incident-list"></div>
-  <p id="gx-brief-isolated-empty" class="gx-brief-empty" hidden>No new isolated issues.</p>
-</section>
-
-<section class="gx-brief-section">
-  <button type="button" class="gx-brief-collapsible-toggle" id="gx-brief-recovered-toggle" aria-expanded="false">
+  <button type="button" class="gx-brief-collapsible-toggle is-open" id="gx-brief-shared-toggle" aria-expanded="true">
     <span class="gx-brief-collapsible-toggle__arrow">&#9656;</span>
-    <h2>Recently recovered (<span id="gx-recovered-count">0</span>)</h2>
+    <h2>Shared or system-level incidents</h2>
   </button>
-  <div id="gx-brief-recovered" class="gx-incident-list" hidden></div>
+  <div id="gx-brief-shared-body" class="gx-brief-section__body">
+    <p class="gx-brief-section__hint">Signatures affecting multiple tools - typically suspected infrastructure or Galaxy/test-harness issues.</p>
+    <div id="gx-brief-shared" class="gx-incident-list"></div>
+    <p id="gx-brief-shared-empty" class="gx-brief-empty" hidden>No shared incidents in this run.</p>
+  </div>
+</section>
+
+<section class="gx-brief-section">
+  <button type="button" class="gx-brief-collapsible-toggle is-open" id="gx-brief-persistent-toggle" aria-expanded="true">
+    <span class="gx-brief-collapsible-toggle__arrow">&#9656;</span>
+    <h2>Persistent tool issues</h2>
+  </button>
+  <div id="gx-brief-persistent-body" class="gx-brief-section__body">
+    <p class="gx-brief-section__hint">Problems restricted to one tool but recurring across runs, versions, or tests.</p>
+    <div id="gx-brief-persistent" class="gx-incident-list"></div>
+    <p id="gx-brief-persistent-empty" class="gx-brief-empty" hidden>No persistent tool-specific issues.</p>
+  </div>
+</section>
+
+<section class="gx-brief-section">
+  <button type="button" class="gx-brief-collapsible-toggle is-open" id="gx-brief-isolated-toggle" aria-expanded="true">
+    <span class="gx-brief-collapsible-toggle__arrow">&#9656;</span>
+    <h2>New isolated issues</h2>
+  </button>
+  <div id="gx-brief-isolated-body" class="gx-brief-section__body">
+    <p class="gx-brief-section__hint">New problems affecting one tool or a small number of tests.</p>
+    <div id="gx-brief-isolated" class="gx-incident-list"></div>
+    <p id="gx-brief-isolated-empty" class="gx-brief-empty" hidden>No new isolated issues.</p>
+  </div>
 </section>
 
 <p id="gx-brief-empty" hidden>No analysis data yet.</p>
@@ -226,7 +233,6 @@ nav_id: results-brief
   .gx-badge--state-new { background: rgba(255, 215, 0, 0.25); color: #8a6d00; }
   .gx-badge--state-continuing { background: rgba(37, 83, 123, 0.1); color: var(--galaxy-primary); }
   .gx-badge--state-persistent { background: rgba(37, 83, 123, 0.18); color: var(--galaxy-primary); }
-  .gx-badge--state-recovered { background: rgba(97, 173, 144, 0.2); color: #2f7a4f; }
   .gx-badge--state-intermittent { background: rgba(216, 126, 85, 0.18); color: #a05230; }
 
   .gx-incident__evidence {
@@ -295,20 +301,6 @@ nav_id: results-brief
     overflow-y: auto;
   }
 
-  .gx-recovered-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.4rem 0;
-    font-size: 0.85rem;
-    border-bottom: 1px solid rgba(37, 83, 123, 0.06);
-  }
-  .gx-recovered-row__tool {
-    color: var(--galaxy-dark);
-  }
-  .gx-recovered-row__title {
-    color: var(--galaxy-grey);
-  }
 </style>
 
 <script>
@@ -330,9 +322,6 @@ nav_id: results-brief
   var persistentEmptyEl = document.getElementById("gx-brief-persistent-empty");
   var isolatedListEl = document.getElementById("gx-brief-isolated");
   var isolatedEmptyEl = document.getElementById("gx-brief-isolated-empty");
-  var recoveredListEl = document.getElementById("gx-brief-recovered");
-  var recoveredCountEl = document.getElementById("gx-recovered-count");
-  var recoveredToggleBtn = document.getElementById("gx-brief-recovered-toggle");
   var aiSummaryEl = document.getElementById("gx-brief-ai-summary");
   var aiSummaryTextEl = document.getElementById("gx-brief-ai-summary-text");
   var aiSummaryMetaEl = document.getElementById("gx-brief-ai-summary-meta");
@@ -448,20 +437,6 @@ nav_id: results-brief
     });
   }
 
-  function renderRecovered(recovered, runId) {
-    recoveredCountEl.textContent = recovered.length;
-    recoveredListEl.innerHTML = "";
-    recovered.forEach(function (r) {
-      var row = document.createElement("div");
-      row.className = "gx-recovered-row";
-      row.innerHTML =
-        '<a class="gx-recovered-row__tool" href="' + escapeHtml(toolLink(r.tool, runId)) + '">' +
-          escapeHtml(shortName(r.tool)) + "</a>" +
-        '<span class="gx-recovered-row__title">' + escapeHtml(r.title) + "</span>";
-      recoveredListEl.appendChild(row);
-    });
-  }
-
   // The generated summary is a single snapshot from whichever CI run last
   // produced it (see anvil_generate_brief_summary.py) - not one per
   // historical run like analysis.json - so it's only shown while the
@@ -499,7 +474,6 @@ nav_id: results-brief
       renderList(sharedListEl, sharedEmptyEl, report.shared_incidents, report.run_id, report.results_html_url);
       renderList(persistentListEl, persistentEmptyEl, report.persistent_tool_issues, report.run_id, report.results_html_url);
       renderList(isolatedListEl, isolatedEmptyEl, report.new_isolated_issues, report.run_id, report.results_html_url);
-      renderRecovered(report.recovered, report.run_id);
 
       windowLabel.textContent =
         "Run " + (windowStart + 1) + " of " + runs.length +
@@ -517,12 +491,6 @@ nav_id: results-brief
       windowStart = Math.min(runs.length - 1, windowStart + 1);
       render();
     });
-    recoveredToggleBtn.addEventListener("click", function () {
-      var opening = recoveredListEl.hidden;
-      recoveredListEl.hidden = !opening;
-      recoveredToggleBtn.classList.toggle("is-open", opening);
-      recoveredToggleBtn.setAttribute("aria-expanded", String(opening));
-    });
 
     render();
   }
@@ -538,6 +506,9 @@ nav_id: results-brief
     });
   }
   wireMoreToggle("gx-brief-more-toggle", "gx-brief-more-text");
+  wireMoreToggle("gx-brief-isolated-toggle", "gx-brief-isolated-body");
+  wireMoreToggle("gx-brief-shared-toggle", "gx-brief-shared-body");
+  wireMoreToggle("gx-brief-persistent-toggle", "gx-brief-persistent-body");
 
   fetch("analysis-data/analysis.json")
     .then(function (r) { return r.json(); })
