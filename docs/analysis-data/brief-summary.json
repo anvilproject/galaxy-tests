@@ -1,6 +1,6 @@
 {
   "run_id": "anvil-test-ci-260903-111533",
-  "generated_at": "2026-09-03T12:15:36+00:00",
+  "generated_at": "2026-09-03T18:14:40+00:00",
   "model": "gemini-3.6-flash",
-  "summary": "New connection timeout errors to host 34.182.220.106 appeared across several tools, including Count1, Filter1, Grep1, and Extract genomic DNA 1. A persistent infrastructure issue causing empty or lost datasets remains the largest shared failure, affecting 65 tests across 25 tools. Other persistent tool-specific and harness issues remain stable with no major changes, while 47 previous failures recovered in this run."
+  "summary": "A widespread connection timeout reaching host 34.182.220.106 accounts for the vast majority of new failures, led by two major shared incidents causing 163 test failures across 77 tools and 153 test failures across 73 tools. The captured errors show HTTP connection attempts timing out after ten minutes during input staging and job checks, which likely indicates a network-level reachability issue with that specific IP host rather than a bug in the tools. Meanwhile, known persistent infrastructure issues remain stable, led by empty dataset output errors across 25 tools.\n\nThe absence of database connection pool timeout errors in the server log indicates that the test runner server was not experiencing internal overload during this run. This makes server-side resource exhaustion an unlikely explanation, pointing instead toward an external network-path or routing problem reaching host 34.182.220.106."
 }

@@ -52,6 +52,21 @@ BAD_STATUSES = {"error", "failure"}
 TMP_PATH_RE = re.compile(r"/tmp/tmp[A-Za-z0-9_]+")
 UUID_RE = re.compile(r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b", re.IGNORECASE)
 HEX_ID_RE = re.compile(r"\b[0-9a-f]{16,}\b", re.IGNORECASE)
+# CPython's default object repr ("<ClassName object at 0x7fe834e11070>")
+# embeds a per-process memory address, so any signature ending in one -
+# e.g. urllib3's ConnectTimeoutError(<HTTPConnection(...) at 0x...>, ...) -
+# never repeats and never clusters, even when it's the exact same
+# underlying condition (confirmed live: 200 identical connect-timeout
+# failures to the same host, on the 2026-09-03 run, each fragmenting into
+# its own 1-test "incident" instead of clustering, purely because that
+# trailing address differs on every occurrence). Matched on "at 0x..."
+# alone, not "object at 0x...": a class with its own __repr__/__str__
+# (like HTTPConnection here) renders as "<HTTPConnection(...) at 0x...>",
+# without the word "object" that only appears in the true CPython
+# default-repr fallback ("<Foo object at 0x...>") - both end the same
+# way. The address itself carries no diagnostic value either way - only
+# that a repr fell back to one.
+OBJ_REPR_ADDR_RE = re.compile(r"\bat 0x[0-9a-f]+", re.IGNORECASE)
 JOB_ERROR_RE = re.compile(r"^(Exception: )?Job in error state")
 
 # These two messages name the file they could not resolve, which is exactly
@@ -106,6 +121,7 @@ def normalize_signature(text: str) -> str:
     text = TMP_PATH_RE.sub("/tmp/<tmp>", text)
     text = UUID_RE.sub("<uuid>", text)
     text = HEX_ID_RE.sub("<id>", text)
+    text = OBJ_REPR_ADDR_RE.sub("at <addr>", text)
     text = TEST_INPUT_FILE_RE.sub("Test input file (<file>) cannot be found", text)
     text = TEST_OUTPUT_FILE_RE.sub("Test output file (<file>) is missing", text)
     return text.strip()
