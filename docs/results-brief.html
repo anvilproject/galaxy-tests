@@ -51,6 +51,11 @@ nav_id: results-brief
   </div>
 </div>
 
+<div id="gx-brief-filter-bar" class="gx-brief-filter-bar" hidden>
+  Filtering by <span id="gx-brief-filter-label" class="gx-brief-filter-bar__label"></span>
+  <button type="button" id="gx-brief-filter-clear" class="gx-brief-filter-bar__clear">Clear filter</button>
+</div>
+
 <section class="gx-brief-section">
   <button type="button" class="gx-brief-collapsible-toggle is-open" id="gx-brief-shared-toggle" aria-expanded="true">
     <span class="gx-brief-collapsible-toggle__arrow">&#9656;</span>
@@ -178,7 +183,12 @@ nav_id: results-brief
   }
   .gx-brief-collapsible-toggle__arrow {
     color: var(--galaxy-grey);
-    font-size: 0.8em;
+    /* Sized against the layout's h2 { font-size: 1.4rem }, not 0.8em
+       relative to this button's own (body-level, ~1rem) inherited
+       font-size - the arrow sits beside the heading, not inside it, so
+       an em value here was scaling off the wrong ancestor and rendering
+       roughly half the heading's size. */
+    font-size: 1.1rem;
     transition: transform 0.1s;
   }
   .gx-brief-collapsible-toggle.is-open .gx-brief-collapsible-toggle__arrow {
@@ -214,11 +224,21 @@ nav_id: results-brief
   }
   .gx-badge {
     display: inline-block;
+    font: inherit;
     font-size: 0.72rem;
     font-weight: 600;
     padding: 0.1rem 0.5rem;
+    border: none;
     border-radius: 1rem;
     white-space: nowrap;
+    cursor: pointer;
+  }
+  .gx-badge:hover {
+    filter: brightness(0.93);
+  }
+  .gx-badge.is-active-filter {
+    outline: 2px solid var(--galaxy-dark);
+    outline-offset: 1px;
   }
   .gx-badge--category-infrastructure { background: rgba(185, 28, 28, 0.12); color: #b91c1c; }
   .gx-badge--category-galaxy-test-harness { background: rgba(99, 1, 119, 0.12); color: #630177; }
@@ -234,6 +254,34 @@ nav_id: results-brief
   .gx-badge--state-continuing { background: rgba(37, 83, 123, 0.1); color: var(--galaxy-primary); }
   .gx-badge--state-persistent { background: rgba(37, 83, 123, 0.18); color: var(--galaxy-primary); }
   .gx-badge--state-intermittent { background: rgba(216, 126, 85, 0.18); color: #a05230; }
+
+  .gx-brief-filter-bar:not([hidden]) {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 1.25rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 0.375rem;
+    background: rgba(37, 83, 123, 0.08);
+    font-size: 0.85rem;
+    color: var(--galaxy-dark);
+  }
+  .gx-brief-filter-bar__label {
+    font-weight: 600;
+  }
+  .gx-brief-filter-bar__clear {
+    font: inherit;
+    font-size: 0.8rem;
+    background: none;
+    border: 1px solid rgba(37, 83, 123, 0.3);
+    border-radius: 1rem;
+    padding: 0.1rem 0.6rem;
+    cursor: pointer;
+    color: var(--galaxy-primary);
+  }
+  .gx-brief-filter-bar__clear:hover {
+    background: rgba(37, 83, 123, 0.1);
+  }
 
   .gx-incident__evidence {
     margin-top: 0.35rem;
@@ -327,6 +375,48 @@ nav_id: results-brief
   var aiSummaryMetaEl = document.getElementById("gx-brief-ai-summary-meta");
   var aiSummaryData = null;
   var currentRunId = null;
+  var filterBarEl = document.getElementById("gx-brief-filter-bar");
+  var filterLabelEl = document.getElementById("gx-brief-filter-label");
+  var filterClearBtn = document.getElementById("gx-brief-filter-clear");
+
+  // Set once init() defines render() - lets badge click handlers (attached
+  // per-incident, before init()'s closure exists yet at parse time) redraw
+  // the currently displayed run without needing render() itself to be
+  // hoisted out of init()'s closure over runs/windowStart.
+  var rerender = function () {};
+
+  // null, or {type: "category"|"confidence"|"state", value: "..."} - a
+  // single filter shared across all three incident lists, persisting
+  // across older/newer pagination until cleared.
+  var activeFilter = null;
+
+  function matchesFilter(incident) {
+    if (!activeFilter) return true;
+    return incident[activeFilter.type] === activeFilter.value;
+  }
+
+  function applyFilterBar() {
+    if (!activeFilter) {
+      filterBarEl.hidden = true;
+      return;
+    }
+    filterLabelEl.textContent = activeFilter.type + " = " + activeFilter.value;
+    filterBarEl.hidden = false;
+  }
+
+  function setFilter(type, value) {
+    activeFilter = (activeFilter && activeFilter.type === type && activeFilter.value === value)
+      ? null
+      : { type: type, value: value };
+    applyFilterBar();
+    rerender();
+  }
+
+  filterClearBtn.addEventListener("click", function () {
+    activeFilter = null;
+    applyFilterBar();
+    rerender();
+  });
 
   function escapeHtml(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -395,6 +485,13 @@ nav_id: results-brief
     return html;
   }
 
+  function filterBadgeHtml(type, value, extraClass, label) {
+    var isActive = !!activeFilter && activeFilter.type === type && activeFilter.value === value;
+    return '<button type="button" class="gx-badge ' + extraClass + (isActive ? " is-active-filter" : "") +
+      '" data-filter-type="' + escapeHtml(type) + '" data-filter-value="' + escapeHtml(value) + '">' +
+      escapeHtml(label) + "</button>";
+  }
+
   function renderIncident(incident, runId, resultsHtmlUrl) {
     var wrap = document.createElement("div");
     wrap.className = "gx-incident";
@@ -403,9 +500,9 @@ nav_id: results-brief
       '<div class="gx-incident__header">' +
         '<span class="gx-incident__title">' + escapeHtml(incident.title) + "</span>" +
         '<span class="gx-incident__badges">' +
-          '<span class="gx-badge ' + categoryClass(incident.category) + '">' + escapeHtml(incident.category) + "</span>" +
-          '<span class="gx-badge gx-badge--confidence">' + escapeHtml(incident.confidence) + " confidence</span>" +
-          '<span class="gx-badge ' + stateClass(incident.state) + '">' + escapeHtml(incident.state) + "</span>" +
+          filterBadgeHtml("category", incident.category, categoryClass(incident.category), incident.category) +
+          filterBadgeHtml("confidence", incident.confidence, "gx-badge--confidence", incident.confidence + " confidence") +
+          filterBadgeHtml("state", incident.state, stateClass(incident.state), incident.state) +
         "</span>" +
       "</div>" +
       '<div class="gx-incident__evidence">' + evidence + "</div>" +
@@ -422,12 +519,26 @@ nav_id: results-brief
       }
       detail.hidden = !detail.hidden;
     });
+
+    wrap.querySelectorAll(".gx-badge[data-filter-type]").forEach(function (badge) {
+      badge.addEventListener("click", function (event) {
+        event.stopPropagation();
+        setFilter(badge.dataset.filterType, badge.dataset.filterValue);
+      });
+    });
+
     return wrap;
   }
 
-  function renderList(container, emptyEl, incidents, runId, resultsHtmlUrl) {
+  function renderList(container, emptyEl, incidents, runId, resultsHtmlUrl, unfilteredCount) {
     container.innerHTML = "";
     if (!incidents.length) {
+      if (!emptyEl.dataset.defaultText) {
+        emptyEl.dataset.defaultText = emptyEl.textContent;
+      }
+      emptyEl.textContent = (activeFilter && unfilteredCount > 0)
+        ? "No incidents match the current filter (" + activeFilter.type + " = " + activeFilter.value + ")."
+        : emptyEl.dataset.defaultText;
       emptyEl.hidden = false;
       return;
     }
@@ -471,9 +582,9 @@ nav_id: results-brief
       countContinuingEl.textContent = report.counts.continuing;
       countRecoveredEl.textContent = report.counts.recovered;
 
-      renderList(sharedListEl, sharedEmptyEl, report.shared_incidents, report.run_id, report.results_html_url);
-      renderList(persistentListEl, persistentEmptyEl, report.persistent_tool_issues, report.run_id, report.results_html_url);
-      renderList(isolatedListEl, isolatedEmptyEl, report.new_isolated_issues, report.run_id, report.results_html_url);
+      renderList(sharedListEl, sharedEmptyEl, report.shared_incidents.filter(matchesFilter), report.run_id, report.results_html_url, report.shared_incidents.length);
+      renderList(persistentListEl, persistentEmptyEl, report.persistent_tool_issues.filter(matchesFilter), report.run_id, report.results_html_url, report.persistent_tool_issues.length);
+      renderList(isolatedListEl, isolatedEmptyEl, report.new_isolated_issues.filter(matchesFilter), report.run_id, report.results_html_url, report.new_isolated_issues.length);
 
       windowLabel.textContent =
         "Run " + (windowStart + 1) + " of " + runs.length +
@@ -492,6 +603,7 @@ nav_id: results-brief
       render();
     });
 
+    rerender = render;
     render();
   }
 
