@@ -1045,16 +1045,20 @@ jobs:
       # this converts that one-off, by-hand sampling into a standing
       # per-run artifact. Has to run here, before "Delete VM" - the DB
       # query, on-disk stat, and internal-nginx fetch all need the live
-      # cluster. timeout-minutes bounds the worst case (hundreds of
-      # per-dataset requests) in case something's unexpectedly slow;
+      # cluster, and the external fetch needs the VM still reachable.
+      # timeout-minutes bounds the worst case (two requests per dataset,
+      # hundreds of datasets) in case something's unexpectedly slow;
       # continue-on-error since this is diagnostic, not core to the run.
       - name: Collect failed-output diagnostics before teardown
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         continue-on-error: true
-        timeout-minutes: 15
+        timeout-minutes: 25
         working-directory: /tmp/main-clone
         env:
           KEY: ${{ steps.api-key.outputs.key }}
+          # The same base URL the test client used, so the external column
+          # measures the exact leg the client's own fetches travelled.
+          GALAXY_URL: http://${{ steps.vm-ip.outputs.ip }}/galaxy/
         run: |
           python "${{ github.workspace }}/.github/scripts/anvil_collect_failed_output_diagnostics.py" \
             "reports/anvil/tool-tests/${{ steps.instance.outputs.name }}/results.json" \
