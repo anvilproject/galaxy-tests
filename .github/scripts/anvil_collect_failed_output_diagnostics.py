@@ -1,7 +1,8 @@
-"""Collect, for every failed/errored test's output datasets, three numbers
+"""Collect, for every failed/errored test's output datasets, four numbers
 that only exist while the VM is still up: the database's own file_size,
-the actual byte count on disk, and the byte count served back through
-Galaxy's internal nginx - writing the result to
+the actual byte count on disk, the byte count served back through
+Galaxy's internal nginx, and the byte count served over the *external*
+route the test client itself uses - writing the result to
 reports/anvil/deployments/<run_id>/failed-output-diagnostics.tsv.
 
 Why (outstanding.md #8, "The VM is deleted at run end"): the empty-output
@@ -18,18 +19,28 @@ Deliberately scoped to failed/error tests only, not every dataset in the
 run (see BAD_STATUSES) - the question this answers is "why did this
 *fail*", not a full audit of every output.
 
+The two fetches are the point of the whole file. Galaxy serves dataset
+content by returning an empty body plus an X-Accel-Redirect header, which
+nginx turns into a file read; anything in front of nginx that mishandles
+or forwards that response delivers HTTP 200 with zero bytes while every
+server-side check still passes. So the internal fetch (port-forward
+straight to svc/galaxy-nginx) and the external one (public IP, port 80,
+through the ingress - the exact leg the test client uses) are compared
+against each other, and against the disk. If they disagree, the
+difference is the ingress path.
+
+Both fetches record the HTTP status alongside the byte count, because
+"200 with 0 bytes" and "502" mean very different things here and are
+otherwise indistinguishable in the output.
+
 Requires kubectl already configured against the live cluster (see
-"Copy kubeconfig from VM") and a running kubectl port-forward-free path:
-this script opens its own short-lived port-forward to galaxy-nginx to
-fetch the "served through nginx" figure, matching the internal-cluster
-route already established (not the external ingress path the test
-client itself uses - that's a separate, deliberate comparison, not this
-script's job).
+"Copy kubeconfig from VM"); this script opens its own short-lived
+port-forward to galaxy-nginx for the internal figure.
 
 Usage: anvil_collect_failed_output_diagnostics.py <results.json path> <out.tsv path>
-Env: GALAXY_URL, KEY (Galaxy API key) - used only to resolve each
-     dataset's history_id/hda_id into the nginx-internal request path;
-     no external network calls are made.
+Env: KEY (Galaxy API key), GALAXY_URL (external base URL, e.g.
+     http://<vm-ip>/galaxy/). Without GALAXY_URL the external columns are
+     left empty and the rest still collected.
 """
 
 import json
@@ -43,6 +54,13 @@ BAD_STATUSES = {"error", "failure"}
 UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", re.IGNORECASE)
 PORT_FORWARD_LOCAL_PORT = 18765
 REQUEST_TIMEOUT = 10  # per-request, internal-cluster hop - should normally take well under 1s
+EXTERNAL_TIMEOUT = 60  # same request over the public internet, and some outputs are large
+
+HEADER = (
+    "test_id\ttool_id\toutput_name\thistory_id\thda_id\tuuid\t"
+    "db_file_size\tdisk_bytes\tnginx_status\tnginx_bytes\t"
+    "external_status\texternal_bytes\n"
+)
 
 
 def collect_failed_outputs(results_path: str) -> list[dict]:
@@ -155,23 +173,39 @@ def start_port_forward() -> subprocess.Popen:
     return proc
 
 
-def fetch_nginx_bytes(row: dict, key: str) -> int | None:
-    url = (
-        f"http://localhost:{PORT_FORWARD_LOCAL_PORT}/galaxy/api/histories/"
-        f"{row['history_id']}/contents/{row['hda_id']}/display?raw=true"
-    )
+def fetch_display(url: str, key: str, timeout: int) -> tuple[int | None, int | None]:
+    """(http_status, bytes_downloaded) for one dataset display request.
+
+    Deliberately no -f: a 200 carrying an empty body is the thing being
+    looked for, and -f would collapse it into the same "no result" as a
+    genuine transport failure."""
     try:
         result = subprocess.run(
-            ["curl", "-sf", "-H", f"x-api-key: {key}", "-o", "/dev/null", "-w", "%{size_download}", url],
+            ["curl", "-s", "-H", f"x-api-key: {key}", "-o", "/dev/null", "-w", "%{http_code} %{size_download}", url],
             capture_output=True,
             text=True,
-            timeout=REQUEST_TIMEOUT,
+            timeout=timeout,
         )
         if result.returncode != 0:
-            return None
-        return int(result.stdout.strip())
+            return None, None
+        status_str, _, size_str = result.stdout.strip().partition(" ")
+        return int(status_str), int(size_str)
     except (subprocess.TimeoutExpired, ValueError):
-        return None
+        return None, None
+
+
+def _display_path(row: dict) -> str:
+    return f"api/histories/{row['history_id']}/contents/{row['hda_id']}/display?raw=true"
+
+
+def fetch_nginx(row: dict, key: str) -> tuple[int | None, int | None]:
+    base = f"http://localhost:{PORT_FORWARD_LOCAL_PORT}/galaxy/"
+    return fetch_display(base + _display_path(row), key, REQUEST_TIMEOUT)
+
+
+def fetch_external(row: dict, key: str, base_url: str) -> tuple[int | None, int | None]:
+    """The same dataset over the public route the test client uses."""
+    return fetch_display(base_url + _display_path(row), key, EXTERNAL_TIMEOUT)
 
 
 def main() -> None:
@@ -179,13 +213,20 @@ def main() -> None:
         raise SystemExit("Usage: anvil_collect_failed_output_diagnostics.py <results.json> <out.tsv>")
     results_path, out_path = sys.argv[1], sys.argv[2]
     key = os.environ["KEY"]
+    # Normalised to exactly one trailing slash so the path fragments below
+    # join cleanly whichever form the workflow passes.
+    external_base = os.environ.get("GALAXY_URL", "").strip()
+    if external_base:
+        external_base = external_base.rstrip("/") + "/"
+    else:
+        print("GALAXY_URL unset - external columns will be empty", file=sys.stderr)
 
     rows = collect_failed_outputs(results_path)
     print(f"{len(rows)} distinct failed-test output datasets to diagnose")
     if not rows:
         os.makedirs(os.path.dirname(out_path), exist_ok=True)
         with open(out_path, "w") as f:
-            f.write("test_id\ttool_id\toutput_name\thistory_id\thda_id\tuuid\tdb_file_size\tdisk_bytes\tnginx_bytes\n")
+            f.write(HEADER)
         return
 
     db_info = fetch_db_file_info([r["uuid"] for r in rows])
@@ -195,15 +236,25 @@ def main() -> None:
     pf = start_port_forward()
     try:
         for i, r in enumerate(rows):
-            r["nginx_bytes"] = fetch_nginx_bytes(r, key)
+            r["nginx_status"], r["nginx_bytes"] = fetch_nginx(r, key)
+            if external_base:
+                r["external_status"], r["external_bytes"] = fetch_external(r, key, external_base)
             if (i + 1) % 100 == 0:
                 print(f"  fetched {i + 1}/{len(rows)}")
     finally:
         pf.terminate()
 
+    if external_base:
+        disagree = sum(
+            1
+            for r in rows
+            if r.get("nginx_bytes") and not r.get("external_bytes")
+        )
+        print(f"{disagree}/{len(rows)} outputs non-empty through nginx but empty externally")
+
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, "w") as f:
-        f.write("test_id\ttool_id\toutput_name\thistory_id\thda_id\tuuid\tdb_file_size\tdisk_bytes\tnginx_bytes\n")
+        f.write(HEADER)
         for r in rows:
             info = db_info.get(r["uuid"], {})
             file_name = info.get("file_name")
@@ -219,7 +270,10 @@ def main() -> None:
                         r["uuid"],
                         info.get("file_size"),
                         disk_bytes.get(file_name) if file_name else None,
+                        r.get("nginx_status"),
                         r.get("nginx_bytes"),
+                        r.get("external_status"),
+                        r.get("external_bytes"),
                     ]
                 )
                 + "\n"
