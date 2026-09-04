@@ -1040,6 +1040,26 @@ jobs:
              "${{ github.workspace }}/results/results.html" \
              "$DIR/"
 
+      # outstanding.md #8, "The VM is deleted at run end": the empty-output
+      # investigation needed a live instance twice and didn't have one -
+      # this converts that one-off, by-hand sampling into a standing
+      # per-run artifact. Has to run here, before "Delete VM" - the DB
+      # query, on-disk stat, and internal-nginx fetch all need the live
+      # cluster. timeout-minutes bounds the worst case (hundreds of
+      # per-dataset requests) in case something's unexpectedly slow;
+      # continue-on-error since this is diagnostic, not core to the run.
+      - name: Collect failed-output diagnostics before teardown
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
+        continue-on-error: true
+        timeout-minutes: 15
+        working-directory: /tmp/main-clone
+        env:
+          KEY: ${{ steps.api-key.outputs.key }}
+        run: |
+          python "${{ github.workspace }}/.github/scripts/anvil_collect_failed_output_diagnostics.py" \
+            "reports/anvil/tool-tests/${{ steps.instance.outputs.name }}/results.json" \
+            "reports/anvil/deployments/${{ steps.instance.outputs.name }}/failed-output-diagnostics.tsv"
+
       # Reads the job.create_time/update_time/external_id already present
       # in the results.json just saved above - no new capture during the
       # run, and re-derives every historical run's trace too, not just this
