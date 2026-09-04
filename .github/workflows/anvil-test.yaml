@@ -175,6 +175,17 @@ jobs:
         id: deploy-start
         run: echo "epoch=$(date -u +%s)" >> "$GITHUB_OUTPUT"
 
+      # --labels: opt-in (launch_vm.sh's own default is unlabeled, so this
+      # only affects our CI, never a plain/AnVIL invocation of the script -
+      # see galaxy-k8s-boot's own comment on LABELS). Lets GCP's billing
+      # export attribute the VM's own compute/disk cost to a specific run
+      # directly via its labels field, instead of inferring it after the
+      # fact from the VM's creation-time window. GCP Batch job costs still
+      # have to be attributed that latter way - Galaxy's own gcp_batch
+      # runner hardcodes its job labels with no extension point, and the
+      # underlying billed VM gets GCP Batch's own auto-labels
+      # (batch-job-id/batch-job-uid) instead of Galaxy's anyway, so a
+      # Galaxy-side change wouldn't reach the billing record even if made.
       - name: Launch Galaxy VM
         working-directory: galaxy-k8s-boot
         run: |
@@ -183,6 +194,7 @@ jobs:
             --git-branch dev \
             -f values/values.yml -f mixins/testing.yml -f mixins/ci-concurrency.yml -f mixins/debug.yml \
             -m t2d-standard-16 \
+            --labels="managed-by=galaxy-tests-ci,github-run-id=${{ github.run_id }}" \
             -k "${{ steps.ssh-key.outputs.public-key }}" \
             "${{ steps.instance.outputs.name }}"
 
@@ -1091,6 +1103,22 @@ jobs:
           RUN_HTML_URL="https://anvilproject.github.io/galaxy-tests/tool-tests/${{ steps.instance.outputs.name }}/results.html"
           python "${{ github.workspace }}/.github/scripts/anvil_update_readme.py" "${{ steps.instance.outputs.name }}" "$RUN_HTML_URL"
 
+      # Has to run here, before "Delete VM" - it needs the main VM and this
+      # run's GCP Batch job records still live/queryable (see
+      # anvil_generate_cost_data.py's own docstring for why this can't be
+      # recomputed later like the other docs/*-data generators). if:
+      # always() so a deploy-only or failed-tests run still gets priced -
+      # the main VM cost applies either way.
+      - name: Estimate GCP cost for this run
+        if: always()
+        continue-on-error: true
+        working-directory: /tmp/main-clone
+        env:
+          DEPLOY_START_EPOCH: ${{ steps.deploy-start.outputs.epoch }}
+        run: |
+          python "${{ github.workspace }}/.github/scripts/anvil_generate_cost_data.py" \
+            "${{ steps.instance.outputs.name }}"
+
       # Raw per-run artifacts (deployment logs, results.json) are useful
       # for digging into a specific run shortly after it happens, not
       # something anyone browses months later - each run's own workflow
@@ -1121,7 +1149,7 @@ jobs:
         run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
-          git add reports/anvil docs/tool-tests docs/raster-data docs/deploy-data docs/analysis-data docs/parallelism-data docs/job-runtime-data 2>/dev/null || true
+          git add reports/anvil docs/tool-tests docs/raster-data docs/deploy-data docs/analysis-data docs/parallelism-data docs/job-runtime-data docs/cost-data 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "No report changes to commit"
             exit 0
