@@ -113,15 +113,19 @@ def fetch_db_file_info(uuids: list[str]) -> dict[str, dict]:
     one read it too early."""
     if not uuids:
         return {}
-    array_literal = "ARRAY[" + ",".join(f"'{u}'" for u in uuids) + "]::uuid[]"
+    # Galaxy's UUIDType is CHAR(32) holding un-hyphenated hex, while the API
+    # (and so results.json) hands back the hyphenated form. Comparing the
+    # column against ::uuid[] is a type error, which fails the whole query.
+    hex_by_uuid = {u: u.replace("-", "").lower() for u in uuids}
+    array_literal = "ARRAY[" + ",".join(f"'{h}'" for h in hex_by_uuid.values()) + "]::text[]"
     sql = (
-        "SELECT hda.uuid, d.file_name, d.file_size, "
+        "SELECT replace(lower(hda.uuid::text),'-',''), d.file_name, d.file_size, "
         "coalesce(length(j.tool_stdout),0), coalesce(length(j.tool_stderr),0) "
         "FROM history_dataset_association hda "
         "JOIN dataset d ON hda.dataset_id = d.id "
         "LEFT JOIN job_to_output_dataset jtod ON jtod.dataset_id = hda.id "
         "LEFT JOIN job j ON j.id = jtod.job_id "
-        f"WHERE hda.uuid = ANY({array_literal});"
+        f"WHERE replace(lower(hda.uuid::text),'-','') = ANY({array_literal});"
     )
     result = subprocess.run(
         ["kubectl", "exec", "-n", "galaxy", "galaxy-postgres-1", "--", "psql", "-U", "postgres", "-d", "galaxy", "-A", "-t", "-F", "\t", "-c", sql],
@@ -132,18 +136,22 @@ def fetch_db_file_info(uuids: list[str]) -> dict[str, dict]:
         print(f"DB query failed: {result.stderr}", file=sys.stderr)
         return {}
 
-    info = {}
+    by_hex: dict[str, dict] = {}
     for line in result.stdout.strip().splitlines():
         parts = line.split("\t")
         if len(parts) != 5:
             continue
-        uuid, file_name, file_size, stdout_len, stderr_len = parts
-        info[uuid] = {
+        row_hex, file_name, file_size, stdout_len, stderr_len = parts
+        by_hex[row_hex] = {
             "file_name": file_name or None,
             "file_size": int(file_size) if file_size else None,
             "stdout_len": int(stdout_len) if stdout_len else None,
             "stderr_len": int(stderr_len) if stderr_len else None,
         }
+    # hand back keyed by the hyphenated form the callers hold
+    info = {u: by_hex[h] for u, h in hex_by_uuid.items() if h in by_hex}
+    if not info:
+        print(f"DB query matched no rows for {len(uuids)} uuids", file=sys.stderr)
     return info
 
 
