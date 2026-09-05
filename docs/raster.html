@@ -66,7 +66,10 @@ nav_id: raster
 </div>
 
 <div class="gx-raster-controls">
-  <input id="gx-raster-search" type="text" placeholder="Find a tool…" class="gx-raster-search">
+  <span class="gx-raster-search-wrap">
+    <input id="gx-raster-search" type="text" placeholder="Find a tool…" class="gx-raster-search">
+    <button type="button" id="gx-raster-search-clear" class="gx-raster-search-clear" aria-label="Clear search" hidden>&times;</button>
+  </span>
   <span class="gx-jump-label">Jump to</span>
   <div id="gx-raster-jump" class="gx-raster-jump"></div>
 </div>
@@ -139,13 +142,40 @@ nav_id: raster
     background: linear-gradient(to right, #f3f4f6, #3a3a3a);
     border: 1px solid rgba(37, 83, 123, 0.15);
   }
+  .gx-raster-search-wrap {
+    position: relative;
+    display: inline-block;
+  }
   .gx-raster-search {
     font: inherit;
     font-size: 0.85rem;
-    padding: 0.3rem 0.6rem;
+    padding: 0.3rem 1.6rem 0.3rem 0.6rem;
     border: 1px solid rgba(37, 83, 123, 0.3);
     border-radius: 0.375rem;
     width: 12rem;
+  }
+  .gx-raster-search-clear {
+    position: absolute;
+    top: 50%;
+    right: 0.3rem;
+    transform: translateY(-50%);
+    width: 1.1rem;
+    height: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: rgba(37, 83, 123, 0.15);
+    font-size: 0.7rem;
+    line-height: 1;
+    padding: 0;
+    color: rgba(37, 83, 123, 0.7);
+    cursor: pointer;
+  }
+  .gx-raster-search-clear:hover {
+    background: rgba(37, 83, 123, 0.3);
+    color: rgba(37, 83, 123, 1);
   }
   .gx-jump-label {
     font-size: 0.85rem;
@@ -796,6 +826,7 @@ nav_id: raster
     var inspectorNext = document.getElementById("gx-inspector-next");
     var inspectorReport = document.getElementById("gx-inspector-report");
     var searchInput = document.getElementById("gx-raster-search");
+    var searchClear = document.getElementById("gx-raster-search-clear");
     var jumpIndex = document.getElementById("gx-raster-jump");
     var densityComfortableBtn = document.getElementById("gx-density-comfortable");
     var densityCompactBtn = document.getElementById("gx-density-compact");
@@ -821,6 +852,7 @@ nav_id: raster
     var inspectorState = null;
     var density = "readable"; // "readable" | "overview" - toggled by the density buttons
     var toolFilter = "all"; // "all" | "error" | "failure" | "both" - toggled by the Errors/Failures/Errors or Failures pill
+    var searchQuery = ""; // lowercased free text - rows whose shortName doesn't contain it are hidden, combines with toolFilter
     var visibleTools = tools; // recomputed at the top of every draw() - the filtered row set
     var searchHighlightRow = null;
     var searchHighlightTimer = null;
@@ -859,9 +891,9 @@ nav_id: raster
       nCols = computeCols();
       clampWindow();
       var visibleRuns = currentRunIds();
-      visibleTools = toolFilter === "all"
-        ? tools
-        : tools.filter(function (toolId) { return toolMatchesFilter(toolId, toolFilter, matrix); });
+      visibleTools = tools
+        .filter(function (toolId) { return toolFilter === "all" || toolMatchesFilter(toolId, toolFilter, matrix); })
+        .filter(function (toolId) { return !searchQuery || shortName(toolId).toLowerCase().indexOf(searchQuery) >= 0; });
       rebuildJumpIndex();
 
       var dpr = window.devicePixelRatio || 1;
@@ -1729,15 +1761,22 @@ nav_id: raster
       }, 1500);
     }
 
-    function runSearch() {
-      var query = searchInput.value.trim().toLowerCase();
-      if (!query) return;
-      var idx = visibleTools.findIndex(function (t) { return shortName(t).toLowerCase().indexOf(query) >= 0; });
-      if (idx >= 0) scrollToRow(idx);
-    }
+    searchInput.addEventListener("input", function () {
+      searchQuery = searchInput.value.trim().toLowerCase();
+      searchClear.hidden = !searchInput.value;
+      draw();
+    });
 
     searchInput.addEventListener("keydown", function (evt) {
-      if (evt.key === "Enter") runSearch();
+      if (evt.key === "Enter" && visibleTools.length) scrollToRow(0);
+    });
+
+    searchClear.addEventListener("click", function () {
+      searchInput.value = "";
+      searchQuery = "";
+      searchClear.hidden = true;
+      searchInput.focus();
+      draw();
     });
 
     // One button per first letter actually present among the (already
