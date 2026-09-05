@@ -59,7 +59,7 @@ EXTERNAL_TIMEOUT = 60  # same request over the public internet, and some outputs
 HEADER = (
     "test_id\ttool_id\toutput_name\thistory_id\thda_id\tuuid\t"
     "db_file_size\tdisk_bytes\tnginx_status\tnginx_bytes\t"
-    "external_status\texternal_bytes\n"
+    "external_status\texternal_bytes\tstdout_len\tstderr_len\n"
 )
 
 
@@ -97,16 +97,30 @@ def collect_failed_outputs(results_path: str) -> list[dict]:
 
 
 def fetch_db_file_info(uuids: list[str]) -> dict[str, dict]:
-    """uuid -> {file_name, file_size} via a single batched psql query -
+    """uuid -> {file_name, file_size, stdout_len, stderr_len}, one batched query.
+
     HDA/dataset UUIDs are real DB columns, unlike Galaxy's signed/encoded
-    API ids, so no id-decoding is needed here."""
+    API ids, so no id-decoding is needed here - and the producing job is
+    reachable from the dataset, which is why the job's stdio lengths are
+    collected here rather than by a second query keyed on a job id we
+    cannot resolve.
+
+    The stdio lengths matter because roughly a third of empty-output
+    failures are assert_stdout/assert_stderr rather than dataset-content
+    assertions. results.json already records what the *client* saw in the
+    job it fetched; this is the server's value at teardown, so the two can
+    be compared - a client that saw an empty stream where the database has
+    one read it too early."""
     if not uuids:
         return {}
     array_literal = "ARRAY[" + ",".join(f"'{u}'" for u in uuids) + "]::uuid[]"
     sql = (
-        "SELECT hda.uuid, d.file_name, d.file_size "
+        "SELECT hda.uuid, d.file_name, d.file_size, "
+        "coalesce(length(j.tool_stdout),0), coalesce(length(j.tool_stderr),0) "
         "FROM history_dataset_association hda "
         "JOIN dataset d ON hda.dataset_id = d.id "
+        "LEFT JOIN job_to_output_dataset jtod ON jtod.dataset_id = hda.id "
+        "LEFT JOIN job j ON j.id = jtod.job_id "
         f"WHERE hda.uuid = ANY({array_literal});"
     )
     result = subprocess.run(
@@ -121,10 +135,15 @@ def fetch_db_file_info(uuids: list[str]) -> dict[str, dict]:
     info = {}
     for line in result.stdout.strip().splitlines():
         parts = line.split("\t")
-        if len(parts) != 3:
+        if len(parts) != 5:
             continue
-        uuid, file_name, file_size = parts
-        info[uuid] = {"file_name": file_name or None, "file_size": int(file_size) if file_size else None}
+        uuid, file_name, file_size, stdout_len, stderr_len = parts
+        info[uuid] = {
+            "file_name": file_name or None,
+            "file_size": int(file_size) if file_size else None,
+            "stdout_len": int(stdout_len) if stdout_len else None,
+            "stderr_len": int(stderr_len) if stderr_len else None,
+        }
     return info
 
 
@@ -274,6 +293,8 @@ def main() -> None:
                         r.get("nginx_bytes"),
                         r.get("external_status"),
                         r.get("external_bytes"),
+                        info.get("stdout_len"),
+                        info.get("stderr_len"),
                     ]
                 )
                 + "\n"
