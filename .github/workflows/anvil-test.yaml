@@ -194,7 +194,7 @@ jobs:
             --git-branch dev \
             -f values/values.yml -f mixins/testing.yml -f mixins/ci-concurrency.yml -f mixins/debug.yml \
             -m t2d-standard-16 \
-            --labels="managed-by=galaxy-tests-ci,github-run-id=${{ github.run_id }}" \
+            --labels "managed-by=galaxy-tests-ci,github-run-id=${{ github.run_id }}" \
             -k "${{ steps.ssh-key.outputs.public-key }}" \
             "${{ steps.instance.outputs.name }}"
 
