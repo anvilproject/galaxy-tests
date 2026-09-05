@@ -92,14 +92,32 @@ EMPTY_DIFF_HUNK_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+\d+,0 @@", re.MULTILINE)
 EMPTY_TEXT_ASSERT_RE = re.compile(r"in output \(''\)")
 EMPTY_COLLECTION_RE = re.compile(r"expected to have \d+ elements, but it had 0\.")
 EMPTY_OUTPUT_SIGNATURE = "Output produced no content (expected data, got an empty dataset)"
+EMPTY_STDIO_SIGNATURE = "Job stdout/stderr was empty when the test read it"
+
+# Only a problem that names an output is about a dataset. An assert_stdout /
+# assert_stderr failure reports the same "in output ('')" text with no such
+# prefix, and no dataset is empty in that case - lumping the two together
+# made a fifth of the bucket wear the wrong label and let each population
+# mask the other on the brief page.
+OUTPUT_NAMED_RE = re.compile(r"^Output [A-Za-z0-9_|]+:")
 
 
 def indicates_empty_output(problem: str) -> bool:
+    """An output *dataset* came back with no content."""
+    if not OUTPUT_NAMED_RE.match(problem.strip()):
+        # A diff hunk or an element count can only come from an output
+        # comparison, so those still count even without the prefix.
+        return bool(EMPTY_DIFF_HUNK_RE.search(problem) or EMPTY_COLLECTION_RE.search(problem))
     return bool(
         EMPTY_DIFF_HUNK_RE.search(problem)
         or EMPTY_TEXT_ASSERT_RE.search(problem)
         or EMPTY_COLLECTION_RE.search(problem)
     )
+
+
+def indicates_empty_stdio(problem: str) -> bool:
+    """An assert_stdout/assert_stderr saw an empty stream."""
+    return bool(EMPTY_TEXT_ASSERT_RE.search(problem)) and not OUTPUT_NAMED_RE.match(problem.strip())
 
 
 def load_rules() -> list[dict]:
@@ -151,8 +169,12 @@ def extract_signature(execution_problem: str | None, output_problems: list[str] 
         # own empty outputs) but before the generic first-line fallback, so
         # this only reclassifies what would otherwise be grouped by an
         # uninformative "Output x: different than expected" line.
+        # Dataset emptiness wins when a test has both: it is the larger
+        # population and the more consequential of the two.
         if any(p and indicates_empty_output(p) for p in output_problems):
             return EMPTY_OUTPUT_SIGNATURE
+        if any(p and indicates_empty_stdio(p) for p in output_problems):
+            return EMPTY_STDIO_SIGNATURE
         first = next((p for p in output_problems if p and p.strip()), None)
         if first:
             return normalize_signature(first.strip().splitlines()[0])
