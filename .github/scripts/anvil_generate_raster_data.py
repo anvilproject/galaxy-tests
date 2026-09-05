@@ -222,10 +222,19 @@ def main() -> None:
     with open(MANIFEST_PATH, "w") as f:
         json.dump(manifest, f, indent=2)
 
+    # Sorted by the *displayed* name (raster.html's own shortName() - the
+    # last "/"-segment, matching the row labels users actually read), not
+    # the raw tool_id - sorting by full id instead grouped every row by
+    # toolshed owner ("repos/iuc/...", "repos/bgruening/...") first, so
+    # what looked alphabetic within one owner's cluster reset to another
+    # letter at the next owner boundary. Case-insensitive so the handful
+    # of capitalized built-in tool names (Filter1, Cut1, ...) interleave
+    # with the rest instead of forming their own block up front.
+    sorted_tools = sorted(matrix_cells, key=lambda t: (t.rsplit("/", 1)[-1].lower(), t))
     matrix = {
-        "tools": sorted(matrix_cells),
+        "tools": sorted_tools,
         "runs": run_ids,
-        "cells": {tool_id: matrix_cells[tool_id] for tool_id in sorted(matrix_cells)},
+        "cells": {tool_id: matrix_cells[tool_id] for tool_id in sorted_tools},
     }
     with open(MATRIX_PATH, "w") as f:
         json.dump(matrix, f, separators=(",", ":"))
