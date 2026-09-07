@@ -1,6 +1,6 @@
 {
-  "run_id": "anvil-test-ci-260906-105709",
-  "generated_at": "2026-09-06T12:06:47+00:00",
+  "run_id": "anvil-test-ci-260907-123339",
+  "generated_at": "2026-09-07T13:43:45+00:00",
   "model": "gemini-3.6-flash",
-  "summary": "New issues surfaced in hyphy_fel with 3 runtime failures and in samtools_slice_bam across 3 tests. The \"History not found\" error in samtools_slice_bam likely points to a test setup or history creation issue where the required history fixture was missing or deleted before execution. Long-standing shared issues remain stable, including internal Galaxy utility job failures affecting 17 tests across 15 tools and missing server test input data affecting 16 tests across 7 tools. A major shared infrastructure failure seen in recent runs has resolved, clearing the vast majority of previously failing tests."
+  "summary": "A wave of new HTTP connection timeouts targeting host 34.145.189.182 represents the primary new issue in this run, led by one cluster affecting 89 tests across 43 tools and another affecting 47 tests across 26 tools. The captured error signatures show 600-second connection timeouts on port 80 during API calls and input staging, suggesting a network-level connectivity issue reaching that endpoint rather than a defect in the tool code itself. Meanwhile, persistent problems remain stable and require no new action, led by longstanding missing test input data across 7 tools and internal utility job failures across 12 tools.\n\nThe absence of database connection pool timeouts elsewhere in this run indicates the server was keeping up with load and not suffering from general system congestion. This makes a server overload explanation unlikely, pointing instead toward a network-level path or routing problem reaching that specific remote host."
 }
