@@ -910,6 +910,7 @@ jobs:
                 -u "$GALAXY_URL" -k "$KEY" -a "$KEY" \
                 --parallel-tests 4 \
                 --force_path_paste \
+                --download-attempts 3 \
                 "${TEST_DATA_ARGS[@]}" \
                 -t "$tool_id" \
                 -j "results/by-tool/$idx.json" \
@@ -964,6 +965,7 @@ jobs:
               -u "$GALAXY_URL" -k "$KEY" -a "$KEY" \
               --parallel-tests "$PARALLEL_TESTS" \
               --force_path_paste \
+              --download-attempts 3 \
               "${TEST_DATA_ARGS[@]}" \
               "${PAGE_ARGS[@]}" \
               -j results/results.json \
