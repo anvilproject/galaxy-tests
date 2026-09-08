@@ -407,7 +407,10 @@ nav_id: costs
         ctx.textBaseline = "bottom";
         ctx.fillText(fmtDollars(run.total_cost), x + BAR_W / 2, bottomY - vmH - batchH - 4);
 
-        // Date label below
+        // Date label below - just the date, matching deploy-stages.html's
+        // bar chart (hover gives the exact timestamp, and full date+time
+        // crowds adjacent rotated labels once more than a couple of bars
+        // are visible).
         ctx.fillStyle = AXIS_LABEL_COLOR;
         ctx.font = "10px 'Atkinson Hyperlegible', sans-serif";
         ctx.textBaseline = "top";
@@ -415,7 +418,7 @@ nav_id: costs
         ctx.translate(x + BAR_W / 2, bottomY + 6);
         ctx.rotate(-Math.PI / 5);
         ctx.textAlign = "right";
-        ctx.fillText(fmtShort(run.timestamp), 0, 0);
+        ctx.fillText((run.timestamp || "").slice(5, 10), 0, 0);
         ctx.restore();
 
         run._x = x;
