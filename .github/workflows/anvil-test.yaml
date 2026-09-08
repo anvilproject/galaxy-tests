@@ -29,7 +29,7 @@ on:
         required: true
       parallel-tests:
         description: 'galaxy-tool-test --parallel-tests value'
-        default: '32'
+        default: '60'
         required: true
       run-tests:
         description: 'Run the full tool-test suite (false = time the deploy only)'
@@ -147,7 +147,20 @@ jobs:
       # galaxy-k8s-boot#97), then to 32 on galaxy-k8s-boot's dev branch once
       # a worker-session-level trace (docs/parallelism-data) showed the
       # 16-slot pool actually hitting its cap ~65% of the time, not sitting
-      # idle. Keep parallel-tests below in sync with whatever this mixin is
+      # idle, then to 40 once 32 became the limiting factor again, and now
+      # to 60 alongside parallel-tests below: a per-run destination
+      # breakdown (docs/parallelism-data, run 260908-111959) found 58-61 of
+      # a scheduled run's ~198 tools route to gcp_batch, so a 32-wide outer
+      # cap left local/k8s-routed tools unable to start at all until enough
+      # of the batch-routed tools (sorted first - see
+      # anvil_sort_scheduled_tool_ids.py) drained to free a slot, observed
+      # as a ~15 min local-runner dead zone at the start of every run.
+      # Raising the cap to cover the batch-routed count lets both classes
+      # start at minute 0 instead. (Re-sorting the list to interleave the
+      # two instead was tried on paper first and simulated *worse* -
+      # batch-first is close to a longest-job-first schedule, which is
+      # already good for minimizing makespan; don't undo that.) Keep
+      # parallel-tests below in sync with whatever this mixin is
       # currently set to. mixins/debug.yml sets cleanup_jobs: never, so job
       # working directories (outputs, logs, instrumentation files) survive
       # for live inspection instead of being deleted shortly after each job
@@ -783,7 +796,7 @@ jobs:
           # input's own declared default so a scheduled run behaves like
           # an un-overridden manual one (see "Set instance name" above).
           RANDOM_TOOL_COUNT="${{ inputs.random-tool-count || '0' }}"
-          PARALLEL_TESTS="${{ inputs.parallel-tests || '32' }}"
+          PARALLEL_TESTS="${{ inputs.parallel-tests || '60' }}"
           TEST_PAGE_SIZE="${{ inputs.test-page-size || '0' }}"
           TEST_PAGE_NUMBER="${{ inputs.test-page-number || '0' }}"
           TOOL_LIST_FILE="${{ inputs.tool-list-file || '' }}"
