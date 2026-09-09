@@ -55,6 +55,7 @@ UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]
 PORT_FORWARD_LOCAL_PORT = 18765
 REQUEST_TIMEOUT = 10  # per-request, internal-cluster hop - should normally take well under 1s
 EXTERNAL_TIMEOUT = 60  # same request over the public internet, and some outputs are large
+DATASET_FILES_ROOT = "/galaxy/server/database/files"
 
 HEADER = (
     "test_id\ttool_id\toutput_name\thistory_id\thda_id\tuuid\t"
@@ -97,7 +98,7 @@ def collect_failed_outputs(results_path: str) -> list[dict]:
 
 
 def fetch_db_file_info(uuids: list[str]) -> dict[str, dict]:
-    """uuid -> {file_name, file_size, stdout_len, stderr_len}, one batched query.
+    """uuid -> {dataset_id, file_size, stdout_len, stderr_len}, one batched query.
 
     HDA/dataset UUIDs are real DB columns, unlike Galaxy's signed/encoded
     API ids, so no id-decoding is needed here - and the producing job is
@@ -113,19 +114,20 @@ def fetch_db_file_info(uuids: list[str]) -> dict[str, dict]:
     one read it too early."""
     if not uuids:
         return {}
-    # Galaxy's UUIDType is CHAR(32) holding un-hyphenated hex, while the API
-    # (and so results.json) hands back the hyphenated form. Comparing the
-    # column against ::uuid[] is a type error, which fails the whole query.
+    # The uuid lives on dataset, not history_dataset_association, and
+    # Galaxy's UUIDType is CHAR(32) holding un-hyphenated hex while the API
+    # (and so results.json) hands back the hyphenated form - so compare as
+    # text, not ::uuid[], which is a type error that fails the whole query.
     hex_by_uuid = {u: u.replace("-", "").lower() for u in uuids}
     array_literal = "ARRAY[" + ",".join(f"'{h}'" for h in hex_by_uuid.values()) + "]::text[]"
     sql = (
-        "SELECT replace(lower(hda.uuid::text),'-',''), d.file_name, d.file_size, "
+        "SELECT replace(lower(d.uuid::text),'-',''), d.id, d.file_size, "
         "coalesce(length(j.tool_stdout),0), coalesce(length(j.tool_stderr),0) "
-        "FROM history_dataset_association hda "
-        "JOIN dataset d ON hda.dataset_id = d.id "
+        "FROM dataset d "
+        "LEFT JOIN history_dataset_association hda ON hda.dataset_id = d.id "
         "LEFT JOIN job_to_output_dataset jtod ON jtod.dataset_id = hda.id "
         "LEFT JOIN job j ON j.id = jtod.job_id "
-        f"WHERE replace(lower(hda.uuid::text),'-','') = ANY({array_literal});"
+        f"WHERE replace(lower(d.uuid::text),'-','') = ANY({array_literal});"
     )
     result = subprocess.run(
         ["kubectl", "exec", "-n", "galaxy", "galaxy-postgres-1", "--", "psql", "-U", "postgres", "-d", "galaxy", "-A", "-t", "-F", "\t", "-c", sql],
@@ -141,9 +143,9 @@ def fetch_db_file_info(uuids: list[str]) -> dict[str, dict]:
         parts = line.split("\t")
         if len(parts) != 5:
             continue
-        row_hex, file_name, file_size, stdout_len, stderr_len = parts
+        row_hex, dataset_id, file_size, stdout_len, stderr_len = parts
         by_hex[row_hex] = {
-            "file_name": file_name or None,
+            "dataset_id": dataset_id or None,
             "file_size": int(file_size) if file_size else None,
             "stdout_len": int(stdout_len) if stdout_len else None,
             "stderr_len": int(stderr_len) if stderr_len else None,
@@ -151,17 +153,25 @@ def fetch_db_file_info(uuids: list[str]) -> dict[str, dict]:
     # hand back keyed by the hyphenated form the callers hold
     info = {u: by_hex[h] for u, h in hex_by_uuid.items() if h in by_hex}
     if not info:
-        print(f"DB query matched no rows for {len(uuids)} uuids", file=sys.stderr)
+        # Silently empty columns hid a broken query for four runs; fail the
+        # step instead so the artifact is never quietly useless.
+        raise RuntimeError(f"DB query matched no rows for {len(uuids)} uuids")
     return info
 
 
-def fetch_disk_bytes(file_names: list[str]) -> dict[str, int | None]:
-    """file_name -> actual byte count on disk, via one batched kubectl
-    exec (a stat per file over separate exec calls would be far slower)."""
-    file_names = [f for f in file_names if f]
-    if not file_names:
+def fetch_disk_bytes(dataset_ids: list[str]) -> dict[str, int | None]:
+    """dataset id -> actual byte count on disk.
+
+    The path cannot come from the database: `dataset.file_name` is not a
+    column, it is computed by the object store at runtime. One `find` over
+    the files tree is cheaper than resolving each path individually and
+    survives the object store's directory sharding."""
+    dataset_ids = [d for d in dataset_ids if d]
+    if not dataset_ids:
         return {}
-    script = "\n".join(f'stat -c "%s %n" {json.dumps(f)} 2>/dev/null || echo "MISSING {f}"' for f in file_names)
+    script = (
+        f"find {DATASET_FILES_ROOT} -name 'dataset_*.dat' -printf '%f %s\\n' 2>/dev/null"
+    )
     result = subprocess.run(
         ["kubectl", "exec", "-i", "-n", "galaxy", "deployment/galaxy-job-0", "--", "sh", "-s"],
         input=script,
@@ -171,14 +181,16 @@ def fetch_disk_bytes(file_names: list[str]) -> dict[str, int | None]:
     if result.returncode != 0:
         print(f"disk stat batch failed: {result.stderr}", file=sys.stderr)
 
+    # name is "dataset_<id>.dat"; key the map by the id so callers can join
+    # on what the database gave them.
     sizes: dict[str, int | None] = {}
     for line in result.stdout.strip().splitlines():
-        if line.startswith("MISSING "):
-            sizes[line[len("MISSING ") :]] = None
+        name, _, size_str = line.partition(" ")
+        if not name.startswith("dataset_") or not name.endswith(".dat"):
             continue
-        size_str, _, name = line.partition(" ")
+        dataset_id = name[len("dataset_") : -len(".dat")]
         try:
-            sizes[name] = int(size_str)
+            sizes[dataset_id] = int(size_str)
         except ValueError:
             continue
     return sizes
@@ -257,8 +269,8 @@ def main() -> None:
         return
 
     db_info = fetch_db_file_info([r["uuid"] for r in rows])
-    file_names = [db_info[r["uuid"]]["file_name"] for r in rows if r["uuid"] in db_info]
-    disk_bytes = fetch_disk_bytes(file_names)
+    dataset_ids = [db_info[r["uuid"]]["dataset_id"] for r in rows if r["uuid"] in db_info]
+    disk_bytes = fetch_disk_bytes(dataset_ids)
 
     pf = start_port_forward()
     try:
@@ -284,7 +296,7 @@ def main() -> None:
         f.write(HEADER)
         for r in rows:
             info = db_info.get(r["uuid"], {})
-            file_name = info.get("file_name")
+            dataset_id = info.get("dataset_id")
             f.write(
                 "\t".join(
                     str(v) if v is not None else ""
@@ -296,7 +308,7 @@ def main() -> None:
                         r["hda_id"],
                         r["uuid"],
                         info.get("file_size"),
-                        disk_bytes.get(file_name) if file_name else None,
+                        disk_bytes.get(dataset_id) if dataset_id else None,
                         r.get("nginx_status"),
                         r.get("nginx_bytes"),
                         r.get("external_status"),
