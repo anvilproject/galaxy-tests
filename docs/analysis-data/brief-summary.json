@@ -1,6 +1,6 @@
 {
-  "run_id": "anvil-test-ci-260909-112430",
-  "generated_at": "2026-09-09T12:10:23+00:00",
+  "run_id": "anvil-test-ci-260910-112049",
+  "generated_at": "2026-09-10T12:27:24+00:00",
   "model": "gemini-3.6-flash",
-  "summary": "A major widespread issue emerged this run involving HTTP connection timeouts to host 34.21.22.5, causing 475 test failures across 147 tools in the largest cluster. The captured error text pointing to connection timeouts suggests a network-level reachability issue reaching that host rather than code regressions in the tools themselves. Known persistent problems, including missing test input data across 6 tools and test expectation discrepancies for trimmomatic, remain stable with no action needed.\n\nThe absence of database connection-pool exhaustion errors in the server logs indicates that the test runner server itself was not overloaded during this run. This makes server-side congestion unlikely, further pointing toward an external network-path problem or downtime on the target endpoint."
+  "summary": "Intermittent JSON decoding errors affected 42 tools in the largest shared failure, while internal Galaxy utility job errors continued across 13 tools. The widespread connection timeouts from the previous run resolved, clearing a major source of failures. Long-standing infrastructure problems such as missing test input data across 7 tools remain stable, alongside six new isolated issues across tools like hyphy_fel and gfastats."
 }
