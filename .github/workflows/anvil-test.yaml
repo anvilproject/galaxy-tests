@@ -28,8 +28,8 @@ on:
         default: 'anvil-test-ci'
         required: true
       parallel-tests:
-        description: 'galaxy-tool-test --parallel-tests value'
-        default: '60'
+        description: 'Concurrent galaxy-tool-test processes (outer fan-out)'
+        default: '40'
         required: true
       run-tests:
         description: 'Run the full tool-test suite (false = time the deploy only)'
@@ -159,9 +159,18 @@ jobs:
       # start at minute 0 instead. (Re-sorting the list to interleave the
       # two instead was tried on paper first and simulated *worse* -
       # batch-first is close to a longest-job-first schedule, which is
-      # already good for minimizing makespan; don't undo that.) Keep
-      # parallel-tests below in sync with whatever this mixin is
-      # currently set to. mixins/debug.yml sets cleanup_jobs: never, so job
+      # already good for minimizing makespan; don't undo that.)
+      #
+      # The list is now sorted by measured duration rather than by routing,
+      # which makes it an actual longest-job-first schedule rather than an
+      # approximation of one - the same idea, sharpened, not undone. The
+      # client-side cap is no longer tied to this number: it is 40 while
+      # this stays at 60, so the handler keeps headroom above whatever the
+      # client asks of it. The dead zone this was raised to avoid is worth
+      # re-checking in docs/parallelism-data on the next run, since a
+      # 40-wide cap filled with long batch-routed tools could bring it
+      # back; simulation says makespan still improves, but simulation does
+      # not model the two destinations separately. mixins/debug.yml sets cleanup_jobs: never, so job
       # working directories (outputs, logs, instrumentation files) survive
       # for live inspection instead of being deleted shortly after each job
       # finishes - needed while diagnosing the GCP-Batch job_metrics/NFS-
@@ -801,6 +810,12 @@ jobs:
                 # whether the network dropped it or the process was never
                 # scheduled to send it, so record what the machine was doing.
                 cat /proc/loadavg 2>/dev/null
+                # Field 8 of the aggregate cpu line is steal - time the
+                # hypervisor gave to someone else. A runner sharing a busy
+                # host looks healthy by load average while getting little
+                # actual CPU, which is the difference between "we asked for
+                # too much" and "we were given too little".
+                awk '/^cpu /{printf "cpu_steal %s cpu_idle %s cpu_total %s\n", $9, $5, $2+$3+$4+$5+$6+$7+$8+$9}' /proc/stat 2>/dev/null
                 grep -E '^(MemTotal|MemAvailable|SwapFree):' /proc/meminfo 2>/dev/null
                 printf 'tool_test_procs %s\n' "$(pgrep -c -f galaxy-tool-test 2>/dev/null || echo 0)"
                 # Present only when the runner has conntrack loaded; a table
@@ -847,7 +862,7 @@ jobs:
           # input's own declared default so a scheduled run behaves like
           # an un-overridden manual one (see "Set instance name" above).
           RANDOM_TOOL_COUNT="${{ inputs.random-tool-count || '0' }}"
-          PARALLEL_TESTS="${{ inputs.parallel-tests || '60' }}"
+          PARALLEL_TESTS="${{ inputs.parallel-tests || '40' }}"
           TEST_PAGE_SIZE="${{ inputs.test-page-size || '0' }}"
           TEST_PAGE_NUMBER="${{ inputs.test-page-number || '0' }}"
           TOOL_LIST_FILE="${{ inputs.tool-list-file || '' }}"
