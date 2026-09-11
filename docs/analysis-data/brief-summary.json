@@ -1,6 +1,6 @@
 {
-  "run_id": "anvil-test-ci-260910-112049",
-  "generated_at": "2026-09-10T12:27:24+00:00",
+  "run_id": "anvil-test-ci-260911-112212",
+  "generated_at": "2026-09-11T12:23:39+00:00",
   "model": "gemini-3.6-flash",
-  "summary": "Intermittent JSON decoding errors affected 42 tools in the largest shared failure, while internal Galaxy utility job errors continued across 13 tools. The widespread connection timeouts from the previous run resolved, clearing a major source of failures. Long-standing infrastructure problems such as missing test input data across 7 tools remain stable, alongside six new isolated issues across tools like hyphy_fel and gfastats."
+  "summary": "The run was dominated by two new shared connection timeout incidents targeting host 34.48.51.124\u2014one affecting 195 tests across 102 tools during input staging and another affecting 59 tests across 37 tools\u2014which likely reflects a network reachability issue hitting that specific address rather than a tool bug. Known persistent issues remained stable, including a long-running missing test data issue affecting 7 tools and minor Galaxy utility job failures. On a positive note, 83 previously failing test issues recovered in this run.\n\nBecause both timeout signatures were recorded for the first time in this run and the server logged zero database connection-pool errors, internal server overload appears unlikely to be the cause. The clean database log instead favors an external network-path or host-level connectivity failure reaching the destination server."
 }

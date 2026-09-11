@@ -27,4 +27,4 @@ pass/fail/error for every tool across the run history, so a tool that starts
 failing (or a fix that starts passing) is easy to spot over time - click a
 cell for that tool's failing tests and tracebacks, the bar above a run column
 for a run-wide breakdown, or a tool's name/recurrence bar for its history.
-[Latest full HTML report](https://anvilproject.github.io/galaxy-tests/tool-tests/anvil-test-ci-260910-112049/results.html) &middot; [latest tool list](https://github.com/anvilproject/galaxy-tests/blob/main/reports/anvil/tool-tests/anvil-test-ci-260910-112049/tools.yml).
+[Latest full HTML report](https://anvilproject.github.io/galaxy-tests/tool-tests/anvil-test-ci-260911-112212/results.html) &middot; [latest tool list](https://github.com/anvilproject/galaxy-tests/blob/main/reports/anvil/tool-tests/anvil-test-ci-260911-112212/tools.yml).
