@@ -30,6 +30,16 @@
   confidence: High
   title: Test input data unavailable on the server
 
+# Matched against the canonical CONNECTION_TIMEOUT_SIGNATURE string
+# (anvil_generate_analysis_data.py's extract_signature() already collapses
+# every URL/traceback-shape variant onto this one line before rules ever
+# see it) - a failure to reach the Galaxy server itself, not anything
+# about the tool or the specific API call in flight.
+- pattern: 'Test client could not reach the Galaxy server'
+  category: Infrastructure
+  confidence: High
+  title: Test client could not reach the Galaxy server
+
 - pattern: 'Job in error state\.\. tool_id: __\w+__'
   category: Galaxy/test harness
   confidence: Probable

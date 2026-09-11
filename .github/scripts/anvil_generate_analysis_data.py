@@ -94,6 +94,24 @@ EMPTY_COLLECTION_RE = re.compile(r"expected to have \d+ elements, but it had 0\.
 EMPTY_OUTPUT_SIGNATURE = "Output produced no content (expected data, got an empty dataset)"
 EMPTY_STDIO_SIGNATURE = "Job stdout/stderr was empty when the test read it"
 
+# The test client's own HTTP connection to Galaxy failed or timed out - a
+# system-level network problem, not anything about the tool or the specific
+# API call in flight. Two things fragment this across many signatures if
+# left to the generic normalize_signature() path: the URL (job/history/
+# dataset id, query string, and which endpoint - /api/jobs vs /api/version
+# vs /api/histories/.../provenance - are all incidental to "can't reach the
+# host") and which of two shapes the error surfaced in (a bare urllib3
+# message from a caught-and-stringified output-verification failure, or a
+# `requests.exceptions.ConnectTimeout: ...` traceback line from a staging
+# failure). Confirmed live: 254 tests across ~140 distinct signatures on
+# the 2026-09-11 run, all the same connect timeout to the same host.
+CONNECTION_TIMEOUT_RE = re.compile(r"HTTPConnectionPool\(.*(?:Max retries exceeded|NewConnectionError)", re.DOTALL)
+CONNECTION_TIMEOUT_SIGNATURE = "Test client could not reach the Galaxy server (connection timeout/refused)"
+
+
+def indicates_connection_timeout(text: str) -> bool:
+    return bool(CONNECTION_TIMEOUT_RE.search(text))
+
 # Only a problem that names an output is about a dataset. An assert_stdout /
 # assert_stderr failure reports the same "in output ('')" text with no such
 # prefix, and no dataset is empty in that case - lumping the two together
@@ -160,11 +178,20 @@ def extract_signature(execution_problem: str | None, output_problems: list[str] 
     if execution_problem and execution_problem.strip():
         lines = [ln for ln in execution_problem.strip().splitlines() if ln.strip()]
         if lines:
+            if indicates_connection_timeout(lines[-1]):
+                return CONNECTION_TIMEOUT_SIGNATURE
             return normalize_signature(lines[-1])
     if output_problems:
         for p in output_problems:
             if p and JOB_ERROR_RE.match(p.strip()):
                 return normalize_signature(p.strip().splitlines()[0])
+        # Checked right after the job-in-error wrapper and before every other
+        # output-comparison signal: a connection failure means the client
+        # never got a real answer, so whatever the comparison logic made of
+        # that (an empty-looking diff, a missing file) is downstream noise,
+        # not a separate condition.
+        if any(p and indicates_connection_timeout(p) for p in output_problems):
+            return CONNECTION_TIMEOUT_SIGNATURE
         # Checked after the job-in-error wrapper (a job that died explains its
         # own empty outputs) but before the generic first-line fallback, so
         # this only reclassifies what would otherwise be grouped by an
