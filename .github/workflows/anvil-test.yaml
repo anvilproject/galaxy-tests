@@ -398,6 +398,14 @@ jobs:
       # job as a background process on the runner itself (not the target
       # cluster) - nothing to explicitly stop, since the runner VM is
       # destroyed at job end regardless of what's still running on it.
+      #
+      # nginx is captured alongside the two handlers because it is the only
+      # record of what actually reached the VM. A client-side connection
+      # failure looks identical whether the VM stopped answering or the
+      # request never arrived; nginx logging every request it served, with
+      # timestamps, is what separates those. Run 260911 used exactly this to
+      # place the failures outside the VM - 113,517 requests served with no
+      # idle minute while 273 tests failed to connect.
       - name: Start continuous Galaxy web/job pod log capture
         if: always()
         continue-on-error: true
@@ -414,6 +422,7 @@ jobs:
           }
           stream_pod_logs galaxy-web logs/galaxy-web.log &
           stream_pod_logs galaxy-job-0 logs/galaxy-job.log &
+          stream_pod_logs galaxy-nginx logs/galaxy-nginx.log &
           disown -a
 
       # Stdlib only, same as "Generate deploy-stage timing data" above.
@@ -765,6 +774,40 @@ jobs:
       # hard stop), but this crashes the whole process with a non-zero exit
       # right after the results are already written - don't let that abort
       # the report-building step.
+      # The other half of the same question. nginx shows what arrived; this
+      # shows whether the runner was able to open the connection in the
+      # first place. Connection failures against the VM have been the
+      # largest single loss on several runs, and the client records only its
+      # own exception, so neither side of the socket is visible after the
+      # fact. Sampled rather than streamed - these are counters, not events.
+      - name: Start runner socket-state sampling
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
+        continue-on-error: true
+        run: |
+          mkdir -p logs
+          sample_sockets() {
+            while true; do
+              {
+                echo "=== $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+                ss -s 2>/dev/null
+                # Ephemeral-port pressure: exhaustion here refuses new
+                # connections locally, without the VM ever being contacted.
+                printf 'time_wait %s\n' "$(ss -tan state time-wait 2>/dev/null | wc -l)"
+                printf 'established %s\n' "$(ss -tan state established 2>/dev/null | wc -l)"
+                cat /proc/net/sockstat 2>/dev/null
+                # Present only when the runner has conntrack loaded; a table
+                # at its limit drops new flows silently.
+                for f in /proc/sys/net/netfilter/nf_conntrack_count \
+                         /proc/sys/net/netfilter/nf_conntrack_max; do
+                  [ -r "$f" ] && printf '%s %s\n' "$(basename "$f")" "$(cat "$f")"
+                done
+              } >> logs/runner-sockets.log 2>&1
+              sleep 10
+            done
+          }
+          sample_sockets &
+          disown -a
+
       - name: Run tool tests
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         continue-on-error: true
@@ -1035,6 +1078,22 @@ jobs:
           DIR="reports/anvil/deployments/${{ steps.instance.outputs.name }}"
           mkdir -p "$DIR"
           gzip -c "${{ github.workspace }}/logs/galaxy-job.log" > "$DIR/galaxy-job.log.gz"
+
+      # nginx's access log and the runner's socket counters are the two
+      # sides of a connection failure. Both are only useful together, and
+      # only if they outlive the runner - hence saved here, before teardown.
+      - name: Save connection-path evidence under reports/anvil
+        if: always()
+        continue-on-error: true
+        working-directory: /tmp/main-clone
+        run: |
+          DIR="reports/anvil/deployments/${{ steps.instance.outputs.name }}"
+          mkdir -p "$DIR"
+          for f in galaxy-nginx runner-sockets; do
+            SRC="${{ github.workspace }}/logs/$f.log"
+            [ -f "$SRC" ] && gzip -c "$SRC" > "$DIR/$f.log.gz"
+          done
+          true
 
       # results.xunit isn't copied here - nothing downstream reads it
       # (confirmed by grep; only planemo ever generates it), and it's
