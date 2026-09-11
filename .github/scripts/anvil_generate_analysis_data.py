@@ -324,6 +324,19 @@ def main() -> None:
         m = manifest_by_run.get(run_id, {})
         tools_attempted_total = m.get("tools_attempted") or 0
 
+        # Same window each incident's own "history" strip (below) is built
+        # from, but computed once per report rather than once per incident:
+        # every incident in a given run shares the identical run window, so
+        # this is what the brief page needs to label/link each dot back to
+        # the run it represents, without re-deriving the window client-side.
+        history_runs = []
+        for i in range(run_idx - HISTORY_LEN + 1, run_idx + 1):
+            if i < 0:
+                history_runs.append(None)
+            else:
+                hr_id = runs[i]
+                history_runs.append({"index": i, "run_id": hr_id, "timestamp": manifest_by_run.get(hr_id, {}).get("timestamp")})
+
         incidents = []
         recovered = []
         active_tools_all = set()
@@ -504,6 +517,7 @@ def main() -> None:
                 "persistent_tool_issues": persistent_tool_issues,
                 "new_isolated_issues": new_isolated_issues,
                 "recovered": recovered,
+                "history_runs": history_runs,
             }
         )
 

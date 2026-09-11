@@ -288,14 +288,35 @@ nav_id: results-brief
     font-size: 0.85rem;
     color: var(--galaxy-grey);
   }
-  .gx-incident__strip {
+  .gx-incident__strip-wrap {
     margin-top: 0.35rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .gx-incident__strip-label {
+    font-size: 0.72rem;
+    color: var(--galaxy-grey);
+    white-space: nowrap;
+  }
+  .gx-incident__strip {
     font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
     font-size: 0.9rem;
     letter-spacing: 0.15em;
     color: rgba(37, 83, 123, 0.3);
   }
+  .gx-incident__strip button {
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+  }
+  .gx-incident__strip button:hover { color: var(--galaxy-primary); }
   .gx-incident__strip .is-present { color: #d87e55; }
+  .gx-incident__strip .is-present:hover { color: #b45a34; }
   .gx-incident__strip .is-absent-pad { color: rgba(37, 83, 123, 0.12); }
 
   .gx-incident__detail {
@@ -385,6 +406,11 @@ nav_id: results-brief
   // hoisted out of init()'s closure over runs/windowStart.
   var rerender = function () {};
 
+  // Same hoisting reason as rerender above - lets a history-strip dot
+  // (also attached per-incident, outside init()'s closure) jump the whole
+  // page to the run it represents.
+  var goToRunIndex = function () {};
+
   // null, or {type: "category"|"confidence"|"state", value: "..."} - a
   // single filter shared across all three incident lists, persisting
   // across older/newer pagination until cleared.
@@ -447,11 +473,22 @@ nav_id: results-brief
     return "gx-badge--state-" + state.toLowerCase();
   }
 
-  function historyStripHtml(history) {
-    return history.map(function (present) {
-      if (present === null) return '<span class="is-absent-pad">&middot;</span>';
-      return present ? '<span class="is-present">&#9679;</span>' : "&middot;";
+  function historyStripHtml(history, historyRuns) {
+    var dots = history.map(function (present, i) {
+      var run = historyRuns && historyRuns[i];
+      if (present === null || !run) return '<span class="is-absent-pad">&middot;</span>';
+      var dm = run.timestamp ? /^(\d{4})-(\d{2})-(\d{2})/.exec(run.timestamp) : null;
+      var title = dm ? MONTH_NAMES[parseInt(dm[2], 10) - 1] + " " + parseInt(dm[3], 10) : run.run_id;
+      return '<button type="button" class="' + (present ? "is-present" : "") +
+        '" data-run-index="' + run.index + '" title="' + escapeHtml(title) + '">' +
+        (present ? "&#9679;" : "&middot;") + "</button>";
     }).join("");
+    return (
+      '<div class="gx-incident__strip-wrap">' +
+      '<span class="gx-incident__strip-label">History (last ' + history.length + ' runs) &middot;</span>' +
+      '<span class="gx-incident__strip">' + dots + "</span>" +
+      "</div>"
+    );
   }
 
   function toolLink(toolId, runId) {
@@ -492,7 +529,7 @@ nav_id: results-brief
       escapeHtml(label) + "</button>";
   }
 
-  function renderIncident(incident, runId, resultsHtmlUrl) {
+  function renderIncident(incident, runId, resultsHtmlUrl, historyRuns) {
     var wrap = document.createElement("div");
     wrap.className = "gx-incident";
     var evidence = incident.evidence.join(" &middot; ");
@@ -506,8 +543,15 @@ nav_id: results-brief
         "</span>" +
       "</div>" +
       '<div class="gx-incident__evidence">' + evidence + "</div>" +
-      '<div class="gx-incident__strip">' + historyStripHtml(incident.history) + "</div>" +
+      historyStripHtml(incident.history, historyRuns) +
       '<div class="gx-incident__detail" hidden></div>';
+
+    wrap.querySelectorAll(".gx-incident__strip button[data-run-index]").forEach(function (btn) {
+      btn.addEventListener("click", function (evt) {
+        evt.stopPropagation();
+        goToRunIndex(parseInt(btn.getAttribute("data-run-index"), 10));
+      });
+    });
 
     var header = wrap.querySelector(".gx-incident__header");
     var detail = wrap.querySelector(".gx-incident__detail");
@@ -530,7 +574,7 @@ nav_id: results-brief
     return wrap;
   }
 
-  function renderList(container, emptyEl, incidents, runId, resultsHtmlUrl, unfilteredCount) {
+  function renderList(container, emptyEl, incidents, runId, resultsHtmlUrl, unfilteredCount, historyRuns) {
     container.innerHTML = "";
     if (!incidents.length) {
       if (!emptyEl.dataset.defaultText) {
@@ -544,7 +588,7 @@ nav_id: results-brief
     }
     emptyEl.hidden = true;
     incidents.forEach(function (incident) {
-      container.appendChild(renderIncident(incident, runId, resultsHtmlUrl));
+      container.appendChild(renderIncident(incident, runId, resultsHtmlUrl, historyRuns));
     });
   }
 
@@ -582,9 +626,9 @@ nav_id: results-brief
       countContinuingEl.textContent = report.counts.continuing;
       countRecoveredEl.textContent = report.counts.recovered;
 
-      renderList(sharedListEl, sharedEmptyEl, report.shared_incidents.filter(matchesFilter), report.run_id, report.results_html_url, report.shared_incidents.length);
-      renderList(persistentListEl, persistentEmptyEl, report.persistent_tool_issues.filter(matchesFilter), report.run_id, report.results_html_url, report.persistent_tool_issues.length);
-      renderList(isolatedListEl, isolatedEmptyEl, report.new_isolated_issues.filter(matchesFilter), report.run_id, report.results_html_url, report.new_isolated_issues.length);
+      renderList(sharedListEl, sharedEmptyEl, report.shared_incidents.filter(matchesFilter), report.run_id, report.results_html_url, report.shared_incidents.length, report.history_runs);
+      renderList(persistentListEl, persistentEmptyEl, report.persistent_tool_issues.filter(matchesFilter), report.run_id, report.results_html_url, report.persistent_tool_issues.length, report.history_runs);
+      renderList(isolatedListEl, isolatedEmptyEl, report.new_isolated_issues.filter(matchesFilter), report.run_id, report.results_html_url, report.new_isolated_issues.length, report.history_runs);
 
       windowLabel.textContent =
         "Run " + (windowStart + 1) + " of " + runs.length +
@@ -604,6 +648,10 @@ nav_id: results-brief
     });
 
     rerender = render;
+    goToRunIndex = function (idx) {
+      windowStart = Math.max(0, Math.min(runs.length - 1, idx));
+      render();
+    };
     render();
   }
 
