@@ -795,6 +795,14 @@ jobs:
                 printf 'time_wait %s\n' "$(ss -tan state time-wait 2>/dev/null | wc -l)"
                 printf 'established %s\n' "$(ss -tan state established 2>/dev/null | wc -l)"
                 cat /proc/net/sockstat 2>/dev/null
+                # The runner hosts one galaxy-tool-test process per
+                # concurrent tool, each ~100MB before any test data, on a
+                # 4-vCPU box. A connect that never completes looks the same
+                # whether the network dropped it or the process was never
+                # scheduled to send it, so record what the machine was doing.
+                cat /proc/loadavg 2>/dev/null
+                grep -E '^(MemTotal|MemAvailable|SwapFree):' /proc/meminfo 2>/dev/null
+                printf 'tool_test_procs %s\n' "$(pgrep -c -f galaxy-tool-test 2>/dev/null || echo 0)"
                 # Present only when the runner has conntrack loaded; a table
                 # at its limit drops new flows silently.
                 for f in /proc/sys/net/netfilter/nf_conntrack_count \
