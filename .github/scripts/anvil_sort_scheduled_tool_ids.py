@@ -1,7 +1,9 @@
-"""Reorder .github/scheduled-tool-ids.txt so tools that route to GCP Batch
-come first, local/k8s-routed tools after.
+"""Reorder .github/scheduled-tool-ids.txt longest-running tools first.
 
-Why: the scheduled run's dispatch loop (anvil-test.yaml's "Run tool tests"
+Measured durations when recent runs provide them, GCP Batch routing as the
+proxy when they do not.
+
+Why order at all: the scheduled run's dispatch loop (anvil-test.yaml's "Run tool tests"
 step) reads this file top to bottom, forking one worker per line as client
 slots free up. Local-routed tools are individually fast and cycle through
 quickly; GCP Batch jobs are individually slow (each provisions its own VM
@@ -41,12 +43,23 @@ Usage: anvil_sort_scheduled_tool_ids.py <path to tpv-shared-database>/tools.yml
        (writes .github/scheduled-tool-ids.txt in place)
 """
 
+import collections
+import glob
+import json
 import re
 import sys
 
 import yaml
 
 SCHEDULED_LIST_PATH = ".github/scheduled-tool-ids.txt"
+RESULTS_GLOB = "reports/anvil/tool-tests/*/results.json"
+# Enough runs to smooth over a tool that failed fast once; few enough to
+# still reflect the current pinned revisions.
+RUNS_TO_CONSIDER = 3
+# A tool's own test cases run inside one worker at this width, so its
+# contribution to the run is its cases packed into that many lanes, not
+# their sum. Keep in step with --parallel-tests in anvil-test.yaml.
+INNER_PARALLELISM = 4
 
 # k8s (local) destination's caps - values/values.yml's tpv_rules_local.yml
 # `destinations.k8s`. Anything exceeding either falls through to gcp_batch,
@@ -132,6 +145,41 @@ def classify(tool_id: str, rules: dict, default: dict) -> str:
     return "local" if (cores <= K8S_MAX_CORES and mem <= K8S_MAX_MEM) else "gcp_batch"
 
 
+def tool_wall_seconds(case_seconds: list, lanes: int = INNER_PARALLELISM) -> float:
+    """Longest lane when a tool's cases are packed into its worker's threads."""
+    packed = [0.0] * lanes
+    for seconds in sorted(case_seconds, reverse=True):
+        packed[packed.index(min(packed))] += seconds
+    return max(packed)
+
+
+def measured_durations() -> dict:
+    """Per-tool wall time from the most recent runs, longest seen per tool.
+
+    Longest rather than mean: scheduling wants to know how long a tool can
+    hold a slot, and a tool that failed fast on one run still costs its full
+    time on the next.
+    """
+    durations: dict = {}
+    for path in sorted(glob.glob(RESULTS_GLOB))[-RUNS_TO_CONSIDER:]:
+        try:
+            with open(path) as f:
+                tests = json.load(f).get("tests", [])
+        except (OSError, ValueError):
+            continue
+        per_tool: dict = collections.defaultdict(list)
+        for test in tests:
+            data = test.get("data", {})
+            seconds = data.get("time_seconds")
+            if data.get("status") != "skip" and isinstance(seconds, (int, float)):
+                per_tool[data.get("tool_id")].append(seconds)
+        for tool_id, case_seconds in per_tool.items():
+            wall = tool_wall_seconds(case_seconds)
+            if wall > durations.get(tool_id, 0.0):
+                durations[tool_id] = wall
+    return durations
+
+
 def main() -> None:
     if len(sys.argv) != 2:
         print(__doc__)
@@ -141,14 +189,26 @@ def main() -> None:
     with open(SCHEDULED_LIST_PATH) as f:
         lines = [ln.rstrip("\n") for ln in f if ln.strip()]
 
-    batch, local = [], []
-    for line in lines:
-        (batch if classify(line, rules, default) == "gcp_batch" else local).append(line)
+    durations = measured_durations()
+
+    def sort_key(tool_id: str):
+        measured = durations.get(tool_id)
+        if measured is not None:
+            return (0, -measured)
+        # No timing yet: fall back to routing, which is a coarse proxy for
+        # the same thing, and place these after the tools we can rank.
+        return (1, 0 if classify(tool_id, rules, default) == "gcp_batch" else 1)
+
+    ordered = sorted(lines, key=sort_key)
 
     with open(SCHEDULED_LIST_PATH, "w") as f:
-        f.write("\n".join(batch + local) + "\n")
+        f.write("\n".join(ordered) + "\n")
 
-    print(f"Sorted {len(lines)} tool IDs: {len(batch)} gcp_batch-classified first, {len(local)} local/k8s after")
+    timed = sum(1 for line in lines if line in durations)
+    print(
+        f"Sorted {len(lines)} tool IDs longest-first: {timed} by measured duration "
+        f"from the last {RUNS_TO_CONSIDER} runs, {len(lines) - timed} by GCP Batch routing"
+    )
 
 
 if __name__ == "__main__":
