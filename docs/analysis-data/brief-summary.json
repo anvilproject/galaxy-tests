@@ -1,6 +1,6 @@
 {
-  "run_id": "anvil-test-ci-260911-112212",
-  "generated_at": "2026-09-11T12:23:39+00:00",
+  "run_id": "anvil-test-ci-260912-104753",
+  "generated_at": "2026-09-12T11:45:04+00:00",
   "model": "gemini-3.6-flash",
-  "summary": "The run was dominated by two new shared connection timeout incidents targeting host 34.48.51.124\u2014one affecting 195 tests across 102 tools during input staging and another affecting 59 tests across 37 tools\u2014which likely reflects a network reachability issue hitting that specific address rather than a tool bug. Known persistent issues remained stable, including a long-running missing test data issue affecting 7 tools and minor Galaxy utility job failures. On a positive note, 83 previously failing test issues recovered in this run.\n\nBecause both timeout signatures were recorded for the first time in this run and the server logged zero database connection-pool errors, internal server overload appears unlikely to be the cause. The clean database log instead favors an external network-path or host-level connectivity failure reaching the destination server."
+  "summary": "A major shared infrastructure incident where the test client could not reach the Galaxy server accounts for 482 test failures across 142 tools, alongside 10 tools affected by internal utility job failures. The long-standing infrastructure issue with unavailable test input data across 7 tools remains stable at 22 runs, while existing tool-specific errors remain unchanged alongside one new single-test failure in hyphy_fel."
 }
