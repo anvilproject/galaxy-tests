@@ -215,6 +215,11 @@ def main() -> None:
 
     ordered = sorted(lines, key=sort_key)
 
+    # This file selects which revision of each tool is tested, so the entries
+    # must survive verbatim - the unversioned form exists only to join against
+    # measured durations, and must never reach the file.
+    assert sorted(ordered) == sorted(lines), "sorting must reorder the list, not rewrite its entries"
+
     with open(SCHEDULED_LIST_PATH, "w") as f:
         f.write("\n".join(ordered) + "\n")
 
