@@ -22,6 +22,7 @@ import collections
 import errno
 import json
 import os
+import signal
 import socket
 import statistics
 import subprocess
@@ -32,20 +33,73 @@ import time
 STOP = threading.Event()
 
 
+# A failure every few minutes over a long run is the expected shape, so
+# the cap only exists to stop a pathological run exhausting memory.
+MAX_FAILURE_SAMPLES = 20000
+
+
 class Counters:
     def __init__(self):
         self.lock = threading.Lock()
         self.connect_latencies = []
         self.outcomes = collections.Counter()
         self.failures = []
+        # Snapshot state for the interval reporter, so a killed run still
+        # leaves a usable time series behind.
+        self._last_outcomes = collections.Counter()
+        self._interval_latencies = []
 
     def record(self, outcome, latency=None, detail=None, at=None):
         with self.lock:
             self.outcomes[outcome] += 1
             if latency is not None:
                 self.connect_latencies.append(latency)
-            if detail is not None:
+                self._interval_latencies.append(latency)
+            if detail is not None and len(self.failures) < MAX_FAILURE_SAMPLES:
                 self.failures.append({"at": at, "outcome": outcome, "detail": detail})
+
+    def take_interval(self):
+        """Counts since the previous call, and reset the interval window."""
+        with self.lock:
+            delta = self.outcomes - self._last_outcomes
+            self._last_outcomes = self.outcomes.copy()
+            latencies = sorted(self._interval_latencies)
+            self._interval_latencies = []
+        ok = delta.get("connect_ok", 0)
+        failed = sum(v for k, v in delta.items()
+                     if k != "connect_ok" and not k.startswith("http_")
+                     and not k.startswith("request_"))
+        return {
+            "at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "connect_ok": ok,
+            "connect_failed": failed,
+            "outcomes": {k: v for k, v in sorted(delta.items()) if v},
+            "connect_p50_ms": round(1000 * statistics.median(latencies), 2) if latencies else None,
+            "connect_max_ms": round(1000 * latencies[-1], 2) if latencies else None,
+        }
+
+
+def reporter(counters, interval, path):
+    """Append one line per interval, flushed immediately.
+
+    A probe running beside a real test run gets killed with the job, so
+    the answer cannot live only in an end-of-run summary. It also has to
+    be a *time series*: the question is whether the path was failing at
+    the moments the tests were, and a single total cannot answer that.
+    """
+    handle = open(path, "a", buffering=1) if path else None
+    try:
+        while not STOP.wait(interval):
+            line = json.dumps(counters.take_interval())
+            if handle:
+                handle.write(line + "\n")
+            else:
+                print(line, file=sys.stderr)
+    finally:
+        if handle:
+            # One last bucket so the tail of the run is not lost.
+            handle.write(json.dumps(counters.take_interval()) + "\n")
+            handle.close()
 
 
 def classify(exc):
@@ -218,6 +272,11 @@ def main():
                         help="poll mode: the client's GALAXY_TEST_POLLING_DELTA.")
     parser.add_argument("--start-at", type=float, default=0,
                         help="Unix epoch to start at, so two arms overlap exactly.")
+    parser.add_argument("--interval", type=float, default=60,
+                        help="Seconds per time-series bucket.")
+    parser.add_argument("--timeline-out", default="",
+                        help="Append one JSON object per interval here, flushed as it goes, "
+                             "so a probe killed with the job still leaves its series behind.")
     parser.add_argument("--label", default="")
     parser.add_argument("--json-out", default="")
     args = parser.parse_args()
@@ -229,6 +288,16 @@ def main():
     wait_until(args.start_at)
     before = tcp_stats()
     started_at = time.time()
+
+    # Killed with the job when it runs beside a real test run; take the
+    # signal as "stop now" so the summary is still written.
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        signal.signal(sig, lambda *_: STOP.set())
+
+    if args.interval > 0:
+        threading.Thread(target=reporter,
+                         args=(counters, args.interval, args.timeline_out),
+                         daemon=True).start()
 
     target = polling_worker if args.mode == "poll" else paced_worker
     threads = [threading.Thread(target=target, args=(args, counters, ticket), daemon=True)
@@ -284,7 +353,7 @@ def main():
         },
         "tcp_stats_before": before,
         "tcp_stats_after": after,
-        "failure_samples": counters.failures[:40],
+        "failure_samples": counters.failures,
     }
     text = json.dumps(report, indent=2)
     print(text)

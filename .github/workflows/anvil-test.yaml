@@ -29,7 +29,7 @@ on:
         required: true
       parallel-tests:
         description: 'Concurrent galaxy-tool-test processes (outer fan-out)'
-        default: '40'
+        default: '32'
         required: true
       run-tests:
         description: 'Run the full tool-test suite (false = time the deploy only)'
@@ -919,6 +919,49 @@ jobs:
           sample_sockets &
           disown -a
 
+      # §A5: the counters above say a handshake failed, but not whether the
+      # path itself was failing at that moment or only this client's
+      # connections were. A probe on the same runner, to the same VM, in
+      # the same minutes, under the same load, separates those - and it is
+      # the one condition the standalone probes could not reproduce. A
+      # paired run on 2026-09-13 found a GitHub runner carrying 270,844
+      # connects to an idle VM with zero failures, so what is left to test
+      # is the harness's own conditions rather than the path in isolation.
+      #
+      # 2/s, handshake only: enough to expect ~28 failures over a run at
+      # the observed 0.52%, while adding ~0.1% to the run's connections and
+      # nothing at all to Galaxy's load. The probe's own attempts land in
+      # the runner-wide counters too, and its summary reports them so they
+      # can be subtracted.
+      #
+      # The egress address is recorded because GitHub's runner pool is
+      # heterogeneous. If bad nights track particular addresses, that is
+      # the answer on its own, and it costs two lines to find out.
+      - name: Start runner-to-VM path probe
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
+        continue-on-error: true
+        run: |
+          mkdir -p logs
+          {
+            echo "=== runner"
+            echo "kernel $(uname -r)"
+            echo "egress_ip $(curl -s --max-time 20 https://api.ipify.org || echo unknown)"
+            echo "runner_name ${RUNNER_NAME:-unknown}"
+          } | tee logs/runner-identity.txt
+          # Long enough to outlast the test step; killed and summarized by
+          # "Collect runner-to-VM path probe" below.
+          nohup python3 .github/scripts/anvil_egress_probe.py \
+            --host '${{ steps.vm-ip.outputs.ip }}' --port 80 --path '' \
+            --mode paced --rate 2 --concurrency 4 \
+            --duration 21600 --connect-timeout 30 --interval 60 \
+            --timeline-out logs/path-probe-timeline.jsonl \
+            --json-out logs/path-probe.json \
+            --label "in-run-$(date -u +%H%M)" \
+            > logs/path-probe.log 2>&1 &
+          disown -a
+          sleep 5
+          test -s logs/path-probe.log && head -2 logs/path-probe.log
+
       - name: Run tool tests
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         continue-on-error: true
@@ -950,7 +993,7 @@ jobs:
           # input's own declared default so a scheduled run behaves like
           # an un-overridden manual one (see "Set instance name" above).
           RANDOM_TOOL_COUNT="${{ inputs.random-tool-count || '0' }}"
-          PARALLEL_TESTS="${{ inputs.parallel-tests || '40' }}"
+          PARALLEL_TESTS="${{ inputs.parallel-tests || '32' }}"
           TEST_PAGE_SIZE="${{ inputs.test-page-size || '0' }}"
           TEST_PAGE_NUMBER="${{ inputs.test-page-number || '0' }}"
           TOOL_LIST_FILE="${{ inputs.tool-list-file || '' }}"
@@ -1190,6 +1233,27 @@ jobs:
           mkdir -p "$DIR"
           gzip -c "${{ github.workspace }}/logs/galaxy-job.log" > "$DIR/galaxy-job.log.gz"
 
+      # SIGTERM rather than a kill: the probe writes its summary on the way
+      # out, and the timeline it has been flushing all run is what gets
+      # lined up against the test failures.
+      - name: Collect runner-to-VM path probe
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
+        continue-on-error: true
+        run: |
+          pkill -TERM -f anvil_egress_probe.py || echo "probe was not running"
+          sleep 5
+          for f in logs/path-probe.json logs/path-probe-timeline.jsonl; do
+            [ -s "$f" ] && echo "--- $f ($(wc -l < "$f") lines)"
+          done
+          python3 - <<'PY_SUM' || true
+          import json
+          r = json.load(open("logs/path-probe.json"))
+          print(f"path probe: {r['connect_attempts']:,} connects, "
+                f"{r['connect_failed']:,} failed ({r['connect_failure_pct']}%) "
+                f"over {r['elapsed_seconds']:.0f}s")
+          print("outcomes:", r["outcomes"])
+          PY_SUM
+
       # Must run before "Delete VM" - this file only exists on the VM.
       - name: Fetch VM network-admission sampler log
         if: always()
@@ -1218,9 +1282,13 @@ jobs:
         run: |
           DIR="reports/anvil/deployments/${{ steps.instance.outputs.name }}"
           mkdir -p "$DIR"
-          for f in galaxy-nginx ingress-nginx runner-sockets vm-net; do
+          for f in galaxy-nginx ingress-nginx runner-sockets vm-net path-probe; do
             SRC="${{ github.workspace }}/logs/$f.log"
             [ -f "$SRC" ] && gzip -c "$SRC" > "$DIR/$f.log.gz"
+          done
+          for f in path-probe.json path-probe-timeline.jsonl runner-identity.txt; do
+            SRC="${{ github.workspace }}/logs/$f"
+            [ -f "$SRC" ] && cp "$SRC" "$DIR/$f"
           done
           true
 
