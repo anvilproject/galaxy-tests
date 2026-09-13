@@ -1,0 +1,108 @@
+# Runs the §A5 connection probe from a GitHub-hosted runner against a
+# host you supply, and nothing else.
+#
+# §A5's central unknown is *where* handshakes to the VM are lost. Every
+# artifact the harness saves comes from one egress - a GitHub-hosted
+# runner - so no amount of further sampling there can separate a fault on
+# that path from a fault at the VM. The same probe, run from somewhere
+# else against the same VM at the same time, can: a failure rate that
+# follows the runner and not the VM is path-dependent, and one that
+# appears from both places is not.
+#
+# Deliberately not part of anvil-test.yaml. It needs a VM that outlives a
+# test run, and mixing it in would make a scheduled run's connection
+# counts include the probe's own.
+name: A5 egress probe
+
+on:
+  workflow_dispatch:
+    inputs:
+      host:
+        description: 'Target host or IP (a VM that is up and serving HTTP)'
+        required: true
+      port:
+        description: 'Target port'
+        default: '80'
+        required: true
+      path:
+        description: "HTTP path, or empty for a handshake-only probe that sends no request"
+        default: '/galaxy/api/version'
+        required: false
+      rate:
+        description: 'Connections per second (the harness averages ~27.6)'
+        default: '28'
+        required: true
+      concurrency:
+        description: 'Concurrent workers (the harness uses --parallel-tests)'
+        default: '60'
+        required: true
+      duration:
+        description: 'Seconds to run'
+        default: '600'
+        required: true
+      connect-timeout:
+        description: 'Per-attempt connect budget in seconds'
+        default: '30'
+        required: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      # The runner's own identity and kernel settings are part of the
+      # result: a comparison between two egresses means nothing without
+      # knowing which address each one presented, and the connect budget
+      # depends on kernel settings that differ between hosts.
+      - name: Record runner egress identity and TCP settings
+        run: |
+          {
+            echo "=== runner"
+            echo "kernel $(uname -r)"
+            echo "egress_ip $(curl -s --max-time 20 https://api.ipify.org || echo unknown)"
+            sysctl net.ipv4.tcp_syn_retries net.ipv4.ip_local_port_range 2>/dev/null
+            if [ -r /proc/sys/net/ipv4/tcp_syn_linear_timeouts ]; then
+              echo "tcp_syn_linear_timeouts $(cat /proc/sys/net/ipv4/tcp_syn_linear_timeouts)"
+            else
+              echo "tcp_syn_linear_timeouts absent"
+            fi
+          } | tee runner-identity.txt
+
+      - name: Probe
+        run: |
+          python3 .github/scripts/anvil_egress_probe.py \
+            --host '${{ inputs.host }}' \
+            --port '${{ inputs.port }}' \
+            --path '${{ inputs.path }}' \
+            --rate '${{ inputs.rate }}' \
+            --concurrency '${{ inputs.concurrency }}' \
+            --duration '${{ inputs.duration }}' \
+            --connect-timeout '${{ inputs.connect-timeout }}' \
+            --label "github-runner" \
+            --json-out probe-github-runner.json
+
+      - name: Summarize
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          try:
+              r = json.load(open("probe-github-runner.json"))
+          except Exception as exc:
+              raise SystemExit(f"no probe output: {exc}")
+          print(f"attempts {r['connect_attempts']}  ok {r['connect_ok']}  "
+                f"failed {r['connect_failed']}  ({r['connect_failure_pct']}%)")
+          print("outcomes:", r["outcomes"])
+          print("connect latency ms:", r["connect_latency_ms"])
+          PY
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a5-egress-probe
+          path: |
+            probe-github-runner.json
+            runner-identity.txt
+          retention-days: 30
