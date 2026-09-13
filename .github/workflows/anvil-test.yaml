@@ -792,6 +792,8 @@ jobs:
       - name: Start runner socket-state sampling
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         continue-on-error: true
+        env:
+          VM_IP: ${{ steps.vm-ip.outputs.ip }}
         run: |
           mkdir -p logs
           # Once, for interpreting the rest: how long the kernel retransmits
@@ -801,6 +803,18 @@ jobs:
             echo "=== static"
             sysctl net.ipv4.tcp_syn_retries net.ipv4.ip_local_port_range 2>/dev/null
             nproc --all 2>/dev/null | sed 's/^/nproc /'
+            # tcp_syn_retries alone does not give the kernel's connect
+            # budget: the wait depends on how many of those retries use a
+            # linear (1s) timeout before exponential backoff starts, and
+            # that knob does not exist on every kernel. Record the version
+            # and say explicitly when the file is absent, so a later
+            # reading is not left inferring which default applied.
+            printf 'kernel %s\n' "$(uname -r)"
+            if [ -r /proc/sys/net/ipv4/tcp_syn_linear_timeouts ]; then
+              printf 'tcp_syn_linear_timeouts %s\n' "$(cat /proc/sys/net/ipv4/tcp_syn_linear_timeouts)"
+            else
+              printf 'tcp_syn_linear_timeouts absent\n'
+            fi
           } >> logs/runner-sockets.log 2>&1
           sample_sockets() {
             while true; do
@@ -832,6 +846,14 @@ jobs:
                 # the kernel is still retransmitting and will eventually fail
                 # the connect with ETIMEDOUT, which is what the client reports.
                 printf 'syn_sent %s\n' "$(ss -Htan state syn-sent 2>/dev/null | wc -l)"
+                # Every counter above is runner-wide, so it cannot separate
+                # traffic to the VM from everything else the runner does
+                # (CVMFS, PyPI, the GitHub API, kubectl on 6443). These can,
+                # and the :80 figures are the test traffic exactly.
+                printf 'syn_sent_vm %s\n' "$(ss -Htan state syn-sent dst "$VM_IP" 2>/dev/null | wc -l)"
+                printf 'syn_sent_vm80 %s\n' "$(ss -Htan state syn-sent dst "$VM_IP:80" 2>/dev/null | wc -l)"
+                printf 'established_vm80 %s\n' "$(ss -Htan state established dst "$VM_IP:80" 2>/dev/null | wc -l)"
+                printf 'time_wait_vm80 %s\n' "$(ss -Htan state time-wait dst "$VM_IP:80" 2>/dev/null | wc -l)"
                 # AttemptFails counts connects that never completed; SynRetrans
                 # counts the retransmissions leading up to them. Rising together
                 # means SYNs are being dropped rather than refused.
