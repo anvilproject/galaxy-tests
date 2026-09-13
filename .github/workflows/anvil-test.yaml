@@ -412,26 +412,69 @@ jobs:
       # record of what actually reached the VM. A client-side connection
       # failure looks identical whether the VM stopped answering or the
       # request never arrived; nginx logging every request it served, with
-      # timestamps, is what separates those. Run 260911 used exactly this to
-      # place the failures outside the VM - 113,517 requests served with no
-      # idle minute while 273 tests failed to connect.
+      # timestamps, is what separates those.
+      #
+      # Both nginx layers are captured, because they answer different
+      # questions. galaxy-nginx is the chart's internal proxy: a request in
+      # its log has already been admitted by the public listener, so it
+      # cannot show a connection that was refused or dropped at the edge.
+      # ingress-nginx is that edge - hostNetwork on the VM's own port 80,
+      # the socket the runner actually connects to. A request present at
+      # the ingress and absent internally, or a connection the runner
+      # attempted that appears in neither, is the distinction §A5 Theory 2
+      # turns on and the saved evidence has never had.
+      # §A5 Theory 2. Every counter the harness saves today is the
+      # runner's, and a runner cannot tell a SYN that was dropped on the
+      # way to the VM from one the VM itself declined - both look like an
+      # unanswered handshake. The VM's own counters can: SynRecv,
+      # ListenOverflows, ListenDrops and SyncookiesSent move only once a
+      # SYN has arrived here. All of them flat while the runner
+      # retransmits puts the loss before the VM; any of them rising puts
+      # it at this boundary.
+      #
+      # Written to the VM's disk and collected at teardown rather than
+      # streamed: a sampler reporting over the same path under
+      # investigation would lose exactly the samples that matter. Detached
+      # with setsid so it outlives this SSH session.
+      - name: Start VM network-admission sampling
+        if: always()
+        continue-on-error: true
+        run: |
+          INSTANCE="${{ steps.instance.outputs.name }}"
+          gcloud compute scp \
+            "${{ github.workspace }}/.github/scripts/anvil_vm_net_sampler.sh" \
+            "debian@$INSTANCE:/tmp/anvil_vm_net_sampler.sh" \
+            --project="$GCP_PROJECT" --zone="$GCP_ZONE" \
+            --ssh-key-file="${{ steps.ssh-key.outputs.private-key-path }}" \
+            --strict-host-key-checking=no
+          gcloud compute ssh "$INSTANCE" \
+            --project="$GCP_PROJECT" --zone="$GCP_ZONE" \
+            --ssh-key-file="${{ steps.ssh-key.outputs.private-key-path }}" \
+            --strict-host-key-checking=no \
+            --command="chmod +x /tmp/anvil_vm_net_sampler.sh && \
+              sudo setsid nohup /tmp/anvil_vm_net_sampler.sh /var/log/anvil-vm-net.log 10 \
+                </dev/null >/dev/null 2>&1 & \
+              sleep 3; sudo test -s /var/log/anvil-vm-net.log || { echo 'VM sampler wrote nothing' >&2; exit 1; }; \
+              echo \"VM sampler started, \$(sudo wc -l < /var/log/anvil-vm-net.log) lines so far\""
+
       - name: Start continuous Galaxy web/job pod log capture
         if: always()
         continue-on-error: true
         run: |
           mkdir -p logs
           stream_pod_logs() {
-            local deployment="$1" outfile="$2" tail="-1"
+            local resource="$1" outfile="$2" namespace="${3:-galaxy}" tail="-1"
             while true; do
-              kubectl logs -f -n galaxy "deployment/$deployment" --all-containers=true --prefix=true --tail="$tail" \
+              kubectl logs -f -n "$namespace" "$resource" --all-containers=true --prefix=true --tail="$tail" \
                 >> "$outfile" 2>&1
               tail=20
               sleep 2
             done
           }
-          stream_pod_logs galaxy-web logs/galaxy-web.log &
-          stream_pod_logs galaxy-job-0 logs/galaxy-job.log &
-          stream_pod_logs galaxy-nginx logs/galaxy-nginx.log &
+          stream_pod_logs deployment/galaxy-web logs/galaxy-web.log &
+          stream_pod_logs deployment/galaxy-job-0 logs/galaxy-job.log &
+          stream_pod_logs deployment/galaxy-nginx logs/galaxy-nginx.log &
+          stream_pod_logs daemonset/ingress-nginx-controller logs/ingress-nginx.log ingress-nginx &
           disown -a
 
       # Stdlib only, same as "Generate deploy-stage timing data" above.
@@ -1147,9 +1190,27 @@ jobs:
           mkdir -p "$DIR"
           gzip -c "${{ github.workspace }}/logs/galaxy-job.log" > "$DIR/galaxy-job.log.gz"
 
-      # nginx's access log and the runner's socket counters are the two
-      # sides of a connection failure. Both are only useful together, and
-      # only if they outlive the runner - hence saved here, before teardown.
+      # Must run before "Delete VM" - this file only exists on the VM.
+      - name: Fetch VM network-admission sampler log
+        if: always()
+        continue-on-error: true
+        run: |
+          mkdir -p logs
+          gcloud compute ssh "${{ steps.instance.outputs.name }}" \
+            --project="$GCP_PROJECT" --zone="$GCP_ZONE" \
+            --ssh-key-file="${{ steps.ssh-key.outputs.private-key-path }}" \
+            --strict-host-key-checking=no \
+            --command="sudo cat /var/log/anvil-vm-net.log" \
+            > logs/vm-net.log 2>/dev/null \
+            || echo "Could not fetch VM network sampler log" | tee -a logs/vm-net.log
+
+      # The two nginx access logs, the runner's socket counters and the
+      # VM's admission counters are four views of the same connection
+      # failure, and each is only useful against the others - the runner
+      # says a handshake failed, the VM says whether the SYN arrived, the
+      # ingress says whether the connection was admitted, and the internal
+      # proxy says whether the request was served. Saved here, before
+      # teardown, because none of them outlive the runner or the VM.
       - name: Save connection-path evidence under reports/anvil
         if: always()
         continue-on-error: true
@@ -1157,7 +1218,7 @@ jobs:
         run: |
           DIR="reports/anvil/deployments/${{ steps.instance.outputs.name }}"
           mkdir -p "$DIR"
-          for f in galaxy-nginx runner-sockets; do
+          for f in galaxy-nginx ingress-nginx runner-sockets vm-net; do
             SRC="${{ github.workspace }}/logs/$f.log"
             [ -f "$SRC" ] && gzip -c "$SRC" > "$DIR/$f.log.gz"
           done

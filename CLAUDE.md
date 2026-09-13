@@ -62,6 +62,19 @@ below for previewing those locally.
   startup timing, feeding `docs/deploy-stages.html`),
   `anvil_generate_raster_data.py` (feeds `docs/raster.html`), and
   `anvil_update_readme.py`.
+- `.github/scripts/anvil_vm_net_sampler.sh` — runs detached *on the VM*
+  (uploaded and started over SSH, collected before teardown) recording the
+  connection-admission counters the runner cannot see: `syn_recv`,
+  `ListenOverflows`, `ListenDrops`, `SyncookiesSent`, per-listener accept
+  queues, conntrack and NIC drops. These move only once a SYN has reached
+  the VM, which is what separates "dropped on the way" from "dropped by
+  the VM" (§A5 Theory 2). Its output lands in
+  `reports/anvil/deployments/<run-prefix>/vm-net.log.gz`, alongside
+  `ingress-nginx.log.gz` (the public `hostNetwork` listener the runner
+  actually connects to) and the pre-existing `galaxy-nginx.log.gz` (the
+  chart's *internal* proxy, which only ever sees already-admitted
+  requests). The conntrack rows are raw hex, summed during analysis —
+  Debian's awk is mawk, which cannot parse hex.
 - `docs/raster.html` / `docs/deploy-stages.html` — the two GitHub Pages
   dashboards (Jekyll `layout: default`, served from `docs/`): a per-tool ×
   per-run heatmap, and Ansible/Galaxy-startup stage timing respectively.
