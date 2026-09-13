@@ -107,7 +107,7 @@ def one_request(host, port, path, connect_timeout, read_timeout, counters):
         sock.close()
 
 
-def worker(args, counters, ticket):
+def paced_worker(args, counters, ticket):
     while not STOP.is_set():
         if not ticket.acquire(timeout=0.5):
             continue
@@ -115,6 +115,23 @@ def worker(args, counters, ticket):
             return
         one_request(args.host, args.port, args.path, args.connect_timeout,
                     args.read_timeout, counters)
+
+
+def polling_worker(args, counters, _ticket):
+    """One test thread's job-status poll loop, as the client actually runs it.
+
+    Closed loop, not a paced stream: connect, ask, close, wait, repeat. The
+    difference matters. A paced probe emits a smooth rate; N independent
+    pollers emit bursts whenever their cycles coincide, and burst arrival
+    is what stresses an accept queue or a translation table. Reproducing
+    the harness's *mean* rate while smoothing away its shape would be
+    testing something the harness never does.
+    """
+    while not STOP.is_set():
+        one_request(args.host, args.port, args.path, args.connect_timeout,
+                    args.read_timeout, counters)
+        if STOP.wait(args.poll_interval):
+            return
 
 
 def pacer(rate, ticket, duration):
@@ -129,6 +146,25 @@ def pacer(rate, ticket, duration):
             time.sleep(sleep_for)
         ticket.release()
     STOP.set()
+
+
+def wait_until(epoch):
+    """Block until a shared wall-clock start, so two arms overlap exactly.
+
+    Comparing two egresses only means anything if they run against the
+    same host at the same time - the thing being tested varies by the
+    hour.
+    """
+    if not epoch:
+        return
+    delay = epoch - time.time()
+    if delay > 0:
+        print(f"waiting {delay:.0f}s for the shared start at "
+              f"{time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(epoch))}", file=sys.stderr)
+        time.sleep(delay)
+    elif delay < -30:
+        print(f"WARNING: shared start was {-delay:.0f}s ago; arms will not overlap cleanly",
+              file=sys.stderr)
 
 
 def tcp_stats():
@@ -175,6 +211,13 @@ def main():
     parser.add_argument("--duration", type=float, default=600.0)
     parser.add_argument("--connect-timeout", type=float, default=30.0)
     parser.add_argument("--read-timeout", type=float, default=30.0)
+    parser.add_argument("--mode", choices=("poll", "paced"), default="poll",
+                        help="poll: N closed-loop pollers, as the test client runs. "
+                             "paced: a smooth --rate stream.")
+    parser.add_argument("--poll-interval", type=float, default=0.25,
+                        help="poll mode: the client's GALAXY_TEST_POLLING_DELTA.")
+    parser.add_argument("--start-at", type=float, default=0,
+                        help="Unix epoch to start at, so two arms overlap exactly.")
     parser.add_argument("--label", default="")
     parser.add_argument("--json-out", default="")
     args = parser.parse_args()
@@ -183,17 +226,24 @@ def main():
 
     counters = Counters()
     ticket = threading.Semaphore(0)
+    wait_until(args.start_at)
     before = tcp_stats()
     started_at = time.time()
 
-    threads = [threading.Thread(target=worker, args=(args, counters, ticket), daemon=True)
+    target = polling_worker if args.mode == "poll" else paced_worker
+    threads = [threading.Thread(target=target, args=(args, counters, ticket), daemon=True)
                for _ in range(args.concurrency)]
     for thread in threads:
         thread.start()
-    print(f"probing {args.host}:{args.port} for {args.duration:.0f}s "
-          f"at ~{args.rate}/s across {args.concurrency} workers", file=sys.stderr)
+    shape = (f"{args.concurrency} pollers every {args.poll_interval}s"
+             if args.mode == "poll" else f"~{args.rate}/s across {args.concurrency} workers")
+    print(f"probing {args.host}:{args.port} for {args.duration:.0f}s, {shape}", file=sys.stderr)
     try:
-        pacer(args.rate, ticket, args.duration)
+        if args.mode == "paced":
+            pacer(args.rate, ticket, args.duration)
+        else:
+            STOP.wait(args.duration)
+            STOP.set()
     except KeyboardInterrupt:
         STOP.set()
     for thread in threads:
@@ -215,6 +265,9 @@ def main():
         "port": args.port,
         "started_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(started_at)),
         "elapsed_seconds": round(elapsed, 1),
+        "mode": args.mode,
+        "poll_interval": args.poll_interval,
+        "concurrency": args.concurrency,
         "requested_rate": args.rate,
         "achieved_rate": round(attempts / elapsed, 2) if elapsed else 0,
         "connect_attempts": attempts,

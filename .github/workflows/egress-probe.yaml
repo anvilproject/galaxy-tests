@@ -28,8 +28,22 @@ on:
         description: "HTTP path, or empty for a handshake-only probe that sends no request"
         default: '/galaxy/api/version'
         required: false
+      mode:
+        description: "poll = N closed-loop pollers, as the client runs; paced = a smooth --rate stream"
+        type: choice
+        options: ['poll', 'paced']
+        default: 'poll'
+        required: true
+      poll-interval:
+        description: "poll mode: the client's GALAXY_TEST_POLLING_DELTA"
+        default: '0.25'
+        required: true
+      start-at:
+        description: 'Unix epoch to start at, so a second arm overlaps exactly (0 = start now)'
+        default: '0'
+        required: true
       rate:
-        description: 'Connections per second (the harness averages ~27.6)'
+        description: 'paced mode only: connections per second (the harness averages ~27.6)'
         default: '28'
         required: true
       concurrency:
@@ -48,7 +62,7 @@ on:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 
@@ -76,6 +90,9 @@ jobs:
             --host '${{ inputs.host }}' \
             --port '${{ inputs.port }}' \
             --path '${{ inputs.path }}' \
+            --mode '${{ inputs.mode }}' \
+            --poll-interval '${{ inputs.poll-interval }}' \
+            --start-at '${{ inputs.start-at }}' \
             --rate '${{ inputs.rate }}' \
             --concurrency '${{ inputs.concurrency }}' \
             --duration '${{ inputs.duration }}' \
@@ -92,6 +109,8 @@ jobs:
               r = json.load(open("probe-github-runner.json"))
           except Exception as exc:
               raise SystemExit(f"no probe output: {exc}")
+          print(f"mode {r['mode']}  concurrency {r['concurrency']}  "
+                f"achieved {r['achieved_rate']}/s over {r['elapsed_seconds']}s")
           print(f"attempts {r['connect_attempts']}  ok {r['connect_ok']}  "
                 f"failed {r['connect_failed']}  ({r['connect_failure_pct']}%)")
           print("outcomes:", r["outcomes"])
