@@ -809,8 +809,9 @@ jobs:
                 ss -s 2>/dev/null
                 # Ephemeral-port pressure: exhaustion here refuses new
                 # connections locally, without the VM ever being contacted.
-                printf 'time_wait %s\n' "$(ss -tan state time-wait 2>/dev/null | wc -l)"
-                printf 'established %s\n' "$(ss -tan state established 2>/dev/null | wc -l)"
+                # -H, or the "Local Address:Port" header counts as a socket.
+                printf 'time_wait %s\n' "$(ss -Htan state time-wait 2>/dev/null | wc -l)"
+                printf 'established %s\n' "$(ss -Htan state established 2>/dev/null | wc -l)"
                 cat /proc/net/sockstat 2>/dev/null
                 # The runner hosts one galaxy-tool-test process per
                 # concurrent tool, each ~100MB before any test data, on a
@@ -825,11 +826,12 @@ jobs:
                 # too much" and "we were given too little".
                 awk '/^cpu /{printf "cpu_steal %s cpu_idle %s cpu_total %s\n", $9, $5, $2+$3+$4+$5+$6+$7+$8+$9}' /proc/stat 2>/dev/null
                 grep -E '^(MemTotal|MemAvailable|SwapFree):' /proc/meminfo 2>/dev/null
-                printf 'tool_test_procs %s\n' "$(pgrep -c -f galaxy-tool-test 2>/dev/null || echo 0)"
+                procs=$(pgrep -c -f galaxy-tool-test 2>/dev/null | head -1)
+                printf 'tool_test_procs %s\n' "${procs:-0}"
                 # Connections stuck here are SYNs that have gone unanswered:
                 # the kernel is still retransmitting and will eventually fail
                 # the connect with ETIMEDOUT, which is what the client reports.
-                printf 'syn_sent %s\n' "$(ss -tan state syn-sent 2>/dev/null | grep -c ':')"
+                printf 'syn_sent %s\n' "$(ss -Htan state syn-sent 2>/dev/null | wc -l)"
                 # AttemptFails counts connects that never completed; SynRetrans
                 # counts the retransmissions leading up to them. Rising together
                 # means SYNs are being dropped rather than refused.
