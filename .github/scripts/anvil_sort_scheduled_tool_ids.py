@@ -145,6 +145,19 @@ def classify(tool_id: str, rules: dict, default: dict) -> str:
     return "local" if (cores <= K8S_MAX_CORES and mem <= K8S_MAX_MEM) else "gcp_batch"
 
 
+def unversioned(tool_id: str) -> str:
+    """Strip the trailing version from a toolshed tool id.
+
+    The scheduled list carries versions; results.json records the same tools
+    without one, and built-in tools such as `Count1` have neither. Both sides
+    have to be reduced to the same shape or nothing joins.
+    """
+    parts = tool_id.split("/")
+    # owner/repo/tool plus the toolshed host and "repos" is five; a sixth is
+    # the version.
+    return "/".join(parts[:-1]) if len(parts) >= 6 else tool_id
+
+
 def tool_wall_seconds(case_seconds: list, lanes: int = INNER_PARALLELISM) -> float:
     """Longest lane when a tool's cases are packed into its worker's threads."""
     packed = [0.0] * lanes
@@ -174,9 +187,10 @@ def measured_durations() -> dict:
             if data.get("status") != "skip" and isinstance(seconds, (int, float)):
                 per_tool[data.get("tool_id")].append(seconds)
         for tool_id, case_seconds in per_tool.items():
+            key = unversioned(tool_id)
             wall = tool_wall_seconds(case_seconds)
-            if wall > durations.get(tool_id, 0.0):
-                durations[tool_id] = wall
+            if wall > durations.get(key, 0.0):
+                durations[key] = wall
     return durations
 
 
@@ -192,7 +206,7 @@ def main() -> None:
     durations = measured_durations()
 
     def sort_key(tool_id: str):
-        measured = durations.get(tool_id)
+        measured = durations.get(unversioned(tool_id))
         if measured is not None:
             return (0, -measured)
         # No timing yet: fall back to routing, which is a coarse proxy for
@@ -201,14 +215,28 @@ def main() -> None:
 
     ordered = sorted(lines, key=sort_key)
 
+    # This file selects which revision of each tool is tested, so the entries
+    # must survive verbatim - the unversioned form exists only to join against
+    # measured durations, and must never reach the file.
+    assert sorted(ordered) == sorted(lines), "sorting must reorder the list, not rewrite its entries"
+
     with open(SCHEDULED_LIST_PATH, "w") as f:
         f.write("\n".join(ordered) + "\n")
 
-    timed = sum(1 for line in lines if line in durations)
+    timed = sum(1 for line in lines if unversioned(line) in durations)
     print(
         f"Sorted {len(lines)} tool IDs longest-first: {timed} by measured duration "
         f"from the last {RUNS_TO_CONSIDER} runs, {len(lines) - timed} by GCP Batch routing"
     )
+    # Most scheduled tools have run recently, so a low match rate means the two
+    # sides stopped agreeing on how a tool is named rather than that the runs
+    # were short of data - which silently degrades this back to a routing sort.
+    if lines and timed < len(lines) // 2:
+        print(
+            f"WARNING: only {timed} of {len(lines)} scheduled tools matched a measured "
+            "duration. Check that results.json tool IDs still line up with the "
+            "scheduled list; ordering has fallen back to routing for the rest."
+        )
 
 
 if __name__ == "__main__":
