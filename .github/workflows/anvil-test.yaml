@@ -441,9 +441,15 @@ jobs:
         continue-on-error: true
         run: |
           INSTANCE="${{ steps.instance.outputs.name }}"
+          # No "debian@" here. gcloud compute ssh below logs in as the
+          # local username, so copying as a different user leaves a file
+          # that session does not own - which is why the first attempt at
+          # this died on "chmod: Operation not permitted". Same user for
+          # both, and run it with sudo bash so no execute bit is needed at
+          # all.
           gcloud compute scp \
             "${{ github.workspace }}/.github/scripts/anvil_vm_net_sampler.sh" \
-            "debian@$INSTANCE:/tmp/anvil_vm_net_sampler.sh" \
+            "$INSTANCE:/tmp/anvil_vm_net_sampler.sh" \
             --project="$GCP_PROJECT" --zone="$GCP_ZONE" \
             --ssh-key-file="${{ steps.ssh-key.outputs.private-key-path }}" \
             --strict-host-key-checking=no
@@ -451,10 +457,9 @@ jobs:
             --project="$GCP_PROJECT" --zone="$GCP_ZONE" \
             --ssh-key-file="${{ steps.ssh-key.outputs.private-key-path }}" \
             --strict-host-key-checking=no \
-            --command="chmod +x /tmp/anvil_vm_net_sampler.sh && \
-              sudo setsid nohup /tmp/anvil_vm_net_sampler.sh /var/log/anvil-vm-net.log 10 \
+            --command="sudo setsid nohup bash /tmp/anvil_vm_net_sampler.sh /var/log/anvil-vm-net.log 10 \
                 </dev/null >/dev/null 2>&1 & \
-              sleep 3; sudo test -s /var/log/anvil-vm-net.log || { echo 'VM sampler wrote nothing' >&2; exit 1; }; \
+              sleep 5; sudo test -s /var/log/anvil-vm-net.log || { echo 'VM sampler wrote nothing' >&2; exit 1; }; \
               echo \"VM sampler started, \$(sudo wc -l < /var/log/anvil-vm-net.log) lines so far\""
 
       - name: Start continuous Galaxy web/job pod log capture
