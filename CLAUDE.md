@@ -193,3 +193,82 @@ is expected and by design, not repository noise.
   splice the content into `docs/_layouts/default.html` in place of
   `{{ content }}`, and serve with `python3 -m http.server` alongside a copy
   of `docs/raster-data/`/`docs/deploy-data/`.
+
+## Working with live VMs
+
+Two kinds turn up, and they have opposite rules. Check which one you have
+before touching anything.
+
+**Harness-run VM — observe only.** The VM a scheduled or dispatched run
+deployed, named `anvil-test-ci-<run-prefix>`. A run in progress is an
+experiment with results we intend to keep, so do not deploy to it, restart
+pods, change config, or delete anything. Reading is fine and is usually the
+point: `kubectl logs`, `kubectl exec` for read-only commands, API queries,
+`gcloud compute ssh` to read a file. Its kubeconfig is generally
+`/Users/ea/projects/galaxy-tests/ea-no-commit/test-vm-kubeconfig.yml`. It is
+deleted at the end of the run, so anything needed after that has to be
+collected before teardown - that is what the "Save ... under reports/anvil"
+steps are for.
+
+**`ea-dev` VM — full control.** A standing development instance, deployed
+from galaxy-k8s-boot by hand and not tied to any run. Deploy, patch,
+restart, create and delete pods, tear it down and rebuild it. This is where
+candidate fixes get tried before they go anywhere near the harness. Its
+kubeconfig is generally
+`/Users/ea/projects/galaxy-k8s-boot/ea-no-commit/kubeconfig-vm`. Its size
+and machine type vary as needed - unlike the harness VM, which is fixed at
+`t2d-standard-16` in `anvil-test.yaml` - so do not read anything from its
+shape as applying to a harness run.
+
+**When a kubeconfig is stale.** These files are copies, and a redeployed VM
+invalidates them (`Unable to connect to the server: dial tcp ...`). Do not
+abandon the task: fetch a fresh one over SSH, e.g.
+
+    gcloud compute ssh <instance> --project=anvil-and-terra-development \
+      --zone=us-east4-c --strict-host-key-checking=no \
+      --command="sudo cat /home/debian/.kube/config" \
+      | sed "s|127.0.0.1|<external-ip>|" > <path>
+
+RKE2 writes `127.0.0.1:6443` into that file, so the server address has to be
+rewritten to the VM's external IP (this is what the workflow's "Copy
+kubeconfig from VM" step does). If SSH is not available either, ask rather
+than giving up.
+
+## Diagnosing a run
+
+- **Read the step's log text, not its conclusion.** Most diagnostic steps
+  carry `continue-on-error: true`, so a step that failed still reports
+  `success` in the run summary and in `gh run view`. A sampler that never
+  started looked green for a whole night this way. Grep the job log for what
+  the step actually printed.
+- **Job logs are not downloadable while a run is in progress** - the API
+  returns `BlobNotFound`. Either wait for the run to finish, or go to the VM
+  and look directly.
+- **Four connection-path views, and each answers a different question.** The
+  runner sockets say a handshake failed; the VM sampler
+  (`anvil_vm_net_sampler.sh`) says whether the SYN arrived at all;
+  `ingress-nginx` says whether the connection was admitted at the public
+  listener; `galaxy-nginx` only ever sees requests that were already
+  admitted, so it cannot show a refused connection. Any conclusion about
+  where a connection died needs at least two of them.
+- **Prefer an in-run measurement to a standalone one.** Probes against an
+  idle dev VM established almost nothing about §A5 because they changed
+  egress, VM, load and time all at once. The probe that settled it ran as a
+  step inside a real run, against the same VM, in the same minutes.
+- **Mutation-test a new assertion.** Break the thing it covers and confirm
+  the test fails. Several tests here asserted on their own configuration and
+  would have passed against a reverted change.
+
+## Notes and evidence
+
+`ea-no-commit/outstanding.md` is the status document: what is true now.
+Keep it to the conclusion and what to do next. The evidence, the theories
+that were tested and discarded, and per-run measurements belong under
+`ea-no-commit/details/<topic>/`, with a pointer from the summary - see
+`details/README.md` for the folder map.
+
+When a section outgrows its conclusion, move the history out rather than
+letting it accumulate: §A5 reached ~530 lines, half the document, most of
+it superseded. Date any section that records a theory, and mark it when it
+is refuted - an undated "what remains unmeasured" reads as current long
+after it stops being true.
