@@ -25,16 +25,27 @@ below for previewing those locally.
 
 ## Repository layout
 
-- `.github/workflows/anvil-test.yaml` — the only active workflow. One job:
+- `.github/workflows/anvil-test.yaml` — the main workflow. One job:
   launch a GCE VM → wait for Galaxy to respond → run the tool-test suite →
   generate reports → commit them to `main` → delete the VM. Triggers on
   `workflow_dispatch` and a daily 1am ET `schedule`.
-- `.github/scheduled-tool-ids.txt` — the fixed 200 tool IDs the scheduled
+- `.github/workflows/update-scheduled-tool-versions.yaml` — a small weekly
+  job (Wednesday 18:00 UTC, plus `workflow_dispatch` with a `dry-run`
+  input) that re-pins `scheduled-tool-ids.txt` to the newest tool versions
+  the instance offers and commits straight to `main`. It touches version
+  segments only; adding or dropping tools stays a hand-made decision. See
+  "Keeping the pinned list current" below.
+- `.github/scheduled-tool-ids.txt` — the fixed ~200 tool IDs the scheduled
   (cron) run tests every night, committed so day-over-day results stay
   comparable while confidence builds before widening coverage. Manual
   `workflow_dispatch` runs ignore this file — they use the
   `random-tool-count`/`test-page-size` inputs instead, or default to
-  testing every tool.
+  testing every tool. Which *tools* it names is hand-curated; which
+  *versions* it names is maintained automatically by the weekly job above.
+- `reports/anvil/testable-tool-ids.txt` — the deployed instance's own
+  `tests_summary` keys, rewritten by each run. The bump job reads it, and
+  its diff is the only record of what the CVMFS tool bundle gained or lost
+  on a given night.
 - `.github/excluded-tool-ids.txt` — tools categorically excluded from runs,
   with the reason for each. Consulted when sampling the random pool, and
   reported on (never enforced) by the pinned-list pre-flight. Entries are
@@ -193,3 +204,104 @@ is expected and by design, not repository noise.
   splice the content into `docs/_layouts/default.html` in place of
   `{{ content }}`, and serve with `python3 -m http.server` alongside a copy
   of `docs/raster-data/`/`docs/deploy-data/`.
+
+## Where the tool set comes from
+
+Nothing in this repo decides which tools the instance has. The chain, with
+its cadences, is:
+
+1. **usegalaxy-tools** (`galaxyproject/usegalaxy-tools`), the `cloud/`
+   toolset — `.yml` files list tools, `.yml.lock` files pin toolshed
+   changeset revisions. `update-cloud-repo.yml` runs Sunday 08:00 UTC and
+   opens a PR; **merging it is manual**, so a published tool update can sit
+   unmerged for days.
+2. **CVMFS** `cloud.galaxyproject.org`, built from that toolset.
+3. **cvmfs-cloud-clone** (`anvilproject/cvmfs-cloud-clone`) — daily 00:00
+   UTC, mounts CVMFS and rsyncs it into three tarballs in the public
+   `gs://cloud-cvmfs` bucket.
+4. **galaxy-helm** fetches those at startup (`galaxy/values.yaml`,
+   `cvmfs.archives`): `startup.tar.gz` (configs + tool XML),
+   `partial.tar.gz` (adds tool scripts), and `contents.tar.gz` — the "full"
+   one, the only tier carrying each tool's **test data**, which is what
+   makes tool-testing here possible at all. A tool whose test data is
+   missing from that archive falls through to the run's `--test-data`
+   fallback paths.
+
+So a tool revision published today typically reaches a nightly run several
+days later, and the deployed instance is the only honest answer to "what
+version is installed". Consequences that are easy to get wrong:
+
+- **Tool updates are additive.** `usegalaxy-tools/scripts/update_tool.py`
+  appends the newest revision to `revisions:` and never removes an older
+  one. Old tool versions therefore stay installed indefinitely — a pinned
+  version does not stop resolving when a newer one ships.
+- **A lock file's `revisions:` list is sorted as hex strings, not
+  chronologically.** The last entry is *not* the newest revision. To order
+  them, intersect the list with the toolshed's
+  `get_ordered_installable_revisions` for that repo, which is chronological.
+- **QIIME2 is mostly not named in the lock files.** `cloud/qiime2.yml.lock`
+  pins the single `suite_qiime2_core` repo, which pulls the individual
+  `qiime2__*` repos in as dependencies; only some are named directly, in
+  the separately-named `cloud/qiime_2.yml.lock`. Resolving a `q2d2` tool's
+  version from the lock files alone will therefore come up empty for ~13 of
+  the pinned IDs.
+- **The toolshed API rate-limits.** Modest concurrency (8 workers) draws
+  HTTP 429 within a couple hundred requests; back off and retry, or go
+  serial, if scripting a bulk audit.
+
+## Keeping the pinned list current
+
+Tool updates reach the instance continuously (usegalaxy-tools' `cloud`
+toolset → CVMFS → cvmfs-cloud-clone's daily bundle) and are *additive* —
+`usegalaxy-tools/scripts/update_tool.py` appends the newest toolshed
+revision and never removes older ones. So a pinned version never stops
+resolving; it just keeps testing an old version while the newly published
+one, the only one that actually changed, goes unexercised. That drift is
+silent: the run stays green.
+
+`update-scheduled-tool-versions.yaml` closes it weekly, running
+`anvil_bump_scheduled_tool_versions.py` against
+`reports/anvil/testable-tool-ids.txt` and then re-running the routing sort
+(a version bump can change a tool's resource requirements, and so which
+runner TPV picks). Deliberate constraints:
+
+- **The instance, not the toolshed, is the source of truth.** The toolshed
+  leads the deployed bundle by the whole publish chain, so its newest
+  version is routinely one the instance does not have yet.
+- **Version segments only.** Tools are never added or dropped; a pin whose
+  tool has vanished is reported, not deleted.
+- **Undecidable cases are skipped, not guessed.** `+galaxyN` is a PEP 440
+  *local* segment, compared as a string, so plain `packaging` — and
+  Galaxy's own `galaxy.tool_util.version.parse_version`, which inherits
+  this — sorts `+galaxy10` *before* `+galaxy3`. The script compares the
+  base with PEP 440 and the suffix with a natural ordering, and skips any
+  tool whose base is not PEP 440 parseable (e.g. mmseqs2's `17-b804f`)
+  rather than falling back to a guess. The failure mode is a missed bump,
+  never a downgraded pin.
+- **A stale inventory aborts the job.** The inventory only refreshes on a
+  successful run, so a week of failed deploys is exactly when bumping
+  could pin versions the instance no longer has.
+
+Widening coverage is still the manual job described above: regenerate
+`scheduled-tool-ids.txt` with more sampled tool IDs, filtered through
+`excluded-tool-ids.txt`, then re-run the sort script.
+
+
+## Reading a run's results
+
+`reports/anvil/tool-tests/<run-prefix>/results.json` has a `tests` list whose
+entries are keyed `{unversioned_tool_id}/{version}-{test_index}` — so a
+prefix match against a pinned ID needs the trailing `-<n>`, not a `/`. Each
+entry's `data` carries `tool_id` (unversioned) and `tool_version`
+separately; prefer those over parsing the key.
+
+`anvil_generate_raster_data.py` keys heatmap rows by that **unversioned**
+`tool_id`, tracking versions inside the cell (`versions_total`,
+`versions_affected`). A version bump therefore continues an existing row
+rather than starting a new one, so re-pinning does not cost dashboard
+history.
+
+Baseline worth knowing before chasing a gap: roughly 9–11 of the pinned IDs
+produce no results on any given night, and *which* ones varies run to run.
+That is timeouts and flakes, not missing tool versions — a genuinely absent
+version shows up in the pinned-list pre-flight instead.

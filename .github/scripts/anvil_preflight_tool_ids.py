@@ -7,8 +7,11 @@ managers sat in `.github/scheduled-tool-ids.txt` for months doing exactly
 that - they were pinned without the `data_manager/` path segment the
 installed tool ids actually carry.
 
-Reports, never rewrites: the pinned list is a reviewed commit, not something
-CI should mutate. Always exits 0 - this is information, not a gate.
+Reports, never rewrites: a run tests the list it was given, and changing that
+list mid-run would make the results describe something other than the
+committed pins. Version drift is corrected out of band, by
+update-scheduled-tool-versions.yaml. Always exits 0 - this is information,
+not a gate.
 
 Also flags pinned ids that appear in `.github/excluded-tool-ids.txt`, since a
 categorically-excluded tool has no business being pinned - it would spend a
