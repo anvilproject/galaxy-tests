@@ -69,6 +69,18 @@ HEX_ID_RE = re.compile(r"\b[0-9a-f]{16,}\b", re.IGNORECASE)
 OBJ_REPR_ADDR_RE = re.compile(r"\bat 0x[0-9a-f]+", re.IGNORECASE)
 JOB_ERROR_RE = re.compile(r"^(Exception: )?Job in error state")
 
+# OpenMPI/ORTE prefixes every stderr line it emits with "[<host>:<pid>]",
+# and the host there is the job container's own hostname - a 12-hex-char
+# container id, fresh on every job, so both halves differ per job. A
+# "Job in error state" signature carrying such a line therefore never
+# clusters and never repeats: hyphy_fel's librdmacm warning fragmented
+# into one single-test "New" incident per failing test per run, on
+# every run it appeared in, for what is a single standing condition.
+# The 12-char id is too short for HEX_ID_RE (16+), and scrubbing it alone
+# would still leave the pid differing - the bracketed pair has to go
+# together.
+MPI_RANK_PREFIX_RE = re.compile(r"\[[A-Za-z0-9][A-Za-z0-9._-]*:\d+\]")
+
 # These two messages name the file they could not resolve, which is exactly
 # what makes them useful per-test and useless per-incident: the filename lands
 # in the signature, so one deployment-wide gap fragments into a separate
@@ -158,6 +170,7 @@ def normalize_signature(text: str) -> str:
     text = UUID_RE.sub("<uuid>", text)
     text = HEX_ID_RE.sub("<id>", text)
     text = OBJ_REPR_ADDR_RE.sub("at <addr>", text)
+    text = MPI_RANK_PREFIX_RE.sub("[<host>:<pid>]", text)
     text = TEST_INPUT_FILE_RE.sub("Test input file (<file>) cannot be found", text)
     text = TEST_OUTPUT_FILE_RE.sub("Test output file (<file>) is missing", text)
     return text.strip()
