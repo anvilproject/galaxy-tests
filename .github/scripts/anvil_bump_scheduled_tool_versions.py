@@ -22,8 +22,15 @@ Every case the version ordering cannot decide confidently is skipped and
 reported rather than guessed, so the failure mode is a missed bump rather
 than a downgraded pin.
 
+A pin naming a tool the instance has no tests for is reported too. It can
+never produce a result - `tests_summary` is what the run draws from - so it
+spends a slot in silence rather than failing. Given the optional installed-id
+list it separates the two causes, which call for different fixes: NOT-INSTALLED
+means the pin or the tool is gone, NO-TESTS means the wrapper itself ships no
+test cases and belongs in .github/excluded-tool-ids.txt.
+
 Usage: anvil_bump_scheduled_tool_versions.py <pinned-list> <testable-ids>
-                                             [--write]
+                                             [installed-ids] [--write]
 Without --write, reports what would change and leaves the file alone.
 """
 
@@ -77,9 +84,25 @@ def version_key(version: str) -> tuple[Version, tuple]:
     return Version(base), natural_key(local)
 
 
-def main(pinned_path: str, testable_path: str, write: bool = False) -> int:
+def untestable_reason(tool_id: str, installed: set[str]) -> str:
+    """Why a pin the instance cannot test is untestable, as far as we can tell."""
+    if not installed:
+        return "NO-TESTS-OR-MISSING - the instance reports no tests for it"
+    unversioned = split_version(tool_id)[0] or tool_id
+    if tool_id in installed or any(i.startswith(f"{unversioned}/") for i in installed):
+        return "NO-TESTS - installed, but the wrapper ships no test cases"
+    return "NOT-INSTALLED - absent from the instance entirely"
+
+
+def main(
+    pinned_path: str,
+    testable_path: str,
+    installed_path: str = "",
+    write: bool = False,
+) -> int:
     pinned = read_ids(pinned_path)
     testable = read_ids(testable_path)
+    installed = set(read_ids(installed_path)) if installed_path else set()
 
     available = collections.defaultdict(set)
     for tool_id in testable:
@@ -93,17 +116,23 @@ def main(pinned_path: str, testable_path: str, write: bool = False) -> int:
     skipped: list[tuple[str, str]] = []
     updated: list[str] = []
 
+    testable_set = set(testable)
+
     for tool_id in pinned:
-        # Galaxy built-ins (Grep1, cat1, __SORTLIST__ ...) carry no version
-        # segment, so there is nothing here to bump.
+        # Galaxy built-ins (Grep1, cat1, __SORTLIST__ ...) are keyed
+        # unversioned, so there is no version to bump - but they can still be
+        # untestable, and silently passing over them is how `intermine` sat in
+        # the list through 30 runs without once producing a result.
         if "/" not in tool_id:
+            if tool_id not in testable_set:
+                skipped.append((tool_id, untestable_reason(tool_id, installed)))
             updated.append(tool_id)
             continue
 
         unversioned, version = split_version(tool_id)
         candidates = available.get(unversioned)
         if not candidates:
-            skipped.append((tool_id, "tool absent from the instance's testable set"))
+            skipped.append((tool_id, untestable_reason(tool_id, installed)))
             updated.append(tool_id)
             continue
         if pin_counts[unversioned] > 1:
@@ -131,15 +160,29 @@ def main(pinned_path: str, testable_path: str, write: bool = False) -> int:
             skipped.append((tool_id, f"instance's newest is older ({newest})"))
             updated.append(tool_id)
 
+    untestable = [(t, r) for t, r in skipped if r.startswith(("NO-TESTS", "NOT-INSTALLED"))]
+
     print(
         f"pinned {len(pinned)} | bumped {len(bumped)} | "
         f"unchanged {len(pinned) - len(bumped) - len(skipped)} | "
-        f"skipped {len(skipped)}"
+        f"skipped {len(skipped)} | untestable {len(untestable)}"
     )
     for unversioned, old, new in bumped:
         print(f"  BUMP  {unversioned.rsplit('/', 1)[-1]}: {old} -> {new}")
     for tool_id, reason in skipped:
         print(f"  SKIP  {tool_id}: {reason}")
+
+    # Called out separately from the SKIP lines: a pin that cannot be tested
+    # costs a slot every night and never fails, so it only surfaces if
+    # something says so out loud.
+    if untestable:
+        print(
+            f"\n{len(untestable)} pinned tool(s) cannot produce a result. "
+            "Give each one a .github/excluded-tool-ids.txt entry, or correct "
+            "the pin:"
+        )
+        for tool_id, reason in untestable:
+            print(f"  UNTESTABLE  {tool_id}: {reason}")
 
     if write and bumped:
         with open(pinned_path, "w") as f:
@@ -153,6 +196,6 @@ def main(pinned_path: str, testable_path: str, write: bool = False) -> int:
 
 if __name__ == "__main__":
     args = [a for a in sys.argv[1:] if a != "--write"]
-    if len(args) != 2:
+    if len(args) not in (2, 3):
         sys.exit(__doc__)
     sys.exit(main(*args, write="--write" in sys.argv[1:]))

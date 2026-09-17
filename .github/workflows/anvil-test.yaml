@@ -1184,25 +1184,48 @@ jobs:
              "${{ github.workspace }}/results/results.html" \
              "$DIR/"
 
-      # The instance's own tests_summary keys, already fetched for the
-      # pinned-list pre-flight. Committed as one rolling file rather than a
-      # per-run copy: the whole tool inventory is far larger than the tested
-      # subset, and what is worth keeping is the night-to-night delta, which
-      # git stores anyway. update-scheduled-tool-versions.yaml bumps the
-      # pinned list against this, and its diff is also the only record of
-      # what the CVMFS bundle gained or lost on a given night.
-      - name: Save the instance's testable tool inventory
+      # Two inventories of what this instance had, as rolling files rather
+      # than per-run copies: they are far larger than the tested subset, and
+      # what is worth keeping is the night-to-night delta, which git stores
+      # anyway. Their diffs are also the only record of what the CVMFS bundle
+      # gained or lost on a given night.
+      #
+      # testable-tool-ids.txt is tests_summary, already fetched for the
+      # pinned-list pre-flight - the set a run can draw from, and what
+      # update-scheduled-tool-versions.yaml bumps against. installed-tool-ids
+      # .txt is every tool present. A pin in the second but not the first is
+      # installed with no test cases, which is untestable for good and calls
+      # for an excluded-tool-ids.txt entry; a pin in neither is simply gone.
+      # Separating those needs both lists, so both are kept.
+      - name: Save the instance's tool inventories
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         working-directory: /tmp/main-clone
+        env:
+          KEY: ${{ steps.api-key.outputs.key }}
+          GALAXY_URL: http://${{ steps.vm-ip.outputs.ip }}/galaxy/
         run: |
-          SRC="${{ github.workspace }}/logs/testable-tool-ids.txt"
-          if [ ! -s "$SRC" ]; then
-            echo "No testable-tool-ids.txt from this run - leaving the committed inventory as is"
-            exit 0
-          fi
           mkdir -p reports/anvil
-          sort "$SRC" > reports/anvil/testable-tool-ids.txt
-          echo "Recorded $(wc -l < reports/anvil/testable-tool-ids.txt) testable tool IDs"
+
+          SRC="${{ github.workspace }}/logs/testable-tool-ids.txt"
+          if [ -s "$SRC" ]; then
+            sort "$SRC" > reports/anvil/testable-tool-ids.txt
+            echo "Recorded $(wc -l < reports/anvil/testable-tool-ids.txt) testable tool IDs"
+          else
+            echo "No testable-tool-ids.txt from this run - leaving the committed inventory as is"
+          fi
+
+          # in_panel=false gives a flat list of every tool rather than the
+          # nested panel sections. Advisory data, so a failure here must not
+          # fail the run or blank the committed copy.
+          if curl -sf --max-time 120 -H "x-api-key: $KEY" \
+               "${GALAXY_URL}api/tools?in_panel=false" \
+               | python3 -c "import json, sys; print('\n'.join(sorted(t['id'] for t in json.load(sys.stdin) if isinstance(t, dict) and t.get('id'))))" \
+               > /tmp/installed-tool-ids.txt && [ -s /tmp/installed-tool-ids.txt ]; then
+            cp /tmp/installed-tool-ids.txt reports/anvil/installed-tool-ids.txt
+            echo "Recorded $(wc -l < reports/anvil/installed-tool-ids.txt) installed tool IDs"
+          else
+            echo "Could not fetch the installed tool list - leaving the committed copy as is"
+          fi
 
       # outstanding.md #8, "The VM is deleted at run end": the empty-output
       # investigation needed a live instance twice and didn't have one -

@@ -74,12 +74,21 @@ jobs:
 
       - name: Bump pinned tool versions
         run: |
-          WRITE=--write
-          [ "${{ inputs.dry-run || 'false' }}" = "true" ] && WRITE=
+          ARGS=(.github/scheduled-tool-ids.txt reports/anvil/testable-tool-ids.txt)
+          # Optional third argument: with it, a pin the instance cannot test
+          # is reported as NO-TESTS or NOT-INSTALLED rather than one vaguer
+          # category. Absent (a run that could not fetch it), the check still
+          # happens, just without the distinction.
+          if [ -s reports/anvil/installed-tool-ids.txt ]; then
+            ARGS+=(reports/anvil/installed-tool-ids.txt)
+          else
+            echo "No installed-tool-ids.txt - untestable pins will not be broken down by cause"
+          fi
+          if [ "${{ inputs.dry-run || 'false' }}" != "true" ]; then
+            ARGS+=(--write)
+          fi
           python3 .github/scripts/anvil_bump_scheduled_tool_versions.py \
-            .github/scheduled-tool-ids.txt \
-            reports/anvil/testable-tool-ids.txt \
-            $WRITE | tee /tmp/bump-summary.txt
+            "${ARGS[@]}" | tee /tmp/bump-summary.txt
 
       # A version bump can change a tool's resource requirements, and so
       # which runner TPV sends it to - which is what this ordering encodes.
@@ -105,7 +114,7 @@ jobs:
           git commit -F - <<EOF
           Pin ${BUMPS:-0} tool(s) to the versions now on the instance
 
-          $(grep '^  BUMP \|^  SKIP ' /tmp/bump-summary.txt || true)
+          $(grep '^  BUMP \|^  SKIP \|^  UNTESTABLE ' /tmp/bump-summary.txt || true)
           EOF
           # main moves under this job (the nightly run commits reports), so
           # rebase and retry rather than dropping the bump.
@@ -129,3 +138,9 @@ jobs:
             cat /tmp/bump-summary.txt 2>/dev/null || echo 'No summary produced'
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+          # An untestable pin never fails a run - it just quietly produces
+          # nothing - so raise it where someone will actually see it. A run
+          # with no bumps commits nothing, and then this is the only trace.
+          while read -r line; do
+            [ -n "$line" ] && echo "::warning::Pinned tool cannot produce a result: ${line#  UNTESTABLE  }"
+          done < <(grep '^  UNTESTABLE ' /tmp/bump-summary.txt 2>/dev/null || true)
