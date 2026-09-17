@@ -91,6 +91,37 @@ hgv_lps
 hgv_pass
 
 
+# --- No test cases to run ----------------------------------------------
+# These tools are installed and working - they simply ship zero tests, so
+# Galaxy's tests_summary (the harness's tool source) never lists them and
+# galaxy-tool-test has nothing to execute. Verified against a live instance:
+# each is present in api/tools, and api/tools/<id>/test_data returns 0 cases
+# (a control EMBOSS tool on the same instance returns 1). None of the seven
+# produced a single result in the first 30 runs of the harness.
+#
+# Excluded rather than left in place: they cost a slot to produce nothing,
+# and listing them here also keeps them out of any future regenerated list.
+# Any of them comes back the moment its wrapper gains a test upstream.
+#
+#   isochore47, polydot77 - the only 2 of the 9 pinned EMBOSS tools without
+#     tests; the other 7 test fine, so this is per-tool, not an emboss_5
+#     packaging gap.
+/repos/devteam/emboss_5/EMBOSS: isochore47/
+/repos/devteam/emboss_5/EMBOSS: polydot77/
+#
+#   4 q2galaxy tools - the suite is installed and testable (140 qiime2 tools
+#     in tests_summary, 10 of the 14 pinned ones run), so this is specific to
+#     these wrappers, at every version they ship, not to QIIME2.
+/repos/q2d2/qiime2__sample_classifier__predict_classification/
+/repos/q2d2/qiime2__metadata__distance_matrix/
+/repos/q2d2/qiime2__quality_control__evaluate_taxonomy/
+/repos/q2d2/qiime2__rescript__evaluate_fit_classifier/
+#
+#   intermine - a Galaxy built-in with no tests. Built-ins are keyed
+#     unversioned, so this is a bare id like the hgv_* entries above.
+intermine
+
+
 # --- Deliberately NOT excluded (recorded so nobody adds them) ----------
 #
 # Extract genomic DNA 1
@@ -110,6 +141,3 @@ hgv_pass
 # amrfinderplus, gtdbtk_classify_wf
 #   Empty reference-data dropdowns. Also broken on usegalaxy.org, so this is
 #   an upstream galaxyproject/idc gap that may well be fixed. Leave visible.
-#
-# Tools with zero tests (4 qiime2, 2 EMBOSS, intermine)
-#   Contribute no coverage but also no failures - nothing to exclude.
