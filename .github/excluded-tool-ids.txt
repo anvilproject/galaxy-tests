@@ -141,3 +141,25 @@ intermine
 # amrfinderplus, gtdbtk_classify_wf
 #   Empty reference-data dropdowns. Also broken on usegalaxy.org, so this is
 #   an upstream galaxyproject/idc gap that may well be fixed. Leave visible.
+#
+# jbrowse
+#   Added 2026-09-17; 9 of its 10 tests pass here, verified against a live
+#   instance. Test 8 is the only one using a built-in genome
+#   (genome_type_select=indexed) and asserts the output contains
+#   `merlin.fa` - a fixture the upstream CI data table provides. Ours
+#   resolves a real CVMFS genome instead, so the assertion cannot hold:
+#       Expected text 'merlin.fa' in output
+#       ... <genome path="/cvmfs/data.galaxyproject.org/...
+#   The test never names a genome, so it takes the data table's default.
+#   Upstream CI has exactly one all_fasta entry (merlin, from the repo's
+#   test .loc), making that default deterministic; ours has 259 real
+#   genomes from CVMFS refdata and no merlin, first entry
+#   hg19_rCRS_pUC18_phiX174. Making it pass here would mean adding merlin
+#   AND making it the instance-wide default reference genome, changing the
+#   default for every genome-selecting tool to satisfy one assertion.
+#   The real fix is upstream - the test should pin a genome explicitly or
+#   use the history branch its nine siblings use. Same class as the spades
+#   has_size bounds: a test that only holds in its authoring environment.
+#   Filed as tools-iuc#8429.
+#   Kept for the same reason as `Extract genomic DNA 1`: excluding it would
+#   discard 9 passing tests to hide 1 known failure.
