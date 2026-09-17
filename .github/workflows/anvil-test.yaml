@@ -507,165 +507,34 @@ jobs:
           python "${{ github.workspace }}/.github/scripts/anvil_record_deployment.py" success "$DURATION" \
             "https://github.com/anvilproject/galaxy-tests/actions/runs/${{ github.run_id }}"
 
+      # Pinned to a `dev` commit rather than the PyPI release, to run the
+      # merged client fixes ahead of a release that is months out. That SHA
+      # is the merge of galaxyproject/galaxy#23517; it also carries #23515,
+      # #23401, #23402, #23483 and #23490.
+      #
+      # #23517 is the one that matters here: the client reused no
+      # connections, so a run opened ~64,000 of them, and SYNs are being
+      # dropped on the path to the VM (see outstanding.md §A5). Reuse takes
+      # that to ~160 and should remove almost all of the exposure.
+      #
+      # This also retires the force_path_paste patch step that used to sit
+      # below this one - all five bugs it worked around are fixed in this
+      # commit, and its asserts fire when the buggy text is *absent*, so
+      # keeping it would abort every run.
+      #
+      # pip resolves the package from a subdirectory of a full clone, which
+      # works because packages/tool_util/src/galaxy/tool_util is a symlink
+      # into lib/. Costs an extra minute or two per run for the clone.
+      # Revert to `"galaxy-tool-util>=23.0"` once a release carries these.
       - name: Install galaxy-tool-test and planemo
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
-        run: python -m pip install "galaxy-tool-util>=23.0" planemo bioblend
-
-      # Two upstream bugs in galaxy-tool-util (confirmed present from 25.1.1
-      # through the latest 26.1.1, so not regressions to just pin around).
-      # Patch the installed package directly rather than wait on upstream
-      # fixes - each assert fails loudly if the expected text isn't found,
-      # e.g. once it's actually fixed upstream.
-      #
-      # 1. remote_to_input()'s non-composite-data branch never forwards
-      #    force_path_paste to _get_path_or_location, so --force_path_paste
-      #    is silently ignored for ordinary file inputs.
-      #
-      # 2. test_data_path() does `return response.json()` for status 404 as
-      #    well as 200, so a test-data file the server can't resolve comes
-      #    back as an error *dict*. _get_path_or_location() feeds that
-      #    straight into os.path.exists(), which raises
-      #    `TypeError: stat: path should be string, bytes, os.PathLike or
-      #    integer, not dict` - and that propagates out as a non-zero exit
-      #    for the whole process after results are already written. On the
-      #    2026-08-22 run this accounted for 54 of 170 failing tests across
-      #    15 tools, and 61% of failures once superseded tool revisions are
-      #    excluded. Rather than let a 404 crash the run, treat "no
-      #    server-side path" as a miss and fall through to the
-      #    test_data_download branch, which fetches the file over the API
-      #    and, if the server genuinely doesn't have it, fails with the
-      #    actionable `Test input file (<name>) cannot be found.` naming the
-      #    file. Note this is a *fallback*, not a replacement:
-      #    --force_path_paste still wins whenever the server can resolve a
-      #    path, so the fast no-download route is unchanged for the ~90% of
-      #    lookups that already work.
-      - name: Patch galaxy-tool-util force_path_paste bugs
-        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         run: |
-          cat > /tmp/patch_force_path_paste.py << 'PYEOF'
-          import galaxy.tool_util.verify.interactor as m
-
-          path = m.__file__
-          with open(path) as f:
-              content = f.read()
-
-          old = (
-              '            path_or_location = self._get_path_or_location(\n'
-              '                fname,\n'
-              '                test_data,\n'
-              '                tool_id,\n'
-              '                tool_version=tool_version,\n'
-              '                mode="file" if tool_input["class"].lower() == "file" else "directory",\n'
-              '            )'
-          )
-          new = old.replace(
-              "tool_version=tool_version,\n",
-              "tool_version=tool_version,\n                force_path_paste=force_path_paste,\n",
-              1,
-          )
-          assert old in content, "Expected force_path_paste bug text not found - has this been fixed upstream?"
-          content = content.replace(old, new, 1)
-
-          # Bug 2: a 404 from test_data_path() yields an error dict, not a path.
-          old_404 = (
-              "        if fname and force_path_paste:\n"
-              "            file_name = self.test_data_path(tool_id, fname, tool_version=tool_version)\n"
-              "            file_name_exists = os.path.exists(file_name)\n"
-          )
-          new_404 = (
-              "        if fname and force_path_paste:\n"
-              "            file_name = self.test_data_path(tool_id, fname, tool_version=tool_version)\n"
-              "            # 404 returns the error dict, not a path - treat it as a miss.\n"
-              "            if not isinstance(file_name, str):\n"
-              "                file_name = None\n"
-              "            file_name_exists = file_name is not None and os.path.exists(file_name)\n"
-          )
-          assert old_404 in content, "Expected test_data_path 404 bug text not found - has this been fixed upstream?"
-          content = content.replace(old_404, new_404, 1)
-
-          # ...and without a usable path, fall through to test_data_download
-          # instead of building a bogus `file://None` location.
-          old_paste = (
-              "            if force_path_paste:\n"
-              "                if file_name is None:\n"
-              "                    file_name = self.test_data_path(tool_id, fname, tool_version=tool_version)\n"
-              '                return PathOrLocation(name=fname, location=f"file://{file_name}", path=None)\n'
-          )
-          new_paste = (
-              "            if force_path_paste and isinstance(file_name, str):\n"
-              '                return PathOrLocation(name=fname, location=f"file://{file_name}", path=None)\n'
-          )
-          assert old_paste in content, "Expected force_path_paste fallthrough text not found - has this been fixed upstream?"
-          content = content.replace(old_paste, new_paste, 1)
-
-          with open(path, "w") as f:
-              f.write(content)
-          print(f"Patched {path}")
-
-          # Bug 3: --force_path_paste makes the client hand the *server* a path to
-          # open (sent as src=url with a file:// URI, which the server normalises
-          # to src=path in services/_fetch_util.py). That is right for a path only
-          # the server can see, e.g. /cvmfs/..., but wrong for one this client
-          # resolved itself - a --test-data fallback file or a test_data_download
-          # temp file. The server has no such path and the fetch fails with
-          # "[Errno 2] No such file or directory", reported only inside the data
-          # fetch tool's own provided metadata, so it surfaces as an opaque
-          # "Job in error state, exit_code: None, stderr: ." Decide per file:
-          # if the path exists on this client, upload the bytes; otherwise leave
-          # it to the server as before.
-          import galaxy.tool_util.client.staging as staging_mod
-
-          staging_path = staging_mod.__file__
-          with open(staging_path) as f:
-              staging = f.read()
-
-          fetch_old = (
-              '                is_path = uri.startswith("file://")\n'
-              '                if not is_path or use_path_paste:\n'
-              '                    return {"src": "url", "url": uri}\n'
-              '                else:\n'
-              '                    path = uri[len("file://") :]\n'
-              '                    upload_payload["__files"][f"files_{index}|file_data"] = self._attach_file(path)\n'
-              '                    return {"src": "files"}\n'
-          )
-          fetch_new = (
-              '                is_path = uri.startswith("file://")\n'
-              '                local_path = uri[len("file://") :] if is_path else None\n'
-              '                server_side = use_path_paste and not (local_path and os.path.exists(local_path))\n'
-              '                if not is_path or server_side:\n'
-              '                    return {"src": "url", "url": uri}\n'
-              '                else:\n'
-              '                    upload_payload["__files"][f"files_{index}|file_data"] = self._attach_file(local_path)\n'
-              '                    return {"src": "files"}\n'
-          )
-          assert fetch_old in staging, "Expected staging fetch _attach_file text not found - fixed upstream?"
-          staging = staging.replace(fetch_old, fetch_new, 1)
-
-          legacy_old = (
-              '                is_path = uri.startswith("file://")\n'
-              '                if not is_path or use_path_paste:\n'
-              '                    upload_payload["inputs"][f"files_{index}|url_paste"] = uri\n'
-              '                else:\n'
-              '                    path = uri[len("file://") :]\n'
-              '                    upload_payload["__files"][f"files_{index}|file_data"] = self._attach_file(path)\n'
-          )
-          legacy_new = (
-              '                is_path = uri.startswith("file://")\n'
-              '                local_path = uri[len("file://") :] if is_path else None\n'
-              '                server_side = use_path_paste and not (local_path and os.path.exists(local_path))\n'
-              '                if not is_path or server_side:\n'
-              '                    upload_payload["inputs"][f"files_{index}|url_paste"] = uri\n'
-              '                else:\n'
-              '                    upload_payload["__files"][f"files_{index}|file_data"] = self._attach_file(local_path)\n'
-          )
-          assert legacy_old in staging, "Expected staging legacy _attach_file text not found - fixed upstream?"
-          staging = staging.replace(legacy_old, legacy_new, 1)
-
-          with open(staging_path, "w") as f:
-              f.write(staging)
-          print(f"Patched {staging_path}")
-          PYEOF
-          python /tmp/patch_force_path_paste.py
+          python -m pip install \
+            "galaxy-tool-util @ git+https://github.com/galaxyproject/galaxy.git@379152f5295415834d6c07bbad5574a04f8574ce#subdirectory=packages/tool_util" \
+            planemo bioblend
+          python -c "import galaxy.tool_util.verify.interactor as m; \
+            assert hasattr(m, 'CONNECT_TIMEOUT'), 'client is not the pinned dev build'; \
+            print('galaxy-tool-util from dev:', m.__file__)"
 
       # galaxypassword is the bootstrap_admin_api_key baked in by
       # galaxy-k8s-boot - per Galaxy's own config docs, it's meant only to
@@ -822,15 +691,13 @@ jobs:
       #
       # continue-on-error: ALL_TOOLS (and, incidentally, a random sample
       # drawn from the same tests_summary) always includes those internal
-      # utility tools alongside real ones. Those 404 from the server-side
-      # test_data_path lookup force_path_paste relies on - another
-      # galaxy-tool-util bug: test_data_path() returns response.json()
-      # unconditionally on both 200 and 404, so a 404 yields a JSON error
-      # dict instead of a path string, crashing os.path.exists() downstream.
-      # Individual tests degrade gracefully (recorded as "Errored", not a
-      # hard stop), but this crashes the whole process with a non-zero exit
-      # right after the results are already written - don't let that abort
-      # the report-building step.
+      # utility tools alongside real ones, and those 404 from the
+      # server-side test_data_path lookup force_path_paste relies on. The
+      # client used to turn that 404 into a crash of the whole process
+      # after results were written; galaxyproject/galaxy#23402, in the
+      # pinned build above, returns None instead, so such tests now degrade
+      # to "Errored" individually. Kept because the step has other ways to
+      # exit non-zero and this must not abort report building.
       # The other half of the same question. nginx shows what arrived; this
       # shows whether the runner was able to open the connection in the
       # first place. Connection failures against the VM have been the
