@@ -877,8 +877,9 @@ jobs:
           # producing no results at all: they were pinned without the
           # `data_manager/` path segment the installed tool ids actually
           # carry, so nothing ever matched them. Advisory only - never fails
-          # the run, and never rewrites the list file itself (that's a
-          # reviewed commit, not a CI side effect). Shared between modes 1
+          # the run, and never rewrites the list file itself (version drift
+          # is corrected out of band by
+          # update-scheduled-tool-versions.yaml). Shared between modes 1
           # and 2 (see the selection-mode comment above): any pinned-style
           # list, not just the scheduled one, benefits from this check.
           run_pinned_list_preflight() {
@@ -1182,6 +1183,26 @@ jobs:
           cp "${{ github.workspace }}/results/results.json" \
              "${{ github.workspace }}/results/results.html" \
              "$DIR/"
+
+      # The instance's own tests_summary keys, already fetched for the
+      # pinned-list pre-flight. Committed as one rolling file rather than a
+      # per-run copy: the whole tool inventory is far larger than the tested
+      # subset, and what is worth keeping is the night-to-night delta, which
+      # git stores anyway. update-scheduled-tool-versions.yaml bumps the
+      # pinned list against this, and its diff is also the only record of
+      # what the CVMFS bundle gained or lost on a given night.
+      - name: Save the instance's testable tool inventory
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
+        working-directory: /tmp/main-clone
+        run: |
+          SRC="${{ github.workspace }}/logs/testable-tool-ids.txt"
+          if [ ! -s "$SRC" ]; then
+            echo "No testable-tool-ids.txt from this run - leaving the committed inventory as is"
+            exit 0
+          fi
+          mkdir -p reports/anvil
+          sort "$SRC" > reports/anvil/testable-tool-ids.txt
+          echo "Recorded $(wc -l < reports/anvil/testable-tool-ids.txt) testable tool IDs"
 
       # outstanding.md #8, "The VM is deleted at run end": the empty-output
       # investigation needed a live instance twice and didn't have one -

@@ -1,0 +1,131 @@
+# Keeps .github/scheduled-tool-ids.txt pinned to the newest tool versions the
+# deployed instance actually offers.
+#
+# Upstream (usegalaxy-tools' cloud toolset -> CVMFS -> cvmfs-cloud-clone's
+# daily bundle) only ever adds tool revisions, so a stale pin never fails
+# loudly - it keeps passing against an old version while the newly published
+# one goes untested. This closes that gap on a weekly cadence.
+#
+# Only version segments are rewritten; which tools are covered stays a
+# deliberate, hand-made decision (see CLAUDE.md).
+name: Update scheduled tool versions
+
+on:
+  schedule:
+    # Wednesday, late enough that the night's own run has long since
+    # committed a fresh inventory, and far enough past usegalaxy-tools'
+    # Sunday update for a merged tool bump to have reached the bundle.
+    - cron: '0 18 * * 3'
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: 'Report the bumps without committing them'
+        type: boolean
+        default: false
+      max-inventory-age-days:
+        description: 'Refuse to bump against an inventory older than this'
+        default: '14'
+
+permissions:
+  contents: write
+
+jobs:
+  update-pinned-versions:
+    runs-on: ubuntu-latest
+    steps:
+      # Deep enough to reach the last commit that touched the inventory
+      # file; the nightly run commits daily, so this is many times over.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 100
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install packaging pyyaml
+
+      # Bumping against a stale inventory is the one way this job can do
+      # real damage - it would pin versions the instance no longer has. The
+      # inventory is only refreshed by a successful run, so a week of failed
+      # deploys is exactly when that could happen.
+      - name: Check the committed inventory is fresh
+        run: |
+          INVENTORY=reports/anvil/testable-tool-ids.txt
+          # inputs.* is empty on the schedule trigger - fall back to the
+          # input's own declared default.
+          MAX_AGE_DAYS="${{ inputs.max-inventory-age-days || '14' }}"
+          if [ ! -s "$INVENTORY" ]; then
+            echo "::error::$INVENTORY is missing or empty - nothing to bump against"
+            exit 1
+          fi
+          COMMITTED=$(git log -1 --format=%ct -- "$INVENTORY")
+          if [ -z "$COMMITTED" ]; then
+            echo "::error::$INVENTORY has not changed within the fetched history - treating as stale"
+            exit 1
+          fi
+          AGE_DAYS=$(( ( $(date +%s) - COMMITTED ) / 86400 ))
+          echo "Inventory last updated $AGE_DAYS day(s) ago ($(wc -l < "$INVENTORY") tool IDs)"
+          if [ "$AGE_DAYS" -gt "$MAX_AGE_DAYS" ]; then
+            echo "::error::Inventory is $AGE_DAYS days old (limit $MAX_AGE_DAYS) - refusing to bump"
+            exit 1
+          fi
+
+      - name: Bump pinned tool versions
+        run: |
+          WRITE=--write
+          [ "${{ inputs.dry-run || 'false' }}" = "true" ] && WRITE=
+          python3 .github/scripts/anvil_bump_scheduled_tool_versions.py \
+            .github/scheduled-tool-ids.txt \
+            reports/anvil/testable-tool-ids.txt \
+            $WRITE | tee /tmp/bump-summary.txt
+
+      # A version bump can change a tool's resource requirements, and so
+      # which runner TPV sends it to - which is what this ordering encodes.
+      # The script takes the shared TPV database as an argument rather than
+      # vendoring it, so fetch a copy.
+      - name: Re-sort the pinned list by routing
+        if: ${{ !(inputs.dry-run || false) }}
+        run: |
+          git clone --depth 1 https://github.com/galaxyproject/tpv-shared-database.git /tmp/tpv
+          python3 .github/scripts/anvil_sort_scheduled_tool_ids.py /tmp/tpv/tools.yml
+
+      - name: Commit the bumped list
+        if: ${{ !(inputs.dry-run || false) }}
+        run: |
+          if git diff --quiet -- .github/scheduled-tool-ids.txt; then
+            echo "No version bumps to commit"
+            exit 0
+          fi
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add .github/scheduled-tool-ids.txt
+          BUMPS=$(grep -c '^  BUMP ' /tmp/bump-summary.txt || true)
+          git commit -F - <<EOF
+          Pin ${BUMPS:-0} tool(s) to the versions now on the instance
+
+          $(grep '^  BUMP \|^  SKIP ' /tmp/bump-summary.txt || true)
+          EOF
+          # main moves under this job (the nightly run commits reports), so
+          # rebase and retry rather than dropping the bump.
+          for attempt in 1 2 3; do
+            if git push origin main; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/3) - rebasing onto current main"
+            git fetch origin main
+            git rebase origin/main
+            sleep 5
+          done
+          echo "::error::Failed to push the bumped list after 3 attempts"
+          exit 1
+
+      - name: Summarize
+        if: always()
+        run: |
+          {
+            echo '```'
+            cat /tmp/bump-summary.txt 2>/dev/null || echo 'No summary produced'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
