@@ -207,6 +207,7 @@ nav_id: costs
   .gx-raster-search-wrap {
     position: relative;
     display: inline-block;
+    margin-left: 0.75rem;
   }
   .gx-raster-search {
     font: inherit;
@@ -748,11 +749,11 @@ nav_id: costs
       detailsEl.className = "gx-chart-details gx-chart-details--active";
       detailsEl.innerHTML =
         '<div class="gx-chart-details__label">' + jobs.length + (searchQuery ? " matching" : "") + " GCP Batch jobs</div>" +
-        '<div class="gx-chart-details__stage">Total: ' + fmtDollars(searchQuery ? totalCost : current.gcp_batch_total_cost) + "</div>" +
+        '<div class="gx-chart-details__label">Total: ' + fmtDollars(searchQuery ? totalCost : current.gcp_batch_total_cost) + "</div>" +
         '<div class="gx-chart-details__stage">Per-job avg: ' + fmtDollars(totalCost / costs.length) + "</div>" +
-        '<div class="gx-chart-details__stage">Boot: ' + fmtDollars(totalBoot) + " (" + fmtPct(totalBoot, phaseTotal) + ")" +
-          " &middot; Run: " + fmtDollars(totalRun) + " (" + fmtPct(totalRun, phaseTotal) + ")" +
-          " &middot; Teardown: " + fmtDollars(totalTeardown) + " (" + fmtPct(totalTeardown, phaseTotal) + ")</div>";
+        '<div class="gx-chart-details__stage">Boot: ' + fmtDollars(totalBoot) + " (" + fmtPct(totalBoot, phaseTotal) + ")</div>" +
+        '<div class="gx-chart-details__stage">Run: ' + fmtDollars(totalRun) + " (" + fmtPct(totalRun, phaseTotal) + ")</div>" +
+        '<div class="gx-chart-details__stage">Teardown: ' + fmtDollars(totalTeardown) + " (" + fmtPct(totalTeardown, phaseTotal) + ")</div>";
     }
 
     function showRun(targetIdx, step) {
@@ -809,6 +810,7 @@ nav_id: costs
       detailsEl.className = "gx-chart-details gx-chart-details--active";
       detailsEl.innerHTML =
         '<div class="gx-chart-details__time">' + escapeHtml(job._toolName) + "</div>" +
+        '<div class="gx-chart-details__label">Total: ' + fmtDollars(job.cost) + "</div>" +
         '<div class="gx-chart-details__stage">Machine: ' + escapeHtml(job.machine_type || "unknown") +
           " (" + job.vcpu + " vCPU, " + job.ram_gib + " GiB)</div>" +
         '<div class="gx-chart-details__stage">Boot: ' + fmtSeconds(job.boot_seconds) + " &middot; " + fmtDollars(job.boot_cost) +
@@ -816,8 +818,7 @@ nav_id: costs
         '<div class="gx-chart-details__stage">Run: ' + fmtSeconds(job.run_seconds) + " &middot; " + fmtDollars(job.run_cost) +
           " (" + fmtPct(job.run_cost, job.cost) + ")</div>" +
         '<div class="gx-chart-details__stage">Teardown (est.): ' + fmtSeconds(job.teardown_seconds) + " &middot; " + fmtDollars(job.teardown_cost) +
-          " (" + fmtPct(job.teardown_cost, job.cost) + ")</div>" +
-        '<div class="gx-chart-details__label">Total: ' + fmtDollars(job.cost) + "</div>";
+          " (" + fmtPct(job.teardown_cost, job.cost) + ")</div>";
     });
     canvas.addEventListener("mouseleave", function () {
       canvas.style.cursor = "default";
