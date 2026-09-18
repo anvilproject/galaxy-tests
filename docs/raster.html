@@ -364,6 +364,64 @@ nav_id: raster
     background: rgba(37, 83, 123, 0.1);
     color: var(--galaxy-primary);
   }
+
+  /* Run-header "run health" block: two proportional bars (tests, tools)
+     with a large primary value beside each and exact counts below -
+     see v2_raster_plan.md's run-health mockup. */
+  .gx-run-summary__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.9rem;
+  }
+  .gx-run-summary__time {
+    font-size: 0.8rem;
+    color: var(--galaxy-grey);
+  }
+  .gx-run-summary__meta .gx-inspector__badge {
+    margin-left: 0;
+  }
+  .gx-run-bar-block {
+    margin-bottom: 0.9rem;
+  }
+  .gx-run-bar-block:last-child {
+    margin-bottom: 0;
+  }
+  .gx-run-bar-block__top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 0.3rem;
+  }
+  .gx-run-bar-block__label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--galaxy-dark);
+  }
+  .gx-run-bar-block__value {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--galaxy-dark);
+  }
+  .gx-run-bar {
+    display: flex;
+    height: 0.65rem;
+    border-radius: 0.2rem;
+    overflow: hidden;
+    background: #eef2f6;
+  }
+  .gx-run-bar__seg {
+    height: 100%;
+  }
+  .gx-run-bar-block__counts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.9rem;
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--galaxy-grey);
+  }
   .gx-inspector__nav {
     display: flex;
     align-items: center;
@@ -534,6 +592,7 @@ nav_id: raster
   };
   var STRIPE_COLOR = "rgba(37, 83, 123, 0.06)";
   var COVERAGE_COLORS = { normal: "#9aa5b1", partial: "#d19e00", sparse: "#b91c1c" };
+  var COVERAGE_LABELS = { normal: "Normal coverage", partial: "Partial coverage", sparse: "Sparse coverage" };
 
   function rgbStr(rgb) { return "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")"; }
 
@@ -716,8 +775,8 @@ nav_id: raster
     return fraction === null ? "n/a" : Math.round(fraction * 100) + "%";
   }
 
-  // Shared by the run tooltip and the run inspector drawer - plain text,
-  // no HTML escaping needed since every value here is a number.
+  // Used by the run tooltip - plain text, no HTML escaping needed since
+  // every value here is a number.
   function testCountsLine(run) {
     var passed = run.tests_passed || 0;
     var failed = run.tests_failed || 0;
@@ -730,6 +789,39 @@ nav_id: raster
       ", failed (" + failed + " · " + pctOf(failed) + "%)" +
       ", errored (" + errored + " · " + pctOf(errored) + "%)" +
       ", skipped (" + skipped + " · " + pctOf(skipped) + "%)";
+  }
+
+  // One "run health" bar for the run inspector drawer: a proportional,
+  // segmented bar (no in-segment labels - several segments are too
+  // narrow for text) with a large primary value beside its label and
+  // exact per-category counts below, each with a color swatch matching
+  // the bar segment. segments: [{count, color, label}].
+  function runBarBlockHtml(label, valueText, segments) {
+    var total = segments.reduce(function (a, s) { return a + s.count; }, 0);
+    var barHtml = segments
+      .filter(function (s) { return s.count > 0; })
+      .map(function (s) {
+        var pct = total ? (s.count / total) * 100 : 0;
+        return '<span class="gx-run-bar__seg" style="flex-basis:' + pct + '%;background:' + s.color + '" ' +
+          'title="' + escapeHtml(s.count + " " + s.label) + '"></span>';
+      })
+      .join("");
+    var countsHtml = segments
+      .map(function (s) {
+        return '<span class="gx-legend2__item"><span class="gx-swatch2" style="background:' + s.color + '"></span>' +
+          s.count + " " + escapeHtml(s.label) + "</span>";
+      })
+      .join("");
+    return (
+      '<div class="gx-run-bar-block">' +
+        '<div class="gx-run-bar-block__top">' +
+          '<span class="gx-run-bar-block__label">' + escapeHtml(label) + "</span>" +
+          '<span class="gx-run-bar-block__value">' + escapeHtml(valueText) + "</span>" +
+        "</div>" +
+        '<div class="gx-run-bar">' + barHtml + "</div>" +
+        '<div class="gx-run-bar-block__counts">' + countsHtml + "</div>" +
+      "</div>"
+    );
   }
 
   function topBarTooltip(runId, stats, manifestByRun, coverage) {
@@ -1554,15 +1646,37 @@ nav_id: raster
       var run = manifestByRun[runId] || {};
       var stats = computeTopStats(runId, tools, matrix);
       var coverage = coverageBucket(run.tools_attempted || 0, maxAttemptedEver);
+
+      var passed = run.tests_passed || 0;
+      var failed = run.tests_failed || 0;
+      var errored = run.tests_errored || 0;
+      var skipped = run.tests_skipped || 0;
+      var testsTotal = passed + failed + errored + skipped;
+      var testsPassedPct = testsTotal ? Math.round((passed / testsTotal) * 100) : 0;
+
+      // "Attempted" here (not run.tools_attempted) so this pct stays
+      // internally consistent with the fail/error/mixed counts it's
+      // built from - both come from the same per-cell classification.
+      var toolsAttempted = stats.pass + stats.affected;
+      var toolsAffectedPct = toolsAttempted ? Math.round((stats.affected / toolsAttempted) * 100) : 0;
+
       inspectorHeader.innerHTML =
-        "<h3>" + escapeHtml(fmtDate(run.timestamp)) + "</h3>" +
-        '<div class="gx-inspector__summary">' +
-        "Tools tested: " + (run.tools_attempted || 0) + "<br>" +
-        testCountsLine(run) + "<br>" +
-        "Summary: " + stats.affected + " of " + (stats.affected + stats.pass) + " attempted tools affected (" +
-        stats.fail + " failure-only, " + stats.error + " error-only, " + stats.mixed + " mixed)<br>" +
-        "Coverage: " + escapeHtml(coverage) +
-        "</div>";
+        '<div class="gx-run-summary__meta">' +
+          '<span class="gx-run-summary__time">' + escapeHtml(fmtDate(run.timestamp)) + " UTC</span>" +
+          '<span class="gx-inspector__badge">' + escapeHtml(COVERAGE_LABELS[coverage] || coverage) + "</span>" +
+        "</div>" +
+        runBarBlockHtml("Tests", testsPassedPct + "% tests passed", [
+          { count: passed, color: COLORS.pass, label: "passed" },
+          { count: failed, color: rgbStr(COLORS.fail), label: "failed" },
+          { count: errored, color: rgbStr(COLORS.error), label: "errored" },
+          { count: skipped, color: COLORS.not_run, label: "skipped" }
+        ]) +
+        runBarBlockHtml("Tools", toolsAffectedPct + "% of tools affected", [
+          { count: stats.pass, color: COLORS.pass, label: "unaffected" },
+          { count: stats.fail, color: rgbStr(COLORS.fail), label: "failure-only" },
+          { count: stats.error, color: rgbStr(COLORS.error), label: "error-only" },
+          { count: stats.mixed, color: rgbStr(COLORS.mixed), label: "both" }
+        ]);
       updateNav({ mode: "run", runId: runId });
     }
 
