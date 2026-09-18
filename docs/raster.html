@@ -1879,7 +1879,10 @@ nav_id: raster
       inspector.hidden = true;
       backdrop.hidden = true;
       if (location.hash) history.replaceState(null, "", location.pathname + location.search);
-      canvas.focus();
+      // preventScroll - focus() scrolls its target into view by default,
+      // which yanks the page back to the raster's top if the canvas
+      // isn't fully in the viewport (e.g. the masthead is showing).
+      canvas.focus({ preventScroll: true });
       draw();
     }
 
