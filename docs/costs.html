@@ -79,6 +79,10 @@ nav_id: costs
   <button id="gx-jobcost-older" type="button">&larr; older</button>
   <span id="gx-jobcost-window"></span>
   <button id="gx-jobcost-newer" type="button">newer &rarr;</button>
+  <span class="gx-raster-search-wrap">
+    <input id="gx-jobcost-search" type="text" placeholder="Find a tool…" class="gx-raster-search">
+    <button type="button" id="gx-jobcost-search-clear" class="gx-raster-search-clear" aria-label="Clear search" hidden>&times;</button>
+  </span>
 </div>
 
 <div id="gx-jobcost-legend" class="gx-chart-legend"></div>
@@ -198,6 +202,43 @@ nav_id: costs
     border-radius: 0.15em;
     flex: none;
   }
+
+  /* Matches raster.html's tool-name search box. */
+  .gx-raster-search-wrap {
+    position: relative;
+    display: inline-block;
+  }
+  .gx-raster-search {
+    font: inherit;
+    font-size: 0.85rem;
+    padding: 0.3rem 1.6rem 0.3rem 0.6rem;
+    border: 1px solid rgba(37, 83, 123, 0.3);
+    border-radius: 0.375rem;
+    width: 12rem;
+  }
+  .gx-raster-search-clear {
+    position: absolute;
+    top: 50%;
+    right: 0.3rem;
+    transform: translateY(-50%);
+    width: 1.1rem;
+    height: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: rgba(37, 83, 123, 0.15);
+    font-size: 0.7rem;
+    line-height: 1;
+    padding: 0;
+    color: rgba(37, 83, 123, 0.7);
+    cursor: pointer;
+  }
+  .gx-raster-search-clear:hover {
+    background: rgba(37, 83, 123, 0.3);
+    color: rgba(37, 83, 123, 1);
+  }
 </style>
 
 <script>
@@ -256,6 +297,53 @@ nav_id: costs
 
   function shortName(toolId) {
     return toolId ? toolId.split("/").pop() : "unknown tool";
+  }
+
+  // GCP Batch job labels can't hold the real tool_id (labels only allow
+  // lowercase letters/digits/hyphens, 63 chars max), so the runner
+  // sanitizes it before setting `galaxy-tool-id`: lowercase, every
+  // non-alphanumeric char (including the "/" that separates the id from
+  // its version) becomes "-", then truncate to 63 chars and drop any
+  // trailing "-" left by the cut. Reproducing that here lets us match a
+  // job's label back to the real, human-readable tool_id recorded
+  // separately in job-runtime-data (see below), instead of showing the
+  // raw "toolshed-g2-bx-psu-edu-repos-..." label.
+  function sanitizeGcpLabel(toolId, version) {
+    var s = (toolId + "/" + version).toLowerCase().replace(/[^a-z0-9]/g, "-");
+    return s.slice(0, 63).replace(/-+$/, "");
+  }
+
+  var toolNameMapCache = {}; // run_id -> {sanitized label: real tool_id}
+
+  function loadToolNameMap(runId) {
+    if (toolNameMapCache[runId]) return Promise.resolve(toolNameMapCache[runId]);
+    return fetch("job-runtime-data/runs/" + encodeURIComponent(runId) + ".json")
+      .then(function (r) { if (!r.ok) throw new Error("not found"); return r.json(); })
+      .then(function (data) {
+        var map = {};
+        (data.jobs || []).forEach(function (j) {
+          if (j.tool_id) map[sanitizeGcpLabel(j.tool_id, j.version)] = j.tool_id;
+        });
+        toolNameMapCache[runId] = map;
+        return map;
+      })
+      .catch(function () {
+        toolNameMapCache[runId] = {};
+        return {};
+      });
+  }
+
+  // Best-effort fallback for a job that job-runtime-data has no matching
+  // entry for (e.g. it never produced a test result) - strips the fixed
+  // toolshed prefix so at least the raw label doesn't dominate the box.
+  function fallbackToolName(rawLabel) {
+    var s = String(rawLabel || "");
+    return s.replace(/^toolshed-g2-bx-psu-edu-repos-/, "") || "unknown tool";
+  }
+
+  function resolveToolName(job, toolNameMap) {
+    var real = job.tool_id ? toolNameMap[job.tool_id] : null;
+    return real ? shortName(real) : fallbackToolName(job.tool_id);
   }
 
   function median(nums) {
@@ -514,13 +602,33 @@ nav_id: costs
       return;
     }
 
+    var searchInput = document.getElementById("gx-jobcost-search");
+    var searchClear = document.getElementById("gx-jobcost-search-clear");
+    var searchQuery = ""; // lowercased free text - rows whose resolved tool name doesn't contain it are hidden
+
     var runIds = manifestRuns.map(function (r) { return r.run_id; });
     var idx = runIds.length - 1;
     var current = null;
 
     function fetchDetail(i) {
-      return fetch("cost-data/runs/" + encodeURIComponent(runIds[i]) + ".json")
-        .then(function (r) { if (!r.ok) throw new Error("not found"); return r.json(); });
+      var runId = runIds[i];
+      return Promise.all([
+        fetch("cost-data/runs/" + encodeURIComponent(runId) + ".json")
+          .then(function (r) { if (!r.ok) throw new Error("not found"); return r.json(); }),
+        loadToolNameMap(runId)
+      ]).then(function (results) {
+        var data = results[0], toolNameMap = results[1];
+        data.jobs.forEach(function (job) { job._toolName = resolveToolName(job, toolNameMap); });
+        return data;
+      });
+    }
+
+    function visibleJobs() {
+      if (!current) return [];
+      if (!searchQuery) return current.jobs;
+      return current.jobs.filter(function (job) {
+        return job._toolName.toLowerCase().indexOf(searchQuery) >= 0;
+      });
     }
 
     function loadNearest(startIdx, step) {
@@ -552,11 +660,24 @@ nav_id: costs
         ctx.clearRect(0, 0, emptyWidthCss, emptyHeightCss);
         return;
       }
+      var jobs = visibleJobs();
       var widthCss = Math.max(300, container.clientWidth);
-      var heightCss = TOP_PAD + current.jobs.length * ROW_STEP + BOTTOM_PAD;
+      var heightCss = TOP_PAD + Math.max(jobs.length, 1) * ROW_STEP + BOTTOM_PAD;
       sizeCanvas(canvas, ctx, widthCss, heightCss);
       ctx.clearRect(0, 0, widthCss, heightCss);
 
+      if (!jobs.length) {
+        ctx.font = "11px 'Atkinson Hyperlegible', sans-serif";
+        ctx.fillStyle = AXIS_LABEL_COLOR;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+        ctx.fillText("No jobs match “" + searchInput.value + "”.", LEFT_MARGIN, TOP_PAD);
+        return;
+      }
+
+      // Timeline stays anchored to the full run (not just the filtered
+      // rows), so searching narrows which rows show without rescaling
+      // where they sit in the run.
       var sp = span();
       var rightEdge = widthCss - RIGHT_PAD;
       var plotW = rightEdge - LEFT_MARGIN;
@@ -577,7 +698,7 @@ nav_id: costs
         ctx.fillText(fmtElapsed(ms - sp.startMs), x, TOP_PAD - 6);
       });
 
-      current.jobs.forEach(function (job, i) {
+      jobs.forEach(function (job, i) {
         var y = TOP_PAD + i * ROW_STEP;
         var bootX0 = xFor(Date.parse(job.scheduled_at));
         var runX0 = xFor(Date.parse(job.running_at));
@@ -597,9 +718,11 @@ nav_id: costs
       var m = manifestRuns[idx];
       var n = current ? current.jobs.length : 0;
       var total = current ? current.gcp_batch_jobs_total : 0;
+      var shown = visibleJobs().length;
       windowLabel.textContent = "Run " + (idx + 1) + " of " + runIds.length +
         (m && m.timestamp ? " · " + fmtShort(m.timestamp) : "") +
-        (current ? " · " + n + " of " + total + " GCP Batch jobs priced" : "");
+        (current ? " · " + n + " of " + total + " GCP Batch jobs priced" : "") +
+        (current && searchQuery ? " · " + shown + " match" : "");
       olderBtn.disabled = idx <= 0;
       newerBtn.disabled = idx >= runIds.length - 1;
     }
@@ -610,16 +733,23 @@ nav_id: costs
         detailsEl.innerHTML = '<span class="gx-chart-details__placeholder">Hover a row for details.</span>';
         return;
       }
-      var costs = current.jobs.map(function (j) { return j.cost; });
-      var totalBoot = current.jobs.reduce(function (a, j) { return a + j.boot_cost; }, 0);
-      var totalRun = current.jobs.reduce(function (a, j) { return a + j.run_cost; }, 0);
-      var totalTeardown = current.jobs.reduce(function (a, j) { return a + j.teardown_cost; }, 0);
+      var jobs = visibleJobs();
+      if (!jobs.length) {
+        detailsEl.className = "gx-chart-details";
+        detailsEl.innerHTML = '<span class="gx-chart-details__placeholder">No jobs match &ldquo;' + escapeHtml(searchInput.value) + '&rdquo;.</span>';
+        return;
+      }
+      var costs = jobs.map(function (j) { return j.cost; });
+      var totalBoot = jobs.reduce(function (a, j) { return a + j.boot_cost; }, 0);
+      var totalRun = jobs.reduce(function (a, j) { return a + j.run_cost; }, 0);
+      var totalTeardown = jobs.reduce(function (a, j) { return a + j.teardown_cost; }, 0);
       var phaseTotal = totalBoot + totalRun + totalTeardown;
+      var totalCost = costs.reduce(function (a, b) { return a + b; }, 0);
       detailsEl.className = "gx-chart-details gx-chart-details--active";
       detailsEl.innerHTML =
-        '<div class="gx-chart-details__label">' + current.jobs.length + " GCP Batch jobs</div>" +
-        '<div class="gx-chart-details__stage">Total: ' + fmtDollars(current.gcp_batch_total_cost) + "</div>" +
-        '<div class="gx-chart-details__stage">Per-job avg: ' + fmtDollars(costs.reduce(function (a, b) { return a + b; }, 0) / costs.length) + "</div>" +
+        '<div class="gx-chart-details__label">' + jobs.length + (searchQuery ? " matching" : "") + " GCP Batch jobs</div>" +
+        '<div class="gx-chart-details__stage">Total: ' + fmtDollars(searchQuery ? totalCost : current.gcp_batch_total_cost) + "</div>" +
+        '<div class="gx-chart-details__stage">Per-job avg: ' + fmtDollars(totalCost / costs.length) + "</div>" +
         '<div class="gx-chart-details__stage">Boot: ' + fmtDollars(totalBoot) + " (" + fmtPct(totalBoot, phaseTotal) + ")" +
           " &middot; Run: " + fmtDollars(totalRun) + " (" + fmtPct(totalRun, phaseTotal) + ")" +
           " &middot; Teardown: " + fmtDollars(totalTeardown) + " (" + fmtPct(totalTeardown, phaseTotal) + ")</div>";
@@ -646,21 +776,39 @@ nav_id: costs
     newerBtn.addEventListener("click", function () { showRun(idx + 1, 1); });
     window.addEventListener("resize", draw);
 
+    searchInput.addEventListener("input", function () {
+      searchQuery = searchInput.value.trim().toLowerCase();
+      searchClear.hidden = !searchInput.value;
+      updateWindowLabel();
+      draw();
+      renderDefaultDetails();
+    });
+    searchClear.addEventListener("click", function () {
+      searchInput.value = "";
+      searchQuery = "";
+      searchClear.hidden = true;
+      searchInput.focus();
+      updateWindowLabel();
+      draw();
+      renderDefaultDetails();
+    });
+
     canvas.addEventListener("mousemove", function (evt) {
       if (!current || !current.jobs.length) return;
+      var jobs = visibleJobs();
       var rect = canvas.getBoundingClientRect();
       var y = evt.clientY - rect.top;
       var row = Math.floor((y - TOP_PAD) / ROW_STEP);
-      if (row < 0 || row >= current.jobs.length) {
+      if (row < 0 || row >= jobs.length) {
         canvas.style.cursor = "default";
         renderDefaultDetails();
         return;
       }
       canvas.style.cursor = "pointer";
-      var job = current.jobs[row];
+      var job = jobs[row];
       detailsEl.className = "gx-chart-details gx-chart-details--active";
       detailsEl.innerHTML =
-        '<div class="gx-chart-details__time">' + escapeHtml(shortName(job.tool_id)) + "</div>" +
+        '<div class="gx-chart-details__time">' + escapeHtml(job._toolName) + "</div>" +
         '<div class="gx-chart-details__stage">Machine: ' + escapeHtml(job.machine_type || "unknown") +
           " (" + job.vcpu + " vCPU, " + job.ram_gib + " GiB)</div>" +
         '<div class="gx-chart-details__stage">Boot: ' + fmtSeconds(job.boot_seconds) + " &middot; " + fmtDollars(job.boot_cost) +
