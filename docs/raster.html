@@ -422,6 +422,36 @@ nav_id: raster
     font-size: 0.8rem;
     color: var(--galaxy-grey);
   }
+
+  /* Tool-header "summary of runs" donut - a ring chart instead of a
+     linear bar, so per-run outcomes read as a proportion rather than
+     (misleadingly) as a timeline running left to right. */
+  .gx-donut-block {
+    margin-bottom: 0.9rem;
+  }
+  .gx-donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.4rem;
+  }
+  .gx-donut {
+    width: 84px;
+    height: 84px;
+    flex: 0 0 auto;
+  }
+  .gx-donut__value {
+    font-size: 7px;
+    font-weight: 700;
+    fill: var(--galaxy-dark);
+  }
+  .gx-donut-block__counts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+    color: var(--galaxy-grey);
+  }
   .gx-inspector__nav {
     display: flex;
     align-items: center;
@@ -791,11 +821,21 @@ nav_id: raster
       ", skipped (" + skipped + " · " + pctOf(skipped) + "%)";
   }
 
-  // One "run health" bar for the run inspector drawer: a proportional,
-  // segmented bar (no in-segment labels - several segments are too
-  // narrow for text) with a large primary value beside its label and
-  // exact per-category counts below, each with a color swatch matching
-  // the bar segment. segments: [{count, color, label}].
+  // One proportional "health" bar, shared by the run and tool inspector
+  // drawers: a segmented bar (no in-segment labels - several segments
+  // are too narrow for text) with a large primary value beside its
+  // label and exact per-category counts below, each with a color
+  // swatch matching the bar segment. segments: [{count, color, label}].
+  // Shared by runBarBlockHtml and donutChartHtml below.
+  function healthCountsHtml(segments) {
+    return segments
+      .map(function (s) {
+        return '<span class="gx-legend2__item"><span class="gx-swatch2" style="background:' + s.color + '"></span>' +
+          s.count + " " + escapeHtml(s.label) + "</span>";
+      })
+      .join("");
+  }
+
   function runBarBlockHtml(label, valueText, segments) {
     var total = segments.reduce(function (a, s) { return a + s.count; }, 0);
     var barHtml = segments
@@ -806,12 +846,6 @@ nav_id: raster
           'title="' + escapeHtml(s.count + " " + s.label) + '"></span>';
       })
       .join("");
-    var countsHtml = segments
-      .map(function (s) {
-        return '<span class="gx-legend2__item"><span class="gx-swatch2" style="background:' + s.color + '"></span>' +
-          s.count + " " + escapeHtml(s.label) + "</span>";
-      })
-      .join("");
     return (
       '<div class="gx-run-bar-block">' +
         '<div class="gx-run-bar-block__top">' +
@@ -819,7 +853,48 @@ nav_id: raster
           '<span class="gx-run-bar-block__value">' + escapeHtml(valueText) + "</span>" +
         "</div>" +
         '<div class="gx-run-bar">' + barHtml + "</div>" +
-        '<div class="gx-run-bar-block__counts">' + countsHtml + "</div>" +
+        '<div class="gx-run-bar-block__counts">' + healthCountsHtml(segments) + "</div>" +
+      "</div>"
+    );
+  }
+
+  // Ring-chart counterpart to runBarBlockHtml, for distributions where a
+  // left-to-right bar risks reading as a timeline (e.g. the tool
+  // header's per-run outcome mix, where segment order is really just
+  // insertion order, not chronology). centerText is a short label (a
+  // bare percentage) - the ring itself is small, so the fuller
+  // valueText goes on the top line instead.
+  function donutChartHtml(label, valueText, centerText, segments) {
+    var total = segments.reduce(function (a, s) { return a + s.count; }, 0);
+    var cumulativePct = 0;
+    var arcsHtml = segments
+      .filter(function (s) { return s.count > 0; })
+      .map(function (s) {
+        var pct = total ? (s.count / total) * 100 : 0;
+        var dasharray = pct.toFixed(3) + " " + (100 - pct).toFixed(3);
+        var dashoffset = (-cumulativePct).toFixed(3);
+        cumulativePct += pct;
+        return '<circle class="gx-donut__seg" cx="18" cy="18" r="15.9155" fill="transparent" ' +
+          'stroke="' + s.color + '" stroke-width="5" stroke-dasharray="' + dasharray + '" ' +
+          'stroke-dashoffset="' + dashoffset + '"><title>' + escapeHtml(s.count + " " + s.label) + "</title></circle>";
+      })
+      .join("");
+    return (
+      '<div class="gx-donut-block">' +
+        '<div class="gx-run-bar-block__top">' +
+          '<span class="gx-run-bar-block__label">' + escapeHtml(label) + "</span>" +
+          '<span class="gx-run-bar-block__value">' + escapeHtml(valueText) + "</span>" +
+        "</div>" +
+        '<div class="gx-donut-wrap">' +
+          '<svg viewBox="0 0 36 36" class="gx-donut" role="img" aria-label="' + escapeHtml(valueText) + '">' +
+            '<circle cx="18" cy="18" r="15.9155" fill="transparent" stroke="#eef2f6" stroke-width="5"></circle>' +
+            '<g transform="rotate(-90 18 18)">' + arcsHtml + "</g>" +
+            '<text x="18" y="18" text-anchor="middle" dominant-baseline="central" class="gx-donut__value">' +
+              escapeHtml(centerText) +
+            "</text>" +
+          "</svg>" +
+          '<div class="gx-donut-block__counts">' + healthCountsHtml(segments) + "</div>" +
+        "</div>" +
       "</div>"
     );
   }
@@ -1743,11 +1818,26 @@ nav_id: raster
     // work).
     function renderToolHeader(toolId) {
       var stats = computeRightStats(toolId, currentRunIds(), matrix);
+      var unhealthyPct = stats.attempted ? Math.round((stats.unhealthy / stats.attempted) * 100) : 0;
+      var streakBadge = stats.attempted === 0
+        ? "Not attempted in window"
+        : stats.currentStreak
+          ? stats.currentStreak + "-run active streak"
+          : "Currently healthy";
       inspectorHeader.innerHTML =
         '<h3 class="gx-inspector__title">' + toolNameHeaderHtml(toolId) + "</h3>" +
+        '<div class="gx-run-summary__meta">' +
+          '<span class="gx-run-summary__time">' + stats.attempted + " of " + currentRunIds().length + " runs shown attempted</span>" +
+          '<span class="gx-inspector__badge">' + escapeHtml(streakBadge) + "</span>" +
+        "</div>" +
+        donutChartHtml("Summary of runs", unhealthyPct + "% of attempted runs unhealthy", unhealthyPct + "%", [
+          { count: stats.counts.pass, color: COLORS.pass, label: "healthy" },
+          { count: stats.counts.fail, color: rgbStr(COLORS.fail), label: "failure-only" },
+          { count: stats.counts.error, color: rgbStr(COLORS.error), label: "error-only" },
+          { count: stats.counts.mixed, color: rgbStr(COLORS.mixed), label: "both" }
+        ]) +
         '<div class="gx-inspector__summary">' +
-        "Unhealthy in " + stats.unhealthy + " of " + stats.attempted + " attempted runs shown<br>" +
-        "Current streak: " + stats.currentStreak + " · longest in this window: " + stats.longestStreak + "<br>" +
+        "Longest streak in this window: " + stats.longestStreak + "<br>" +
         "Median affected: " + pct(stats.medianAffected) + " · max affected: " + pct(stats.maxAffected) +
         "</div>";
       updateNav({ mode: "tool", toolId: toolId });
