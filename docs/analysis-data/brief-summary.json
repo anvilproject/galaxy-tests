@@ -1,6 +1,6 @@
 {
-  "run_id": "anvil-test-ci-260920-112513",
-  "generated_at": "2026-09-20T12:46:44+00:00",
+  "run_id": "anvil-test-ci-260921-124934",
+  "generated_at": "2026-09-21T14:11:54+00:00",
   "model": "gemini-3.6-flash",
-  "summary": "There are no new failures in this run. A long-standing shared infrastructure issue regarding test input data being unavailable on the server continues to affect 10 tests across 6 tools with a 30-run streak. All remaining persistent tool-specific issues are unchanged from recent runs and remain stable, so no action is needed."
+  "summary": "The most notable new issue affects split_file_to_collection, where 20 tests failed with a history not found error, alongside a single new output mismatch in deeptools_plot_enrichment. The history error text likely reflects a session state or history lifecycle failure where the execution workspace was deleted or became inaccessible before the tests completed. Persistent issues\u2014including the long-standing shared input data failure and several recurring tool-specific errors\u2014remain stable compared to recent runs, requiring no action.\n\nThe absence of database connection-pool timeouts elsewhere in this run makes a general server-overload explanation unlikely. This points instead toward a localized history handling or workspace management issue specific to that test workflow."
 }
