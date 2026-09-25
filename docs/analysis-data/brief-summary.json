@@ -1,6 +1,6 @@
 {
-  "run_id": "anvil-test-ci-260924-114738",
-  "generated_at": "2026-09-24T13:06:14+00:00",
+  "run_id": "anvil-test-ci-260925-115237",
+  "generated_at": "2026-09-25T13:07:34+00:00",
   "model": "gemini-3.6-flash",
-  "summary": "New failures appeared across several individual tools this run, including samtools_sort, dada2_dada, anndata_manipulate, gfastats, and purge_dups. Persistent issues remain stable with no action needed, as the long-standing server input data error affecting six tools and other recurring tool failures are unchanged from recent runs. Four tools successfully recovered from previous errors, including mitohifi and pepquery2."
+  "summary": "A new isolated issue affected bcftools_concat across 6 tests with a \"History not found\" error, likely pointing to a data staging or history context lookup problem during test setup. Persistent issues remain stable, including the long-standing shared infrastructure failure affecting input data across 6 tools alongside several continuing tool-specific errors. Ten issues recovered in this run, clearing up errors across multiple tools.\n\nThe absence of database connection-pool errors in the server logs suggests the server was keeping up during this run, making general server overload an unlikely explanation. Furthermore, because this exact error signature was first recorded in an August run, it points toward a recurring intermittent state issue rather than a brand new regression."
 }
