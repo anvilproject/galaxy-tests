@@ -1,6 +1,6 @@
 {
-  "run_id": "anvil-test-ci-260925-115237",
-  "generated_at": "2026-09-25T13:07:34+00:00",
+  "run_id": "anvil-test-ci-260926-112630",
+  "generated_at": "2026-09-26T12:45:45+00:00",
   "model": "gemini-3.6-flash",
-  "summary": "A new isolated issue affected bcftools_concat across 6 tests with a \"History not found\" error, likely pointing to a data staging or history context lookup problem during test setup. Persistent issues remain stable, including the long-standing shared infrastructure failure affecting input data across 6 tools alongside several continuing tool-specific errors. Ten issues recovered in this run, clearing up errors across multiple tools.\n\nThe absence of database connection-pool errors in the server logs suggests the server was keeping up during this run, making general server overload an unlikely explanation. Furthermore, because this exact error signature was first recorded in an August run, it points toward a recurring intermittent state issue rather than a brand new regression."
+  "summary": "A single new failure appeared this run, with circos_aln_to_links encountering a \"History not found\" error. Known persistent issues remain stable and require no immediate action, dominated by a long-standing infrastructure problem where test input data is unavailable on the server affecting 10 tests across 6 tools. Two failures cleared since the last run, including issues on mitohifi and bcftools_concat."
 }
