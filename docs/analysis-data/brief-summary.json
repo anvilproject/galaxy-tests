@@ -1,6 +1,6 @@
 {
-  "run_id": "anvil-test-ci-260929-125453",
-  "generated_at": "2026-09-29T14:17:00+00:00",
+  "run_id": "anvil-test-ci-260930-123651",
+  "generated_at": "2026-09-30T13:59:59+00:00",
   "model": "gemini-3.6-flash",
-  "summary": "There are no new failures in this run. The primary ongoing issue remains a persistent infrastructure failure where test input data is unavailable on the server, affecting 10 tests across 6 tools. Other continuing tool failures remain stable with no action needed, while a runtime error affecting fasterq_dump has recovered."
+  "summary": "New failures emerged in volcanoplot, affecting 5 tests with a history error, alongside a single failure in infernal_cmpress. The missing history error on volcanoplot likely points to a problem during test workspace or session initialization rather than an error within the tool itself. Persistent issues\u2014including the shared unavailable test data affecting 6 tools\u2014remain stable with no action needed, while mitohifi recovered from its previous failure.\n\nThe zero connection-pool timeout count indicates the server was keeping up during this run, making server overload an unlikely explanation for the volcanoplot failures. Given that this exact error signature was first recorded in run anvil-test-ci-260901-114002, the evidence points toward an intermittent test harness or history lifecycle issue rather than a novel infrastructure outage."
 }
