@@ -12,10 +12,10 @@ name: Update scheduled tool versions
 
 on:
   schedule:
-    # Wednesday, late enough that the night's own run has long since
-    # committed a fresh inventory, and far enough past usegalaxy-tools'
-    # Sunday update for a merged tool bump to have reached the bundle.
-    - cron: '0 18 * * 3'
+    # Tuesday 22:56 UTC (cron is always UTC): after Tuesday's run has
+    # committed an inventory reflecting the bundle cvmfs-cloud-clone built at
+    # 00:00 UTC, and before Wednesday's run, which then tests the new pins.
+    - cron: '56 22 * * 2'
   workflow_dispatch:
     inputs:
       dry-run:
