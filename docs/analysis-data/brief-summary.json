@@ -1,6 +1,6 @@
 {
-  "run_id": "anvil-test-ci-260930-123651",
-  "generated_at": "2026-09-30T13:59:59+00:00",
+  "run_id": "anvil-test-ci-261001-131543",
+  "generated_at": "2026-10-01T14:38:38+00:00",
   "model": "gemini-3.6-flash",
-  "summary": "New failures emerged in volcanoplot, affecting 5 tests with a history error, alongside a single failure in infernal_cmpress. The missing history error on volcanoplot likely points to a problem during test workspace or session initialization rather than an error within the tool itself. Persistent issues\u2014including the shared unavailable test data affecting 6 tools\u2014remain stable with no action needed, while mitohifi recovered from its previous failure.\n\nThe zero connection-pool timeout count indicates the server was keeping up during this run, making server overload an unlikely explanation for the volcanoplot failures. Given that this exact error signature was first recorded in run anvil-test-ci-260901-114002, the evidence points toward an intermittent test harness or history lifecycle issue rather than a novel infrastructure outage."
+  "summary": "New isolated runtime errors occurred in plotly_parallel_coordinates_plot and rseqc_clipping_profile. The long-standing infrastructure issue causing unavailable test input data across 6 tools remains stable with 10 test failures, and overall persistent issues remain unchanged from recent runs with no action needed. Meanwhile, failures previously affecting volcanoplot and infernal_cmpress have cleared."
 }
