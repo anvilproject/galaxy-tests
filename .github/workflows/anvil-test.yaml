@@ -646,13 +646,13 @@ jobs:
           echo "key=$KEY" >> "$GITHUB_OUTPUT"
 
       # Five selection modes, in priority order:
-      #   1. Scheduled run: always the fixed 200 tool IDs pinned in
-      #      .github/scheduled-tool-ids.txt (the exact sample from run
+      #   1. Scheduled run: always the curated tool IDs pinned in
+      #      .github/scheduled-tool-ids.txt (expanded from the sample in run
       #      32498376715, the first one confirmed not to silently drop
       #      tools - see the xargs-desync note below), not a fresh random
       #      sample each night. The point of a nightly run right now is to
       #      build confidence in a stable set before widening it, so a
-      #      different random 200 each night would defeat that - two
+      #      different random sample each night would defeat that - two
       #      failures a week apart wouldn't tell you whether the tool
       #      regressed or you just got unlucky with the sample. Once
       #      confidence is established, widen coverage by regenerating this

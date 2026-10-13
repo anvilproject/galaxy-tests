@@ -1,6 +1,6 @@
 # Tools categorically excluded from AnVIL harness runs.
 #
-# Purpose: as coverage widens from the current pinned 200 toward the full
+# Purpose: as coverage widens from the current pinned list toward the full
 # toolset, some tools can never produce a useful result here. Testing them
 # spends a slot to manufacture a red cell every night, which trains everyone
 # to ignore red cells. This file is the single place that decides which.
@@ -120,6 +120,336 @@ hgv_pass
 #   intermine - a Galaxy built-in with no tests. Built-ins are keyed
 #     unversioned, so this is a bare id like the hgv_* entries above.
 intermine
+
+
+# --- Installed tools with zero tests (live audit 2026-10-13) ------------
+# Checked api/tools?in_panel=false against api/tools/tests_summary on ea-dev.
+# Latest-only policy: exclude a family when its latest installed version
+# has zero test cases. Older zero-test versions never justify excluding a
+# tested latest version. Most entries below have no tests at any version.
+# Entries already covered above (including data managers) are not repeated.
+# Revisit on toolset updates and remove an entry when its latest version
+# gains tests. These exclusions do not imply that the tools cannot run.
+# Built-in pick_value has 13 tests; use it rather than the Tool Shed wrapper.
+#
+# Tool Shed tools (version-independent owner/repository/tool paths):
+/repos/bgruening/kmetashot/kmetashot/
+/repos/devteam/emboss_5/EMBOSS: cai_custom6/
+/repos/devteam/emboss_5/EMBOSS: chaos7/
+/repos/devteam/emboss_5/EMBOSS: charge8/
+/repos/devteam/emboss_5/EMBOSS: checktrans9/
+/repos/devteam/emboss_5/EMBOSS: cirdna11/
+/repos/devteam/emboss_5/EMBOSS: cpgplot15/
+/repos/devteam/emboss_5/EMBOSS: dan19/
+/repos/devteam/emboss_5/EMBOSS: diffseq22/
+/repos/devteam/emboss_5/EMBOSS: digest23/
+/repos/devteam/emboss_5/EMBOSS: dotmatcher24/
+/repos/devteam/emboss_5/EMBOSS: dotpath25/
+/repos/devteam/emboss_5/EMBOSS: dottup26/
+/repos/devteam/emboss_5/EMBOSS: epestfind29/
+/repos/devteam/emboss_5/EMBOSS: extractfeat34/
+/repos/devteam/emboss_5/EMBOSS: fuzzpro38/
+/repos/devteam/emboss_5/EMBOSS: infoseq46/
+/repos/devteam/emboss_5/EMBOSS: lindna48/
+/repos/devteam/emboss_5/EMBOSS: megamerger53/
+/repos/devteam/emboss_5/EMBOSS: merger54/
+/repos/devteam/emboss_5/EMBOSS: octanol63/
+/repos/devteam/emboss_5/EMBOSS: oddcomp64/
+/repos/devteam/emboss_5/EMBOSS: pepinfo69/
+/repos/devteam/emboss_5/EMBOSS: pepnet70/
+/repos/devteam/emboss_5/EMBOSS: pepwheel72/
+/repos/devteam/emboss_5/EMBOSS: pepwindow73/
+/repos/devteam/emboss_5/EMBOSS: pepwindowall74/
+/repos/devteam/emboss_5/EMBOSS: plotcon75/
+/repos/devteam/emboss_5/EMBOSS: plotorf76/
+/repos/devteam/emboss_5/EMBOSS: prettyplot79/
+/repos/devteam/emboss_5/EMBOSS: showfeat85/
+/repos/devteam/emboss_5/EMBOSS: shuffleseq87/
+/repos/devteam/emboss_5/EMBOSS: skipseq91/
+/repos/devteam/emboss_5/EMBOSS: supermatcher95/
+/repos/devteam/emboss_5/EMBOSS: syco96/
+/repos/devteam/emboss_5/EMBOSS: tcode97/
+/repos/devteam/emboss_5/EMBOSS: textsearch98/
+/repos/devteam/emboss_5/EMBOSS: tmap99/
+/repos/devteam/emboss_5/EMBOSS: twofeat104/
+/repos/devteam/emboss_5/EMBOSS: vectorstrip106/
+/repos/devteam/emboss_5/EMBOSS: wordmatch110/
+/repos/devteam/gmaj/gmaj_1/
+/repos/ebi-gxa/salmon_kallisto_mtx_to_10x/_salmon_kallisto_mtx_to_10x/
+/repos/iuc/jbrowse/jbrowse_to_standalone/
+/repos/iuc/snpsift/snpsift_vartype/
+/repos/iuc/snpsift_dbnsfp/snpSift_dbnsfp/
+/repos/iuc/snpsift_genesets/snpSift_geneSets/
+/repos/nick/dunovo/correct_barcodes/
+/repos/nick/dunovo/precheck/
+/repos/nick/sequence_content_trimmer/sequence_content_trimmer/
+/repos/q2d2/qiime2__alignment__mafft/qiime2__alignment__mafft/
+/repos/q2d2/qiime2__alignment__mafft_add/qiime2__alignment__mafft_add/
+/repos/q2d2/qiime2__alignment__mask/qiime2__alignment__mask/
+/repos/q2d2/qiime2__composition__add_pseudocount/qiime2__composition__add_pseudocount/
+/repos/q2d2/qiime2__composition__ancom/qiime2__composition__ancom/
+/repos/q2d2/qiime2__composition__ancombc2_visualizer/qiime2__composition__ancombc2_visualizer/
+/repos/q2d2/qiime2__composition__da_barplot/qiime2__composition__da_barplot/
+/repos/q2d2/qiime2__composition__tabulate/qiime2__composition__tabulate/
+/repos/q2d2/qiime2__cutadapt__trim_paired/qiime2__cutadapt__trim_paired/
+/repos/q2d2/qiime2__cutadapt__trim_single/qiime2__cutadapt__trim_single/
+/repos/q2d2/qiime2__dada2__denoise_ccs/qiime2__dada2__denoise_ccs/
+/repos/q2d2/qiime2__dada2__denoise_pyro/qiime2__dada2__denoise_pyro/
+/repos/q2d2/qiime2__deblur__denoise_other/qiime2__deblur__denoise_other/
+/repos/q2d2/qiime2__demux__emp_paired/qiime2__demux__emp_paired/
+/repos/q2d2/qiime2__demux__filter_samples/qiime2__demux__filter_samples/
+/repos/q2d2/qiime2__demux__partition_samples_paired/qiime2__demux__partition_samples_paired/
+/repos/q2d2/qiime2__demux__partition_samples_single/qiime2__demux__partition_samples_single/
+/repos/q2d2/qiime2__demux__subsample_paired/qiime2__demux__subsample_paired/
+/repos/q2d2/qiime2__demux__subsample_single/qiime2__demux__subsample_single/
+/repos/q2d2/qiime2__demux__tabulate_read_counts/qiime2__demux__tabulate_read_counts/
+/repos/q2d2/qiime2__diversity__adonis/qiime2__diversity__adonis/
+/repos/q2d2/qiime2__diversity__alpha/qiime2__diversity__alpha/
+/repos/q2d2/qiime2__diversity__alpha_phylogenetic/qiime2__diversity__alpha_phylogenetic/
+/repos/q2d2/qiime2__diversity__alpha_rarefaction/qiime2__diversity__alpha_rarefaction/
+/repos/q2d2/qiime2__diversity__beta/qiime2__diversity__beta/
+/repos/q2d2/qiime2__diversity__beta_correlation/qiime2__diversity__beta_correlation/
+/repos/q2d2/qiime2__diversity__beta_group_significance/qiime2__diversity__beta_group_significance/
+/repos/q2d2/qiime2__diversity__beta_phylogenetic/qiime2__diversity__beta_phylogenetic/
+/repos/q2d2/qiime2__diversity__beta_rarefaction/qiime2__diversity__beta_rarefaction/
+/repos/q2d2/qiime2__diversity__bioenv/qiime2__diversity__bioenv/
+/repos/q2d2/qiime2__diversity__core_metrics/qiime2__diversity__core_metrics/
+/repos/q2d2/qiime2__diversity__core_metrics_phylogenetic/qiime2__diversity__core_metrics_phylogenetic/
+/repos/q2d2/qiime2__diversity__filter_alpha_diversity/qiime2__diversity__filter_alpha_diversity/
+/repos/q2d2/qiime2__diversity__filter_distance_matrix/qiime2__diversity__filter_distance_matrix/
+/repos/q2d2/qiime2__diversity__mantel/qiime2__diversity__mantel/
+/repos/q2d2/qiime2__diversity__partial_procrustes/qiime2__diversity__partial_procrustes/
+/repos/q2d2/qiime2__diversity__pcoa/qiime2__diversity__pcoa/
+/repos/q2d2/qiime2__diversity__pcoa_biplot/qiime2__diversity__pcoa_biplot/
+/repos/q2d2/qiime2__diversity__procrustes_analysis/qiime2__diversity__procrustes_analysis/
+/repos/q2d2/qiime2__diversity__tsne/qiime2__diversity__tsne/
+/repos/q2d2/qiime2__diversity__umap/qiime2__diversity__umap/
+/repos/q2d2/qiime2__emperor__biplot/qiime2__emperor__biplot/
+/repos/q2d2/qiime2__feature_classifier__blast/qiime2__feature_classifier__blast/
+/repos/q2d2/qiime2__feature_classifier__classify_consensus_blast/qiime2__feature_classifier__classify_consensus_blast/
+/repos/q2d2/qiime2__feature_classifier__classify_consensus_vsearch/qiime2__feature_classifier__classify_consensus_vsearch/
+/repos/q2d2/qiime2__feature_classifier__classify_hybrid_vsearch_sklearn/qiime2__feature_classifier__classify_hybrid_vsearch_sklearn/
+/repos/q2d2/qiime2__feature_classifier__classify_sklearn/qiime2__feature_classifier__classify_sklearn/
+/repos/q2d2/qiime2__feature_classifier__extract_reads/qiime2__feature_classifier__extract_reads/
+/repos/q2d2/qiime2__feature_classifier__find_consensus_annotation/qiime2__feature_classifier__find_consensus_annotation/
+/repos/q2d2/qiime2__feature_classifier__fit_classifier_naive_bayes/qiime2__feature_classifier__fit_classifier_naive_bayes/
+/repos/q2d2/qiime2__feature_classifier__fit_classifier_sklearn/qiime2__feature_classifier__fit_classifier_sklearn/
+/repos/q2d2/qiime2__feature_classifier__makeblastdb/qiime2__feature_classifier__makeblastdb/
+/repos/q2d2/qiime2__feature_classifier__vsearch_global/qiime2__feature_classifier__vsearch_global/
+/repos/q2d2/qiime2__feature_table__core_features/qiime2__feature_table__core_features/
+/repos/q2d2/qiime2__feature_table__filter_seqs/qiime2__feature_table__filter_seqs/
+/repos/q2d2/qiime2__feature_table__heatmap/qiime2__feature_table__heatmap/
+/repos/q2d2/qiime2__feature_table__normalize/qiime2__feature_table__normalize/
+/repos/q2d2/qiime2__feature_table__presence_absence/qiime2__feature_table__presence_absence/
+/repos/q2d2/qiime2__feature_table__rarefy/qiime2__feature_table__rarefy/
+/repos/q2d2/qiime2__feature_table__relative_frequency/qiime2__feature_table__relative_frequency/
+/repos/q2d2/qiime2__feature_table__rename_ids/qiime2__feature_table__rename_ids/
+/repos/q2d2/qiime2__feature_table__split/qiime2__feature_table__split/
+/repos/q2d2/qiime2__feature_table__subsample/qiime2__feature_table__subsample/
+/repos/q2d2/qiime2__feature_table__subsample_ids/qiime2__feature_table__subsample_ids/
+/repos/q2d2/qiime2__feature_table__transpose/qiime2__feature_table__transpose/
+/repos/q2d2/qiime2__fragment_insertion__classify_otus_experimental/qiime2__fragment_insertion__classify_otus_experimental/
+/repos/q2d2/qiime2__fragment_insertion__filter_features/qiime2__fragment_insertion__filter_features/
+/repos/q2d2/qiime2__fragment_insertion__sepp/qiime2__fragment_insertion__sepp/
+/repos/q2d2/qiime2__gneiss__assign_ids/qiime2__gneiss__assign_ids/
+/repos/q2d2/qiime2__gneiss__correlation_clustering/qiime2__gneiss__correlation_clustering/
+/repos/q2d2/qiime2__gneiss__dendrogram_heatmap/qiime2__gneiss__dendrogram_heatmap/
+/repos/q2d2/qiime2__gneiss__gradient_clustering/qiime2__gneiss__gradient_clustering/
+/repos/q2d2/qiime2__gneiss__ilr_hierarchical/qiime2__gneiss__ilr_hierarchical/
+/repos/q2d2/qiime2__gneiss__ilr_phylogenetic/qiime2__gneiss__ilr_phylogenetic/
+/repos/q2d2/qiime2__gneiss__ilr_phylogenetic_differential/qiime2__gneiss__ilr_phylogenetic_differential/
+/repos/q2d2/qiime2__gneiss__ilr_phylogenetic_ordination/qiime2__gneiss__ilr_phylogenetic_ordination/
+/repos/q2d2/qiime2__longitudinal__anova/qiime2__longitudinal__anova/
+/repos/q2d2/qiime2__longitudinal__feature_volatility/qiime2__longitudinal__feature_volatility/
+/repos/q2d2/qiime2__longitudinal__first_differences/qiime2__longitudinal__first_differences/
+/repos/q2d2/qiime2__longitudinal__first_distances/qiime2__longitudinal__first_distances/
+/repos/q2d2/qiime2__longitudinal__linear_mixed_effects/qiime2__longitudinal__linear_mixed_effects/
+/repos/q2d2/qiime2__longitudinal__maturity_index/qiime2__longitudinal__maturity_index/
+/repos/q2d2/qiime2__longitudinal__nmit/qiime2__longitudinal__nmit/
+/repos/q2d2/qiime2__longitudinal__pairwise_differences/qiime2__longitudinal__pairwise_differences/
+/repos/q2d2/qiime2__longitudinal__pairwise_distances/qiime2__longitudinal__pairwise_distances/
+/repos/q2d2/qiime2__longitudinal__plot_feature_volatility/qiime2__longitudinal__plot_feature_volatility/
+/repos/q2d2/qiime2__metadata__merge/qiime2__metadata__merge/
+/repos/q2d2/qiime2__metadata__shuffle_groups/qiime2__metadata__shuffle_groups/
+# Latest installed version 2025.10.0+q2galaxy.2025.10.0 has zero tests; older versions have tests.
+/repos/q2d2/qiime2__metadata__tabulate/qiime2__metadata__tabulate/
+/repos/q2d2/qiime2__phylogeny__align_to_tree_mafft_iqtree/qiime2__phylogeny__align_to_tree_mafft_iqtree/
+/repos/q2d2/qiime2__phylogeny__align_to_tree_mafft_raxml/qiime2__phylogeny__align_to_tree_mafft_raxml/
+/repos/q2d2/qiime2__phylogeny__fasttree/qiime2__phylogeny__fasttree/
+/repos/q2d2/qiime2__phylogeny__filter_table/qiime2__phylogeny__filter_table/
+/repos/q2d2/qiime2__phylogeny__filter_tree/qiime2__phylogeny__filter_tree/
+/repos/q2d2/qiime2__phylogeny__iqtree/qiime2__phylogeny__iqtree/
+/repos/q2d2/qiime2__phylogeny__iqtree_ultrafast_bootstrap/qiime2__phylogeny__iqtree_ultrafast_bootstrap/
+/repos/q2d2/qiime2__phylogeny__midpoint_root/qiime2__phylogeny__midpoint_root/
+/repos/q2d2/qiime2__phylogeny__raxml/qiime2__phylogeny__raxml/
+/repos/q2d2/qiime2__phylogeny__raxml_rapid_bootstrap/qiime2__phylogeny__raxml_rapid_bootstrap/
+/repos/q2d2/qiime2__phylogeny__robinson_foulds/qiime2__phylogeny__robinson_foulds/
+/repos/q2d2/qiime2__quality_control__bowtie2_build/qiime2__quality_control__bowtie2_build/
+/repos/q2d2/qiime2__quality_control__decontam_identify/qiime2__quality_control__decontam_identify/
+/repos/q2d2/qiime2__quality_control__decontam_identify_batches/qiime2__quality_control__decontam_identify_batches/
+/repos/q2d2/qiime2__quality_control__decontam_remove/qiime2__quality_control__decontam_remove/
+/repos/q2d2/qiime2__quality_control__decontam_score_viz/qiime2__quality_control__decontam_score_viz/
+/repos/q2d2/qiime2__quality_control__evaluate_composition/qiime2__quality_control__evaluate_composition/
+/repos/q2d2/qiime2__quality_control__evaluate_seqs/qiime2__quality_control__evaluate_seqs/
+/repos/q2d2/qiime2__quality_control__exclude_seqs/qiime2__quality_control__exclude_seqs/
+/repos/q2d2/qiime2__quality_control__filter_reads/qiime2__quality_control__filter_reads/
+/repos/q2d2/qiime2__rescript__cull_seqs/qiime2__rescript__cull_seqs/
+/repos/q2d2/qiime2__rescript__degap_seqs/qiime2__rescript__degap_seqs/
+/repos/q2d2/qiime2__rescript__dereplicate/qiime2__rescript__dereplicate/
+/repos/q2d2/qiime2__rescript__edit_taxonomy/qiime2__rescript__edit_taxonomy/
+/repos/q2d2/qiime2__rescript__evaluate_classifications/qiime2__rescript__evaluate_classifications/
+/repos/q2d2/qiime2__rescript__evaluate_cross_validate/qiime2__rescript__evaluate_cross_validate/
+/repos/q2d2/qiime2__rescript__evaluate_seqs/qiime2__rescript__evaluate_seqs/
+/repos/q2d2/qiime2__rescript__evaluate_taxonomy/qiime2__rescript__evaluate_taxonomy/
+/repos/q2d2/qiime2__rescript__extract_seq_segments/qiime2__rescript__extract_seq_segments/
+/repos/q2d2/qiime2__rescript__filter_seqs_length/qiime2__rescript__filter_seqs_length/
+/repos/q2d2/qiime2__rescript__filter_seqs_length_by_taxon/qiime2__rescript__filter_seqs_length_by_taxon/
+/repos/q2d2/qiime2__rescript__filter_taxa/qiime2__rescript__filter_taxa/
+/repos/q2d2/qiime2__rescript__get_bv_brc_genome_features/qiime2__rescript__get_bv_brc_genome_features/
+/repos/q2d2/qiime2__rescript__get_bv_brc_genomes/qiime2__rescript__get_bv_brc_genomes/
+/repos/q2d2/qiime2__rescript__get_bv_brc_metadata/qiime2__rescript__get_bv_brc_metadata/
+/repos/q2d2/qiime2__rescript__get_gtdb_data/qiime2__rescript__get_gtdb_data/
+/repos/q2d2/qiime2__rescript__get_midori2_data/qiime2__rescript__get_midori2_data/
+/repos/q2d2/qiime2__rescript__get_ncbi_data/qiime2__rescript__get_ncbi_data/
+/repos/q2d2/qiime2__rescript__get_ncbi_data_protein/qiime2__rescript__get_ncbi_data_protein/
+/repos/q2d2/qiime2__rescript__get_ncbi_genomes/qiime2__rescript__get_ncbi_genomes/
+/repos/q2d2/qiime2__rescript__get_pr2_data/qiime2__rescript__get_pr2_data/
+/repos/q2d2/qiime2__rescript__get_silva_data/qiime2__rescript__get_silva_data/
+/repos/q2d2/qiime2__rescript__get_unite_data/qiime2__rescript__get_unite_data/
+/repos/q2d2/qiime2__rescript__merge_taxa/qiime2__rescript__merge_taxa/
+/repos/q2d2/qiime2__rescript__orient_reads/qiime2__rescript__orient_reads/
+/repos/q2d2/qiime2__rescript__orient_seqs/qiime2__rescript__orient_seqs/
+/repos/q2d2/qiime2__rescript__parse_silva_taxonomy/qiime2__rescript__parse_silva_taxonomy/
+/repos/q2d2/qiime2__rescript__reverse_transcribe/qiime2__rescript__reverse_transcribe/
+/repos/q2d2/qiime2__rescript__subsample_fasta/qiime2__rescript__subsample_fasta/
+/repos/q2d2/qiime2__rescript__trim_alignment/qiime2__rescript__trim_alignment/
+/repos/q2d2/qiime2__sample_classifier__classify_samples/qiime2__sample_classifier__classify_samples/
+/repos/q2d2/qiime2__sample_classifier__classify_samples_from_dist/qiime2__sample_classifier__classify_samples_from_dist/
+/repos/q2d2/qiime2__sample_classifier__classify_samples_ncv/qiime2__sample_classifier__classify_samples_ncv/
+/repos/q2d2/qiime2__sample_classifier__confusion_matrix/qiime2__sample_classifier__confusion_matrix/
+/repos/q2d2/qiime2__sample_classifier__fit_classifier/qiime2__sample_classifier__fit_classifier/
+/repos/q2d2/qiime2__sample_classifier__fit_regressor/qiime2__sample_classifier__fit_regressor/
+/repos/q2d2/qiime2__sample_classifier__heatmap/qiime2__sample_classifier__heatmap/
+/repos/q2d2/qiime2__sample_classifier__metatable/qiime2__sample_classifier__metatable/
+/repos/q2d2/qiime2__sample_classifier__predict_regression/qiime2__sample_classifier__predict_regression/
+/repos/q2d2/qiime2__sample_classifier__regress_samples/qiime2__sample_classifier__regress_samples/
+/repos/q2d2/qiime2__sample_classifier__regress_samples_ncv/qiime2__sample_classifier__regress_samples_ncv/
+/repos/q2d2/qiime2__sample_classifier__scatterplot/qiime2__sample_classifier__scatterplot/
+/repos/q2d2/qiime2__sample_classifier__split_table/qiime2__sample_classifier__split_table/
+/repos/q2d2/qiime2__sample_classifier__summarize/qiime2__sample_classifier__summarize/
+/repos/q2d2/qiime2__stats__collate_stats/qiime2__stats__collate_stats/
+/repos/q2d2/qiime2__stats__facet_across/qiime2__stats__facet_across/
+/repos/q2d2/qiime2__stats__facet_within/qiime2__stats__facet_within/
+/repos/q2d2/qiime2__stats__prep_alpha_distribution/qiime2__stats__prep_alpha_distribution/
+/repos/q2d2/qiime2__taxa__filter_seqs/qiime2__taxa__filter_seqs/
+/repos/q2d2/qiime2__taxa__filter_table/qiime2__taxa__filter_table/
+/repos/q2d2/qiime2__vizard__boxplot/qiime2__vizard__boxplot/
+/repos/q2d2/qiime2__vsearch__cluster_features_closed_reference/qiime2__vsearch__cluster_features_closed_reference/
+/repos/q2d2/qiime2__vsearch__cluster_features_open_reference/qiime2__vsearch__cluster_features_open_reference/
+/repos/q2d2/qiime2__vsearch__dereplicate_sequences/qiime2__vsearch__dereplicate_sequences/
+/repos/q2d2/qiime2__vsearch__fastq_stats/qiime2__vsearch__fastq_stats/
+/repos/q2d2/qiime2__vsearch__merge_pairs/qiime2__vsearch__merge_pairs/
+/repos/q2d2/qiime2__vsearch__uchime_denovo/qiime2__vsearch__uchime_denovo/
+/repos/q2d2/qiime2__vsearch__uchime_ref/qiime2__vsearch__uchime_ref/
+/repos/q2d2/qiime2_core__tools__export/qiime2_core__tools__export/
+/repos/q2d2/qiime2_core__tools__import/qiime2_core__tools__import/
+/repos/q2d2/qiime2_core__tools__import_fastq/qiime2_core__tools__import_fastq/
+/repos/saskia-hiltemann/krona_text/krona-text/
+
+# Galaxy built-ins, converters, internal and interactive tools:
+CONVERTER_Bam_Bai_0
+CONVERTER_Gro_to_Pdb_0
+CONVERTER_Pdb_to_Gro_0
+CONVERTER_SMILES_to_MOL
+CONVERTER_archive_to_directory
+CONVERTER_bam_to_bigwig_0
+CONVERTER_bam_to_coodinate_sorted_bam
+CONVERTER_bam_to_qname_sorted_bam
+CONVERTER_bcf_uncompressed_to_bcf
+CONVERTER_bed_gff_or_vcf_to_bigwig_0
+CONVERTER_bed_to_fli_0
+CONVERTER_bed_to_gff_0
+CONVERTER_bedgraph_to_bigwig
+CONVERTER_biom
+CONVERTER_bz2_to_uncompressed
+CONVERTER_cml_to_smiles
+CONVERTER_cram_to_bam_0
+CONVERTER_fasta_to_2bit
+CONVERTER_fasta_to_bowtie_base_index
+CONVERTER_fasta_to_bowtie_color_index
+CONVERTER_fasta_to_fai
+CONVERTER_fasta_to_len
+CONVERTER_fasta_to_tabular
+CONVERTER_fastq_to_fqtoc0
+CONVERTER_gff_to_bed_0
+CONVERTER_gff_to_fli_0
+CONVERTER_gff_to_interval_index_0
+CONVERTER_gz_to_uncompressed
+CONVERTER_inchi_to_mol
+CONVERTER_interval_to_bed12_0
+CONVERTER_interval_to_bed6_0
+CONVERTER_interval_to_bed_0
+CONVERTER_interval_to_bedstrict_0
+CONVERTER_interval_to_bgzip_0
+CONVERTER_interval_to_bigwig_0
+CONVERTER_interval_to_tabix_0
+CONVERTER_len_to_linecount
+CONVERTER_maf_to_fasta_0
+CONVERTER_maf_to_interval_0
+CONVERTER_mdconvert
+CONVERTER_mol2_to_mol
+CONVERTER_molecules
+CONVERTER_neostorezip_to_neostore
+CONVERTER_parquet_to_csv
+CONVERTER_picard_interval_list_to_bed6
+CONVERTER_ref_to_seq_taxomony
+CONVERTER_sam_to_bigwig_0
+CONVERTER_sam_to_unsorted_bam
+CONVERTER_smiles_to_smiles
+CONVERTER_uncompressed_to_gz
+CONVERTER_vcf_bgzip_to_tabix_0
+CONVERTER_wig_to_bigwig
+CONVERTER_wiggle_to_interval_0
+__APPLY_RULES__
+__DATA_FETCH__
+__EXPORT_HISTORY_TO_URI__
+__EXPORT_HISTORY__
+__IMPORT_HISTORY__
+__SET_METADATA__
+__UNZIP_COLLECTION__
+__ZIP_COLLECTION__
+bigwigtowig
+csv_to_tabular
+ebi_sra_main
+eupathdb
+export_remote
+flymine
+hbvar
+interactive_tool_askomics
+interactive_tool_bam_iobio
+interactive_tool_ethercalc
+interactive_tool_hicbrowser
+interactive_tool_neo4j
+interactive_tool_phinch
+liftOver1
+lped2fpedconvert
+lped2pbedconvert
+modENCODEfly
+modENCODEworm
+modmine
+mousemine
+pbed2ldindepconvert
+pbed2lpedconvert
+ratmine
+tabular_to_csv
+tabular_to_dbnsfp
+ucsc_bigbedtobed
+ucsc_table_direct1
+ucsc_table_direct_archaea1
+upload1
+wormbase
+yeastmine
+zebrafishmine
 
 
 # --- Deliberately NOT excluded (recorded so nobody adds them) ----------
