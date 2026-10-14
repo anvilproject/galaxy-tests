@@ -1,6 +1,6 @@
 {
-  "run_id": "anvil-test-ci-261013-141345",
-  "generated_at": "2026-10-13T15:36:08+00:00",
+  "run_id": "anvil-test-ci-261014-115415",
+  "generated_at": "2026-10-14T14:55:57+00:00",
   "model": "gemini-3.6-flash",
-  "summary": "The shared infrastructure issue where test input data is unavailable on the server remains ongoing, affecting 10 tests across 6 tools. All other failures are known persistent issues that remain stable from recent runs, so no action is needed."
+  "summary": "A new issue in MultiQC affects 37 tests, and another new issue in Trim Galore impacts 6 tests alongside isolated failures in tools such as BUSCO and FeatureCounts. The MultiQC failures likely result from an unhandled error during plot rendering or file export despite a successful job exit code. The Trim Galore test discrepancies appear to be driven by an updated Cutadapt version changing the expected report output text. Existing persistent issues remain stable with no action needed, including the long-running missing input data problem affecting 6 tools.\n\nThe absence of database connection pool timeouts in this run's logs suggests the server was not experiencing systemic overload. This makes environmental resource exhaustion unlikely, favoring tool-level dependency changes or output rendering issues as the primary drivers of this run's new failures."
 }
