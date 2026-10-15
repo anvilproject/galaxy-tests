@@ -15,7 +15,10 @@ history rather than pruned to a rolling window, since the raster's
 prev/next navigation and deep links can reach any run, not just the
 currently-drawn columns. (docs/tool-tests/ growing unbounded is the same
 tradeoff already accepted for runs/*/detail.json - revisit only if repo
-size actually becomes a problem.)
+size actually becomes a problem.) The compact manifest/matrix are retained
+independently: existing summaries survive even when both raw reports and
+per-test details are absent. Archived detail is only a migration fallback
+for runs not yet indexed in these summaries.
 
 Row set (tools) grows as tools are actually attempted, not a fixed list -
 see v2_raster_plan.md sec 2/7. tools_expected/coverage-against-the-full-
@@ -61,6 +64,18 @@ def load_run(run_id: str) -> list[dict]:
     with open(path) as f:
         data = json.load(f)
     return data.get("tests", [])
+
+
+def load_archived_run(run_id: str) -> list[dict]:
+    """Recover raster inputs after the raw report has been pruned."""
+    with open(os.path.join(RUNS_DIR, run_id, "detail.json")) as f:
+        detail = json.load(f)
+    return [
+        {"data": dict(case, tool_id=tool_id, tool_version=version)}
+        for tool_id, versions in detail.items()
+        for version, cases in versions.items()
+        for case in cases
+    ]
 
 
 def run_timestamp(run_id: str) -> str | None:
@@ -199,17 +214,42 @@ def sync_run_report_to_pages(run_id: str) -> None:
 
 
 def main() -> None:
-    run_ids = all_run_dirs()
+    raw_run_ids = set(all_run_dirs())
+    archived_run_ids = {
+        name for name in os.listdir(RUNS_DIR)
+        if os.path.isfile(os.path.join(RUNS_DIR, name, "detail.json"))
+    } if os.path.isdir(RUNS_DIR) else set()
+    run_ids = sorted(raw_run_ids | archived_run_ids)
+    previous_manifest = {}
+    if os.path.exists(MANIFEST_PATH):
+        with open(MANIFEST_PATH) as f:
+            previous_manifest = {entry["run_id"]: entry for entry in json.load(f)}
+    previous_matrix = {}
+    if os.path.exists(MATRIX_PATH):
+        with open(MATRIX_PATH) as f:
+            previous_matrix = json.load(f)
+    summarized_run_ids = set(previous_manifest) & set(previous_matrix.get("runs", []))
+    run_ids = sorted(set(run_ids) | summarized_run_ids)
 
     manifest = []
     matrix_cells: dict[str, dict[str, dict]] = defaultdict(dict)
 
     for run_id in run_ids:
-        tests = load_run(run_id)
+        if run_id not in raw_run_ids and run_id in summarized_run_ids:
+            manifest.append(previous_manifest[run_id])
+            for tool_id, cells in previous_matrix.get("cells", {}).items():
+                if run_id in cells:
+                    matrix_cells[tool_id][run_id] = cells[run_id]
+            continue
+
+        tests = load_run(run_id) if run_id in raw_run_ids else load_archived_run(run_id)
         aggregates = tool_aggregates(tests)
 
         sync_run_report_to_pages(run_id)
-        manifest.append(build_manifest_entry(run_id, tests, aggregates))
+        entry = build_manifest_entry(run_id, tests, aggregates)
+        if run_id not in raw_run_ids:
+            entry["duration_seconds"] = previous_manifest.get(run_id, {}).get("duration_seconds")
+        manifest.append(entry)
         for tool_id, cell in aggregates.items():
             matrix_cells[tool_id][run_id] = cell
 
@@ -242,7 +282,7 @@ def main() -> None:
     print(
         f"Wrote {MANIFEST_PATH} ({len(manifest)} runs), {MATRIX_PATH} "
         f"({len(matrix['tools'])} tools x {len(run_ids)} runs), and "
-        f"{len(run_ids)} runs/*/detail.json files"
+        f"{len(raw_run_ids | (archived_run_ids - summarized_run_ids))} refreshed runs/*/detail.json files"
     )
 
 
