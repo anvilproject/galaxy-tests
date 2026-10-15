@@ -52,7 +52,7 @@ format entirely offline:
     export GEMINI_API_KEY=...
     python3 .github/scripts/anvil_generate_brief_summary.py
 
-This overwrites docs/analysis-data/brief-summary.json and also prints the
+This preserves summaries by run in docs/analysis-data/brief-summary.json and prints the
 summary to stdout, so you don't even need to open results-brief.html to
 see the effect of a prompt tweak - `git diff`/`git checkout --` the output
 file to compare or discard a local run. Pass --run-id to target an older
@@ -77,7 +77,7 @@ import requests
 ANALYSIS_PATH_DEFAULT = "docs/analysis-data/analysis.json"
 OUT_PATH_DEFAULT = "docs/analysis-data/brief-summary.json"
 DEPLOYMENTS_DIR = "reports/anvil/deployments"
-MODEL_DEFAULT = "gemini-3.6-flash"
+MODEL_DEFAULT = "gemini-4-argon"
 
 SHARED_CAP = 8
 PERSISTENT_CAP = 8
@@ -341,6 +341,23 @@ def call_gemini(facts: dict, model: str, api_key: str) -> str:
         raise SystemExit(f"Unexpected Gemini response shape: {json.dumps(data)[:2000]}") from e
 
 
+def save_summary(path: str, summary: dict) -> None:
+    """Update one run while preserving prior text and model provenance."""
+    summaries = {}
+    if os.path.exists(path):
+        with open(path) as f:
+            existing = json.load(f)
+        if "summaries" in existing:
+            summaries.update(existing["summaries"])
+        elif existing.get("run_id"):
+            summaries[existing["run_id"]] = existing
+    summaries[summary["run_id"]] = summary
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    with open(path, "w") as f:
+        json.dump({"summaries": dict(sorted(summaries.items()))}, f, indent=2)
+        f.write("\n")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-id", default=None, help="Target run (default: latest in analysis.json)")
@@ -364,18 +381,15 @@ def main() -> None:
     print(file=sys.stderr)
     print(f"({len(summary)} chars, model={args.model}, run_id={facts['run_id']})", file=sys.stderr)
 
-    os.makedirs(os.path.dirname(args.out), exist_ok=True)
-    with open(args.out, "w") as f:
-        json.dump(
-            {
-                "run_id": facts["run_id"],
-                "generated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
-                "model": args.model,
-                "summary": summary,
-            },
-            f,
-            indent=2,
-        )
+    save_summary(
+        args.out,
+        {
+            "run_id": facts["run_id"],
+            "generated_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+            "model": args.model,
+            "summary": summary,
+        },
+    )
     print(f"Wrote {args.out}", file=sys.stderr)
 
 

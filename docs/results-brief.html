@@ -592,16 +592,17 @@ nav_id: results-brief
     });
   }
 
-  // The generated summary is a single snapshot from whichever CI run last
-  // produced it (see anvil_generate_brief_summary.py) - not one per
-  // historical run like analysis.json - so it's only shown while the
-  // paginator is on that exact run, not superimposed on older ones.
+  // Summaries retain their original text/model for each run. Also accept
+  // the legacy single-summary format during the deployment transition.
   function applyAiSummary() {
-    if (aiSummaryData && aiSummaryData.run_id === currentRunId) {
-      aiSummaryTextEl.textContent = aiSummaryData.summary;
+    var summary = aiSummaryData && (aiSummaryData.summaries
+      ? aiSummaryData.summaries[currentRunId]
+      : aiSummaryData.run_id === currentRunId ? aiSummaryData : null);
+    if (summary) {
+      aiSummaryTextEl.textContent = summary.summary;
       aiSummaryMetaEl.textContent =
-        "AI-generated summary · " + (aiSummaryData.model || "unknown model") +
-        (aiSummaryData.generated_at ? " · " + fmtShort(aiSummaryData.generated_at) : "");
+        "AI-generated summary · " + (summary.model || "unknown model") +
+        (summary.generated_at ? " · " + fmtShort(summary.generated_at) : "");
       aiSummaryEl.hidden = false;
     } else {
       aiSummaryEl.hidden = true;

@@ -1,6 +1,262 @@
 {
-  "run_id": "anvil-test-ci-261015-113110",
-  "generated_at": "2026-10-15T14:20:50+00:00",
-  "model": "gemini-3.6-flash",
-  "summary": "A new test expectation issue arose for flye due to an unexpected assembly_graph output, while a long-standing infrastructure failure with unavailable test input data continues to affect 10 tests across 6 tools. Other persistent tool-specific failures remain stable from recent runs and require no immediate action. Meanwhile, a previous runtime issue on raceid_inspectclusters has recovered."
+  "summaries": {
+    "anvil-test-ci-260903-111533": {
+      "run_id": "anvil-test-ci-260903-111533",
+      "generated_at": "2026-09-03T18:14:40+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A widespread connection timeout reaching host 34.182.220.106 accounts for the vast majority of new failures, led by two major shared incidents causing 163 test failures across 77 tools and 153 test failures across 73 tools. The captured errors show HTTP connection attempts timing out after ten minutes during input staging and job checks, which likely indicates a network-level reachability issue with that specific IP host rather than a bug in the tools. Meanwhile, known persistent infrastructure issues remain stable, led by empty dataset output errors across 25 tools.\n\nThe absence of database connection pool timeout errors in the server log indicates that the test runner server was not experiencing internal overload during this run. This makes server-side resource exhaustion an unlikely explanation, pointing instead toward an external network-path or routing problem reaching host 34.182.220.106."
+    },
+    "anvil-test-ci-260904-111858": {
+      "run_id": "anvil-test-ci-260904-111858",
+      "generated_at": "2026-09-04T12:29:55+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A single new failure occurred this run on bowtie2 involving dataset metadata verification, while the primary driver remains a persistent shared infrastructure issue causing empty dataset outputs across 248 tests in 47 tools. Other persistent tool failures across the test suite remain stable compared to recent runs, so no action is needed on those. Additionally, transient network connection timeouts that spiked during the previous run have largely recovered."
+    },
+    "anvil-test-ci-260905-115830": {
+      "run_id": "anvil-test-ci-260905-115830",
+      "generated_at": "2026-09-05T13:08:23+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "No new failures occurred in this run, but a persistent infrastructure issue where outputs produced no content remains the primary disruption, affecting 251 tests across 45 tools. Remaining persistent problems across test expectations, internal test harness jobs, and individual tools are stable compared to recent runs, so no action is needed on those. Additionally, 14 previously failing issues recovered during this pass."
+    },
+    "anvil-test-ci-260906-105709": {
+      "run_id": "anvil-test-ci-260906-105709",
+      "generated_at": "2026-09-06T12:06:47+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "New issues surfaced in hyphy_fel with 3 runtime failures and in samtools_slice_bam across 3 tests. The \"History not found\" error in samtools_slice_bam likely points to a test setup or history creation issue where the required history fixture was missing or deleted before execution. Long-standing shared issues remain stable, including internal Galaxy utility job failures affecting 17 tests across 15 tools and missing server test input data affecting 16 tests across 7 tools. A major shared infrastructure failure seen in recent runs has resolved, clearing the vast majority of previously failing tests."
+    },
+    "anvil-test-ci-260907-123339": {
+      "run_id": "anvil-test-ci-260907-123339",
+      "generated_at": "2026-09-07T13:43:45+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A wave of new HTTP connection timeouts targeting host 34.145.189.182 represents the primary new issue in this run, led by one cluster affecting 89 tests across 43 tools and another affecting 47 tests across 26 tools. The captured error signatures show 600-second connection timeouts on port 80 during API calls and input staging, suggesting a network-level connectivity issue reaching that endpoint rather than a defect in the tool code itself. Meanwhile, persistent problems remain stable and require no new action, led by longstanding missing test input data across 7 tools and internal utility job failures across 12 tools.\n\nThe absence of database connection pool timeouts elsewhere in this run indicates the server was keeping up with load and not suffering from general system congestion. This makes a server overload explanation unlikely, pointing instead toward a network-level path or routing problem reaching that specific remote host."
+    },
+    "anvil-test-ci-260908-111959": {
+      "run_id": "anvil-test-ci-260908-111959",
+      "generated_at": "2026-09-08T12:30:38+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A cluster of new connection timeouts to host 136.107.33.62 represents the primary issue this run, headlined by one incident causing 53 test failures across 30 tools and a related input staging timeout affecting 25 tests across 18 tools. The captured error signatures pointing to connection timeouts at port 80 suggest a transient network-level reachability problem with that host rather than a software defect in the tools. Meanwhile, known persistent issues, including recurring internal utility job failures and unavailable server test data, remain stable and require no immediate action.\n\nBecause database connection pool exhaustion errors were entirely absent from the server logs during this run, general server overload is an unlikely explanation. This lack of internal server strain points instead toward an external network or path issue reaching that specific host during testing."
+    },
+    "anvil-test-ci-260909-112430": {
+      "run_id": "anvil-test-ci-260909-112430",
+      "generated_at": "2026-09-09T12:10:23+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A major widespread issue emerged this run involving HTTP connection timeouts to host 34.21.22.5, causing 475 test failures across 147 tools in the largest cluster. The captured error text pointing to connection timeouts suggests a network-level reachability issue reaching that host rather than code regressions in the tools themselves. Known persistent problems, including missing test input data across 6 tools and test expectation discrepancies for trimmomatic, remain stable with no action needed.\n\nThe absence of database connection-pool exhaustion errors in the server logs indicates that the test runner server itself was not overloaded during this run. This makes server-side congestion unlikely, further pointing toward an external network-path problem or downtime on the target endpoint."
+    },
+    "anvil-test-ci-260910-112049": {
+      "run_id": "anvil-test-ci-260910-112049",
+      "generated_at": "2026-09-10T12:27:24+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "Intermittent JSON decoding errors affected 42 tools in the largest shared failure, while internal Galaxy utility job errors continued across 13 tools. The widespread connection timeouts from the previous run resolved, clearing a major source of failures. Long-standing infrastructure problems such as missing test input data across 7 tools remain stable, alongside six new isolated issues across tools like hyphy_fel and gfastats."
+    },
+    "anvil-test-ci-260911-112212": {
+      "run_id": "anvil-test-ci-260911-112212",
+      "generated_at": "2026-09-11T12:23:39+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "The run was dominated by two new shared connection timeout incidents targeting host 34.48.51.124\u2014one affecting 195 tests across 102 tools during input staging and another affecting 59 tests across 37 tools\u2014which likely reflects a network reachability issue hitting that specific address rather than a tool bug. Known persistent issues remained stable, including a long-running missing test data issue affecting 7 tools and minor Galaxy utility job failures. On a positive note, 83 previously failing test issues recovered in this run.\n\nBecause both timeout signatures were recorded for the first time in this run and the server logged zero database connection-pool errors, internal server overload appears unlikely to be the cause. The clean database log instead favors an external network-path or host-level connectivity failure reaching the destination server."
+    },
+    "anvil-test-ci-260912-104753": {
+      "run_id": "anvil-test-ci-260912-104753",
+      "generated_at": "2026-09-12T11:45:04+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A major shared infrastructure incident where the test client could not reach the Galaxy server accounts for 482 test failures across 142 tools, alongside 10 tools affected by internal utility job failures. The long-standing infrastructure issue with unavailable test input data across 7 tools remains stable at 22 runs, while existing tool-specific errors remain unchanged alongside one new single-test failure in hyphy_fel."
+    },
+    "anvil-test-ci-260913-115335": {
+      "run_id": "anvil-test-ci-260913-115335",
+      "generated_at": "2026-09-13T12:52:35+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "The run continues to be dominated by a persistent infrastructure issue where the test client could not reach the Galaxy server, affecting 378 tests across 131 tools. A single new isolated issue saw a read timeout connecting to zenodo.org, while long-standing tool-specific errors and missing server test data remain stable with no action needed. A slight drop in server connection failures allowed 36 tests to recover from yesterday's elevated levels."
+    },
+    "anvil-test-ci-260914-124821": {
+      "run_id": "anvil-test-ci-260914-124821",
+      "generated_at": "2026-09-14T14:02:02+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "Two new runtime job errors affecting the hyphy_fel tool emerged in this run. Known persistent failures remain stable with no action needed, including a long-standing infrastructure issue where test input data is unavailable on the server across 7 tools and 16 tests, alongside a small set of continuing tool-specific errors. The widespread infrastructure connectivity failures that impacted recent runs have now cleared, driving a major recovery across the test suite."
+    },
+    "anvil-test-ci-260915-114538": {
+      "run_id": "anvil-test-ci-260915-114538",
+      "generated_at": "2026-09-15T12:48:35+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A shared infrastructure incident where the test client could not reach the Galaxy server continues to drive most failures, accounting for 383 test failures across 117 tools. Known persistent problems, including missing test input data across 7 tools and six isolated tool failures, remain stable with no action needed. Fifteen issues recovered during this run, keeping overall trends consistent with recent days."
+    },
+    "anvil-test-ci-260916-113533": {
+      "run_id": "anvil-test-ci-260916-113533",
+      "generated_at": "2026-09-16T12:45:20+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "Three new runtime failures emerged for the hyphy_fel tool this run. Meanwhile, the widespread server connectivity failure from the previous run has resolved, leading to a large recovery across the test suite. Persistent issues remain stable with no action needed, led by a long-running infrastructure problem with missing test input data affecting 10 tests across 6 tools."
+    },
+    "anvil-test-ci-260917-114232": {
+      "run_id": "anvil-test-ci-260917-114232",
+      "generated_at": "2026-09-17T12:55:03+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "An intermittent infrastructure issue where the test client could not reach the Galaxy server caused 84 test failures across 41 tools in this run. Known persistent problems remain largely stable, led by missing test input data on the server affecting 6 tools at a 27-run streak, alongside eight continuing tool-specific errors. Three issues recovered since the last run, and no new tool-specific defects were detected."
+    },
+    "anvil-test-ci-260918-111533": {
+      "run_id": "anvil-test-ci-260918-111533",
+      "generated_at": "2026-09-18T12:37:39+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A new test expectation issue appeared for jbrowse, while the persistent infrastructure problem involving unavailable test input data continues to impact 10 tests across 6 tools. Other continuing tool-specific failures remain stable with no new growth, so no action is needed on those. Broad recoveries cleared 45 previously failing tests, mostly resolving the server connectivity issues seen in the prior run."
+    },
+    "anvil-test-ci-260919-110008": {
+      "run_id": "anvil-test-ci-260919-110008",
+      "generated_at": "2026-09-19T12:20:48+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "No new failures were introduced in this run, and all continuing issues remain stable. The main persistent issue is an infrastructure error where test input data is unavailable on the server, which continues to affect 6 tools, alongside 8 continuing tool-specific failures. Because the overall test state is unchanged from recent runs, no immediate action is needed."
+    },
+    "anvil-test-ci-260920-112513": {
+      "run_id": "anvil-test-ci-260920-112513",
+      "generated_at": "2026-09-20T12:46:44+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "There are no new failures in this run. A long-standing shared infrastructure issue regarding test input data being unavailable on the server continues to affect 10 tests across 6 tools with a 30-run streak. All remaining persistent tool-specific issues are unchanged from recent runs and remain stable, so no action is needed."
+    },
+    "anvil-test-ci-260921-124934": {
+      "run_id": "anvil-test-ci-260921-124934",
+      "generated_at": "2026-09-21T14:11:54+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "The most notable new issue affects split_file_to_collection, where 20 tests failed with a history not found error, alongside a single new output mismatch in deeptools_plot_enrichment. The history error text likely reflects a session state or history lifecycle failure where the execution workspace was deleted or became inaccessible before the tests completed. Persistent issues\u2014including the long-standing shared input data failure and several recurring tool-specific errors\u2014remain stable compared to recent runs, requiring no action.\n\nThe absence of database connection-pool timeouts elsewhere in this run makes a general server-overload explanation unlikely. This points instead toward a localized history handling or workspace management issue specific to that test workflow."
+    },
+    "anvil-test-ci-260922-113949": {
+      "run_id": "anvil-test-ci-260922-113949",
+      "generated_at": "2026-09-22T13:02:13+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "The main shared issue continues to be test input data unavailable on the server, which accounts for 10 test failures across 6 tools. Known persistent tool issues remain stable relative to recent runs, with no action needed. A minor isolated issue affecting split_file_to_collection cleared in this run."
+    },
+    "anvil-test-ci-260923-113848": {
+      "run_id": "anvil-test-ci-260923-113848",
+      "generated_at": "2026-09-23T13:02:17+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "The shared infrastructure issue involving test input data unavailable on the server continues to account for 10 test failures across 6 tools. The remaining failures are all known persistent tool issues that remain stable compared to recent runs, so no immediate action is needed."
+    },
+    "anvil-test-ci-260924-114738": {
+      "run_id": "anvil-test-ci-260924-114738",
+      "generated_at": "2026-09-24T13:06:14+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "New failures appeared across several individual tools this run, including samtools_sort, dada2_dada, anndata_manipulate, gfastats, and purge_dups. Persistent issues remain stable with no action needed, as the long-standing server input data error affecting six tools and other recurring tool failures are unchanged from recent runs. Four tools successfully recovered from previous errors, including mitohifi and pepquery2."
+    },
+    "anvil-test-ci-260925-115237": {
+      "run_id": "anvil-test-ci-260925-115237",
+      "generated_at": "2026-09-25T13:07:34+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A new isolated issue affected bcftools_concat across 6 tests with a \"History not found\" error, likely pointing to a data staging or history context lookup problem during test setup. Persistent issues remain stable, including the long-standing shared infrastructure failure affecting input data across 6 tools alongside several continuing tool-specific errors. Ten issues recovered in this run, clearing up errors across multiple tools.\n\nThe absence of database connection-pool errors in the server logs suggests the server was keeping up during this run, making general server overload an unlikely explanation. Furthermore, because this exact error signature was first recorded in an August run, it points toward a recurring intermittent state issue rather than a brand new regression."
+    },
+    "anvil-test-ci-260926-112630": {
+      "run_id": "anvil-test-ci-260926-112630",
+      "generated_at": "2026-09-26T12:45:45+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A single new failure appeared this run, with circos_aln_to_links encountering a \"History not found\" error. Known persistent issues remain stable and require no immediate action, dominated by a long-standing infrastructure problem where test input data is unavailable on the server affecting 10 tests across 6 tools. Two failures cleared since the last run, including issues on mitohifi and bcftools_concat."
+    },
+    "anvil-test-ci-260927-120343": {
+      "run_id": "anvil-test-ci-260927-120343",
+      "generated_at": "2026-09-27T13:15:31+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "There are no new test failures in this run, and persistent issues remain stable with no action needed. The primary continuing issue is a long-standing infrastructure incident where test input data is unavailable on the server, affecting 10 tests across 6 tools. Two previously failing tool issues recovered, leaving the overall test results unchanged from recent trends."
+    },
+    "anvil-test-ci-260928-135649": {
+      "run_id": "anvil-test-ci-260928-135649",
+      "generated_at": "2026-09-28T15:11:17+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A new issue emerged with the fasterq_dump tool, where 6 tests failed because no fastq files were generated to build the expected output collection. This missing-file error likely points to a data-staging failure or an external data retrieval problem during job execution. Persistent issues remain stable compared to recent runs, including the long-standing infrastructure failure affecting 6 tools, requiring no immediate action.\n\nThe absence of database connection pool errors elsewhere in this run makes a server-overload explanation unlikely. This points instead toward an external network or data-staging mechanism failure rather than local server resource congestion."
+    },
+    "anvil-test-ci-260929-125453": {
+      "run_id": "anvil-test-ci-260929-125453",
+      "generated_at": "2026-09-29T14:17:00+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "There are no new failures in this run. The primary ongoing issue remains a persistent infrastructure failure where test input data is unavailable on the server, affecting 10 tests across 6 tools. Other continuing tool failures remain stable with no action needed, while a runtime error affecting fasterq_dump has recovered."
+    },
+    "anvil-test-ci-260930-123651": {
+      "run_id": "anvil-test-ci-260930-123651",
+      "generated_at": "2026-09-30T13:59:59+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "New failures emerged in volcanoplot, affecting 5 tests with a history error, alongside a single failure in infernal_cmpress. The missing history error on volcanoplot likely points to a problem during test workspace or session initialization rather than an error within the tool itself. Persistent issues\u2014including the shared unavailable test data affecting 6 tools\u2014remain stable with no action needed, while mitohifi recovered from its previous failure.\n\nThe zero connection-pool timeout count indicates the server was keeping up during this run, making server overload an unlikely explanation for the volcanoplot failures. Given that this exact error signature was first recorded in run anvil-test-ci-260901-114002, the evidence points toward an intermittent test harness or history lifecycle issue rather than a novel infrastructure outage."
+    },
+    "anvil-test-ci-261001-131543": {
+      "run_id": "anvil-test-ci-261001-131543",
+      "generated_at": "2026-10-01T14:38:38+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "New isolated runtime errors occurred in plotly_parallel_coordinates_plot and rseqc_clipping_profile. The long-standing infrastructure issue causing unavailable test input data across 6 tools remains stable with 10 test failures, and overall persistent issues remain unchanged from recent runs with no action needed. Meanwhile, failures previously affecting volcanoplot and infernal_cmpress have cleared."
+    },
+    "anvil-test-ci-261002-123616": {
+      "run_id": "anvil-test-ci-261002-123616",
+      "generated_at": "2026-10-02T13:54:19+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "There are no new issues in this run, and known persistent failures remain stable with no action needed. A long-standing server infrastructure issue where test input data is unavailable across six tools continues for its 31st run, alongside several ongoing tool-specific failures. Two tool runtime errors recovered since the previous run."
+    },
+    "anvil-test-ci-261003-114050": {
+      "run_id": "anvil-test-ci-261003-114050",
+      "generated_at": "2026-10-03T13:11:20+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "Six new isolated failures emerged across individual tools, including unexpected test outputs in spades and mfassignr_mfassignCHO as well as job errors in tools like bamtools_split_mapped and rseqc_clipping_profile. The shared infrastructure issue regarding unavailable server test input data persists across 6 tools and 10 tests, while other continuing tool issues remain stable with no action needed. A previous output failure for mfassignr_mfassignCHO has recovered."
+    },
+    "anvil-test-ci-261004-122301": {
+      "run_id": "anvil-test-ci-261004-122301",
+      "generated_at": "2026-10-04T13:41:43+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "No new failures were introduced in this run, and ongoing issues remain stable with no action needed. The largest continuing problem remains a shared infrastructure failure where test input data is unavailable on the server, affecting 10 tests across 6 tools. Six previously failing issues recovered, clearing isolated failures across several tools."
+    },
+    "anvil-test-ci-261005-144009": {
+      "run_id": "anvil-test-ci-261005-144009",
+      "generated_at": "2026-10-05T16:00:20+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "The shared infrastructure issue regarding unavailable test input data on the server remains active, affecting 10 tests across 6 tools. Overall, persistent tool-specific failures are stable with no new issues introduced, so no action is needed. A previously failing output test for spades has recovered."
+    },
+    "anvil-test-ci-261006-132011": {
+      "run_id": "anvil-test-ci-261006-132011",
+      "generated_at": "2026-10-06T14:52:45+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "No new failures occurred during this run, though a long-standing infrastructure incident where test input data is unavailable on the server continues to affect 10 tests across 6 tools. Existing persistent tool-specific issues remain stable with no action needed. A single test expectation failure affecting the mfassignr_mfassignCHO tool has resolved."
+    },
+    "anvil-test-ci-261007-132452": {
+      "run_id": "anvil-test-ci-261007-132452",
+      "generated_at": "2026-10-07T14:40:00+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "The ongoing infrastructure incident involving test input data being unavailable on the server continues to affect 10 tests across 6 tools. Remaining persistent tool issues are stable with no new failures this run, so no action is needed. Five continuing issues cleared, slightly reducing the overall persistent failure count."
+    },
+    "anvil-test-ci-261008-133113": {
+      "run_id": "anvil-test-ci-261008-133113",
+      "generated_at": "2026-10-08T14:51:57+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A single new isolated issue appeared for hifiasm where a dataset entered an unusable state. Known persistent issues remain stable with no action needed, including a long-standing infrastructure failure affecting 10 tests across 6 tools along with several tool-specific test output discrepancies. A previous test expectation issue for spades recovered this run."
+    },
+    "anvil-test-ci-261009-131930": {
+      "run_id": "anvil-test-ci-261009-131930",
+      "generated_at": "2026-10-09T14:37:47+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "There are no new failures in this run, though the long-standing infrastructure incident where test input data is unavailable on the server continues to affect 10 tests across 6 tools. Existing tool-specific issues remain stable with long streaks, so no immediate action is required. Additionally, two issues affecting hifiasm and mitohifi have recovered."
+    },
+    "anvil-test-ci-261010-123342": {
+      "run_id": "anvil-test-ci-261010-123342",
+      "generated_at": "2026-10-10T13:48:13+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A new tool runtime issue appeared on raceid_inspectclusters this run. Known persistent issues remain stable with no action needed, including a long-running infrastructure incident causing unavailable test input data across six tools alongside recurring tool-specific test expectation failures. A previously failing dataset input issue on raceid_inspectclusters recovered since the last run."
+    },
+    "anvil-test-ci-261011-125203": {
+      "run_id": "anvil-test-ci-261011-125203",
+      "generated_at": "2026-10-11T14:06:46+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "No new issues were introduced in this run. Persistent test failures remain stable and require no action, including a long-running infrastructure problem where test input data is unavailable on the server for six tools. Five tool-specific issues recovered, including failures previously seen in hifiasm and mitohifi."
+    },
+    "anvil-test-ci-261012-152729": {
+      "run_id": "anvil-test-ci-261012-152729",
+      "generated_at": "2026-10-12T16:42:33+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "There are no new failures in this run. Known persistent issues remain stable, led by a long-standing infrastructure incident where test input data is unavailable on the server alongside several persistent tool-specific errors, so no immediate action is needed. A single test expectation issue for the mitohifi tool recovered this run."
+    },
+    "anvil-test-ci-261013-141345": {
+      "run_id": "anvil-test-ci-261013-141345",
+      "generated_at": "2026-10-13T15:36:08+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "The shared infrastructure issue where test input data is unavailable on the server remains ongoing, affecting 10 tests across 6 tools. All other failures are known persistent issues that remain stable from recent runs, so no action is needed."
+    },
+    "anvil-test-ci-261014-115415": {
+      "run_id": "anvil-test-ci-261014-115415",
+      "generated_at": "2026-10-14T14:55:57+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A new issue in MultiQC affects 37 tests, and another new issue in Trim Galore impacts 6 tests alongside isolated failures in tools such as BUSCO and FeatureCounts. The MultiQC failures likely result from an unhandled error during plot rendering or file export despite a successful job exit code. The Trim Galore test discrepancies appear to be driven by an updated Cutadapt version changing the expected report output text. Existing persistent issues remain stable with no action needed, including the long-running missing input data problem affecting 6 tools.\n\nThe absence of database connection pool timeouts in this run's logs suggests the server was not experiencing systemic overload. This makes environmental resource exhaustion unlikely, favoring tool-level dependency changes or output rendering issues as the primary drivers of this run's new failures."
+    },
+    "anvil-test-ci-261015-113110": {
+      "run_id": "anvil-test-ci-261015-113110",
+      "generated_at": "2026-10-15T14:20:50+00:00",
+      "model": "gemini-3.6-flash",
+      "summary": "A new test expectation issue arose for flye due to an unexpected assembly_graph output, while a long-standing infrastructure failure with unavailable test input data continues to affect 10 tests across 6 tools. Other persistent tool-specific failures remain stable from recent runs and require no immediate action. Meanwhile, a previous runtime issue on raceid_inspectclusters has recovered."
+    }
+  }
 }
