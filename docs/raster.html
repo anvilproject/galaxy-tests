@@ -1599,8 +1599,14 @@ nav_id: raster
     }
 
     function toolNameHeaderHtml(toolId) {
+      var parts = toolId.split("/");
+      var name = shortName(toolId);
+      if (parts.length >= 5 && parts[1] === "repos") {
+        name = parts[2] + "/" + parts[3] +
+          (parts[4] === parts[3] ? "" : "/" + parts[4]);
+      }
       return (
-        escapeHtml(shortName(toolId)) +
+        escapeHtml(name) +
         '<button type="button" class="gx-copy-btn" data-copy-text="' + escapeHtml(toolId) +
         '" aria-label="Copy tool ID" title="Copy tool ID">' +
         '<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">' +
