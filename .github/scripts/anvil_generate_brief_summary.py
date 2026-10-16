@@ -22,12 +22,20 @@ signature ever been recorded before, in the dashboard's full history).
 Only for those does the prompt invite the model to go beyond stating
 what happened and hypothesize a plausible *mechanism* from the error
 text itself (e.g. a connection timeout to a specific host implies a
-network-level problem reaching that host) - never a specific named
-cause like a commit/config change, since the model isn't given
-anything about recent changes to reason from. Minor, persistent,
+network-level problem reaching that host) - never an unrecorded cause
+like a commit/config change not present in the input JSON (though it may
+connect a core deployment version change recorded in
+deployment_version_changes when relevant). Minor, persistent,
 continuing, and intermittent incidents never get a raw sample and are
 kept to the brief "stable" framing only - see SYSTEM_INSTRUCTION for
 the exact boundary.
+
+Facts also carries core deployment component versions for the run
+(deployment_versions, such as galaxy_version from tool-test results.json
+and k8s_version from ingress-nginx.log) and any version changes relative
+to prior runs (deployment_version_changes), so the summary calls out
+stack upgrades like a Galaxy or Kubernetes version change without
+reporting noisy per-tool version changes.
 
 When there's at least one such substantial-new incident, facts also
 carries a small "run_level_signals" block - currently just a grep
@@ -69,6 +77,7 @@ import argparse
 import gzip
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 
@@ -77,7 +86,13 @@ import requests
 ANALYSIS_PATH_DEFAULT = "docs/analysis-data/analysis.json"
 OUT_PATH_DEFAULT = "docs/analysis-data/brief-summary.json"
 DEPLOYMENTS_DIR = "reports/anvil/deployments"
+TOOL_TESTS_DIR = "reports/anvil/tool-tests"
 MODEL_DEFAULT = "gemini-4-argon"
+
+GALAXY_VERSION_RE = re.compile(r'"galaxy_version"\s*:\s*"([^"]+)"')
+GALAXY_JOB_IMAGE_VERSION_RE = re.compile(r"galaxy-min:([0-9]+\.[0-9]+(?:\.[0-9]+)?)")
+K8S_VERSION_RE = re.compile(r'"Running in Kubernetes cluster".*?\bgit="([^"]+)"')
+GALAXY_CHART_VERSION_RE = re.compile(r"Galaxy Chart Version:\s*(\S.*?)\s*$")
 
 SHARED_CAP = 8
 PERSISTENT_CAP = 8
@@ -99,8 +114,9 @@ You write a short, plain-English status summary for a nightly software
 test dashboard, for engineers who do not want to read a table of test
 results themselves. The input is a compact JSON object describing one
 test run's failure/error incidents - already deduplicated and classified
-by deterministic code, not by you - plus the last few runs' one-line
-summaries for trend context.
+by deterministic code, not by you - plus core deployment component
+versions (and any version changes since the prior run) and the last few
+runs' one-line summaries for trend context.
 
 Incident categories, already assigned, use exactly this vocabulary:
 - Infrastructure: the deployment/test environment itself (e.g. data
@@ -120,18 +136,26 @@ tools"). Start directly with the substance instead.
 
 Write plain prose, no bullet lists, no markdown, no incident IDs, no
 code. Cover, in this priority order, and skip anything not applicable:
-1. Anything new or large-and-shared that a person should actually look
+1. Core deployment version changes: if deployment_version_changes is
+   non-empty (for example, galaxy_version changing from 26.1 to 26.2, or
+   a k8s_version change), explicitly mention the version change up front
+   with both the previous and new version. If deployment_version_changes
+   is empty, do not mention version numbers just to say they are
+   unchanged. Do NOT mention individual biological tool version changes
+   (there are too many) - only report core deployment changes from
+   deployment_version_changes.
+2. Anything new or large-and-shared that a person should actually look
    at, named specifically enough that a reader knows what it is without
    opening the page. A specific number tied to that one incident (e.g.
    "228 test failures across 43 tools") is fine and useful here - it's
    the redundant top-line totals above that should be skipped, not all
    numbers everywhere.
-2. Known persistent issues: say "stable, no action needed" if their
+3. Known persistent issues: say "stable, no action needed" if their
    streak/count are essentially unchanged from recent runs, or flag it
    if it's growing.
-3. Recovered issues, briefly, only if that meaningfully changes the
+4. Recovered issues, briefly, only if that meaningfully changes the
    picture (e.g. a big persistent one just cleared).
-Keep items 1-3 to 2-4 sentences total.
+Keep items 1-4 to 2-4 sentences total.
 
 Some entries under shared_incidents or new_isolated_issues carry a
 "sample_raw" field: the actual captured error text for one
@@ -152,9 +176,13 @@ database/connection-pool error suggests the server was overloaded; a
 missing-file error suggests a data-staging problem. Phrase it
 explicitly as a plausible read, not a confirmed diagnosis ("likely a
 transient network issue between the test runner and the server" rather
-than asserting it as fact) - and never claim a specific named cause (a
-particular commit, deploy, or configuration change) since you are not
-given anything about recent changes to reason from.
+than asserting it as fact). If deployment_version_changes is non-empty
+and the error text plausibly relates to that upgrade (for example, a
+Galaxy server parameter or API error appearing in the same run that
+galaxy_version changed), you may note that version change as a plausible
+factor; otherwise never claim a specific named cause (a particular
+commit, deploy, or configuration change) that is not given in the input
+JSON.
 
 Optional second paragraph - deeper dive: if facts includes a top-level
 "run_level_signals" object, you may write one additional short
@@ -182,11 +210,14 @@ run makes a server-overload explanation unlikely, pointing instead
 toward a network-level problem reaching that host" is the right
 register, not "this was caused by a network outage."
 
-Use ONLY the facts given in the JSON, including sample_raw,
-first_seen_run, and run_level_signals when present. Never invent a
-tool name or count that is not present in the input, and never invent
-a specific named cause per the paragraphs above. If there were no
-failures or errors this run, say so in one sentence and stop there.
+Use ONLY the facts given in the JSON, including deployment_versions,
+deployment_version_changes, sample_raw, first_seen_run, and
+run_level_signals when present. Never invent a tool name, version, or
+count that is not present in the input, do not report individual tool
+version changes, and never invent a specific named cause per the
+paragraphs above. If there were no failures or errors this run, say so
+in one sentence (still noting any core deployment version change in
+deployment_version_changes) and stop there.
 """
 
 
@@ -257,6 +288,124 @@ def count_queuepool_timeouts(run_id: str) -> int | None:
     return None
 
 
+def _extract_galaxy_version(run_id: str) -> str | None:
+    """Extract the Galaxy server version for a run from tool-test results.json
+    (data.job.galaxy_version), falling back to galaxy-job.log(.gz) container
+    tag if needed. Reads in 64 KiB chunks so multi-megabyte single-line JSON
+    files are scanned in under a millisecond."""
+    results_path = os.path.join(TOOL_TESTS_DIR, run_id, "results.json")
+    if os.path.isfile(results_path):
+        tail = ""
+        with open(results_path, "r", errors="replace") as f:
+            while chunk := f.read(65536):
+                window = tail + chunk
+                m = GALAXY_VERSION_RE.search(window)
+                if m:
+                    return m.group(1)
+                tail = window[-128:]
+    for name in ("galaxy-job.log.gz", "galaxy-job.log"):
+        path = os.path.join(DEPLOYMENTS_DIR, run_id, name)
+        if not os.path.isfile(path):
+            continue
+        opener = gzip.open if path.endswith(".gz") else open
+        with opener(path, "rt", errors="replace") as f:
+            for line in f:
+                m = GALAXY_JOB_IMAGE_VERSION_RE.search(line)
+                if m:
+                    return m.group(1)
+    return None
+
+
+def _extract_k8s_version(run_id: str) -> str | None:
+    """Extract the Kubernetes/RKE2 version logged at startup in ingress-nginx.log(.gz)."""
+    for name in ("ingress-nginx.log.gz", "ingress-nginx.log"):
+        path = os.path.join(DEPLOYMENTS_DIR, run_id, name)
+        if not os.path.isfile(path):
+            continue
+        opener = gzip.open if path.endswith(".gz") else open
+        with opener(path, "rt", errors="replace") as f:
+            for line in f:
+                m = K8S_VERSION_RE.search(line)
+                if m:
+                    return m.group(1)
+    return None
+
+
+def _extract_galaxy_chart_version(run_id: str) -> str | None:
+    """Extract the explicit Galaxy Helm chart version from ansible-output.log(.gz)
+    when set to a concrete version rather than '(role default)'."""
+    for name in ("ansible-output.log.gz", "ansible-output.log"):
+        path = os.path.join(DEPLOYMENTS_DIR, run_id, name)
+        if not os.path.isfile(path):
+            continue
+        opener = gzip.open if path.endswith(".gz") else open
+        with opener(path, "rt", errors="replace") as f:
+            for line in f:
+                m = GALAXY_CHART_VERSION_RE.search(line)
+                if m:
+                    val = m.group(1).strip().strip("\"',")
+                    if val and val != "(role default)":
+                        return val
+                    return None
+    return None
+
+
+def extract_deployment_versions(run_id: str) -> dict[str, str]:
+    """Return core deployment component versions for run_id (excluding tool versions)."""
+    versions: dict[str, str] = {}
+    galaxy_version = _extract_galaxy_version(run_id)
+    if galaxy_version:
+        versions["galaxy_version"] = galaxy_version
+    k8s_version = _extract_k8s_version(run_id)
+    if k8s_version:
+        versions["k8s_version"] = k8s_version
+    chart_version = _extract_galaxy_chart_version(run_id)
+    if chart_version:
+        versions["galaxy_chart_version"] = chart_version
+    return versions
+
+
+def get_run_deployment_versions(
+    run: dict, cache: dict[str, dict[str, str]] | None = None
+) -> dict[str, str]:
+    run_id = run["run_id"]
+    if cache is not None and run_id in cache:
+        return cache[run_id]
+    versions = extract_deployment_versions(run_id)
+    if isinstance(run.get("deployment_versions"), dict):
+        for k, v in run["deployment_versions"].items():
+            if v:
+                versions[k] = str(v)
+    if cache is not None:
+        cache[run_id] = versions
+    return versions
+
+
+def compute_deployment_version_changes(
+    target_versions: dict[str, str],
+    prior_runs: list[dict],
+    cache: dict[str, dict[str, str]] | None = None,
+) -> dict[str, dict[str, str]]:
+    """Compare target_versions against the most recent prior run that recorded
+    each component version. Only components whose version changed are returned."""
+    changes: dict[str, dict[str, str]] = {}
+    for component, current_val in target_versions.items():
+        if not current_val:
+            continue
+        for prev_run in reversed(prior_runs):
+            prev_versions = get_run_deployment_versions(prev_run, cache)
+            prev_val = prev_versions.get(component)
+            if prev_val:
+                if prev_val != current_val:
+                    changes[component] = {
+                        "previous": prev_val,
+                        "current": current_val,
+                        "previous_run_id": prev_run["run_id"],
+                    }
+                break
+    return changes
+
+
 def build_facts(analysis: dict, run_id: str | None, history: int) -> dict:
     runs = analysis["runs"]
     by_id = {r["run_id"]: idx for idx, r in enumerate(runs)}
@@ -270,6 +419,12 @@ def build_facts(analysis: dict, run_id: str | None, history: int) -> dict:
     target = runs[idx]
     prior = runs[max(0, idx - history) : idx]
 
+    version_cache: dict[str, dict[str, str]] = {}
+    deployment_versions = get_run_deployment_versions(target, version_cache)
+    deployment_version_changes = compute_deployment_version_changes(
+        deployment_versions, runs[:idx], version_cache
+    )
+
     recovered = target.get("recovered", [])
     recovered_sample = [
         {"title": r.get("title"), "tool": short_tool_name(r["tool"]), "category": r.get("category")}
@@ -282,6 +437,8 @@ def build_facts(analysis: dict, run_id: str | None, history: int) -> dict:
     facts = {
         "run_id": target["run_id"],
         "timestamp": target.get("timestamp"),
+        "deployment_versions": deployment_versions,
+        "deployment_version_changes": deployment_version_changes,
         "tools_attempted": target.get("tools_attempted"),
         "counts": target.get("counts"),
         "existing_algorithmic_summary_sentence": target.get("summary_sentence"),
@@ -296,6 +453,7 @@ def build_facts(analysis: dict, run_id: str | None, history: int) -> dict:
             {
                 "run_id": r["run_id"],
                 "timestamp": r.get("timestamp"),
+                "deployment_versions": get_run_deployment_versions(r, version_cache),
                 "summary_sentence": r.get("summary_sentence"),
                 "counts": r.get("counts"),
             }
