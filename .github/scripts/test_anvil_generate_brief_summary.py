@@ -105,5 +105,37 @@ class DeploymentVersionFactsTest(unittest.TestCase):
                 )
 
 
+class GeminiTextExtractionTest(unittest.TestCase):
+    def test_extract_gemini_text_skips_thought_parts(self):
+        response = {
+            "candidates": [
+                {
+                    "content": {
+                        "parts": [
+                            {"thought": True, "text": "Let's check if I need the second paragraph."},
+                            {"text": "Final prose summary paragraph."},
+                        ]
+                    }
+                }
+            ]
+        }
+        self.assertEqual(brief.extract_gemini_text(response), "Final prose summary paragraph.")
+
+    def test_sanitize_summary_text_strips_leaked_inline_thought_and_duplicate_draft(self):
+        corrupted = (
+            "New tool execution errors appeared in salmon (3 tests).}"
+            "[Wait — let's check if I need the second paragraph. The prompt says: "
+            '"Only write this second paragraph when the evidence actually points somewhat one way."]\n\n'
+            "Let's re-read the prompt on the second paragraph carefully.\n\n"
+            "New tool execution errors appeared this run in salmon (3 tests).\n\n"
+            "For the new salmon error, this exact signature was recorded for the first time."
+        )
+        self.assertEqual(
+            brief.sanitize_summary_text(corrupted),
+            "New tool execution errors appeared in salmon (3 tests).",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
+

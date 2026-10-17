@@ -186,10 +186,16 @@ JSON.
 
 Optional second paragraph - deeper dive: if facts includes a top-level
 "run_level_signals" object, you may write one additional short
-paragraph (2-3 sentences) after the main one, trying to narrow down
-*which* of the mechanisms you raised above is more likely, using
-ONLY that object's evidence plus first_seen_run - nothing else. Right
-now run_level_signals has exactly one fact:
+paragraph (2-3 sentences) after the main one ONLY when a substantial
+new incident above involves a timeout, network/connectivity failure, or
+server-side state failure where server overload vs. an external
+network/service problem is genuinely in question. Do NOT write a second
+paragraph (and do not mention queuepool_timeout_count) when the new
+incident is a deterministic code, parameter, configuration, or
+test-expectation error where database connection-pool exhaustion is
+not a plausible mechanism in the first place. When the second paragraph
+DOES apply, use ONLY run_level_signals plus first_seen_run - nothing
+else. Right now run_level_signals has exactly one fact:
 queuepool_timeout_count - a count of database-connection-pool-
 exhaustion errors elsewhere in this same run's server log, independent
 of any specific incident. Reason like this: a nonzero (especially
@@ -200,15 +206,14 @@ reaching one external host" explanation; a zero count is evidence
 AGAINST server overload (the server was otherwise keeping up), which
 favors an external/network-path explanation instead; a null count
 means the log wasn't available to check and you have no basis to favor
-either explanation. Only write this second paragraph when the evidence
-actually points somewhat one way - if it's ambiguous or absent
-(run_level_signals missing, or queuepool_timeout_count is null), skip
-the second paragraph entirely rather than manufacturing a conclusion
-you don't have grounds for. Never state the favored explanation as
-certain - "the absence of connection-pool errors elsewhere in this
-run makes a server-overload explanation unlikely, pointing instead
-toward a network-level problem reaching that host" is the right
-register, not "this was caused by a network outage."
+either explanation. If the evidence is ambiguous, inapplicable, or
+absent (run_level_signals missing, or queuepool_timeout_count is null),
+skip the second paragraph entirely rather than manufacturing a
+conclusion you don't have grounds for. Never state the favored
+explanation as certain - "the absence of connection-pool errors
+elsewhere in this run makes a server-overload explanation unlikely,
+pointing instead toward a network-level problem reaching that host" is
+the right register, not "this was caused by a network outage."
 
 Use ONLY the facts given in the JSON, including deployment_versions,
 deployment_version_changes, sample_raw, first_seen_run, and
@@ -217,7 +222,9 @@ count that is not present in the input, do not report individual tool
 version changes, and never invent a specific named cause per the
 paragraphs above. If there were no failures or errors this run, say so
 in one sentence (still noting any core deployment version change in
-deployment_version_changes) and stop there.
+deployment_version_changes) and stop there. Output ONLY the final
+summary prose itself - never output internal reasoning, self-correction,
+bracketed notes, multiple drafts, or quotes from these instructions.
 """
 
 
@@ -479,6 +486,64 @@ def build_facts(analysis: dict, run_id: str | None, history: int) -> dict:
     return facts
 
 
+LEAKED_THOUGHT_MARKERS = (
+    "The prompt says:",
+    "Let's re-read the prompt",
+    "Let's check if I need",
+    "Let's write a clean",
+    "[Wait —",
+    "[Wait -",
+)
+
+
+def sanitize_summary_text(text: str) -> str:
+    """Strip leaked inline chain-of-thought / self-correction blocks that
+    thinking models occasionally emit mid-stream (e.g. '}[Wait — let's check
+    if I need the second paragraph...')."""
+    text = text.strip()
+    if "}[" in text:
+        before, after = text.split("}[", 1)
+        before = before.strip()
+        if before and before[-1] in ".!?":
+            text = before
+        else:
+            # Drop the remainder of the corrupted thought paragraph and keep
+            # clean paragraphs that follow.
+            parts = re.split(r"\n\s*\n", after)
+            text = "\n\n".join(parts[1:]).strip() if len(parts) > 1 else ""
+
+    paragraphs = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+    clean_paragraphs = [
+        p
+        for p in paragraphs
+        if not any(marker in p for marker in LEAKED_THOUGHT_MARKERS)
+    ]
+    return "\n\n".join(clean_paragraphs).strip()
+
+
+def extract_gemini_text(data: dict) -> str:
+    try:
+        parts = data["candidates"][0]["content"]["parts"]
+    except (KeyError, IndexError, TypeError) as e:
+        raise SystemExit(f"Unexpected Gemini response shape: {json.dumps(data)[:2000]}") from e
+
+    non_thought_texts = [
+        p["text"].strip()
+        for p in parts
+        if isinstance(p, dict)
+        and not p.get("thought")
+        and isinstance(p.get("text"), str)
+        and p["text"].strip()
+    ]
+    if not non_thought_texts:
+        raise SystemExit(f"No non-thought text parts in Gemini response: {json.dumps(data)[:2000]}")
+
+    cleaned = sanitize_summary_text("\n\n".join(non_thought_texts))
+    if not cleaned:
+        raise SystemExit(f"Empty summary after sanitizing Gemini response: {json.dumps(data)[:2000]}")
+    return cleaned
+
+
 def call_gemini(facts: dict, model: str, api_key: str) -> str:
     resp = requests.post(
         f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
@@ -492,11 +557,7 @@ def call_gemini(facts: dict, model: str, api_key: str) -> str:
     )
     if not resp.ok:
         raise SystemExit(f"Gemini API error {resp.status_code}: {resp.text[:2000]}")
-    data = resp.json()
-    try:
-        return data["candidates"][0]["content"]["parts"][0]["text"].strip()
-    except (KeyError, IndexError) as e:
-        raise SystemExit(f"Unexpected Gemini response shape: {json.dumps(data)[:2000]}") from e
+    return extract_gemini_text(resp.json())
 
 
 def save_summary(path: str, summary: dict) -> None:
