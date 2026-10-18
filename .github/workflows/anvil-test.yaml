@@ -193,6 +193,13 @@ jobs:
       # 16-way parallelism (see docs/parallelism-data), so doubling
       # concurrency without doubling the node would likely have made the
       # node itself the new bottleneck instead of gcp_batch.workers.
+      #
+      # --boot-disk-size 200GB: bumped from launch_vm.sh's 100GB default
+      # because --ephemeral-only puts the OS, RKE2 containerd image store,
+      # PostgreSQL, CVMFS cache, Galaxy datasets (--no-history-cleanup), and
+      # retained job working directories (cleanup_job: never) on the single
+      # root filesystem, which hit Kubelet's 85% image-GC and 90%
+      # DiskPressure thresholds twice during run 261018-110738 on 100GB.
       - name: Record deploy start time
         id: deploy-start
         run: echo "epoch=$(date -u +%s)" >> "$GITHUB_OUTPUT"
@@ -213,6 +220,7 @@ jobs:
         run: |
           bin/launch_vm.sh \
             --ephemeral-only \
+            --boot-disk-size 200GB \
             --git-branch dev \
             -f values/values.yml -f mixins/testing.yml -f mixins/ci-concurrency.yml -f mixins/debug.yml \
             -m t2d-standard-16 \
