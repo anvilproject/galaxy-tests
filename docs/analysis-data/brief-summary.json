@@ -269,6 +269,12 @@
       "generated_at": "2026-10-17T13:05:53+00:00",
       "model": "gemini-4-argon",
       "summary": "New tool execution errors appeared in salmon (3 tests), purge_dups (2 tests), and tooldistillator (1 test). For salmon, the captured error references a missing or unrecognized 'processors' key during tool execution, which is likely a tool wrapper parameter or job destination configuration mismatch rather than a runtime crash inside the binary itself. Meanwhile, the long-standing shared infrastructure issue with unavailable test input data (10 tests across 6 tools, at a 57-run streak) and the established set of persistent tool-specific failures remain stable, though the total count of continuing issues has crept up to 28 following last run's spike."
+    },
+    "anvil-test-ci-261018-110738": {
+      "run_id": "anvil-test-ci-261018-110738",
+      "generated_at": "2026-10-18T13:28:05+00:00",
+      "model": "gemini-4-argon",
+      "summary": "New isolated failures appeared this run in qiime2__diversity_lib__weighted_unifrac (a tool/runtime job error across two tests), deseq2 (an invalid dataset ID parameter error), and flye (a test expectation mismatch on assembly_info, while a separate assembly_gfa expectation mismatch on flye recovered). The shared infrastructure issue with unavailable test input data on the server remains unchanged at 10 affected tests across 6 tools for a 58-run streak, and long-standing tool-specific issues on scanpy_parameter_iterator, repeatmasker_wrapper, ncbi_blastp_wrapper, hisat2, trimmomatic, jbrowse, and pepquery2 are stable, no action needed, though the overall backlog of continuing tool-specific problems has crept up over the past few runs since the Galaxy 26.2 rollout."
     }
   }
 }
