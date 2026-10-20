@@ -61,6 +61,7 @@ class RasterRetentionTest(unittest.TestCase):
         manifest, matrix = self.generate()
         self.assertEqual(manifest[0]["tests_failed"], 1)
         self.assertEqual(matrix["cells"]["example"][self.run_id]["status"], "fail")
+        self.assertEqual(matrix["cells"]["example"][self.run_id]["versions"], ["1"])
 
     def test_archived_details_bootstrap_missing_summaries(self):
         expected = self.generate()

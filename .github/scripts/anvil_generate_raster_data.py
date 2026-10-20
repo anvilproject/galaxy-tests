@@ -118,7 +118,7 @@ def run_duration_seconds(tests: list[dict]) -> float | None:
 
 
 def tool_aggregates(tests: list[dict]) -> dict[str, dict]:
-    """tool_id -> {status, affected, versions_affected, versions_total,
+    """tool_id -> {status, affected, versions, versions_affected, versions_total,
     tests_attempted, tests_passed, tests_failed, tests_errored,
     tests_skipped} for one run's flat test list."""
     by_tool: dict[str, list[dict]] = defaultdict(list)
@@ -157,6 +157,7 @@ def tool_aggregates(tests: list[dict]) -> dict[str, dict]:
         aggregates[tool_id] = {
             "status": status,
             "affected": round((n_fail + n_error) / attempted, 4),
+            "versions": sorted(v for v in versions_seen if v),
             "versions_affected": sum(1 for v in versions_seen.values() if v),
             "versions_total": len(versions_seen),
             "tests_attempted": attempted,
@@ -235,7 +236,12 @@ def main() -> None:
     matrix_cells: dict[str, dict[str, dict]] = defaultdict(dict)
 
     for run_id in run_ids:
-        if run_id not in raw_run_ids and run_id in summarized_run_ids:
+        has_previous_cells = run_id in summarized_run_ids and all(
+            "versions" in cells[run_id]
+            for cells in previous_matrix.get("cells", {}).values()
+            if run_id in cells
+        )
+        if run_id not in raw_run_ids and (has_previous_cells or run_id not in archived_run_ids):
             manifest.append(previous_manifest[run_id])
             for tool_id, cells in previous_matrix.get("cells", {}).items():
                 if run_id in cells:

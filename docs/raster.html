@@ -680,6 +680,9 @@ nav_id: raster
   function cellTooltip(toolId, runId, cell, manifestByRun) {
     var idParts = toolId.split("/");
     var name = (idParts.length >= 5 && idParts[1] === "repos" ? idParts[2] + "/" : "") + shortName(toolId);
+    if (cell && cell.versions && cell.versions.length) {
+      name += " " + cell.versions.join(", ");
+    }
     var run = manifestByRun[runId];
     var when = run ? fmtDate(run.timestamp) : runId;
     if (!cell) {
