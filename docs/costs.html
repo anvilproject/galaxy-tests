@@ -10,19 +10,19 @@ nav_id: costs
   <button type="button" class="gx-more-toggle" id="gx-costs-more-toggle" aria-expanded="false">More</button>
 </p>
 <p class="gx-prose gx-more-text" id="gx-costs-more-text" hidden>
-  Unit prices are real billed rates for this GCP project (derived once from
-  its own BigQuery billing export), not public list pricing - applied to
-  each run's own measured machine types, boot-disk sizes, and VM
-  lifetimes. The shared deploy node's cost runs from launch to when this
-  data was generated (a few minutes before the VM is actually deleted -
-  negligible, since it's the smaller of the two totals). Each GCP Batch
-  job gets its own dedicated VM; its lifetime splits into boot
-  (provisioning, measured from the job's own status events), run (actual
-  tool execution, also measured), and teardown - a small fixed estimate,
-  since GCP Batch exposes no event for when the VM is actually deleted
-  after the job finishes. See
+  Costs are GCP compute list prices reported by the instance's
+  Rainstone deployment (CPU and RAM only; persistent disk, external IP,
+  and network egress are excluded), applied to each run's measured
+  machine shapes and observed GCE VM lifetimes. The shared deploy node's
+  cost runs from launch until this data is collected just before
+  teardown. Each GCP Batch job gets its own dedicated VM; its lifetime
+  is measured from Rainstone's observed GCE instance start to deletion
+  and split into boot (GCE start to tool start), run (tool execution),
+  and teardown (tool finish to GCE deletion). Runs recorded after
+  billing export completes also show a side-by-side comparison against
+  GCP BigQuery billing (`cost_at_list`). See
   <a href="https://github.com/anvilproject/galaxy-tests/blob/main/.github/scripts/anvil_generate_cost_data.py">anvil_generate_cost_data.py</a>
-  for the full methodology and pricing constants.
+  for how Rainstone's API is queried.
 </p>
 
 <div id="gx-summary" class="gx-summary" hidden>
@@ -65,14 +65,11 @@ nav_id: costs
   <button type="button" class="gx-more-toggle" id="gx-jobcost-more-toggle" aria-expanded="false">More</button>
 </p>
 <p class="gx-prose gx-more-text" id="gx-jobcost-more-text" hidden>
-  Rows are ordered top-to-bottom by when the job's VM was scheduled, and
+  Rows are ordered top-to-bottom by when the job's VM started, and
   positioned left-to-right by elapsed time since the first job in the
-  run started provisioning. Boot and run are measured from the job's own
-  GCP Batch status events; teardown is a small fixed estimate applied to
-  every job equally (see the note above) - useful for showing the shape
-  of the overhead, not a precise per-job figure. Only jobs whose machine
-  type and status events were both captured are priced; a run with
-  mostly-failed jobs may show fewer rows than its total job count.
+  run started provisioning. Boot, run, and teardown durations come from
+  Rainstone's observed GCE instance and Galaxy tool timestamps (earlier
+  runs used GCP Batch status events with a fixed teardown estimate).
 </p>
 
 <div class="gx-raster-controls">
@@ -148,7 +145,7 @@ nav_id: costs
     overflow-y: auto;
   }
   .gx-chart-details {
-    flex: 0 0 15rem;
+    flex: 0 0 18rem;
     min-height: 18rem;
     padding: 1.3rem 1rem 0.85rem;
     border: 1px solid rgba(37, 83, 123, 0.15);
@@ -178,6 +175,27 @@ nav_id: costs
     font-weight: 700;
     color: var(--galaxy-dark);
     margin-top: 0.5rem;
+  }
+  .gx-recon-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.35rem;
+    font-size: 0.78rem;
+  }
+  .gx-recon-table th,
+  .gx-recon-table td {
+    padding: 0.12rem 0.25rem;
+    text-align: right;
+    border-bottom: 1px solid rgba(37, 83, 123, 0.08);
+  }
+  .gx-recon-table th:first-child,
+  .gx-recon-table td:first-child {
+    text-align: left;
+    padding-left: 0;
+  }
+  .gx-recon-table th {
+    font-weight: 600;
+    color: var(--galaxy-grey);
   }
 
   .gx-chart-legend {
@@ -265,7 +283,17 @@ nav_id: costs
 
   function fmtDollars(n) {
     if (n == null) return "unknown";
-    return "$" + n.toFixed(n < 10 ? 3 : 2);
+    var abs = Math.abs(n);
+    var sign = n < 0 ? "-" : "";
+    return sign + "$" + abs.toFixed(abs < 10 ? 3 : 2);
+  }
+
+  function fmtSignedDollars(n) {
+    if (n == null) return "unknown";
+    if (Math.abs(n) < 0.0005) return "$0.000";
+    var sign = n > 0 ? "+" : "-";
+    var abs = Math.abs(n);
+    return sign + "$" + abs.toFixed(abs < 10 ? 3 : 2);
   }
 
   function fmtPct(part, whole) {
@@ -315,6 +343,7 @@ nav_id: costs
   }
 
   var toolNameMapCache = {}; // run_id -> {sanitized label: real tool_id}
+  var reconciliationCache = {}; // run_id -> reconciliation object | null
 
   function loadToolNameMap(runId) {
     if (toolNameMapCache[runId]) return Promise.resolve(toolNameMapCache[runId]);
@@ -334,17 +363,88 @@ nav_id: costs
       });
   }
 
+  function loadReconciliation(runId) {
+    if (runId in reconciliationCache) return Promise.resolve(reconciliationCache[runId]);
+    return fetch("cost-data/reconciliation/" + encodeURIComponent(runId) + ".json")
+      .then(function (r) { if (!r.ok) throw new Error("not found"); return r.json(); })
+      .then(function (data) {
+        reconciliationCache[runId] = data;
+        return data;
+      })
+      .catch(function () {
+        reconciliationCache[runId] = null;
+        return null;
+      });
+  }
+
   // Best-effort fallback for a job that job-runtime-data has no matching
   // entry for (e.g. it never produced a test result) - strips the fixed
   // toolshed prefix so at least the raw label doesn't dominate the box.
   function fallbackToolName(rawLabel) {
     var s = String(rawLabel || "");
+    if (s.indexOf("/") >= 0) return shortName(s);
     return s.replace(/^toolshed-g2-bx-psu-edu-repos-/, "") || "unknown tool";
   }
 
   function resolveToolName(job, toolNameMap) {
-    var real = job.tool_id ? toolNameMap[job.tool_id] : null;
+    if (job.tool_name) return job.tool_name;
+    var real = job.tool_id && toolNameMap ? toolNameMap[job.tool_id] : null;
     return real ? shortName(real) : fallbackToolName(job.tool_id);
+  }
+
+  function fmtMachine(job) {
+    var mt = escapeHtml(job.machine_type || "unknown");
+    if (job.vcpu != null && job.ram_gib != null) {
+      return mt + " (" + job.vcpu + " vCPU, " + job.ram_gib + " GiB)";
+    }
+    var cap = job.machine_capacity;
+    if (cap && cap.vcpu != null && cap.memory_mib != null) {
+      var gib = Math.round((Number(cap.memory_mib) / 1024) * 10) / 10;
+      return mt + " (" + escapeHtml(cap.vcpu) + " vCPU, " + gib + " GiB)";
+    }
+    return mt;
+  }
+
+  function renderReconciliationTable(rows) {
+    var body = rows.map(function (r) {
+      return "<tr>" +
+        "<td>" + escapeHtml(r.label) + "</td>" +
+        "<td>" + fmtDollars(r.rainstone) + "</td>" +
+        "<td>" + fmtDollars(r.billing) + "</td>" +
+        "<td>" + fmtSignedDollars(r.difference) + "</td>" +
+      "</tr>";
+    }).join("");
+    return '<table class="gx-recon-table">' +
+      "<thead><tr><th></th><th>Rainstone</th><th>Billing</th><th>Diff</th></tr></thead>" +
+      "<tbody>" + body + "</tbody>" +
+    "</table>";
+  }
+
+  function jobBoundsMs(job) {
+    var startStr = job.resource_started_at || job.scheduled_at || job.tool_started_at || job.running_at;
+    var runStartStr = job.tool_started_at || job.running_at || startStr;
+    var runEndStr = job.tool_finished_at || job.terminal_at || job.resource_finished_at || runStartStr;
+    var startMs = startStr ? Date.parse(startStr) : NaN;
+    var runStartMs = runStartStr ? Date.parse(runStartStr) : startMs;
+    var runEndMs = runEndStr ? Date.parse(runEndStr) : runStartMs;
+    var endMs;
+    if (job.resource_finished_at) {
+      endMs = Date.parse(job.resource_finished_at);
+    } else if (job.terminal_at) {
+      endMs = Date.parse(job.terminal_at) + (job.teardown_seconds || 0) * 1000;
+    } else {
+      endMs = runEndMs;
+    }
+    if (isNaN(startMs) || isNaN(endMs)) return null;
+    if (isNaN(runStartMs) || runStartMs < startMs) runStartMs = startMs;
+    if (isNaN(runEndMs) || runEndMs < runStartMs) runEndMs = runStartMs;
+    if (endMs < runEndMs) endMs = runEndMs;
+    return {
+      bootStartMs: startMs,
+      runStartMs: runStartMs,
+      runEndMs: runEndMs,
+      endMs: endMs
+    };
   }
 
   function median(nums) {
@@ -440,6 +540,28 @@ nav_id: costs
         '<div class="gx-chart-details__stage">Median: ' + fmtDollars(median(totals)) + "/run</div>" +
         '<div class="gx-chart-details__stage">Head node total: ' + fmtDollars(vmSum) + " (" + fmtPct(vmSum, grandTotal) + ")</div>" +
         '<div class="gx-chart-details__stage">GCP Batch total: ' + fmtDollars(batchSum) + " (" + fmtPct(batchSum, grandTotal) + ")</div>";
+    }
+
+    function renderHoveredRunDetails(hit) {
+      var recon = reconciliationCache[hit.run_id];
+      var html =
+        '<div class="gx-chart-details__time">' + escapeHtml(fmtShort(hit.timestamp)) + "</div>" +
+        '<div class="gx-chart-details__label">Total: ' + fmtDollars(hit.total_cost) + "</div>" +
+        '<div class="gx-chart-details__stage">Head node: ' + fmtDollars(hit.main_vm_cost) +
+          " (" + fmtPct(hit.main_vm_cost, hit.total_cost) + ")</div>" +
+        '<div class="gx-chart-details__stage">GCP Batch: ' + fmtDollars(hit.gcp_batch_cost) +
+          " (" + fmtPct(hit.gcp_batch_cost, hit.total_cost) + ")" +
+          " &middot; " + hit.gcp_batch_jobs_priced + " of " + hit.gcp_batch_jobs_total + " jobs priced</div>";
+      if (recon && recon.total && recon.main_vm && recon.gcp_batch) {
+        html += '<div class="gx-chart-details__label">Rainstone vs Billing</div>' +
+          renderReconciliationTable([
+            { label: "Head node", rainstone: recon.main_vm.rainstone, billing: recon.main_vm.billing, difference: recon.main_vm.difference },
+            { label: "GCP Batch", rainstone: recon.gcp_batch.rainstone, billing: recon.gcp_batch.billing, difference: recon.gcp_batch.difference },
+            { label: "Total", rainstone: recon.total.rainstone, billing: recon.total.billing, difference: recon.total.difference }
+          ]);
+      }
+      detailsEl.className = "gx-chart-details gx-chart-details--active";
+      detailsEl.innerHTML = html;
     }
 
     function draw() {
@@ -551,16 +673,16 @@ nav_id: costs
         return;
       }
       canvas.style.cursor = "pointer";
-      if (hovered !== hit) { hovered = hit; draw(); }
-      detailsEl.className = "gx-chart-details gx-chart-details--active";
-      detailsEl.innerHTML =
-        '<div class="gx-chart-details__time">' + escapeHtml(fmtShort(hit.timestamp)) + "</div>" +
-        '<div class="gx-chart-details__label">Total: ' + fmtDollars(hit.total_cost) + "</div>" +
-        '<div class="gx-chart-details__stage">Head node: ' + fmtDollars(hit.main_vm_cost) +
-          " (" + fmtPct(hit.main_vm_cost, hit.total_cost) + ")</div>" +
-        '<div class="gx-chart-details__stage">GCP Batch: ' + fmtDollars(hit.gcp_batch_cost) +
-          " (" + fmtPct(hit.gcp_batch_cost, hit.total_cost) + ")" +
-          " &middot; " + hit.gcp_batch_jobs_priced + " of " + hit.gcp_batch_jobs_total + " jobs priced</div>";
+      if (hovered !== hit) {
+        hovered = hit;
+        draw();
+        if (!(hit.run_id in reconciliationCache)) {
+          loadReconciliation(hit.run_id).then(function () {
+            if (hovered && hovered.run_id === hit.run_id) renderHoveredRunDetails(hit);
+          });
+        }
+      }
+      renderHoveredRunDetails(hit);
     });
     canvas.addEventListener("mouseleave", function () {
       if (hovered) { hovered = null; canvas.style.cursor = "default"; draw(); }
@@ -592,7 +714,7 @@ nav_id: costs
     legendEl.innerHTML =
       '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:' + BOOT_COLOR + '"></span>Boot</span>' +
       '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:' + RUN_COLOR + '"></span>Run</span>' +
-      '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:' + TEARDOWN_COLOR + '"></span>Teardown (estimated)</span>';
+      '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:' + TEARDOWN_COLOR + '"></span>Teardown</span>';
 
     var LEFT_MARGIN = 10, TOP_PAD = 20, BOTTOM_PAD = 6, RIGHT_PAD = 20;
     var ROW_H = 5, ROW_GAP = 1, ROW_STEP = ROW_H + ROW_GAP;
@@ -616,18 +738,37 @@ nav_id: costs
       return Promise.all([
         fetch("cost-data/runs/" + encodeURIComponent(runId) + ".json")
           .then(function (r) { if (!r.ok) throw new Error("not found"); return r.json(); }),
-        loadToolNameMap(runId)
+        loadToolNameMap(runId),
+        loadReconciliation(runId)
       ]).then(function (results) {
-        var data = results[0], toolNameMap = results[1];
-        data.jobs.forEach(function (job) { job._toolName = resolveToolName(job, toolNameMap); });
+        var data = results[0], toolNameMap = results[1], recon = results[2];
+        var reconByKey = {};
+        if (recon && Array.isArray(recon.jobs)) {
+          recon.jobs.forEach(function (rj) {
+            if (rj.resource_key) reconByKey[rj.resource_key] = rj;
+          });
+        }
+        data._reconciliation = recon;
+        (data.jobs || []).forEach(function (job) {
+          job._toolName = resolveToolName(job, toolNameMap);
+          job._bounds = jobBoundsMs(job);
+          var keys = job.resource_keys || (job.name ? [job.name] : []);
+          for (var k = 0; k < keys.length; k++) {
+            if (reconByKey[keys[k]]) {
+              job._recon = reconByKey[keys[k]];
+              break;
+            }
+          }
+        });
         return data;
       });
     }
 
     function visibleJobs() {
       if (!current) return [];
-      if (!searchQuery) return current.jobs;
-      return current.jobs.filter(function (job) {
+      var timed = current.jobs.filter(function (job) { return job._bounds != null; });
+      if (!searchQuery) return timed;
+      return timed.filter(function (job) {
         return job._toolName.toLowerCase().indexOf(searchQuery) >= 0;
       });
     }
@@ -646,15 +787,16 @@ nav_id: costs
 
     function span() {
       if (!current || !current.jobs.length) return null;
-      var startMs = Math.min.apply(null, current.jobs.map(function (j) { return Date.parse(j.scheduled_at); }));
-      var endMs = Math.max.apply(null, current.jobs.map(function (j) {
-        return Date.parse(j.terminal_at) + j.teardown_seconds * 1000;
-      }));
+      var bounds = current.jobs.map(function (j) { return j._bounds; }).filter(Boolean);
+      if (!bounds.length) return null;
+      var startMs = Math.min.apply(null, bounds.map(function (b) { return b.bootStartMs; }));
+      var endMs = Math.max.apply(null, bounds.map(function (b) { return b.endMs; }));
       return { startMs: startMs, endMs: Math.max(endMs, startMs + 1) };
     }
 
     function draw() {
-      if (!current || !current.jobs.length) {
+      var sp = span();
+      if (!current || !current.jobs.length || !sp) {
         var emptyWidthCss = Math.max(300, container.clientWidth);
         var emptyHeightCss = TOP_PAD + BOTTOM_PAD;
         sizeCanvas(canvas, ctx, emptyWidthCss, emptyHeightCss);
@@ -679,7 +821,6 @@ nav_id: costs
       // Timeline stays anchored to the full run (not just the filtered
       // rows), so searching narrows which rows show without rescaling
       // where they sit in the run.
-      var sp = span();
       var rightEdge = widthCss - RIGHT_PAD;
       var plotW = rightEdge - LEFT_MARGIN;
       function xFor(ms) { return LEFT_MARGIN + ((ms - sp.startMs) / (sp.endMs - sp.startMs)) * plotW; }
@@ -700,11 +841,13 @@ nav_id: costs
       });
 
       jobs.forEach(function (job, i) {
+        var b = job._bounds;
+        if (!b) return;
         var y = TOP_PAD + i * ROW_STEP;
-        var bootX0 = xFor(Date.parse(job.scheduled_at));
-        var runX0 = xFor(Date.parse(job.running_at));
-        var teardownX0 = xFor(Date.parse(job.terminal_at));
-        var teardownX1 = xFor(Date.parse(job.terminal_at) + job.teardown_seconds * 1000);
+        var bootX0 = xFor(b.bootStartMs);
+        var runX0 = xFor(b.runStartMs);
+        var teardownX0 = xFor(b.runEndMs);
+        var teardownX1 = xFor(b.endMs);
 
         ctx.fillStyle = BOOT_COLOR;
         ctx.fillRect(bootX0, y, Math.max(1, runX0 - bootX0), ROW_H);
@@ -717,7 +860,9 @@ nav_id: costs
 
     function updateWindowLabel() {
       var m = manifestRuns[idx];
-      var n = current ? current.jobs.length : 0;
+      var n = current
+        ? (current.gcp_batch_jobs_priced != null ? current.gcp_batch_jobs_priced : current.jobs.length)
+        : 0;
       var total = current ? current.gcp_batch_jobs_total : 0;
       var shown = visibleJobs().length;
       windowLabel.textContent = "Run " + (idx + 1) + " of " + runIds.length +
@@ -740,20 +885,45 @@ nav_id: costs
         detailsEl.innerHTML = '<span class="gx-chart-details__placeholder">No jobs match &ldquo;' + escapeHtml(searchInput.value) + '&rdquo;.</span>';
         return;
       }
-      var costs = jobs.map(function (j) { return j.cost; });
-      var totalBoot = jobs.reduce(function (a, j) { return a + j.boot_cost; }, 0);
-      var totalRun = jobs.reduce(function (a, j) { return a + j.run_cost; }, 0);
-      var totalTeardown = jobs.reduce(function (a, j) { return a + j.teardown_cost; }, 0);
-      var phaseTotal = totalBoot + totalRun + totalTeardown;
-      var totalCost = costs.reduce(function (a, b) { return a + b; }, 0);
-      detailsEl.className = "gx-chart-details gx-chart-details--active";
-      detailsEl.innerHTML =
+      var pricedJobs = jobs.filter(function (j) { return j.cost != null; });
+      var totalCost = pricedJobs.reduce(function (a, j) { return a + j.cost; }, 0);
+      var hasPhaseCosts = pricedJobs.some(function (j) { return j.boot_cost != null; });
+
+      var html =
         '<div class="gx-chart-details__label">' + jobs.length + (searchQuery ? " matching" : "") + " GCP Batch jobs</div>" +
         '<div class="gx-chart-details__label">Total: ' + fmtDollars(searchQuery ? totalCost : current.gcp_batch_total_cost) + "</div>" +
-        '<div class="gx-chart-details__stage">Per-job avg: ' + fmtDollars(totalCost / costs.length) + "</div>" +
-        '<div class="gx-chart-details__stage">Boot: ' + fmtDollars(totalBoot) + " (" + fmtPct(totalBoot, phaseTotal) + ")</div>" +
-        '<div class="gx-chart-details__stage">Run: ' + fmtDollars(totalRun) + " (" + fmtPct(totalRun, phaseTotal) + ")</div>" +
-        '<div class="gx-chart-details__stage">Teardown: ' + fmtDollars(totalTeardown) + " (" + fmtPct(totalTeardown, phaseTotal) + ")</div>";
+        '<div class="gx-chart-details__stage">Per-job avg: ' + fmtDollars(pricedJobs.length ? totalCost / pricedJobs.length : null) + "</div>";
+
+      if (hasPhaseCosts) {
+        var totalBoot = pricedJobs.reduce(function (a, j) { return a + (j.boot_cost || 0); }, 0);
+        var totalRun = pricedJobs.reduce(function (a, j) { return a + (j.run_cost || 0); }, 0);
+        var totalTeardown = pricedJobs.reduce(function (a, j) { return a + (j.teardown_cost || 0); }, 0);
+        var phaseTotal = totalBoot + totalRun + totalTeardown;
+        html +=
+          '<div class="gx-chart-details__stage">Boot: ' + fmtDollars(totalBoot) + " (" + fmtPct(totalBoot, phaseTotal) + ")</div>" +
+          '<div class="gx-chart-details__stage">Run: ' + fmtDollars(totalRun) + " (" + fmtPct(totalRun, phaseTotal) + ")</div>" +
+          '<div class="gx-chart-details__stage">Teardown: ' + fmtDollars(totalTeardown) + " (" + fmtPct(totalTeardown, phaseTotal) + ")</div>";
+      } else {
+        var bootSec = jobs.reduce(function (a, j) { return a + (j.boot_seconds || 0); }, 0);
+        var runSec = jobs.reduce(function (a, j) { return a + (j.run_seconds || 0); }, 0);
+        var tearSec = jobs.reduce(function (a, j) { return a + (j.teardown_seconds || 0); }, 0);
+        var totalSec = bootSec + runSec + tearSec;
+        html +=
+          '<div class="gx-chart-details__stage">Boot time: ' + fmtSeconds(bootSec) + " (" + fmtPct(bootSec, totalSec) + ")</div>" +
+          '<div class="gx-chart-details__stage">Run time: ' + fmtSeconds(runSec) + " (" + fmtPct(runSec, totalSec) + ")</div>" +
+          '<div class="gx-chart-details__stage">Teardown time: ' + fmtSeconds(tearSec) + " (" + fmtPct(tearSec, totalSec) + ")</div>";
+      }
+
+      if (!searchQuery && current._reconciliation && current._reconciliation.gcp_batch) {
+        var b = current._reconciliation.gcp_batch;
+        html += '<div class="gx-chart-details__label">Rainstone vs Billing</div>' +
+          renderReconciliationTable([
+            { label: "GCP Batch", rainstone: b.rainstone, billing: b.billing, difference: b.difference }
+          ]);
+      }
+
+      detailsEl.className = "gx-chart-details gx-chart-details--active";
+      detailsEl.innerHTML = html;
     }
 
     function showRun(targetIdx, step) {
@@ -807,18 +977,40 @@ nav_id: costs
       }
       canvas.style.cursor = "pointer";
       var job = jobs[row];
-      detailsEl.className = "gx-chart-details gx-chart-details--active";
-      detailsEl.innerHTML =
+      var teardownLabel = job.resource_finished_at ? "Teardown" : "Teardown (est.)";
+      var totalDur = (job.boot_seconds || 0) + (job.run_seconds || 0) + (job.teardown_seconds || 0);
+      var html =
         '<div class="gx-chart-details__time">' + escapeHtml(job._toolName) + "</div>" +
         '<div class="gx-chart-details__label">Total: ' + fmtDollars(job.cost) + "</div>" +
-        '<div class="gx-chart-details__stage">Machine: ' + escapeHtml(job.machine_type || "unknown") +
-          " (" + job.vcpu + " vCPU, " + job.ram_gib + " GiB)</div>" +
-        '<div class="gx-chart-details__stage">Boot: ' + fmtSeconds(job.boot_seconds) + " &middot; " + fmtDollars(job.boot_cost) +
-          " (" + fmtPct(job.boot_cost, job.cost) + ")</div>" +
-        '<div class="gx-chart-details__stage">Run: ' + fmtSeconds(job.run_seconds) + " &middot; " + fmtDollars(job.run_cost) +
-          " (" + fmtPct(job.run_cost, job.cost) + ")</div>" +
-        '<div class="gx-chart-details__stage">Teardown (est.): ' + fmtSeconds(job.teardown_seconds) + " &middot; " + fmtDollars(job.teardown_cost) +
-          " (" + fmtPct(job.teardown_cost, job.cost) + ")</div>";
+        '<div class="gx-chart-details__stage">Machine: ' + fmtMachine(job) + "</div>";
+
+      if (job.boot_cost != null) {
+        html +=
+          '<div class="gx-chart-details__stage">Boot: ' + fmtSeconds(job.boot_seconds) + " &middot; " + fmtDollars(job.boot_cost) +
+            " (" + fmtPct(job.boot_cost, job.cost) + ")</div>" +
+          '<div class="gx-chart-details__stage">Run: ' + fmtSeconds(job.run_seconds) + " &middot; " + fmtDollars(job.run_cost) +
+            " (" + fmtPct(job.run_cost, job.cost) + ")</div>" +
+          '<div class="gx-chart-details__stage">' + teardownLabel + ": " + fmtSeconds(job.teardown_seconds) + " &middot; " + fmtDollars(job.teardown_cost) +
+            " (" + fmtPct(job.teardown_cost, job.cost) + ")</div>";
+      } else {
+        html +=
+          '<div class="gx-chart-details__stage">Boot: ' + fmtSeconds(job.boot_seconds) +
+            " (" + fmtPct(job.boot_seconds || 0, totalDur) + ")</div>" +
+          '<div class="gx-chart-details__stage">Run: ' + fmtSeconds(job.run_seconds) +
+            " (" + fmtPct(job.run_seconds || 0, totalDur) + ")</div>" +
+          '<div class="gx-chart-details__stage">' + teardownLabel + ": " + fmtSeconds(job.teardown_seconds) +
+            " (" + fmtPct(job.teardown_seconds || 0, totalDur) + ")</div>";
+      }
+
+      if (job._recon) {
+        html += '<div class="gx-chart-details__label">Rainstone vs Billing</div>' +
+          renderReconciliationTable([
+            { label: "Job", rainstone: job._recon.rainstone, billing: job._recon.billing, difference: job._recon.difference }
+          ]);
+      }
+
+      detailsEl.className = "gx-chart-details gx-chart-details--active";
+      detailsEl.innerHTML = html;
     });
     canvas.addEventListener("mouseleave", function () {
       canvas.style.cursor = "default";

@@ -1,271 +1,623 @@
-"""Generate docs/cost-data/{costs.json,runs/<run_id>.json}: a best-effort
-GCP cost estimate for one CI run, computed while the main VM and this
-run's GCP Batch job records are still live/queryable.
+#!/usr/bin/env python3
+"""Record per-run GCP compute costs in docs/cost-data/ from Rainstone's API.
 
-Unlike every other docs/*-data generator, this canNOT be recomputed
-later from committed report data alone - GCP Batch job records and the
-main VM's own live specs eventually age out - so it runs once, at the
-end of the run that produced it, and APPENDS to history rather than
-rescanning it (same shape as anvil_record_deployment.py, not the
-raster/analysis/job-runtime family, which rebuild their full output from
-scratch every run).
+Queries the Rainstone service deployed alongside Galaxy on the test VM
+(http://<vm-ip>/galaxy/costs/api) before the VM is deleted:
 
-Methodology (see the 2026-09 investigation that produced these numbers -
-ea-no-commit/talk-outline.md slide 11, not committed here). The unit
-prices below are REAL billed rates for this GCP project, derived once
-from its own BigQuery billing export (project anvil-and-terra-development,
-dataset daily_cost_detail: cost/usage per Compute Engine SKU on a clean
-day) - not public list pricing, and not a live query every run. The CI
-service account's access to that BigQuery dataset is unverified, and
-list pricing barely moves month to month, so a periodic manual refresh
-of the constants below is preferable to a new per-run dependency.
-Applied to this run's own exact machine types, boot-disk sizes, and
-measured VM lifetimes:
+1. Polls GET /api/summary until Rainstone reports no in-progress or
+   incomplete jobs and a complete main-VM launch record (or until a
+   bounded timeout expires, in which case whatever Rainstone reported is
+   recorded as-is).
+2. Pins a single calculation revision (revision_id) across GET /api/summary,
+   GET /api/jobs?runner=gcp_batch, and concurrent GET /api/jobs/{id}
+   requests, restarting from step 1 if the collector supersedes the
+   revision mid-load (HTTP 409).
+3. Verifies internal consistency of Rainstone's response (logging workflow
+   warnings on any discrepancy) and writes:
+   - docs/cost-data/runs/<run_id>.json  (main VM + per-Batch-job detail)
+   - docs/cost-data/costs.json          (compact per-run summary series)
 
-- Main VM: launch (the "Record deploy start time" step's epoch) to "now"
-  (this script's own run time) - a few minutes short of the VM's actual
-  deletion, since this step necessarily runs before "Delete VM" (the
-  commit-and-push step needs this data, and runs before VM teardown).
-  Negligible: the main VM is the smaller of the two cost components.
-- GCP Batch jobs: each job's own SCHEDULED->terminal status-event window
-  (the VM's true billed lifetime) - NOT galaxy-tool-test's reported
-  "runtime_seconds", which only covers the RUNNING phase and misses the
-  ~90-100s/job of provisioning overhead this per-job-VM architecture
-  actually pays for. Split into boot (SCHEDULED->RUNNING, measured) /
-  run (RUNNING->terminal, measured) / teardown (a flat
-  TEARDOWN_ESTIMATE_SECONDS - GCP Batch exposes no event for when the
-  VM is actually deleted after job completion, so this one segment is a
-  labeled estimate, not a measurement).
-
-Usage: anvil_generate_cost_data.py <instance_name>
-Env: GCP_PROJECT, GCP_ZONE (both already set at the workflow level),
-     DEPLOY_START_EPOCH (from the "Record deploy start time" step's
-     epoch output)
+All cost figures are GCP list-price compute (vCPU + RAM) in USD, copied
+directly from Rainstone without local rate tables, disk estimates, or
+phase-cost apportionment.
 """
 
+from __future__ import annotations
+
+import argparse
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime, timedelta, timezone
+from decimal import Decimal
 import json
 import os
-import subprocess
+from pathlib import Path
 import sys
-from datetime import datetime, timezone
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
 
-COST_DATA_DIR = "docs/cost-data"
-COSTS_PATH = f"{COST_DATA_DIR}/costs.json"
-RUNS_DIR = f"{COST_DATA_DIR}/runs"
-
-BATCH_LOCATION = "us-east4"  # matches the "Clean up orphaned GCP Batch jobs" step
-
-# Derived 2026-09-02 from this project's own BigQuery billing export -
-# see this file's own docstring. Refresh periodically; these are not
-# fetched live.
-T2D_VCPU_HR = 0.023233
-T2D_RAM_GIB_HR = 0.003114
-PD_BALANCED_GIB_HR = 0.0001147
-N2_VCPU_HR = 0.026705
-N2_RAM_GIB_HR = 0.003580
-PD_STANDARD_GIB_HR = 0.0000459
-
-# Not measured - see docstring. A GCE instance delete typically completes
-# on this order of magnitude; flagged as an estimate everywhere it's used.
-TEARDOWN_ESTIMATE_SECONDS = 10
+DEFAULT_WAIT_SECONDS = 600
+DEFAULT_POLL_INTERVAL = 15
+DEFAULT_WORKERS = 8
+MAX_REVISION_RETRIES = 5
+PAGE_LIMIT = 200
 
 
-def run_gcloud_json(args: list[str]):
-    result = subprocess.run(["gcloud", *args, "--format=json"], capture_output=True, text=True, check=True)
-    return json.loads(result.stdout) if result.stdout.strip() else None
+class HttpStatusError(Exception):
+    def __init__(self, status: int, url: str, detail: str) -> None:
+        super().__init__(f"HTTP {status} for {url}: {detail}")
+        self.status = status
+        self.url = url
+        self.detail = detail
 
 
-def parse_ts(s: str) -> datetime:
-    return datetime.fromisoformat(s.replace("Z", "+00:00"))
+def warn(message: str) -> None:
+    if os.environ.get("GITHUB_ACTIONS") == "true":
+        print(f"::warning::{message}", file=sys.stderr)
+    else:
+        print(f"WARNING: {message}", file=sys.stderr)
 
 
-def n2_specs(machine_type: str):
-    fam, size = machine_type.rsplit("-", 1)
-    vcpu = int(size)
-    ram_per_vcpu = {"n2-standard": 4, "n2-highmem": 8, "n2-highcpu": 1}.get(fam)
-    if ram_per_vcpu is None:
+def parse_iso(ts: str | None) -> datetime | None:
+    if not ts:
         return None
-    return vcpu, vcpu * ram_per_vcpu
-
-
-def t2d_specs(machine_type: str):
-    if not machine_type.startswith("t2d-standard-"):
+    try:
+        return datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    except ValueError:
         return None
-    vcpu = int(machine_type.rsplit("-", 1)[1])
-    return vcpu, vcpu * 4
 
 
-def get_main_vm_info(instance_name: str, project: str, zone: str):
-    data = run_gcloud_json(
-        ["compute", "instances", "describe", instance_name, f"--project={project}", f"--zone={zone}"]
+def to_decimal(val: object) -> Decimal | None:
+    if val is None or val == "":
+        return None
+    return Decimal(str(val))
+
+
+def round_money(val: Decimal | None, places: int = 4) -> float | None:
+    if val is None:
+        return None
+    return round(float(val), places)
+
+
+def build_headers(cli_headers: list[str]) -> dict[str, str]:
+    headers: dict[str, str] = {"Accept": "application/json"}
+    tenant = os.environ.get("RAINSTONE_TENANT")
+    user = os.environ.get("RAINSTONE_USER")
+    admin = os.environ.get("RAINSTONE_ADMIN")
+    if tenant:
+        headers["X-Rainstone-Tenant"] = tenant
+    if user:
+        headers["X-Rainstone-User"] = user
+    if admin:
+        headers["X-Rainstone-Admin"] = admin
+    for item in cli_headers:
+        sep = ":" if ":" in item else "="
+        if sep not in item:
+            raise ValueError(f"Invalid header {item!r}; expected KEY:VALUE or KEY=VALUE")
+        k, v = item.split(sep, 1)
+        headers[k.strip()] = v.strip()
+    return headers
+
+
+def api_get(
+    base_url: str,
+    path: str,
+    params: dict[str, str] | None = None,
+    headers: dict[str, str] | None = None,
+    timeout: int = 60,
+) -> dict:
+    url = f"{base_url.rstrip('/')}/{path.lstrip('/')}"
+    if params:
+        qs = urllib.parse.urlencode(params)
+        url = f"{url}?{qs}"
+    req = urllib.request.Request(url, headers=headers or {})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            return json.load(resp)
+    except urllib.error.HTTPError as exc:
+        body = ""
+        try:
+            body = exc.read().decode("utf-8", errors="replace")
+        except Exception:
+            pass
+        raise HttpStatusError(exc.code, url, body or str(exc.reason)) from exc
+
+
+def resolve_window(
+    base_url: str,
+    headers: dict[str, str],
+    deploy_start_epoch: str | None,
+    from_arg: str | None,
+    to_arg: str | None,
+) -> tuple[str, str | None]:
+    """Return (from_iso, fixed_to_iso) with explicit UTC offsets.
+
+    In CI, DEPLOY_START_EPOCH sets `from` and `to` is refreshed to current UTC
+    on each poll/attempt. When running against an imported snapshot without
+    DEPLOY_START_EPOCH, fall back to the snapshot's own current_launch window.
+    """
+    if from_arg:
+        dt_from = parse_iso(from_arg)
+        if not dt_from:
+            raise ValueError(f"Cannot parse --from timestamp: {from_arg!r}")
+        from_iso = dt_from.astimezone(timezone.utc).isoformat()
+    elif deploy_start_epoch:
+        dt_from = datetime.fromtimestamp(float(deploy_start_epoch), tz=timezone.utc)
+        from_iso = dt_from.isoformat()
+    else:
+        probe = api_get(
+            base_url,
+            "/summary",
+            params={"mode": "accrued", "timezone": "UTC"},
+            headers=headers,
+        )
+        launch = probe.get("current_launch") or {}
+        launch_at = parse_iso(launch.get("launch_at") or launch.get("first_observed_at"))
+        as_of = parse_iso(launch.get("as_of") or probe.get("as_of"))
+        if launch_at:
+            from_iso = (launch_at - timedelta(minutes=5)).astimezone(timezone.utc).isoformat()
+        else:
+            from_iso = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
+        if not to_arg and as_of:
+            to_arg = (as_of + timedelta(minutes=5)).astimezone(timezone.utc).isoformat()
+
+    fixed_to_iso = None
+    if to_arg:
+        dt_to = parse_iso(to_arg)
+        if not dt_to:
+            raise ValueError(f"Cannot parse --to timestamp: {to_arg!r}")
+        fixed_to_iso = dt_to.astimezone(timezone.utc).isoformat()
+
+    return from_iso, fixed_to_iso
+
+
+def build_query(from_iso: str, fixed_to_iso: str | None, revision: str | None = None) -> dict[str, str]:
+    to_iso = fixed_to_iso or (datetime.now(timezone.utc) + timedelta(minutes=1)).isoformat()
+    query = {
+        "mode": "accrued",
+        "timezone": "UTC",
+        "from": from_iso,
+        "to": to_iso,
+        "sort": "amount",
+        "direction": "desc",
+    }
+    if revision:
+        query["revision"] = revision
+    return query
+
+
+def is_complete(summary: dict) -> bool:
+    in_progress = summary.get("in_progress_job_count")
+    incomplete = (summary.get("coverage") or {}).get("incomplete")
+    launch_completeness = (summary.get("current_launch") or {}).get("completeness")
+    return (
+        in_progress == 0
+        and incomplete == 0
+        and launch_completeness == "complete"
     )
-    machine_type = data["machineType"].rsplit("/", 1)[-1]
-    boot_disk = data["disks"][0]
+
+
+def wait_for_completeness(
+    base_url: str,
+    headers: dict[str, str],
+    from_iso: str,
+    fixed_to_iso: str | None,
+    wait_seconds: int,
+    poll_interval: int,
+) -> dict:
+    deadline = time.monotonic() + max(0, wait_seconds)
+    attempt = 0
+    while True:
+        attempt += 1
+        query = build_query(from_iso, fixed_to_iso)
+        summary = api_get(base_url, "/summary", params=query, headers=headers)
+        in_progress = summary.get("in_progress_job_count")
+        incomplete = (summary.get("coverage") or {}).get("incomplete")
+        launch_comp = (summary.get("current_launch") or {}).get("completeness")
+        rev = summary.get("revision_id")
+        print(
+            f"[poll {attempt}] revision={rev} in_progress={in_progress} "
+            f"coverage.incomplete={incomplete} current_launch.completeness={launch_comp}"
+        )
+        if is_complete(summary):
+            print("Rainstone reports complete cost coverage.")
+            return summary
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            warn(
+                f"Timed out after {wait_seconds}s waiting for Rainstone completeness "
+                f"(in_progress={in_progress}, coverage.incomplete={incomplete}, "
+                f"current_launch.completeness={launch_comp}); recording current state."
+            )
+            return summary
+        time.sleep(min(poll_interval, max(1.0, remaining)))
+
+
+def fetch_all_batch_jobs(
+    base_url: str,
+    headers: dict[str, str],
+    pinned_query: dict[str, str],
+) -> tuple[list[dict], dict]:
+    items: list[dict] = []
+    meta: dict | None = None
+
+    offset = 0
+    while True:
+        params = {
+            **pinned_query,
+            "runner": "gcp_batch",
+            "limit": str(PAGE_LIMIT),
+            "offset": str(offset),
+        }
+        page = api_get(base_url, "/jobs", params=params, headers=headers)
+        if meta is None:
+            meta = page["meta"]
+        batch = page.get("items") or []
+        items.extend(batch)
+        offset += len(batch)
+        if offset >= page.get("total", 0) or not batch:
+            break
+
+    assert meta is not None
+    return items, meta
+
+
+def load_pinned_revision(
+    base_url: str,
+    headers: dict[str, str],
+    from_iso: str,
+    fixed_to_iso: str | None,
+    initial_summary: dict | None,
+    workers: int,
+) -> tuple[dict, dict, list[dict]]:
+    summary = initial_summary
+    for attempt in range(1, MAX_REVISION_RETRIES + 1):
+        try:
+            if summary is None:
+                query = build_query(from_iso, fixed_to_iso)
+                summary = api_get(base_url, "/summary", params=query, headers=headers)
+            revision_id = summary.get("revision_id")
+            pinned_query = build_query(from_iso, fixed_to_iso, revision=revision_id)
+
+            job_items, jobs_meta = fetch_all_batch_jobs(
+                base_url, headers, pinned_query
+            )
+
+            def fetch_one(job_id: str) -> dict:
+                params = {"revision": revision_id} if revision_id else {}
+                return api_get(base_url, f"/jobs/{job_id}", params=params, headers=headers)
+
+            with ThreadPoolExecutor(max_workers=workers) as pool:
+                job_details = list(pool.map(fetch_one, [it["id"] for it in job_items]))
+
+            return summary, jobs_meta, job_details
+        except HttpStatusError as exc:
+            if exc.status == 409 and attempt < MAX_REVISION_RETRIES:
+                print(
+                    f"Revision was superseded during load (HTTP 409); "
+                    f"retrying ({attempt}/{MAX_REVISION_RETRIES})..."
+                )
+                summary = None
+                continue
+            raise
+    raise RuntimeError(f"Failed to load a consistent revision after {MAX_REVISION_RETRIES} attempts")
+
+
+def batch_job_id_for_resource(resource: dict) -> str | None:
+    """Extract the GCP Batch job ID for joining against BigQuery billing export.
+
+    Rainstone's `resources[].resource_key` is `gce:<project>/<zone>/<instance_id>`,
+    whereas BigQuery's billing export leaves `resource.name` NULL on Batch VMs
+    and identifies them by the `batch-job-id` label (stored by Rainstone under
+    `resources[].provisioned`).
+    """
+    prov = resource.get("provisioned") or {}
+    labels = prov.get("provider_labels") or {}
+    if labels.get("batch-job-id"):
+        return str(labels["batch-job-id"])
+    batch_name = prov.get("batch_name") or ""
+    if "/jobs/" in batch_name:
+        return batch_name.rsplit("/jobs/", 1)[-1]
+    return None
+
+
+def map_job_detail(detail: dict) -> dict:
+    resources = detail.get("resources") or []
+    attempts = detail.get("attempts") or []
+
+    # Billing join keys (`batch-job-id` label values in BigQuery), falling back
+    # to Rainstone's resource_key if no Batch metadata is present.
+    resource_keys: list[str] = []
+    gce_resource_keys: list[str] = []
+    for r in resources:
+        rk = r.get("resource_key")
+        if rk and rk not in gce_resource_keys:
+            gce_resource_keys.append(rk)
+        bid = batch_job_id_for_resource(r) or rk
+        if bid and bid not in resource_keys:
+            resource_keys.append(bid)
+
+    res_starts = [r["resource_started_at"] for r in resources if r.get("resource_started_at")]
+    res_ends = [r["resource_finished_at"] for r in resources if r.get("resource_finished_at")]
+    resource_started_at = min(res_starts) if res_starts else None
+    resource_finished_at = (
+        max(res_ends)
+        if res_starts and len(res_ends) == len(res_starts)
+        else None
+    )
+
+    provider_attempts = [a for a in attempts if a.get("role") != "observation"]
+    active_attempts = provider_attempts or attempts
+    tool_starts = [a["tool_started_at"] for a in active_attempts if a.get("tool_started_at")]
+    tool_ends = [a["tool_finished_at"] for a in active_attempts if a.get("tool_finished_at")]
+    tool_started_at = min(tool_starts) if tool_starts else detail.get("started_at")
+    tool_finished_at = max(tool_ends) if tool_ends else detail.get("finished_at")
+
+    t_res_start = parse_iso(resource_started_at)
+    t_tool_start = parse_iso(tool_started_at)
+    t_tool_end = parse_iso(tool_finished_at)
+    t_res_end = parse_iso(resource_finished_at)
+
+    boot_seconds = (
+        round(max(0.0, (t_tool_start - t_res_start).total_seconds()), 1)
+        if t_res_start and t_tool_start
+        else None
+    )
+    run_seconds = (
+        round(max(0.0, (t_tool_end - t_tool_start).total_seconds()), 1)
+        if t_tool_start and t_tool_end
+        else None
+    )
+    teardown_seconds = (
+        round(max(0.0, (t_res_end - t_tool_end).total_seconds()), 1)
+        if t_tool_end and t_res_end
+        else None
+    )
+
+    primary = resources[0] if resources else {}
+    full_amount = to_decimal(detail.get("full_job_amount"))
+
     return {
-        "machine_type": machine_type,
-        "boot_disk_gb": float(boot_disk.get("diskSizeGb", 100)),
-        "boot_disk_type": boot_disk.get("type", "PERSISTENT"),
+        "id": detail.get("id"),
+        "source_id": detail.get("source_id"),
+        "name": resource_keys[0] if resource_keys else detail.get("source_id"),
+        "tool_id": detail.get("tool_id"),
+        "tool_name": detail.get("tool_name"),
+        "tool_version": detail.get("tool_version"),
+        "machine_type": primary.get("machine_type"),
+        "machine_capacity": primary.get("machine_capacity"),
+        "resource_keys": resource_keys,
+        "gce_resource_keys": gce_resource_keys,
+        "resource_started_at": resource_started_at,
+        "tool_started_at": tool_started_at,
+        "tool_finished_at": tool_finished_at,
+        "resource_finished_at": resource_finished_at,
+        "boot_seconds": boot_seconds,
+        "run_seconds": run_seconds,
+        "teardown_seconds": teardown_seconds,
+        "cost": round_money(full_amount, 6),
+        "quality": detail.get("full_quality"),
     }
 
 
-def main_vm_cost(info: dict, lifetime_seconds: float) -> dict:
-    specs = t2d_specs(info["machine_type"])
-    if specs is None:
-        print(f"Unrecognized main VM machine type {info['machine_type']!r} - skipping cost calc", file=sys.stderr)
-        return {"cost": None}
-    vcpu, ram_gib = specs
-    hrs = lifetime_seconds / 3600.0
-    # boot disk type here is the GCE disk resource's own `type` (e.g.
-    # ".../diskTypes/pd-balanced"), not the Batch job JSON's simpler
-    # bootDisk.type string - normalize to the same pd-balanced/pd-standard
-    # label used for pricing.
-    disk_type = "pd-balanced" if "balanced" in info["boot_disk_type"] else "pd-standard"
-    disk_rate = PD_BALANCED_GIB_HR if disk_type == "pd-balanced" else PD_STANDARD_GIB_HR
-    compute_cost = vcpu * T2D_VCPU_HR * hrs + ram_gib * T2D_RAM_GIB_HR * hrs
-    disk_cost = info["boot_disk_gb"] * disk_rate * hrs
+def check_consistency(jobs_meta: dict, job_details: list[dict], mapped_jobs: list[dict]) -> None:
+    coverage = jobs_meta.get("coverage") or {}
+    expected_jobs = coverage.get("jobs", 0)
+    if len(mapped_jobs) != expected_jobs:
+        warn(
+            f"Rainstone consistency check: len(jobs) ({len(mapped_jobs)}) "
+            f"!= jobs.meta.coverage.jobs ({expected_jobs})."
+        )
+
+    priced_jobs = [j for j in mapped_jobs if j.get("cost") is not None]
+    expected_priced = coverage.get("priced", 0)
+    if len(priced_jobs) != expected_priced:
+        warn(
+            f"Rainstone consistency check: {len(priced_jobs)} jobs have "
+            f"non-null cost, but jobs.meta.coverage.priced is {expected_priced}."
+        )
+
+    sum_cost = sum(float(j["cost"]) for j in priced_jobs)
+    subtotal_raw = jobs_meta.get("priced_subtotal")
+    subtotal = float(subtotal_raw) if subtotal_raw is not None else 0.0
+    if abs(sum_cost - subtotal) > 0.01:
+        warn(
+            f"Rainstone consistency check: sum of job costs ({sum_cost:.6f}) "
+            f"differs from jobs.meta.priced_subtotal ({subtotal_raw}) by > $0.01."
+        )
+
+
+def build_main_vm(summary: dict) -> dict:
+    launch = summary.get("current_launch") or {}
+    elapsed = to_decimal(launch.get("elapsed_seconds"))
+    rate = to_decimal(launch.get("hourly_rate"))
+    total = to_decimal(launch.get("total_since_launch"))
     return {
-        "machine_type": info["machine_type"],
-        "vcpu": vcpu,
-        "ram_gib": ram_gib,
-        "boot_disk_gb": info["boot_disk_gb"],
-        "boot_disk_type": disk_type,
-        "lifetime_seconds": round(lifetime_seconds, 1),
-        "compute_cost": round(compute_cost, 4),
-        "disk_cost": round(disk_cost, 4),
-        "cost": round(compute_cost + disk_cost, 4),
-    }
-
-
-def batch_job_cost(job: dict) -> dict | None:
-    status = job.get("status", {})
-    instances = status.get("taskGroups", {}).get("group0", {}).get("instances", [{}])
-    if not instances:
-        return None
-    machine_type = instances[0].get("machineType")
-    boot_gb = float(instances[0].get("bootDisk", {}).get("sizeGb", 100))
-    specs = n2_specs(machine_type) if machine_type else None
-    if specs is None:
-        return None
-    vcpu, ram_gib = specs
-
-    scheduled_t = running_t = terminal_t = None
-    for e in status.get("statusEvents", []):
-        desc = e.get("description", "")
-        if "to SCHEDULED" in desc:
-            scheduled_t = parse_ts(e["eventTime"])
-        elif "to RUNNING" in desc:
-            running_t = parse_ts(e["eventTime"])
-        elif "to SUCCEEDED" in desc or "to FAILED" in desc:
-            terminal_t = parse_ts(e["eventTime"])
-    if not scheduled_t or not terminal_t:
-        return None
-    if not running_t:
-        running_t = terminal_t  # no observed RUNNING transition - treat as zero-length boot
-
-    boot_s = max(0.0, (running_t - scheduled_t).total_seconds())
-    run_s = max(0.0, (terminal_t - running_t).total_seconds())
-    teardown_s = float(TEARDOWN_ESTIMATE_SECONDS)
-
-    def phase_cost(seconds: float) -> float:
-        hrs = seconds / 3600.0
-        return vcpu * N2_VCPU_HR * hrs + ram_gib * N2_RAM_GIB_HR * hrs + boot_gb * PD_STANDARD_GIB_HR * hrs
-
-    boot_cost, run_cost, teardown_cost = phase_cost(boot_s), phase_cost(run_s), phase_cost(teardown_s)
-    labels = job.get("labels", {}) or {}
-
-    return {
-        "name": job["name"].rsplit("/", 1)[-1],
-        "tool_id": labels.get("galaxy-tool-id"),
-        "machine_type": machine_type,
-        "vcpu": vcpu,
-        "ram_gib": ram_gib,
-        "scheduled_at": scheduled_t.isoformat(),
-        "running_at": running_t.isoformat(),
-        "terminal_at": terminal_t.isoformat(),
-        "boot_seconds": round(boot_s, 1),
-        "run_seconds": round(run_s, 1),
-        "teardown_seconds": teardown_s,
-        "boot_cost": round(boot_cost, 5),
-        "run_cost": round(run_cost, 5),
-        "teardown_cost": round(teardown_cost, 5),
-        "cost": round(boot_cost + run_cost + teardown_cost, 5),
+        "machine_type": launch.get("machine_type"),
+        "machine_capacity": launch.get("machine_capacity"),
+        "launch_at": launch.get("launch_at"),
+        "as_of": launch.get("as_of"),
+        "elapsed_seconds": round(float(elapsed), 1) if elapsed is not None else None,
+        "hourly_rate": float(rate) if rate is not None else None,
+        "cost": round_money(total, 4),
     }
 
 
 def main() -> None:
-    if len(sys.argv) != 2:
-        raise SystemExit("Usage: anvil_generate_cost_data.py <instance_name>")
-    # Same string everywhere in this codebase's docs/*-data - the VM
-    # instance name doubles as the run identifier.
-    run_id = instance_name = sys.argv[1]
-
-    project = os.environ["GCP_PROJECT"]
-    zone = os.environ["GCP_ZONE"]
-    deploy_start_epoch = int(os.environ["DEPLOY_START_EPOCH"])
-    deploy_start = datetime.fromtimestamp(deploy_start_epoch, tz=timezone.utc)
-    now = datetime.now(timezone.utc)
-
-    vm_info = get_main_vm_info(instance_name, project, zone)
-    lifetime_seconds = (now - deploy_start).total_seconds()
-    vm_cost = main_vm_cost(vm_info, lifetime_seconds)
-
-    jobs_raw = run_gcloud_json(
-        [
-            "batch",
-            "jobs",
-            "list",
-            f"--project={project}",
-            f"--location={BATCH_LOCATION}",
-            f"--filter=createTime>={deploy_start.strftime('%Y-%m-%dT%H:%M:%SZ')}",
-        ]
-    ) or []
-
-    batch_jobs = [j for j in (batch_job_cost(j) for j in jobs_raw) if j is not None]
-    batch_jobs.sort(key=lambda j: j["scheduled_at"])
-    batch_total_cost = round(sum(j["cost"] for j in batch_jobs), 4)
-
-    total_cost = round((vm_cost.get("cost") or 0) + batch_total_cost, 4)
-
-    os.makedirs(RUNS_DIR, exist_ok=True)
-    run_detail = {
-        "run_id": run_id,
-        "timestamp": deploy_start.replace(tzinfo=None).isoformat(),
-        "main_vm": vm_cost,
-        "gcp_batch_jobs_total": len(jobs_raw),
-        "gcp_batch_jobs_priced": len(batch_jobs),
-        "gcp_batch_total_cost": batch_total_cost,
-        "total_cost": total_cost,
-        "teardown_estimate_seconds": TEARDOWN_ESTIMATE_SECONDS,
-        "jobs": batch_jobs,
-    }
-    with open(f"{RUNS_DIR}/{run_id}.json", "w") as f:
-        json.dump(run_detail, f, separators=(",", ":"))
-
-    try:
-        with open(COSTS_PATH) as f:
-            costs = json.load(f)
-    except FileNotFoundError:
-        costs = {"runs": []}
-
-    costs["runs"] = [r for r in costs["runs"] if r["run_id"] != run_id]
-    costs["runs"].append(
-        {
-            "run_id": run_id,
-            "timestamp": run_detail["timestamp"],
-            "main_vm_cost": vm_cost.get("cost"),
-            "gcp_batch_cost": batch_total_cost,
-            "gcp_batch_jobs_priced": len(batch_jobs),
-            "gcp_batch_jobs_total": len(jobs_raw),
-            "total_cost": total_cost,
-        }
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("run_id", help="Harness run identifier (e.g. anvil-test-ci-261021-115117)")
+    parser.add_argument(
+        "--rainstone-url",
+        default=os.environ.get("RAINSTONE_API_URL", "http://localhost:5173/api"),
+        help="Base URL of Rainstone's API (default: $RAINSTONE_API_URL or http://localhost:5173/api)",
     )
-    with open(COSTS_PATH, "w") as f:
-        json.dump(costs, f, separators=(",", ":"))
+    parser.add_argument(
+        "--github-run-id",
+        default=os.environ.get("GITHUB_RUN_ID"),
+        help="GitHub Actions run ID for main-VM billing reconciliation (default: $GITHUB_RUN_ID)",
+    )
+    parser.add_argument(
+        "--deploy-start-epoch",
+        default=os.environ.get("DEPLOY_START_EPOCH"),
+        help="Run start Unix epoch seconds (default: $DEPLOY_START_EPOCH)",
+    )
+    parser.add_argument("--from", dest="from_time", help="Explicit UTC ISO-8601 start time override")
+    parser.add_argument("--to", dest="to_time", help="Explicit UTC ISO-8601 end time override")
+    parser.add_argument(
+        "--wait-seconds",
+        type=int,
+        default=int(os.environ.get("RAINSTONE_WAIT_SECONDS", str(DEFAULT_WAIT_SECONDS))),
+        help=f"Max seconds to wait for Rainstone completeness (default: {DEFAULT_WAIT_SECONDS})",
+    )
+    parser.add_argument(
+        "--poll-interval",
+        type=int,
+        default=int(os.environ.get("RAINSTONE_POLL_INTERVAL", str(DEFAULT_POLL_INTERVAL))),
+        help=f"Seconds between completeness polls (default: {DEFAULT_POLL_INTERVAL})",
+    )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=DEFAULT_WORKERS,
+        help=f"Concurrent workers for GET /api/jobs/{{id}} (default: {DEFAULT_WORKERS})",
+    )
+    parser.add_argument(
+        "--header",
+        "--headers",
+        dest="headers",
+        action="append",
+        default=[],
+        help="Extra HTTP header KEY:VALUE (repeatable; for local development stacks)",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("docs/cost-data"),
+        help="Output directory for costs.json and runs/<run_id>.json (default: docs/cost-data)",
+    )
+    args = parser.parse_args()
+
+    headers = build_headers(args.headers)
+    from_iso, fixed_to_iso = resolve_window(
+        args.rainstone_url,
+        headers,
+        args.deploy_start_epoch,
+        args.from_time,
+        args.to_time,
+    )
+
+    initial_summary = wait_for_completeness(
+        args.rainstone_url,
+        headers,
+        from_iso,
+        fixed_to_iso,
+        args.wait_seconds,
+        args.poll_interval,
+    )
+
+    summary, jobs_meta, job_details = load_pinned_revision(
+        args.rainstone_url,
+        headers,
+        from_iso,
+        fixed_to_iso,
+        initial_summary,
+        args.workers,
+    )
+
+    revision_id = summary.get("revision_id")
+    github_output = os.environ.get("GITHUB_OUTPUT")
+    if github_output and revision_id:
+        with open(github_output, "a", encoding="utf-8") as out_f:
+            out_f.write(f"revision_id={revision_id}\n")
+
+    mapped_jobs = [map_job_detail(d) for d in job_details]
+    check_consistency(jobs_meta, job_details, mapped_jobs)
+    mapped_jobs.sort(
+        key=lambda j: (
+            j.get("resource_started_at") is None,
+            j.get("resource_started_at") or "",
+            j.get("tool_started_at") or "",
+            j.get("id") or "",
+        )
+    )
+
+    main_vm = build_main_vm(summary)
+    launch = summary.get("current_launch") or {}
+    main_vm_dec = to_decimal(launch.get("total_since_launch"))
+
+    coverage = jobs_meta.get("coverage") or {}
+    gcp_batch_jobs_total = int(coverage.get("jobs", 0))
+    gcp_batch_jobs_priced = int(coverage.get("priced", 0))
+    subtotal_raw = jobs_meta.get("priced_subtotal")
+    if subtotal_raw is not None:
+        gcp_batch_dec = to_decimal(subtotal_raw)
+    elif gcp_batch_jobs_total == 0 and int(coverage.get("incomplete", 0)) == 0:
+        gcp_batch_dec = Decimal("0")
+    else:
+        gcp_batch_dec = None
+
+    total_dec = (
+        main_vm_dec + gcp_batch_dec
+        if main_vm_dec is not None and gcp_batch_dec is not None
+        else None
+    )
+
+    launch_dt = parse_iso(launch.get("launch_at")) or parse_iso(from_iso)
+    timestamp = (
+        launch_dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+        if launch_dt
+        else datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+    )
+
+    main_vm_cost = round_money(main_vm_dec, 4)
+    gcp_batch_cost = round_money(gcp_batch_dec, 4)
+    total_cost = round_money(total_dec, 4)
+
+    run_detail: dict = {
+        "run_id": args.run_id,
+        "timestamp": timestamp,
+        "rainstone_revision": revision_id,
+        "main_vm": main_vm,
+        "gcp_batch_jobs_total": gcp_batch_jobs_total,
+        "gcp_batch_jobs_priced": gcp_batch_jobs_priced,
+        "gcp_batch_total_cost": gcp_batch_cost,
+        "total_cost": total_cost,
+        "jobs": mapped_jobs,
+    }
+    if args.github_run_id:
+        run_detail["github_run_id"] = str(args.github_run_id)
+
+    runs_dir = args.output_dir / "runs"
+    runs_dir.mkdir(parents=True, exist_ok=True)
+    detail_path = runs_dir / f"{args.run_id}.json"
+    detail_path.write_text(json.dumps(run_detail, separators=(",", ":")))
+
+    costs_path = args.output_dir / "costs.json"
+    existing = json.loads(costs_path.read_text()) if costs_path.exists() else {"runs": []}
+    runs = [r for r in existing.get("runs", []) if r.get("run_id") != args.run_id]
+    run_summary: dict = {
+        "run_id": args.run_id,
+        "timestamp": timestamp,
+        "main_vm_cost": main_vm_cost,
+        "gcp_batch_cost": gcp_batch_cost,
+        "gcp_batch_jobs_priced": gcp_batch_jobs_priced,
+        "gcp_batch_jobs_total": gcp_batch_jobs_total,
+        "total_cost": total_cost,
+        "rainstone_revision": revision_id,
+    }
+    if args.github_run_id:
+        run_summary["github_run_id"] = str(args.github_run_id)
+    runs.append(run_summary)
+    runs.sort(key=lambda r: r.get("timestamp", ""))
+    costs_path.write_text(json.dumps({"runs": runs}, separators=(",", ":")))
 
     print(
-        f"Wrote cost data for {run_id}: main VM ${vm_cost.get('cost') or 0:.2f}, "
-        f"GCP Batch ${batch_total_cost:.2f} ({len(batch_jobs)}/{len(jobs_raw)} jobs priced), "
-        f"total ${total_cost:.2f}"
+        f"{args.run_id}: main VM = ${main_vm_cost} "
+        f"({main_vm.get('machine_type')}, {main_vm.get('elapsed_seconds')}s), "
+        f"GCP Batch = ${gcp_batch_cost} "
+        f"({gcp_batch_jobs_priced}/{gcp_batch_jobs_total} jobs priced), "
+        f"total = ${total_cost} (revision={revision_id})"
     )
 
 
