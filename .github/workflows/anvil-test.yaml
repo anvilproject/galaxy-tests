@@ -488,6 +488,8 @@ jobs:
           stream_pod_logs deployment/galaxy-job-0 logs/galaxy-job.log &
           stream_pod_logs deployment/galaxy-nginx logs/galaxy-nginx.log &
           stream_pod_logs daemonset/ingress-nginx-controller logs/ingress-nginx.log ingress-nginx &
+          stream_pod_logs deployment/rainstone-collector logs/rainstone-collector.log &
+          stream_pod_logs deployment/rainstone-web logs/rainstone-web.log &
           disown -a
 
       # Stdlib only, same as "Generate deploy-stage timing data" above.
@@ -1149,6 +1151,19 @@ jobs:
           mkdir -p "$DIR"
           gzip -c "${{ github.workspace }}/logs/galaxy-job.log" > "$DIR/galaxy-job.log.gz"
 
+      - name: Save Rainstone pod logs under reports/anvil
+        if: always()
+        continue-on-error: true
+        working-directory: /tmp/main-clone
+        run: |
+          DIR="reports/anvil/deployments/${{ steps.instance.outputs.name }}"
+          mkdir -p "$DIR"
+          for f in rainstone-collector rainstone-web; do
+            SRC="${{ github.workspace }}/logs/$f.log"
+            [ -f "$SRC" ] && gzip -c "$SRC" > "$DIR/$f.log.gz"
+          done
+          true
+
       # SIGTERM rather than a kill: the probe writes its summary on the way
       # out, and the timeline it has been flushing all run is what gets
       # lined up against the test failures.
@@ -1364,6 +1379,7 @@ jobs:
       # always() so a deploy-only or failed-tests run still gets priced -
       # the main VM cost applies either way.
       - name: Estimate GCP cost for this run
+        id: estimate-cost
         if: always()
         continue-on-error: true
         working-directory: /tmp/main-clone
@@ -1372,6 +1388,105 @@ jobs:
         run: |
           python "${{ github.workspace }}/.github/scripts/anvil_generate_cost_data.py" \
             "${{ steps.instance.outputs.name }}"
+
+      # Export Rainstone's fact tables, manifest, and diagnostics bundle after
+      # the cost step has waited for collection and pinned a revision, so the
+      # snapshot reflects the exact state the reported figures came from and
+      # can be loaded directly by rainstone-api's load-snapshot.sh.
+      - name: Save Rainstone snapshot
+        if: always()
+        continue-on-error: true
+        working-directory: /tmp/main-clone
+        env:
+          INSTANCE_NAME: ${{ steps.instance.outputs.name }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          PINNED_REVISION: ${{ steps.estimate-cost.outputs.revision_id }}
+          RAINSTONE_API_URL: http://${{ steps.vm-ip.outputs.ip }}/galaxy/costs/api
+          LOGS_DIR: ${{ github.workspace }}/logs
+        run: |
+          mkdir -p "$LOGS_DIR"
+          DIR="reports/anvil/deployments/$INSTANCE_NAME"
+          mkdir -p "$DIR"
+
+          curl -sf --max-time 60 "$RAINSTONE_API_URL/status/download" \
+            > "$LOGS_DIR/rainstone-diagnostics.json" \
+            && cp "$LOGS_DIR/rainstone-diagnostics.json" "$DIR/rainstone-diagnostics.json" \
+            || echo "Could not fetch Rainstone diagnostics bundle"
+
+          NAMESPACE="galaxy"
+          RELEASE="rainstone"
+          EXCLUDED=(cost_line cost_revision report_generation capability_report installation_record alembic_version)
+          database=(kubectl -n "$NAMESPACE" exec "statefulset/${RELEASE}-postgres" --)
+          dump=(pg_dump -U rainstone -d rainstone --data-only --disable-triggers --no-owner --no-privileges)
+          for table in "${EXCLUDED[@]}"; do dump+=("--exclude-table-data=$table"); done
+
+          RAW_SQL="/tmp/rainstone-snapshot.sql"
+          captured_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          "${database[@]}" "${dump[@]}" 2>/dev/null > "$RAW_SQL"
+          test -s "$RAW_SQL" || { echo "Rainstone pg_dump produced an empty snapshot"; exit 0; }
+
+          gzip -c "$RAW_SQL" > "$LOGS_DIR/rainstone-snapshot.sql.gz"
+          cp "$LOGS_DIR/rainstone-snapshot.sql.gz" "$DIR/rainstone-snapshot.sql.gz"
+
+          cutoffs="$("${database[@]}" psql -U rainstone -d rainstone -tAc \
+            "SELECT coalesce(json_object_agg(source, last_success_at), '{}') FROM ingestion_state" 2>/dev/null || echo '{}')"
+          image="$(kubectl -n "$NAMESPACE" get "deploy/${RELEASE}-collector" \
+            -o jsonpath='{.spec.template.spec.containers[0].image}' 2>/dev/null || true)"
+          image_id="$(kubectl -n "$NAMESPACE" get pod -n "$NAMESPACE" -l app.kubernetes.io/component=collector \
+            -o jsonpath='{.items[0].status.containerStatuses[0].imageID}' 2>/dev/null || true)"
+
+          python3 - "$RAW_SQL" "$LOGS_DIR/rainstone-snapshot.manifest.json" \
+              "$INSTANCE_NAME" "$GITHUB_RUN_ID" "$captured_at" "$cutoffs" \
+              "$image" "$image_id" "$NAMESPACE" "$RELEASE" "$PINNED_REVISION" \
+              "${dump[*]}" "${EXCLUDED[@]}" <<'PY'
+          import hashlib, json, os, sys
+          (snapshot, manifest, instance_name, github_run_id, captured_at, cutoffs,
+           image, image_id, namespace, release, pinned_revision, command, *excluded) = sys.argv[1:]
+          with open(snapshot, "rb") as handle:
+              digest = hashlib.sha256(handle.read()).hexdigest()
+          revision_id = pinned_revision or None
+          if not revision_id and os.path.exists("docs/cost-data/costs.json"):
+              try:
+                  with open("docs/cost-data/costs.json") as f:
+                      for entry in json.load(f):
+                          if entry.get("run_id") == instance_name:
+                              revision_id = entry.get("rainstone_revision")
+                              break
+              except Exception:
+                  pass
+          try:
+              parsed_cutoffs = json.loads(cutoffs) if cutoffs.strip() else {}
+          except Exception:
+              parsed_cutoffs = {}
+          payload = {
+              "label": f"{instance_name} (run {github_run_id})",
+              "instance_name": instance_name,
+              "github_run_id": github_run_id,
+              "snapshot_file": "rainstone-snapshot.sql",
+              "snapshot_digest": digest,
+              "captured_at": captured_at,
+              "captured_at_source": "UTC clock of the runner executing pg_dump, just before pg_dump",
+              "revision_id": revision_id,
+              "source_cutoffs": parsed_cutoffs,
+              "source": {
+                  "namespace": namespace,
+                  "release": release,
+                  "image": image,
+                  "image_id": image_id,
+              },
+              "export": {
+                  "tool": "pg_dump",
+                  "command": command,
+                  "excluded_tables": excluded,
+              },
+          }
+          with open(manifest, "w") as handle:
+              json.dump(payload, handle, indent=2)
+              handle.write("\n")
+          print(f"wrote {manifest} (digest {digest[:12]}, revision {revision_id})")
+          PY
+          cp "$LOGS_DIR/rainstone-snapshot.manifest.json" "$DIR/rainstone-snapshot.manifest.json"
+          rm -f "$RAW_SQL"
 
       # Raw per-run artifacts (deployment logs, results.json) are useful
       # for digging into a specific run shortly after it happens, not
