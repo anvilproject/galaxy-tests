@@ -1,0 +1,93 @@
+name: Reconcile Rainstone Costs Against GCP Billing
+
+on:
+  schedule:
+    # Daily at 14:37 UTC. Reconciles harness runs in docs/cost-data/costs.json
+    # whose timestamp is between 2 and 10 days old (so BigQuery billing export
+    # has settled) and that do not yet have a reconciliation file.
+    - cron: '37 14 * * *'
+  workflow_dispatch:
+    inputs:
+      run-id:
+        description: 'Optional specific run_id (e.g. 20261019-115423) to reconcile regardless of age'
+        required: false
+        default: ''
+        type: string
+      dry-run:
+        description: 'Print reconciliation summary without writing or committing files'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  reconcile-costs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository (main)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/526897014808/locations/global/workloadIdentityPools/galaxy-tests-identity-pool/providers/gxy-tests-provider'
+          service_account: 'galaxy-tests-repo-actions-sa@anvil-and-terra-development.iam.gserviceaccount.com'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Run BigQuery billing reconciliation
+        env:
+          INPUT_RUN_ID: ${{ inputs.run-id || '' }}
+          INPUT_DRY_RUN: ${{ inputs.dry-run && 'true' || 'false' }}
+        run: |
+          ARGS=(--cost-data-dir docs/cost-data)
+          if [ -n "$INPUT_RUN_ID" ]; then
+            ARGS+=(--run-id "$INPUT_RUN_ID" --force)
+          fi
+          if [ "$INPUT_DRY_RUN" = "true" ]; then
+            ARGS+=(--dry-run)
+          fi
+
+          python3 .github/scripts/anvil_reconcile_costs.py "${ARGS[@]}" | tee /tmp/reconcile-summary.txt
+
+          {
+            echo "### Rainstone vs GCP Billing Reconciliation"
+            echo ""
+            echo '```'
+            cat /tmp/reconcile-summary.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit and push reconciliation files
+        if: ${{ !(inputs.dry-run == true) }}
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add docs/cost-data/reconciliation 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No reconciliation changes to commit"
+            exit 0
+          fi
+          git commit -m "Add GCP billing cost reconciliation from run ${{ github.run_id }}"
+          for attempt in 1 2 3 4 5; do
+            if git push origin main; then
+              exit 0
+            fi
+            echo "Push rejected (attempt $attempt/5) - rebasing onto origin/main and retrying"
+            git fetch origin main
+            git rebase origin/main
+            sleep 5
+          done
+          echo "::error::Failed to push reconciliation files to main after 5 attempts"
+          exit 1
