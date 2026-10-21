@@ -17,8 +17,9 @@ nav_id: costs
   cost runs from launch until this data is collected just before
   teardown. Each GCP Batch job gets its own dedicated VM; its lifetime
   is measured from Rainstone's observed GCE instance start to deletion
-  and split into boot (GCE start to tool start), run (tool execution),
-  and teardown (tool finish to GCE deletion). Runs recorded after
+  and split by Rainstone into boot (GCE start to tool start), run (tool
+  execution), idle (between retries on the same VM), and teardown (tool
+  finish to GCE deletion), each with its own cost. Runs recorded after
   billing export completes also show a side-by-side comparison against
   GCP BigQuery billing (`cost_at_list`). See
   <a href="https://github.com/anvilproject/galaxy-tests/blob/main/.github/scripts/anvil_generate_cost_data.py">anvil_generate_cost_data.py</a>
@@ -67,9 +68,11 @@ nav_id: costs
 <p class="gx-prose gx-more-text" id="gx-jobcost-more-text" hidden>
   Rows are ordered top-to-bottom by when the job's VM started, and
   positioned left-to-right by elapsed time since the first job in the
-  run started provisioning. Boot, run, and teardown durations come from
-  Rainstone's observed GCE instance and Galaxy tool timestamps (earlier
-  runs used GCP Batch status events with a fixed teardown estimate).
+  run started provisioning. Phase durations and costs are Rainstone's own
+  resource phases, which add up to each job's cost. A job whose phases
+  Rainstone could not separate is drawn as one grey bar, with Rainstone's
+  reason in its details (earlier runs used GCP Batch status events with a
+  fixed teardown estimate).
 </p>
 
 <div class="gx-raster-controls">
@@ -269,6 +272,14 @@ nav_id: costs
   var BOOT_COLOR = "#9aa5b1";
   var RUN_COLOR = "#d87e55";
   var TEARDOWN_COLOR = "#b0578d";
+  var UNSEPARATED_COLOR = "#d5d9de";
+  // Field prefixes in runs/<run_id>.json, in the order a job lives them.
+  var PHASES = [
+    { key: "boot", label: "Boot" },
+    { key: "run", label: "Run" },
+    { key: "idle", label: "Idle" },
+    { key: "teardown", label: "Teardown" }
+  ];
   var AXIS_LABEL_COLOR = "#3d4148";
   var OUTLINE_COLOR = "#ffd700"; // --galaxy-gold
 
@@ -420,6 +431,15 @@ nav_id: costs
     "</table>";
   }
 
+  // The Batch comparison covers only jobs Rainstone priced; billing for the
+  // rest is cost Rainstone is missing, stated beside the table.
+  function unpricedBillingHtml(gcpBatch) {
+    var unpriced = gcpBatch && gcpBatch.unpriced_in_rainstone;
+    if (!unpriced || !unpriced.jobs) return "";
+    return '<div class="gx-chart-details__stage">Billing for ' + unpriced.jobs +
+      " jobs Rainstone did not price: " + fmtDollars(unpriced.billing) + "</div>";
+  }
+
   function jobBoundsMs(job) {
     var startStr = job.resource_started_at || job.scheduled_at || job.tool_started_at || job.running_at;
     var runStartStr = job.tool_started_at || job.running_at || startStr;
@@ -558,7 +578,7 @@ nav_id: costs
             { label: "Head node", rainstone: recon.main_vm.rainstone, billing: recon.main_vm.billing, difference: recon.main_vm.difference },
             { label: "GCP Batch", rainstone: recon.gcp_batch.rainstone, billing: recon.gcp_batch.billing, difference: recon.gcp_batch.difference },
             { label: "Total", rainstone: recon.total.rainstone, billing: recon.total.billing, difference: recon.total.difference }
-          ]);
+          ]) + unpricedBillingHtml(recon.gcp_batch);
       }
       detailsEl.className = "gx-chart-details gx-chart-details--active";
       detailsEl.innerHTML = html;
@@ -714,7 +734,8 @@ nav_id: costs
     legendEl.innerHTML =
       '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:' + BOOT_COLOR + '"></span>Boot</span>' +
       '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:' + RUN_COLOR + '"></span>Run</span>' +
-      '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:' + TEARDOWN_COLOR + '"></span>Teardown</span>';
+      '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:' + TEARDOWN_COLOR + '"></span>Teardown</span>' +
+      '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:' + UNSEPARATED_COLOR + '"></span>Not separated</span>';
 
     var LEFT_MARGIN = 10, TOP_PAD = 20, BOTTOM_PAD = 6, RIGHT_PAD = 20;
     var ROW_H = 5, ROW_GAP = 1, ROW_STEP = ROW_H + ROW_GAP;
@@ -849,6 +870,11 @@ nav_id: costs
         var teardownX0 = xFor(b.runEndMs);
         var teardownX1 = xFor(b.endMs);
 
+        if (job.phases_separated === false) {
+          ctx.fillStyle = UNSEPARATED_COLOR;
+          ctx.fillRect(bootX0, y, Math.max(1, teardownX1 - bootX0), ROW_H);
+          return;
+        }
         ctx.fillStyle = BOOT_COLOR;
         ctx.fillRect(bootX0, y, Math.max(1, runX0 - bootX0), ROW_H);
         ctx.fillStyle = RUN_COLOR;
@@ -873,6 +899,27 @@ nav_id: costs
       newerBtn.disabled = idx >= runIds.length - 1;
     }
 
+    // Sums Rainstone's per-job phase costs. Jobs whose phases were not
+    // separated are a bucket of their own, so the rows add up to the total.
+    function phaseTotalsHtml(pricedJobs, totalCost) {
+      var separated = pricedJobs.filter(function (j) { return j.phases_separated; });
+      var html = PHASES.map(function (phase) {
+        var withPhase = separated.filter(function (j) { return j[phase.key + "_cost"] != null; });
+        if (!withPhase.length) return "";
+        var cost = withPhase.reduce(function (a, j) { return a + j[phase.key + "_cost"]; }, 0);
+        var seconds = withPhase.reduce(function (a, j) { return a + (j[phase.key + "_seconds"] || 0); }, 0);
+        return '<div class="gx-chart-details__stage">' + phase.label + ": " + fmtSeconds(seconds) +
+          " &middot; " + fmtDollars(cost) + " (" + fmtPct(cost, totalCost) + ")</div>";
+      }).join("");
+      var unseparated = pricedJobs.filter(function (j) { return !j.phases_separated; });
+      if (unseparated.length) {
+        var rest = unseparated.reduce(function (a, j) { return a + j.cost; }, 0);
+        html += '<div class="gx-chart-details__stage">Not separated (' + unseparated.length + " jobs): " +
+          fmtDollars(rest) + " (" + fmtPct(rest, totalCost) + ")</div>";
+      }
+      return html;
+    }
+
     function renderDefaultDetails() {
       if (!current || !current.jobs.length) {
         detailsEl.className = "gx-chart-details";
@@ -887,14 +934,18 @@ nav_id: costs
       }
       var pricedJobs = jobs.filter(function (j) { return j.cost != null; });
       var totalCost = pricedJobs.reduce(function (a, j) { return a + j.cost; }, 0);
-      var hasPhaseCosts = pricedJobs.some(function (j) { return j.boot_cost != null; });
+      // Runs recorded from Rainstone say per job whether its phases were separated.
+      var fromRainstone = jobs.some(function (j) { return j.phases_separated !== undefined; });
+      var hasPhaseCosts = !fromRainstone && pricedJobs.some(function (j) { return j.boot_cost != null; });
 
       var html =
         '<div class="gx-chart-details__label">' + jobs.length + (searchQuery ? " matching" : "") + " GCP Batch jobs</div>" +
         '<div class="gx-chart-details__label">Total: ' + fmtDollars(searchQuery ? totalCost : current.gcp_batch_total_cost) + "</div>" +
         '<div class="gx-chart-details__stage">Per-job avg: ' + fmtDollars(pricedJobs.length ? totalCost / pricedJobs.length : null) + "</div>";
 
-      if (hasPhaseCosts) {
+      if (fromRainstone) {
+        html += phaseTotalsHtml(pricedJobs, totalCost);
+      } else if (hasPhaseCosts) {
         var totalBoot = pricedJobs.reduce(function (a, j) { return a + (j.boot_cost || 0); }, 0);
         var totalRun = pricedJobs.reduce(function (a, j) { return a + (j.run_cost || 0); }, 0);
         var totalTeardown = pricedJobs.reduce(function (a, j) { return a + (j.teardown_cost || 0); }, 0);
@@ -919,7 +970,7 @@ nav_id: costs
         html += '<div class="gx-chart-details__label">Rainstone vs Billing</div>' +
           renderReconciliationTable([
             { label: "GCP Batch", rainstone: b.rainstone, billing: b.billing, difference: b.difference }
-          ]);
+          ]) + unpricedBillingHtml(b);
       }
 
       detailsEl.className = "gx-chart-details gx-chart-details--active";
@@ -984,7 +1035,18 @@ nav_id: costs
         '<div class="gx-chart-details__label">Total: ' + fmtDollars(job.cost) + "</div>" +
         '<div class="gx-chart-details__stage">Machine: ' + fmtMachine(job) + "</div>";
 
-      if (job.boot_cost != null) {
+      if (job.phases_separated === false) {
+        html += '<div class="gx-chart-details__stage">Phases not separated: ' +
+          escapeHtml(job.phases_reason || "no reason recorded") + "</div>";
+      } else if (job.phases_separated) {
+        html += PHASES.map(function (phase) {
+          var seconds = job[phase.key + "_seconds"];
+          var cost = job[phase.key + "_cost"];
+          if (seconds == null && cost == null) return "";
+          return '<div class="gx-chart-details__stage">' + phase.label + ": " + fmtSeconds(seconds) +
+            (cost != null ? " &middot; " + fmtDollars(cost) + " (" + fmtPct(cost, job.cost) + ")" : "") + "</div>";
+        }).join("");
+      } else if (job.boot_cost != null) {
         html +=
           '<div class="gx-chart-details__stage">Boot: ' + fmtSeconds(job.boot_seconds) + " &middot; " + fmtDollars(job.boot_cost) +
             " (" + fmtPct(job.boot_cost, job.cost) + ")</div>" +

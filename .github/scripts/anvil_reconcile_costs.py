@@ -10,6 +10,8 @@ For each eligible run in `docs/cost-data/costs.json` (or an explicit `--run-id`)
       * GCP Batch VMs: `labels.batch-job-id IN <run's resource_keys>`
   - Writes `docs/cost-data/reconciliation/<run_id>.json` with `queried_at`,
     `rainstone_revision`, `main_vm`, `gcp_batch`, `total`, and per-job `jobs[]`.
+    The Batch and total comparisons cover only jobs Rainstone priced;
+    billing for jobs it left unpriced is under `gcp_batch.unpriced_in_rainstone`.
 
 Numbers are recorded only; discrepancies never fail the workflow.
 """
@@ -249,6 +251,7 @@ def reconcile_one_run(
     )
 
     rainstone_priced_keys = {k for k, v in rainstone_by_key.items() if v is not None}
+    rainstone_unpriced_keys = set(rainstone_by_key) - rainstone_priced_keys
     billing_present_keys = set(batch_billing_by_key.keys())
 
     only_in_rainstone = sorted(rainstone_priced_keys - billing_present_keys)
@@ -271,8 +274,17 @@ def reconcile_one_run(
     main_vm_rainstone = round_money(run_summary.get("main_vm_cost"), 4)
     main_vm_billing = round_money(main_vm_billing_raw, 4)
 
+    # Rainstone's Batch figure covers only the jobs it priced, so only their
+    # billing is compared with it. Billing for jobs Rainstone left unpriced
+    # is recorded beside the comparison: it is cost Rainstone is missing,
+    # not an error in the costs it reported.
     batch_rainstone = round_money(run_summary.get("gcp_batch_cost"), 4)
-    batch_billing_raw = sum(batch_billing_by_key.values())
+    batch_billing_raw = sum(
+        v for k, v in batch_billing_by_key.items() if k in rainstone_priced_keys
+    )
+    unpriced_billing_raw = sum(
+        v for k, v in batch_billing_by_key.items() if k in rainstone_unpriced_keys
+    )
     batch_billing = round_money(batch_billing_raw, 4)
 
     total_rainstone = round_money(run_summary.get("total_cost"), 4)
@@ -294,9 +306,14 @@ def reconcile_one_run(
             "billing": batch_billing,
             "difference": diff_money(batch_rainstone, batch_billing, 4),
             "rainstone_jobs": len(rainstone_priced_keys),
-            "billing_jobs": len(billing_present_keys),
+            "billing_jobs": len(billing_present_keys & rainstone_priced_keys),
             "only_in_rainstone": only_in_rainstone,
             "only_in_billing": only_in_billing,
+            "unpriced_in_rainstone": {
+                "jobs": len(rainstone_unpriced_keys),
+                "jobs_with_billing": len(rainstone_unpriced_keys & billing_present_keys),
+                "billing": round_money(unpriced_billing_raw, 4),
+            },
         },
         "total": {
             "rainstone": total_rainstone,
@@ -384,12 +401,18 @@ def main() -> None:
         vm = result["main_vm"]
         batch = result["gcp_batch"]
         tot = result["total"]
+        unpriced = batch["unpriced_in_rainstone"]
+
+        def signed(value: float | None) -> str:
+            return "n/a" if value is None else f"{value:+.4f}"
+
         print(
             f"{run_id} (github_run_id={result['github_run_id']}): "
-            f"main_vm rainstone=${vm['rainstone']} billing=${vm['billing']} (diff={vm['difference']:+.4f}), "
-            f"gcp_batch rainstone=${batch['rainstone']} billing=${batch['billing']} (diff={batch['difference']:+.4f}, "
+            f"main_vm rainstone=${vm['rainstone']} billing=${vm['billing']} (diff={signed(vm['difference'])}), "
+            f"gcp_batch rainstone=${batch['rainstone']} billing=${batch['billing']} (diff={signed(batch['difference'])}, "
             f"jobs={batch['rainstone_jobs']}/{batch['billing_jobs']}), "
-            f"total rainstone=${tot['rainstone']} billing=${tot['billing']} (diff={tot['difference']:+.4f})"
+            f"unpriced in rainstone: {unpriced['jobs']} jobs, billing=${unpriced['billing']}, "
+            f"total rainstone=${tot['rainstone']} billing=${tot['billing']} (diff={signed(tot['difference'])})"
         )
 
         if not args.dry_run:

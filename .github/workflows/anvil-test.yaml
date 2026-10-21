@@ -1449,7 +1449,7 @@ jobs:
           if not revision_id and os.path.exists("docs/cost-data/costs.json"):
               try:
                   with open("docs/cost-data/costs.json") as f:
-                      for entry in json.load(f):
+                      for entry in json.load(f).get("runs", []):
                           if entry.get("run_id") == instance_name:
                               revision_id = entry.get("rainstone_revision")
                               break

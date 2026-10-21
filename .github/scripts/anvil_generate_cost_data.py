@@ -18,8 +18,10 @@ Queries the Rainstone service deployed alongside Galaxy on the test VM
    - docs/cost-data/costs.json          (compact per-run summary series)
 
 All cost figures are GCP list-price compute (vCPU + RAM) in USD, copied
-directly from Rainstone without local rate tables, disk estimates, or
-phase-cost apportionment.
+directly from Rainstone without local rate tables or disk estimates. Each
+Batch job's boot / run / idle / teardown seconds and costs are Rainstone's
+own resource phases (`resources[].phases`, `full_phase_totals`); when
+Rainstone cannot separate a job's phases, its reason is recorded instead.
 """
 
 from __future__ import annotations
@@ -322,6 +324,49 @@ def batch_job_id_for_resource(resource: dict) -> str | None:
     return None
 
 
+# Rainstone phase name -> field prefix in runs/<run_id>.json. The prefixes
+# predate Rainstone and are kept so older run files render the same way.
+PHASE_PREFIXES = {
+    "provisioning": "boot",
+    "execution": "run",
+    "idle": "idle",
+    "teardown": "teardown",
+}
+
+
+def phase_fields(detail: dict, resources: list[dict]) -> dict:
+    """Per-phase seconds and costs exactly as Rainstone reports them.
+
+    Seconds sum each phase's `observed_seconds` across the job's machines;
+    costs are the job's `full_phase_totals`, recorded only when Rainstone
+    marks the total complete. A phase Rainstone omits is absent (null), not
+    zero. When any machine's phases could not be separated, Rainstone's
+    reason is kept and no split is recorded for the job.
+    """
+    phases = [p for r in resources for p in (r.get("phases") or [])]
+    totals = {t["phase"]: t for t in detail.get("full_phase_totals") or []}
+    separated = (
+        bool(resources)
+        and all(r.get("phases") for r in resources)
+        and not any(p.get("phase") == "unattributed" for p in phases)
+    )
+    fields: dict = {"phases_separated": separated}
+    for phase, prefix in PHASE_PREFIXES.items():
+        matching = [p for p in phases if p.get("phase") == phase]
+        seconds = None
+        if separated and matching and all(p.get("observed_seconds") is not None for p in matching):
+            seconds = round(sum(float(p["observed_seconds"]) for p in matching), 1)
+        total = totals.get(phase)
+        cost = to_decimal(total.get("amount")) if separated and total and total.get("complete") else None
+        fields[f"{prefix}_seconds"] = seconds
+        fields[f"{prefix}_cost"] = round_money(cost, 6)
+    reasons = sorted({
+        p["reason"] for p in phases if p.get("phase") == "unattributed" and p.get("reason")
+    })
+    fields["phases_reason"] = "; ".join(reasons) or None
+    return fields
+
+
 def map_job_detail(detail: dict) -> dict:
     resources = detail.get("resources") or []
     attempts = detail.get("attempts") or []
@@ -347,33 +392,22 @@ def map_job_detail(detail: dict) -> dict:
         else None
     )
 
-    provider_attempts = [a for a in attempts if a.get("role") != "observation"]
-    active_attempts = provider_attempts or attempts
-    tool_starts = [a["tool_started_at"] for a in active_attempts if a.get("tool_started_at")]
-    tool_ends = [a["tool_finished_at"] for a in active_attempts if a.get("tool_finished_at")]
-    tool_started_at = min(tool_starts) if tool_starts else detail.get("started_at")
-    tool_finished_at = max(tool_ends) if tool_ends else detail.get("finished_at")
-
-    t_res_start = parse_iso(resource_started_at)
-    t_tool_start = parse_iso(tool_started_at)
-    t_tool_end = parse_iso(tool_finished_at)
-    t_res_end = parse_iso(resource_finished_at)
-
-    boot_seconds = (
-        round(max(0.0, (t_tool_start - t_res_start).total_seconds()), 1)
-        if t_res_start and t_tool_start
-        else None
-    )
-    run_seconds = (
-        round(max(0.0, (t_tool_end - t_tool_start).total_seconds()), 1)
-        if t_tool_start and t_tool_end
-        else None
-    )
-    teardown_seconds = (
-        round(max(0.0, (t_res_end - t_tool_end).total_seconds()), 1)
-        if t_tool_end and t_res_end
-        else None
-    )
+    phases = phase_fields(detail, resources)
+    executions = [
+        p for r in resources for p in (r.get("phases") or []) if p.get("phase") == "execution"
+    ]
+    if phases["phases_separated"] and executions:
+        tool_started_at = min(p["started_at"] for p in executions)
+        tool_finished_at = max(p["finished_at"] for p in executions)
+    else:
+        # Only positions the job's row on the dashboard timeline; without
+        # Rainstone's phases, no boot/run/teardown split is recorded.
+        provider_attempts = [a for a in attempts if a.get("role") != "observation"]
+        active_attempts = provider_attempts or attempts
+        tool_starts = [a["tool_started_at"] for a in active_attempts if a.get("tool_started_at")]
+        tool_ends = [a["tool_finished_at"] for a in active_attempts if a.get("tool_finished_at")]
+        tool_started_at = min(tool_starts) if tool_starts else detail.get("started_at")
+        tool_finished_at = max(tool_ends) if tool_ends else detail.get("finished_at")
 
     primary = resources[0] if resources else {}
     full_amount = to_decimal(detail.get("full_job_amount"))
@@ -393,9 +427,7 @@ def map_job_detail(detail: dict) -> dict:
         "tool_started_at": tool_started_at,
         "tool_finished_at": tool_finished_at,
         "resource_finished_at": resource_finished_at,
-        "boot_seconds": boot_seconds,
-        "run_seconds": run_seconds,
-        "teardown_seconds": teardown_seconds,
+        **phases,
         "cost": round_money(full_amount, 6),
         "quality": detail.get("full_quality"),
     }
@@ -408,6 +440,21 @@ def check_consistency(jobs_meta: dict, job_details: list[dict], mapped_jobs: lis
         warn(
             f"Rainstone consistency check: len(jobs) ({len(mapped_jobs)}) "
             f"!= jobs.meta.coverage.jobs ({expected_jobs})."
+        )
+
+    phase_mismatches = []
+    for detail in job_details:
+        totals = detail.get("full_phase_totals") or []
+        full_amount = to_decimal(detail.get("full_job_amount"))
+        if not totals or full_amount is None or not all(t.get("complete") for t in totals):
+            continue
+        phase_sum = sum((to_decimal(t.get("amount")) or Decimal("0") for t in totals), Decimal("0"))
+        if abs(phase_sum - full_amount) > Decimal("0.000001"):
+            phase_mismatches.append(detail.get("id"))
+    if phase_mismatches:
+        warn(
+            f"Rainstone consistency check: {len(phase_mismatches)} jobs' phase totals "
+            f"do not sum to full_job_amount (e.g. {', '.join(map(str, phase_mismatches[:3]))})."
         )
 
     priced_jobs = [j for j in mapped_jobs if j.get("cost") is not None]
