@@ -17,6 +17,7 @@ Only the version segment of an existing pin is ever rewritten. Tools are
 never added or removed - which tools are covered is a separate, deliberate
 decision (see CLAUDE.md), and a pin whose tool has vanished from the instance
 is a finding to report, not something to silently drop.
+Commented-out pins are inactive and preserved unchanged when writing updates.
 
 Every case the version ordering cannot decide confidently is skipped and
 reported rather than guessed, so the failure mode is a missed bump rather
@@ -46,7 +47,7 @@ from packaging.version import (
 
 def read_ids(path: str) -> list[str]:
     with open(path) as f:
-        return [line.strip() for line in f if line.strip()]
+        return [line.strip() for line in f if line.strip() and not line.lstrip().startswith("#")]
 
 
 def split_version(tool_id: str) -> tuple[str, str]:
@@ -185,8 +186,13 @@ def main(
             print(f"  UNTESTABLE  {tool_id}: {reason}")
 
     if write and bumped:
+        replacements = dict(zip(pinned, updated))
+        with open(pinned_path) as f:
+            original_lines = f.readlines()
         with open(pinned_path, "w") as f:
-            f.write("\n".join(updated) + "\n")
+            for line in original_lines:
+                tool_id = line.strip()
+                f.write(f"{replacements[tool_id]}\n" if tool_id in replacements else line)
         print(f"Wrote {len(bumped)} version bump(s) to {pinned_path}")
     elif write:
         print("No version bumps to write")

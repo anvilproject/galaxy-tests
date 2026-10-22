@@ -201,7 +201,8 @@ def main() -> None:
     rules, default = load_tool_rules(sys.argv[1])
 
     with open(SCHEDULED_LIST_PATH) as f:
-        lines = [ln.rstrip("\n") for ln in f if ln.strip()]
+        original_lines = f.readlines()
+    lines = [ln.strip() for ln in original_lines if ln.strip() and not ln.lstrip().startswith("#")]
 
     durations = measured_durations()
 
@@ -221,7 +222,11 @@ def main() -> None:
     assert sorted(ordered) == sorted(lines), "sorting must reorder the list, not rewrite its entries"
 
     with open(SCHEDULED_LIST_PATH, "w") as f:
-        f.write("\n".join(ordered) + "\n")
+        # Sort active pins only; keep disabled entries and their explanations
+        # together in their original positions.
+        reordered = iter(ordered)
+        for line in original_lines:
+            f.write(f"{next(reordered)}\n" if line.strip() and not line.lstrip().startswith("#") else line)
 
     timed = sum(1 for line in lines if unversioned(line) in durations)
     print(

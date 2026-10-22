@@ -517,34 +517,26 @@ jobs:
           python "${{ github.workspace }}/.github/scripts/anvil_record_deployment.py" success "$DURATION" \
             "https://github.com/anvilproject/galaxy-tests/actions/runs/${{ github.run_id }}"
 
-      # Pinned to a `dev` commit rather than the PyPI release, to run the
-      # merged client fixes ahead of a release that is months out. That SHA
-      # is the merge of galaxyproject/galaxy#23517; it also carries #23515,
-      # #23401, #23402, #23483 and #23490.
-      #
-      # #23517 is the one that matters here: the client reused no
-      # connections, so a run opened ~64,000 of them, and SYNs are being
-      # dropped on the path to the VM (see outstanding.md §A5). Reuse takes
-      # that to ~160 and should remove almost all of the exposure.
-      #
-      # This also retires the force_path_paste patch step that used to sit
-      # below this one - all five bugs it worked around are fixed in this
-      # commit, and its asserts fire when the buggy text is *absent*, so
-      # keeping it would abort every run.
-      #
-      # pip resolves the package from a subdirectory of a full clone, which
-      # works because packages/tool_util/src/galaxy/tool_util is a symlink
-      # into lib/. Costs an extra minute or two per run for the clone.
-      # Revert to `"galaxy-tool-util>=23.0"` once a release carries these.
+      # Match the server's 26.2 release line using an immutable source pin.
+      # This is the release_26.2 merge of galaxyproject/galaxy#24180: directory
+      # test inputs are downloaded before archiving under force_path_paste.
+      # It retains #23517's connection reuse and the earlier staging fixes.
+      # Keep the utility/model packages on the same revision: the client uses
+      # helpers absent from the published galaxy-util package.
+      # PyPI's latest galaxy-tool-util is still 26.1.1 (checked 2026-10-22).
+      # Switch to a pinned compatible package release once it includes these
+      # fixes; review this client pin whenever the server release line changes.
       - name: Install galaxy-tool-test and planemo
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         run: |
           python -m pip install \
-            "galaxy-tool-util @ git+https://github.com/galaxyproject/galaxy.git@379152f5295415834d6c07bbad5574a04f8574ce#subdirectory=packages/tool_util" \
+            "galaxy-util @ git+https://github.com/galaxyproject/galaxy.git@7d57d184f1917918d13416dd41a8699e3e5afc9c#subdirectory=packages/util" \
+            "galaxy-tool-util-models @ git+https://github.com/galaxyproject/galaxy.git@7d57d184f1917918d13416dd41a8699e3e5afc9c#subdirectory=packages/tool_util_models" \
+            "galaxy-tool-util @ git+https://github.com/galaxyproject/galaxy.git@7d57d184f1917918d13416dd41a8699e3e5afc9c#subdirectory=packages/tool_util" \
             planemo bioblend
-          python -c "import galaxy.tool_util.verify.interactor as m; \
-            assert hasattr(m, 'CONNECT_TIMEOUT'), 'client is not the pinned dev build'; \
-            print('galaxy-tool-util from dev:', m.__file__)"
+          python -c "from importlib.metadata import version; import galaxy.tool_util.verify.interactor as m; \
+            assert hasattr(m, 'CONNECT_TIMEOUT') and hasattr(m.GalaxyInteractorApi, '_session'), 'client lacks required connection handling'; \
+            print('galaxy-tool-util', version('galaxy-tool-util'), '(release_26.2, 7d57d184f1):', m.__file__)"
 
       # galaxypassword is the bootstrap_admin_api_key baked in by
       # galaxy-k8s-boot - per Galaxy's own config docs, it's meant only to
@@ -912,11 +904,11 @@ jobs:
           # staying absent/empty means none applies, falling through to the
           # ALL_TOOLS/paged single-process path below.
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            cp .github/scheduled-tool-ids.txt /tmp/sampled_tool_ids.txt
+            awk '!/^[[:space:]]*(#|$)/' .github/scheduled-tool-ids.txt > /tmp/sampled_tool_ids.txt
             echo "Scheduled run: testing the $(wc -l < /tmp/sampled_tool_ids.txt) tool IDs pinned in .github/scheduled-tool-ids.txt"
             run_pinned_list_preflight
           elif [ -n "$TOOL_LIST_FILE" ] && [ -s "$TOOL_LIST_FILE" ]; then
-            cp "$TOOL_LIST_FILE" /tmp/sampled_tool_ids.txt
+            awk '!/^[[:space:]]*(#|$)/' "$TOOL_LIST_FILE" > /tmp/sampled_tool_ids.txt
             echo "Manual run: testing the $(wc -l < /tmp/sampled_tool_ids.txt) tool IDs from $TOOL_LIST_FILE"
             run_pinned_list_preflight
           elif [ "$RANDOM_TOOL_COUNT" != "0" ]; then
