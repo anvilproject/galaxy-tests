@@ -526,17 +526,26 @@ jobs:
       # PyPI's latest galaxy-tool-util is still 26.1.1 (checked 2026-10-22).
       # Switch to a pinned compatible package release once it includes these
       # fixes; review this client pin whenever the server release line changes.
-      - name: Install galaxy-tool-test and planemo
+      - name: Install galaxy-tool-test
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         run: |
           python -m pip install \
             "galaxy-util @ git+https://github.com/galaxyproject/galaxy.git@7d57d184f1917918d13416dd41a8699e3e5afc9c#subdirectory=packages/util" \
             "galaxy-tool-util-models @ git+https://github.com/galaxyproject/galaxy.git@7d57d184f1917918d13416dd41a8699e3e5afc9c#subdirectory=packages/tool_util_models" \
             "galaxy-tool-util @ git+https://github.com/galaxyproject/galaxy.git@7d57d184f1917918d13416dd41a8699e3e5afc9c#subdirectory=packages/tool_util" \
-            planemo bioblend
+            bioblend
           python -c "from importlib.metadata import version; import galaxy.tool_util.verify.interactor as m; \
             assert hasattr(m, 'CONNECT_TIMEOUT') and hasattr(m.GalaxyInteractorApi, '_session'), 'client lacks required connection handling'; \
             print('galaxy-tool-util', version('galaxy-tool-util'), '(release_26.2, 7d57d184f1):', m.__file__)"
+
+      # Planemo's published Galaxy dependencies differ from the source-pinned
+      # test client. Keep the renderer isolated and check its CLI before tests.
+      - name: Install and check report renderer
+        if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
+        run: |
+          python -m venv "$RUNNER_TEMP/planemo-report"
+          "$RUNNER_TEMP/planemo-report/bin/python" -m pip install 'planemo==0.75.47'
+          "$RUNNER_TEMP/planemo-report/bin/planemo" test_reports --help
 
       # galaxypassword is the bootstrap_admin_api_key baked in by
       # galaxy-k8s-boot - per Galaxy's own config docs, it's meant only to
@@ -1097,10 +1106,22 @@ jobs:
             done
           fi
 
+      # Preserve raw test evidence independently of rendering or earlier failures.
+      - name: Save raw results under reports/anvil
+        if: ${{ always() && (inputs.run-tests || github.event_name == 'schedule') }}
+        working-directory: /tmp/main-clone
+        run: |
+          SRC="${{ github.workspace }}/results/results.json"
+          if [ -s "$SRC" ]; then
+            DIR="reports/anvil/tool-tests/${{ steps.instance.outputs.name }}"
+            mkdir -p "$DIR"
+            cp "$SRC" "$DIR/"
+          fi
+
       - name: Build HTML/xunit report
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         run: |
-          planemo test_reports results/results.json \
+          "$RUNNER_TEMP/planemo-report/bin/planemo" test_reports results/results.json \
             --test_output results/results.html \
             --test_output_xunit results/results.xunit
 
@@ -1224,15 +1245,13 @@ jobs:
       # committed (docs/tool-tests/<run_id>/results.html, the one GitHub
       # Pages serves) - removed again right after, see "Remove redundant
       # results.html copy".
-      - name: Save results under reports/anvil
+      - name: Save HTML report under reports/anvil
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         working-directory: /tmp/main-clone
         run: |
           DIR="reports/anvil/tool-tests/${{ steps.instance.outputs.name }}"
           mkdir -p "$DIR"
-          cp "${{ github.workspace }}/results/results.json" \
-             "${{ github.workspace }}/results/results.html" \
-             "$DIR/"
+          cp "${{ github.workspace }}/results/results.html" "$DIR/"
 
       # Two inventories of what this instance had, as rolling files rather
       # than per-run copies: they are far larger than the tested subset, and
