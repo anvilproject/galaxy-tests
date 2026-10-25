@@ -299,6 +299,12 @@
       "generated_at": "2026-10-22T13:05:10+00:00",
       "model": "gemini-4-argon",
       "summary": "No new issues appeared in this run. Known persistent issues\u2014including two shared infrastructure problems (unavailable test input data on the server affecting 10 tests across 6 tools, and empty or lost output datasets affecting 3 tests across 2 tools) alongside long-standing test expectation and runtime failures in tools like scanpy_parameter_iterator, ncbi_blastp_wrapper, hisat2, trimmomatic, jbrowse, and pepquery2\u2014are stable, no action needed. Meanwhile, a batch of HTTP 500 Internal Server Errors and empty job output failures across tools such as hifiasm, ampvis2_load, anndata_inspect, and anndata_manipulate recovered since the previous run."
+    },
+    "anvil-test-ci-261025-101342": {
+      "run_id": "anvil-test-ci-261025-101342",
+      "generated_at": "2026-10-25T12:44:29+00:00",
+      "model": "gemini-4-argon",
+      "summary": "New test expectation mismatches on binary BAM outputs appeared for the first time in this run, including shared failures on bam_output (15 tests across 2 tools) and output_bam (4 tests across 2 tools), alongside isolated failures in samtools_view (18 tests on outputsam), minimap2 (8 tests on alignment_output), lofreq_viterbi (2 tests), and rna_starsolo (2 tests). For the new bam_output, output_bam, alignment_output, and outputsam incidents, the captured errors show direct binary file comparisons failing via diff on temporary .bam files, which is likely caused by raw binary diffing catching non-deterministic BAM headers or compression metadata rather than a functional regression in the alignment tools. Meanwhile, large shared dependency issues from the previous run continue to affect multiple tools\u2014specifically missing pillow and tifffile packages (39 tests across 6 tools), an undefined tifffile name (10 tests across 3 tools), and a missing h5py dependency for h5 assertions (47 tests across 4 tools). Known persistent issues, including unavailable test input data on the server (10 tests across 6 tools) and long-standing tool-specific failures in hisat2, scanpy_parameter_iterator, and pepquery2, remain stable, no action needed."
     }
   }
 }
