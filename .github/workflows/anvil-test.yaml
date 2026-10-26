@@ -526,17 +526,22 @@ jobs:
       # PyPI's latest galaxy-tool-util is still 26.1.1 (checked 2026-10-22).
       # Switch to a pinned compatible package release once it includes these
       # fixes; review this client pin whenever the server release line changes.
+      # Assertion libraries belong to the test client, independently of Planemo.
+      # extended-assertions includes BAM/image support; HDF5 needs h5py explicitly.
       - name: Install galaxy-tool-test
         if: ${{ inputs.run-tests || github.event_name == 'schedule' }}
         run: |
           python -m pip install \
             "galaxy-util @ git+https://github.com/galaxyproject/galaxy.git@7d57d184f1917918d13416dd41a8699e3e5afc9c#subdirectory=packages/util" \
             "galaxy-tool-util-models @ git+https://github.com/galaxyproject/galaxy.git@7d57d184f1917918d13416dd41a8699e3e5afc9c#subdirectory=packages/tool_util_models" \
-            "galaxy-tool-util @ git+https://github.com/galaxyproject/galaxy.git@7d57d184f1917918d13416dd41a8699e3e5afc9c#subdirectory=packages/tool_util" \
-            bioblend
+            "galaxy-tool-util[extended-assertions] @ git+https://github.com/galaxyproject/galaxy.git@7d57d184f1917918d13416dd41a8699e3e5afc9c#subdirectory=packages/tool_util" \
+            bioblend h5py
           python -c "from importlib.metadata import version; import galaxy.tool_util.verify.interactor as m; \
             assert hasattr(m, 'CONNECT_TIMEOUT') and hasattr(m.GalaxyInteractorApi, '_session'), 'client lacks required connection handling'; \
             print('galaxy-tool-util', version('galaxy-tool-util'), '(release_26.2, 7d57d184f1):', m.__file__)"
+          python -c "import numpy, pysam, tifffile, h5py; from PIL import Image; \
+            from importlib.metadata import version; \
+            print('Assertion dependencies:', {p: version(p) for p in ('numpy', 'pysam', 'Pillow', 'tifffile', 'h5py')})"
 
       # Planemo's published Galaxy dependencies differ from the source-pinned
       # test client. Keep the renderer isolated and check its CLI before tests.
