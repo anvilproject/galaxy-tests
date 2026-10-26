@@ -1,0 +1,35 @@
+{
+  "label": "anvil-test-ci-261026-113731 (run 40316044888)",
+  "instance_name": "anvil-test-ci-261026-113731",
+  "github_run_id": "40316044888",
+  "snapshot_file": "rainstone-snapshot.sql",
+  "snapshot_digest": "87881b0b102432d57ababf81cc04eb0ab85a5f1ead8b440de7198bb2e854d0d4",
+  "captured_at": "2026-10-26T14:06:41Z",
+  "captured_at_source": "UTC clock of the runner executing pg_dump, just before pg_dump",
+  "revision_id": "d579b77d-cfb2-45aa-8e27-885a45b0d491",
+  "source_cutoffs": {
+    "price_feed": "2026-10-26T11:47:05.875529+00:00",
+    "galaxy_db": "2026-10-26T14:06:09.737478+00:00",
+    "gcp_batch": "2026-10-26T14:06:12.432629+00:00",
+    "kubernetes": "2026-10-26T14:06:23.675518+00:00",
+    "galaxy_server": "2026-10-26T14:06:32.114848+00:00"
+  },
+  "source": {
+    "namespace": "galaxy",
+    "release": "rainstone",
+    "image": "docker.io/afgane/rainstone:2.0.0b2",
+    "image_id": "docker.io/afgane/rainstone@sha256:3fc7e2835f8ef50835b52ff43f427f8dabc5e8094bc5440435a47294862cb88b"
+  },
+  "export": {
+    "tool": "pg_dump",
+    "command": "pg_dump -U rainstone -d rainstone --data-only --disable-triggers --no-owner --no-privileges --exclude-table-data=cost_line --exclude-table-data=cost_revision --exclude-table-data=report_generation --exclude-table-data=capability_report --exclude-table-data=installation_record --exclude-table-data=alembic_version",
+    "excluded_tables": [
+      "cost_line",
+      "cost_revision",
+      "report_generation",
+      "capability_report",
+      "installation_record",
+      "alembic_version"
+    ]
+  }
+}
