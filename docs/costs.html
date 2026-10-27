@@ -60,20 +60,11 @@ nav_id: costs
 </div>
 <p id="gx-cost-empty" hidden>No cost data yet.</p>
 
-<h2>Per-job cost (GCP Batch)</h2>
+<h2>Explore Batch costs</h2>
 <p class="gx-prose">
-  One row per GCP Batch job, split into its boot / run / teardown phases.
-  <button type="button" class="gx-more-toggle" id="gx-jobcost-more-toggle" aria-expanded="false">More</button>
+  Compare tools by spending, then select a tool to inspect its jobs. Bars show dollars, split by resource phase.
 </p>
-<p class="gx-prose gx-more-text" id="gx-jobcost-more-text" hidden>
-  Rows are ordered top-to-bottom by when the job's VM started, and
-  positioned left-to-right by elapsed time since the first job in the
-  run started provisioning. Phase durations and costs are Rainstone's own
-  resource phases, which add up to each job's cost. A job whose phases
-  Rainstone could not separate is drawn as one grey bar, with Rainstone's
-  reason in its details (earlier runs used GCP Batch status events with a
-  fixed teardown estimate).
-</p>
+<p class="gx-prose">Overhead includes boot, idle and teardown. Its percentage uses only jobs with known phase costs; unpriced jobs are counted but never treated as free.</p>
 
 <div class="gx-raster-controls">
   <button id="gx-jobcost-older" type="button">&larr; older</button>
@@ -85,16 +76,54 @@ nav_id: costs
   </span>
 </div>
 
+<div class="gx-explorer-controls">
+  <label>View <select id="gx-cost-view"><option value="tools">By tool</option><option value="jobs">Individual jobs</option><option value="timeline">Timeline</option></select></label>
+  <label id="gx-cost-sort-label">Sort <select id="gx-cost-sort"><option value="cost">Total cost</option><option value="median">Median cost / job</option><option value="count">Job count</option><option value="overhead">Overhead %</option><option value="label">Name</option></select></label>
+  <label id="gx-cost-limit-label">Show <select id="gx-cost-limit"><option value="20" selected>Top 20</option><option value="100">Top 100</option><option value="0">All</option></select></label>
+  <button type="button" id="gx-cost-export" title="Export all matching rows, including rows outside the top-N limit">Export CSV</button>
+</div>
+<p id="gx-cost-scope" class="gx-prose" aria-live="polite"></p>
 <div id="gx-jobcost-legend" class="gx-chart-legend"></div>
 
 <div class="gx-chart-row">
+  <div class="gx-cost-browser">
+    <nav id="gx-cost-selection" class="gx-cost-selection" aria-label="Cost drill-down" hidden>
+      <button type="button" id="gx-cost-back">← All tools</button>
+      <span aria-hidden="true">/</span>
+      <span id="gx-cost-selected-label" aria-current="location"></span>
+    </nav>
   <div id="gx-jobcost-container" class="gx-deploy-container gx-job-runtime-container">
-    <canvas id="gx-jobcost-canvas"></canvas>
+    <div id="gx-cost-ranking"></div>
+    <canvas id="gx-jobcost-canvas" hidden></canvas>
+  </div>
   </div>
   <div id="gx-jobcost-details" class="gx-chart-details"><span class="gx-chart-details__placeholder">Hover a row for details.</span></div>
 </div>
 <p id="gx-jobcost-empty" hidden>No GCP Batch job cost data yet.</p>
 
+<style>
+.gx-explorer-controls {display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:16px 0;}
+.gx-cost-browser {flex:1 1 auto;min-width:0;}
+.gx-cost-selection {display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 14px;margin-bottom:8px;background:#edf4fa;border-left:3px solid #25537b;border-radius:4px;color:#25537b;}
+.gx-cost-selection button {font:inherit;font-weight:bold;color:#25537b;border:0;background:none;padding:0;text-decoration:underline;cursor:pointer;}
+.gx-cost-selection[hidden] {display:none !important;}
+.gx-explorer-controls label {display:flex;gap:6px;align-items:center;}
+.gx-explorer-controls select,.gx-explorer-controls button {font:inherit;padding:6px 9px;border:1px solid #b8cad9;border-radius:5px;background:white;color:#25537b;}
+#gx-cost-ranking {overflow-x:auto;}
+#gx-jobcost-canvas[hidden], #gx-cost-ranking[hidden], .gx-explorer-controls [hidden] {display:none !important;}
+.gx-cost-table {border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums;}
+.gx-cost-table th {position:sticky;top:0;background:#edf4fa;z-index:1;}
+.gx-cost-table td,.gx-cost-table th {padding:9px 8px;border-bottom:1px solid #e0e8ef;text-align:right;white-space:nowrap;}
+.gx-cost-table td:first-child,.gx-cost-table th:first-child {text-align:left;white-space:normal;min-width:185px;max-width:265px;overflow-wrap:anywhere;}
+.gx-cost-table th button {font:inherit;font-weight:bold;background:none;border:0;color:#25537b;cursor:pointer;}
+.gx-cost-table tr:hover,.gx-cost-table tr:focus-within {background:#edf4fa;}
+.gx-cost-tool {background:none;border:0;padding:0;font:inherit;color:#25537b;text-align:left;cursor:pointer;text-decoration:underline;}
+.gx-cost-bar {display:flex;height:14px;min-width:0;}
+.gx-cost-track {width:160px;}
+.gx-cost-bar span {height:100%;}
+.gx-cost-table small {display:block;color:#687888;}
+</style>
+<script src="assets/cost-explorer.js"></script>
 <style>
   /* Matches deploy-stages.html/raster.html - these multi-run bar charts
      want more horizontal room than default.html's shared 1100px. */
@@ -506,7 +535,7 @@ nav_id: costs
     });
   }
   wireMoreToggle("gx-costs-more-toggle", "gx-costs-more-text");
-  wireMoreToggle("gx-jobcost-more-toggle", "gx-jobcost-more-text");
+
 
   // ----- Chart 1: cost per run (stacked bar, head node vs GCP Batch) -----
 
@@ -734,6 +763,7 @@ nav_id: costs
     legendEl.innerHTML =
       '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:' + BOOT_COLOR + '"></span>Boot</span>' +
       '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:' + RUN_COLOR + '"></span>Run</span>' +
+      '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:#d19e00"></span>Idle</span>' +
       '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:' + TEARDOWN_COLOR + '"></span>Teardown</span>' +
       '<span class="gx-chart-legend__item"><span class="gx-chart-legend__swatch" style="background:' + UNSEPARATED_COLOR + '"></span>Not separated</span>';
 
@@ -785,13 +815,62 @@ nav_id: costs
       });
     }
 
+    var view = document.getElementById("gx-cost-view"), sortControl = document.getElementById("gx-cost-sort");
+    var limitControl = document.getElementById("gx-cost-limit");
+    var selection = document.getElementById("gx-cost-selection"), selectedLabel = document.getElementById("gx-cost-selected-label");
+    var back = document.getElementById("gx-cost-back"), ranking = document.getElementById("gx-cost-ranking");
+    var scope = document.getElementById("gx-cost-scope"), selectedTool = null, ascending = false, explorerRows = [];
+    var explorer = window.GxCostExplorer;
+    function matchingJobs() {
+      return (current ? current.jobs : []).filter(function(j){
+        var id=explorer.identity(j);
+        return (!selectedTool || id.key===selectedTool) && (!searchQuery || (id.label+" "+j._toolName).toLowerCase().indexOf(searchQuery)>=0);
+      });
+    }
+    function refreshExplorer() {updateWindowLabel();draw();renderDefaultDetails();}
+    [view,sortControl,limitControl].forEach(function(control){control.addEventListener("change",function(){if(control===sortControl)ascending=sortControl.value==="label";refreshExplorer();});});
+    back.addEventListener("click",function(){selectedTool=null;view.value="tools";container.scrollTop=0;refreshExplorer();});
+    document.getElementById("gx-cost-export").addEventListener("click",function(){
+      var data=explorer.sort(explorer.rows(matchingJobs(),view.value==="timeline"?"jobs":view.value),sortControl.value,ascending);
+      var url=URL.createObjectURL(new Blob([explorer.csv(data)],{type:"text/csv;charset=utf-8"}));
+      var link=document.createElement("a");link.href=url;link.download=current.run_id+"-"+view.value+"-costs.csv";link.click();setTimeout(function(){URL.revokeObjectURL(url);},1000);
+    });
+    function renderRanking() {
+      var jobs=matchingJobs(), all=explorer.sort(explorer.rows(jobs,view.value),sortControl.value,ascending);
+      var limit=Number(limitControl.value), shown=limit?all.slice(0,limit):all;
+      explorerRows=shown.slice();
+      var total=explorer.summarize(jobs,"",""), shownCost=shown.reduce(function(a,r){return a+(r.cost||0);},0);
+      var allCost=(current.jobs||[]).reduce(function(a,j){return a+(j.cost||0);},0);
+      scope.textContent=(selectedTool?"Selected tool · ":"")+jobs.length+" jobs · "+total.priced+" priced · "+fmtDollars(total.cost)+" · "+fmtPct(total.cost,allCost)+" of run Batch cost. Showing "+shown.length+" of "+all.length+" "+(view.value==="tools"?"tools":"jobs")+" ("+fmtPct(shownCost,total.cost)+" of matching cost).";
+      var restCost=all.slice(shown.length).reduce(function(a,r){return a+(r.cost||0);},0);
+      var max=Math.max.apply(null,all.map(function(r){return r.cost||0;}).concat([restCost,0.000001]));
+      var columns=[["label",view.value==="tools"?"Tool":"Tool / job"],[null,"Cost by phase"],["cost","Total"],["count","Jobs"],["median","Median / job"],["overhead","Overhead"]];
+      var html='<table class="gx-cost-table"><thead><tr>'+columns.map(function(c){return '<th'+(c[0]?' aria-sort="'+(sortControl.value===c[0]?(ascending?'ascending':'descending'):'none')+'"':'')+'>'+(c[0]?'<button data-sort="'+c[0]+'">'+c[1]+(sortControl.value===c[0]?(ascending?' ↑':' ↓'):'')+'</button>':c[1])+'</th>';}).join('')+'</tr></thead><tbody>';
+      function rowHTML(r,i,other) {
+        var colors={boot:BOOT_COLOR,run:RUN_COLOR,idle:"#d19e00",teardown:TEARDOWN_COLOR,unknown:UNSEPARATED_COLOR};
+        var bar=Object.keys(colors).map(function(k){return '<span title="'+k+': '+fmtDollars(r.phases[k])+'" style="background:'+colors[k]+';width:'+(r.cost?r.phases[k]/r.cost*100:0)+'%"></span>';}).join('');
+        return '<tr tabindex="0" data-row="'+i+'"><td><button class="gx-cost-tool" data-open="'+i+'">'+escapeHtml(r.label)+'</button>'+(other?'<small>Show all to expand</small>':'')+'</td><td><div class="gx-cost-track"><div class="gx-cost-bar" style="width:'+((r.cost||0)/max*100)+'%">'+bar+'</div></div></td><td>'+fmtDollars(r.cost)+'</td><td>'+r.count+(r.priced<r.count?'<small>'+r.priced+' priced</small>':'')+'</td><td>'+fmtDollars(r.median)+'</td><td>'+(r.overhead==null?'—':Math.round(r.overhead*100)+'%')+(r.knownCost<(r.cost||0)?'<small>Partial / unknown</small>':'')+'</td></tr>';
+      }
+      shown.forEach(function(r,i){html+=rowHTML(r,i,false);});
+      if(shown.length<all.length){var rest=all.slice(shown.length).reduce(function(a,r){return a.concat(r.jobs);},[]);var other=explorer.summarize(rest,"__other__","Other "+(all.length-shown.length)+" "+(view.value==="tools"?"tools":"jobs"));explorerRows.push(other);html+=rowHTML(other,explorerRows.length-1,true);}
+      html+='</tbody></table>';ranking.innerHTML=all.length?html:'<p>No matching jobs.</p>';
+    }
+    ranking.addEventListener("click",function(e){
+      var sort=e.target.closest("[data-sort]"),open=e.target.closest("[data-open]");
+      if(sort){var key=sort.dataset.sort;ascending=sortControl.value===key?!ascending:key==="label";sortControl.value=key;refreshExplorer();}
+      if(open){var row=explorerRows[Number(open.dataset.open)];if(row.key==="__other__"){limitControl.value="0";}else if(view.value==="tools"){selectedTool=row.key;view.value="jobs";container.scrollTop=0;}else{renderJobDetails(row.jobs[0]);return;}refreshExplorer();}
+    });
+    function showRow(e) {
+      var node=e.target.closest("[data-row]");if(!node)return;var r=explorerRows[Number(node.dataset.row)];
+      if(view.value==="jobs" && r.jobs.length===1){renderJobDetails(r.jobs[0]);return;}
+      detailsEl.innerHTML='<div class="gx-chart-details__label">'+escapeHtml(r.label)+'</div><div>'+r.count+' jobs · '+r.priced+' priced</div><div>Total: '+fmtDollars(r.cost)+'</div><div>Median / job: '+fmtDollars(r.median)+'</div><div>'+fmtPct(r.cost,current.gcp_batch_total_cost)+' of Batch cost</div>'+phaseTotalsHtml(r.jobs.filter(function(j){return j.cost!=null;}),r.cost)+(r.billing!=null?'<div>GCP list billing: '+fmtDollars(r.billing)+' ('+r.matched+'/'+r.count+' jobs matched)</div>':'')+'<p>Select the tool to inspect its jobs.</p>';
+    }
+    ranking.addEventListener("mouseover",showRow);ranking.addEventListener("focusin",showRow);ranking.addEventListener("mouseleave",renderDefaultDetails);
+
     function visibleJobs() {
       if (!current) return [];
-      var timed = current.jobs.filter(function (job) { return job._bounds != null; });
-      if (!searchQuery) return timed;
-      return timed.filter(function (job) {
-        return job._toolName.toLowerCase().indexOf(searchQuery) >= 0;
-      });
+      var jobs=matchingJobs();
+      return view.value==="timeline" ? jobs.filter(function(j){return j._bounds!=null;}) : jobs;
     }
 
     function loadNearest(startIdx, step) {
@@ -816,6 +895,17 @@ nav_id: costs
     }
 
     function draw() {
+      var timeline=view.value==="timeline";
+      canvas.hidden=!timeline;ranking.hidden=timeline;container.style.maxHeight=timeline?"420px":"680px";
+      document.getElementById("gx-cost-sort-label").hidden=timeline;document.getElementById("gx-cost-limit-label").hidden=timeline;
+      selection.hidden=!selectedTool;
+      if(selectedTool && current){
+        var selected=current.jobs.find(function(j){return explorer.identity(j).key===selectedTool;});
+        selectedLabel.textContent=selected?explorer.identity(selected).label+" · individual jobs":"Selected tool";
+      }
+      if(!current){ranking.innerHTML="";scope.textContent="";return;}
+      if(!timeline){renderRanking();return;}
+      scope.textContent="Timeline · "+visibleJobs().length+" timed jobs. Horizontal position is elapsed time, not dollars.";
       var sp = span();
       if (!current || !current.jobs.length || !sp) {
         var emptyWidthCss = Math.max(300, container.clientWidth);
@@ -965,7 +1055,7 @@ nav_id: costs
           '<div class="gx-chart-details__stage">Teardown time: ' + fmtSeconds(tearSec) + " (" + fmtPct(tearSec, totalSec) + ")</div>";
       }
 
-      if (!searchQuery && current._reconciliation && current._reconciliation.gcp_batch) {
+      if (!searchQuery && !selectedTool && current._reconciliation && current._reconciliation.gcp_batch) {
         var b = current._reconciliation.gcp_batch;
         html += '<div class="gx-chart-details__label">Rainstone vs Billing</div>' +
           renderReconciliationTable([
@@ -978,6 +1068,7 @@ nav_id: costs
     }
 
     function showRun(targetIdx, step) {
+      olderBtn.disabled = newerBtn.disabled = true;
       loadNearest(targetIdx, step).then(function (data) {
         current = data;
         emptyEl.hidden = true;
@@ -1016,7 +1107,7 @@ nav_id: costs
     });
 
     canvas.addEventListener("mousemove", function (evt) {
-      if (!current || !current.jobs.length) return;
+      if (view.value!=="timeline" || !current || !current.jobs.length) return;
       var jobs = visibleJobs();
       var rect = canvas.getBoundingClientRect();
       var y = evt.clientY - rect.top;
@@ -1028,10 +1119,13 @@ nav_id: costs
       }
       canvas.style.cursor = "pointer";
       var job = jobs[row];
+      renderJobDetails(job);
+    });
+    function renderJobDetails(job) {
       var teardownLabel = job.resource_finished_at ? "Teardown" : "Teardown (est.)";
       var totalDur = (job.boot_seconds || 0) + (job.run_seconds || 0) + (job.teardown_seconds || 0);
       var html =
-        '<div class="gx-chart-details__time">' + escapeHtml(job._toolName) + "</div>" +
+        '<div class="gx-chart-details__time">' + escapeHtml(explorer.identity(job).label) + "</div>" +
         '<div class="gx-chart-details__label">Total: ' + fmtDollars(job.cost) + "</div>" +
         '<div class="gx-chart-details__stage">Machine: ' + fmtMachine(job) + "</div>";
 
@@ -1073,7 +1167,7 @@ nav_id: costs
 
       detailsEl.className = "gx-chart-details gx-chart-details--active";
       detailsEl.innerHTML = html;
-    });
+    }
     canvas.addEventListener("mouseleave", function () {
       canvas.style.cursor = "default";
       renderDefaultDetails();
