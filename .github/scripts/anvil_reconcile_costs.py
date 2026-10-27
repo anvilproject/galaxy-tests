@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -144,26 +143,18 @@ WHERE _PARTITIONTIME >= TIMESTAMP('{partition_start}')
 GROUP BY 1, 2
 """.strip()
 
-    cmd = [
-        "bq",
-        "query",
-        f"--project_id={project}",
-        "--use_legacy_sql=false",
-        "--max_rows=100000",
-        "--format=json",
-        f"--parameter=github_run_id:STRING:{github_run_id}",
-        f"--parameter=resource_keys:ARRAY<STRING>:{json.dumps(resource_keys)}",
-        sql,
-    ]
-    proc = subprocess.run(cmd, capture_output=True, text=True, check=False)
-    if proc.returncode != 0:
-        raise RuntimeError(
-            f"bq query failed (exit {proc.returncode}):\n"
-            f"stdout: {proc.stdout}\nstderr: {proc.stderr}"
-        )
+    # Read typed rows directly: bq's console output is not a reliable JSON API.
+    # Application Default Credentials use the workflow's WIF authentication.
+    from google.cloud import bigquery
 
-    out = proc.stdout.strip()
-    rows = json.loads(out) if out else []
+    config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("github_run_id", "STRING", str(github_run_id)),
+            bigquery.ArrayQueryParameter("resource_keys", "STRING", resource_keys),
+        ]
+    )
+    with bigquery.Client(project=project) as client:
+        rows = list(client.query(sql, job_config=config).result())
 
     main_vm_billing = 0.0
     batch_billing_by_key: dict[str, float] = {}

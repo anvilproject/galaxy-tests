@@ -43,10 +43,11 @@ jobs:
           workload_identity_provider: 'projects/526897014808/locations/global/workloadIdentityPools/galaxy-tests-identity-pool/providers/gxy-tests-provider'
           service_account: 'galaxy-tests-repo-actions-sa@anvil-and-terra-development.iam.gserviceaccount.com'
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+      - name: Install BigQuery client
+        run: python -m pip install 'google-cloud-bigquery>=3,<4'
 
       - name: Run BigQuery billing reconciliation
+        shell: bash
         env:
           INPUT_RUN_ID: ${{ inputs.run-id || '' }}
           INPUT_DRY_RUN: ${{ inputs.dry-run && 'true' || 'false' }}
