@@ -311,6 +311,12 @@
       "generated_at": "2026-10-26T14:06:29+00:00",
       "model": "gemini-4-argon",
       "summary": "Two new shared HTTP 500 internal server error incidents appeared in this run: one affecting 24 tests across 16 tools, and another hitting the Galaxy jobs API at 35.194.92.2 across 6 tests and 6 tools, alongside a single new test-expectation failure in flye. The first HTTP 500 incident occurs while waiting for input data staging jobs to complete, suggesting a server-side failure during history data staging rather than a defect in the tools themselves. The second HTTP 500 incident on the jobs endpoint is accompanied by HTTP 409 conflicts when displaying history contents, likely pointing to a server-side job-tracking failure that left output datasets in an incomplete state. Meanwhile, known persistent issues\u2014including missing h5py, pillow, and tifffile test dependencies, unavailable server test data, and long-running tool-specific failures\u2014are continuing from recent runs, though the overall volume of continuing issues has been creeping up over the past few days.\n\nBoth of the new shared HTTP 500 signatures were recorded for the very first time in this run. The presence of 31 database connection-pool exhaustion errors in the server log during this same run provides direct evidence that the Galaxy server was under heavy load, making server-side resource exhaustion a much more likely explanation for these staging and job API failures than an external network issue or tool regression."
+    },
+    "anvil-test-ci-261027-110700": {
+      "run_id": "anvil-test-ci-261027-110700",
+      "generated_at": "2026-10-27T13:31:17+00:00",
+      "model": "gemini-4-argon",
+      "summary": "New failures appeared in `pepquery2` (5 tests failing with a parameter type error) and `deseq2` (1 test failing with an invalid dataset ID for the `sample_sheet` parameter). The `pepquery2` error (\"Expected an integer, got ['1']\") has never been seen before on this dashboard and is likely a parameter-parsing or wrapper-definition issue where a single value is being passed as a list of strings instead of a scalar integer. The long-standing shared infrastructure issue with unavailable test input data (10 tests across 6 tools) and the persistent tool-specific issues, including `multiqc` (33 tests), are stable, no action needed. Meanwhile, the spike of HTTP 500 server errors and missing `tifffile` dependency failures from recent runs has cleared, bringing overall failure volume back down to baseline."
     }
   }
 }
