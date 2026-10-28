@@ -317,6 +317,12 @@
       "generated_at": "2026-10-27T13:31:17+00:00",
       "model": "gemini-4-argon",
       "summary": "New failures appeared in `pepquery2` (5 tests failing with a parameter type error) and `deseq2` (1 test failing with an invalid dataset ID for the `sample_sheet` parameter). The `pepquery2` error (\"Expected an integer, got ['1']\") has never been seen before on this dashboard and is likely a parameter-parsing or wrapper-definition issue where a single value is being passed as a list of strings instead of a scalar integer. The long-standing shared infrastructure issue with unavailable test input data (10 tests across 6 tools) and the persistent tool-specific issues, including `multiqc` (33 tests), are stable, no action needed. Meanwhile, the spike of HTTP 500 server errors and missing `tifffile` dependency failures from recent runs has cleared, bringing overall failure volume back down to baseline."
+    },
+    "anvil-test-ci-261028-114351": {
+      "run_id": "anvil-test-ci-261028-114351",
+      "generated_at": "2026-10-28T14:05:31+00:00",
+      "model": "gemini-4-argon",
+      "summary": "No new failures or errors appeared in this run. The shared infrastructure incident where test input data is unavailable on the server (10 tests across 6 tools, now at a 67-run streak) and the long-running tool-specific issues\u2014including test expectation mismatches in scanpy_parameter_iterator, ncbi_blastp_wrapper, hisat2, and jbrowse, invalid parameter option errors in featurecounts and stringtie, and a runtime job error in qiime2__deblur__denoise_16S\u2014are all stable, no action needed. A few isolated issues in trimmomatic, hyphy_fel, multiqc, and deseq2 recovered since the prior run."
     }
   }
 }
