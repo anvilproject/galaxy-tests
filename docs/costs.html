@@ -42,7 +42,7 @@ nav_id: costs
 </div>
 
 <h2>Cost per run</h2>
-<p class="gx-prose">Each bar is a run, split between the shared deploy node and GCP Batch jobs.</p>
+<p class="gx-prose">Each bar is a run, split between the shared deploy node and GCP Batch jobs. Click a bar to pin its details; click elsewhere to unpin.</p>
 
 <div class="gx-raster-controls">
   <button id="gx-cost-older" type="button">&larr; older</button>
@@ -112,7 +112,7 @@ nav_id: costs
 #gx-cost-ranking {overflow-x:auto;}
 #gx-jobcost-canvas[hidden], #gx-cost-ranking[hidden], .gx-explorer-controls [hidden] {display:none !important;}
 .gx-cost-table {border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums;}
-.gx-cost-table th {position:sticky;top:0;background:#edf4fa;z-index:1;}
+.gx-cost-table th {color:#25537b;position:sticky;top:0;background:#edf4fa;z-index:1;}
 .gx-cost-table td,.gx-cost-table th {padding:9px 8px;border-bottom:1px solid #e0e8ef;text-align:right;white-space:nowrap;}
 .gx-cost-table td:first-child,.gx-cost-table th:first-child {text-align:left;white-space:normal;min-width:185px;max-width:265px;overflow-wrap:anywhere;}
 .gx-cost-table th button {font:inherit;font-weight:bold;background:none;border:0;color:#25537b;cursor:pointer;}
@@ -121,6 +121,7 @@ nav_id: costs
 .gx-cost-bar {display:flex;height:14px;min-width:0;}
 .gx-cost-track {width:160px;}
 .gx-cost-bar span {height:100%;}
+.gx-cost-table td:nth-child(3) {font-weight:700;}
 .gx-cost-table small {display:block;color:#687888;}
 </style>
 <script src="assets/cost-explorer.js"></script>
@@ -177,7 +178,7 @@ nav_id: costs
     overflow-y: auto;
   }
   .gx-chart-details {
-    flex: 0 0 18rem;
+    flex: 0 0 21rem;
     min-height: 18rem;
     padding: 1.3rem 1rem 0.85rem;
     border: 1px solid rgba(37, 83, 123, 0.15);
@@ -225,9 +226,48 @@ nav_id: costs
     text-align: left;
     padding-left: 0;
   }
-  .gx-recon-table th {
+  .gx-recon-table thead th {
     font-weight: 600;
-    color: var(--galaxy-grey);
+    color: #25537b;
+    background: #e7eef5;
+    position: static;
+  }
+  .gx-recon-table tbody tr:nth-child(n) > * {
+    background: transparent;
+  }
+  .gx-recon-table .gx-recon-table__total > * {
+    font-weight: 700;
+    border-top: 2px solid #b8cad9;
+  }
+  .gx-recon-table__percent {
+    display: block;
+    font-size: 0.72rem;
+    color: #3d4148;
+  }
+  .gx-recon-note, .gx-chart-details__pin {
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    color: #3d4148;
+  }
+  #gx-cost-details {
+    position: relative;
+    height: 24rem;
+    min-height: 24rem;
+    padding-top: 1.3rem;
+    overflow-y: auto;
+  }
+  #gx-cost-details .gx-chart-details__pin {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    margin: 0;
+  }
+  .gx-chart-details--pinned {
+    border-color: #25537b;
+  }
+  @media (max-width: 760px) {
+    .gx-chart-row { flex-direction: column; }
+    .gx-chart-details { flex-basis: auto; min-height: 0; }
   }
 
   .gx-chart-legend {
@@ -447,17 +487,23 @@ nav_id: costs
 
   function renderReconciliationTable(rows) {
     var body = rows.map(function (r) {
-      return "<tr>" +
-        "<td>" + escapeHtml(r.label) + "</td>" +
+      // Billing is the reference; a zero or missing bill has no defined ratio.
+      var percent = r.difference != null && r.billing > 0
+        ? (r.difference / r.billing * 100) : null;
+      var rounded = percent == null ? null : Number(percent.toFixed(1));
+      var percentText = rounded == null ? "N/A" : (rounded > 0 ? "+" : "") + rounded.toFixed(1) + "%";
+      return '<tr' + (r.label === "Total" ? ' class="gx-recon-table__total"' : '') + '>' +
+        '<th scope="row">' + escapeHtml(r.label) + "</th>" +
         "<td>" + fmtDollars(r.rainstone) + "</td>" +
         "<td>" + fmtDollars(r.billing) + "</td>" +
-        "<td>" + fmtSignedDollars(r.difference) + "</td>" +
+        "<td>" + fmtSignedDollars(r.difference) +
+          '<span class="gx-recon-table__percent">' + percentText + "</span></td>" +
       "</tr>";
     }).join("");
     return '<table class="gx-recon-table">' +
-      "<thead><tr><th></th><th>Rainstone</th><th>Billing</th><th>Diff</th></tr></thead>" +
+      '<thead><tr><th scope="col">Resource</th><th scope="col">Rainstone</th><th scope="col">Billing</th><th scope="col">Diff</th></tr></thead>' +
       "<tbody>" + body + "</tbody>" +
-    "</table>";
+    '</table><div class="gx-recon-note">Diff = Rainstone − Billing; % of Billing. N/A when Billing is zero or unknown.</div>';
   }
 
   // The Batch comparison covers only jobs Rainstone priced; billing for the
@@ -563,7 +609,8 @@ nav_id: costs
     }
 
     var windowStart = runs.length - 1;
-    var hovered = null; // {run}
+    var hovered = null; // selected run
+    var pinned = false;
 
     function visibleRuns() {
       var count = computeBars(container, runs.length, BAR_W, BAR_GAP, LEFT_MARGIN, RIGHT_PAD);
@@ -609,7 +656,9 @@ nav_id: costs
             { label: "Total", rainstone: recon.total.rainstone, billing: recon.total.billing, difference: recon.total.difference }
           ]) + unpricedBillingHtml(recon.gcp_batch);
       }
-      detailsEl.className = "gx-chart-details gx-chart-details--active";
+      html += '<div class="gx-chart-details__pin" title="Click a bar to pin; click elsewhere or press Escape to unpin">' + (pinned
+        ? "Pinned" : "Click bar to pin") + "</div>";
+      detailsEl.className = "gx-chart-details gx-chart-details--active" + (pinned ? " gx-chart-details--pinned" : "");
       detailsEl.innerHTML = html;
     }
 
@@ -699,7 +748,8 @@ nav_id: costs
     function render() {
       draw();
       updateWindowLabel();
-      renderDefaultDetails();
+      if (hovered) renderHoveredRunDetails(hovered);
+      else renderDefaultDetails();
     }
 
     olderBtn.addEventListener("click", function () {
@@ -712,30 +762,58 @@ nav_id: costs
     });
     window.addEventListener("resize", render);
 
-    canvas.addEventListener("mousemove", function (evt) {
+    function hitRun(evt) {
       var rect = canvas.getBoundingClientRect();
       var mx = evt.clientX - rect.left;
+      var my = evt.clientY - rect.top;
       var vr = visibleRuns();
-      var hit = vr.filter(function (r) { return r._x != null && mx >= r._x && mx <= r._x + BAR_W; })[0];
-      if (!hit) {
-        if (hovered) { hovered = null; canvas.style.cursor = "default"; draw(); renderDefaultDetails(); }
-        return;
-      }
+      var maxTotal = Math.max.apply(null, vr.map(function (r) { return r.total_cost || 0; })) || 1;
+      return vr.filter(function (r) {
+        var height = ((r.main_vm_cost || 0) + (r.gcp_batch_cost || 0)) / maxTotal * CHART_H;
+        return r._x != null && mx >= r._x && mx <= r._x + BAR_W &&
+          my >= TOP_PAD + CHART_H - height && my <= TOP_PAD + CHART_H;
+      })[0];
+    }
+
+    function selectRun(hit) {
+      hovered = hit;
       canvas.style.cursor = "pointer";
-      if (hovered !== hit) {
-        hovered = hit;
-        draw();
-        if (!(hit.run_id in reconciliationCache)) {
-          loadReconciliation(hit.run_id).then(function () {
-            if (hovered && hovered.run_id === hit.run_id) renderHoveredRunDetails(hit);
-          });
-        }
-      }
+      draw();
       renderHoveredRunDetails(hit);
+      if (!(hit.run_id in reconciliationCache)) {
+        loadReconciliation(hit.run_id).then(function () {
+          if (hovered === hit) renderHoveredRunDetails(hit);
+        });
+      }
+    }
+
+    function clearSelection() {
+      pinned = false;
+      hovered = null;
+      canvas.style.cursor = "default";
+      draw();
+      renderDefaultDetails();
+    }
+
+    canvas.addEventListener("mousemove", function (evt) {
+      if (pinned) return;
+      var hit = hitRun(evt);
+      if (hit) {
+        if (hovered !== hit) selectRun(hit);
+      } else if (hovered) clearSelection();
     });
     canvas.addEventListener("mouseleave", function () {
-      if (hovered) { hovered = null; canvas.style.cursor = "default"; draw(); }
-      renderDefaultDetails();
+      if (!pinned) clearSelection();
+    });
+    document.addEventListener("click", function (evt) {
+      var hit = evt.target === canvas ? hitRun(evt) : null;
+      if (hit) {
+        pinned = true;
+        selectRun(hit);
+      } else if (pinned || hovered) clearSelection();
+    });
+    document.addEventListener("keydown", function (evt) {
+      if (evt.key === "Escape" && pinned) clearSelection();
     });
 
     render();
