@@ -621,6 +621,7 @@ nav_id: raster
     mixed: [21, 2, 118]     // #150276
   };
   var STRIPE_COLOR = "rgba(37, 83, 123, 0.06)";
+  var HOVER_COLOR = "rgba(37, 83, 123, 0.2)";
   var COVERAGE_COLORS = { normal: "#9aa5b1", partial: "#d19e00", sparse: "#b91c1c" };
   var COVERAGE_LABELS = { normal: "Normal coverage", partial: "Partial coverage", sparse: "Sparse coverage" };
 
@@ -1071,6 +1072,25 @@ nav_id: raster
       return runs.slice(windowStart, windowStart + nCols);
     }
 
+    // Cheap ellipsis measured at bold weight (700) so bolding a tool name
+    // on hover never overflows LABEL_WIDTH into the grid columns or shifts
+    // where the ellipsis falls.
+    function fitToolLabel(cctx, toolId) {
+      var full = shortName(toolId);
+      var label = full;
+      var maxWidth = LABEL_WIDTH - LABEL_PAD_LEFT - 8;
+      cctx.save();
+      cctx.font = "700 " + READABLE_FONT_PX + "px 'Atkinson Hyperlegible', sans-serif";
+      if (cctx.measureText(label).width > maxWidth) {
+        while (label.length > 1 && cctx.measureText(label + "…").width > maxWidth) {
+          label = label.slice(0, -1);
+        }
+        label += "…";
+      }
+      cctx.restore();
+      return label;
+    }
+
     function sizeCanvas(c, cctx, widthCss, heightCss, dpr) {
       c.style.width = widthCss + "px";
       c.style.height = heightCss + "px";
@@ -1139,14 +1159,7 @@ nav_id: raster
 
         if (density !== "overview") {
           ctx.fillStyle = "#2c3143";
-          var label = shortName(toolId);
-          // Cheap ellipsis: trim until it fits rather than measuring per char.
-          var maxWidth = LABEL_WIDTH - LABEL_PAD_LEFT - 8;
-          while (ctx.measureText(label).width > maxWidth && label.length > 1) {
-            label = label.slice(0, -1);
-          }
-          if (label !== shortName(toolId)) label += "…";
-          ctx.fillText(label, LABEL_PAD_LEFT, y + CELL_H / 2);
+          ctx.fillText(fitToolLabel(ctx, toolId), LABEL_PAD_LEFT, y + CELL_H / 2);
         } else if (firstRowLetters[row]) {
           // Alphabet landmark for the otherwise-blank label column in
           // overview mode - the exact name still appears on hover/keyboard
@@ -1361,12 +1374,33 @@ nav_id: raster
       var fullH = TOP_MARGIN_H + visibleTools.length * CELL_H + BOTTOM_PAD_H;
       overlayCtx.clearRect(0, 0, widthCss, fullH);
       if (hoveredCol !== null) {
-        overlayCtx.fillStyle = "rgba(37, 83, 123, 0.07)";
+        overlayCtx.fillStyle = HOVER_COLOR;
         overlayCtx.fillRect(LABEL_WIDTH + hoveredCol * CELL_W, 0, CELL_W - CELL_GAP, fullH);
       }
       if (hoveredRow !== null) {
-        overlayCtx.fillStyle = "rgba(37, 83, 123, 0.07)";
-        overlayCtx.fillRect(0, TOP_MARGIN_H + hoveredRow * CELL_H, widthCss, CELL_H);
+        var rowY = TOP_MARGIN_H + hoveredRow * CELL_H;
+        if (density !== "overview") {
+          // Clear the base canvas's normal-weight label before painting the
+          // hover band and bold label so regular and bold glyphs don't stack.
+          overlayCtx.fillStyle = "#ffffff";
+          overlayCtx.fillRect(0, rowY, LABEL_WIDTH, CELL_H);
+        }
+        overlayCtx.fillStyle = HOVER_COLOR;
+        overlayCtx.fillRect(0, rowY, widthCss, CELL_H);
+        if (density !== "overview") {
+          overlayCtx.save();
+          overlayCtx.font = "700 " + READABLE_FONT_PX + "px 'Atkinson Hyperlegible', sans-serif";
+          overlayCtx.textAlign = "left";
+          overlayCtx.textBaseline = "middle";
+          overlayCtx.fillStyle = "#2c3143";
+          overlayCtx.fillText(fitToolLabel(overlayCtx, visibleTools[hoveredRow]), LABEL_PAD_LEFT, rowY + CELL_H / 2);
+          overlayCtx.restore();
+          if (searchHighlightRow === hoveredRow) {
+            overlayCtx.strokeStyle = "#d19e00";
+            overlayCtx.lineWidth = 2;
+            overlayCtx.strokeRect(1, rowY + 1, LABEL_WIDTH - 2, CELL_H - 2);
+          }
+        }
       }
       // Both set simultaneously only happens for an exact grid-cell hover
       // (see mousemove) - outline it without touching its fill
@@ -1390,13 +1424,9 @@ nav_id: raster
       // (v2_raster_ui.md round 3 sec 1 & 4).
       if (hoveredRow !== null) {
         var flabel = shortName(visibleTools[hoveredRow]);
-        var truncatedInReadable = false;
-        if (density !== "overview") {
-          overlayCtx.font = READABLE_FONT_PX + "px 'Atkinson Hyperlegible', sans-serif";
-          truncatedInReadable = overlayCtx.measureText(flabel).width > (LABEL_WIDTH - LABEL_PAD_LEFT - 8);
-        }
+        var truncatedInReadable = density !== "overview" && fitToolLabel(overlayCtx, visibleTools[hoveredRow]) !== flabel;
         if (density === "overview" || (focusSource === "keyboard" && truncatedInReadable)) {
-          overlayCtx.font = "11px 'Atkinson Hyperlegible', sans-serif";
+          overlayCtx.font = "700 11px 'Atkinson Hyperlegible', sans-serif";
           overlayCtx.textAlign = "left";
           overlayCtx.textBaseline = "middle";
           var ftextW = overlayCtx.measureText(flabel).width;
