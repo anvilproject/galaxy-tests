@@ -41,9 +41,11 @@ nav_id: deploy-stages
 </p>
 
 <div class="gx-raster-controls">
+  <button id="gx-deploy-oldest" type="button">Oldest</button>
   <button id="gx-deploy-older" type="button">&larr; older</button>
   <span id="gx-deploy-window"></span>
   <button id="gx-deploy-newer" type="button">newer &rarr;</button>
+  <button id="gx-deploy-latest" type="button">Latest</button>
 </div>
 
 <div id="gx-deploy-legend" class="gx-chart-legend"></div>
@@ -102,9 +104,11 @@ nav_id: deploy-stages
 </p>
 
 <div class="gx-raster-controls">
+  <button id="gx-parallelism-oldest" type="button">Oldest</button>
   <button id="gx-parallelism-older" type="button">&larr; older</button>
   <span id="gx-parallelism-window"></span>
   <button id="gx-parallelism-newer" type="button">newer &rarr;</button>
+  <button id="gx-parallelism-latest" type="button">Latest</button>
 </div>
 
 <div id="gx-parallelism-legend" class="gx-chart-legend"></div>
@@ -134,9 +138,11 @@ nav_id: deploy-stages
 </p>
 
 <div class="gx-raster-controls">
+  <button id="gx-job-runtime-oldest" type="button">Oldest</button>
   <button id="gx-job-runtime-older" type="button">&larr; older</button>
   <span id="gx-job-runtime-window"></span>
   <button id="gx-job-runtime-newer" type="button">newer &rarr;</button>
+  <button id="gx-job-runtime-latest" type="button">Latest</button>
 </div>
 
 <div class="gx-chart-row">
@@ -896,8 +902,10 @@ nav_id: deploy-stages
     var canvas = document.getElementById(idPrefix + "-canvas");
     var ctx = canvas.getContext("2d");
     var detailsEl = document.getElementById(idPrefix + "-details");
+    var oldestBtn = document.getElementById(idPrefix + "-oldest");
     var olderBtn = document.getElementById(idPrefix + "-older");
     var newerBtn = document.getElementById(idPrefix + "-newer");
+    var latestBtn = document.getElementById(idPrefix + "-latest");
     var windowLabel = document.getElementById(idPrefix + "-window");
     var legendEl = document.getElementById(idPrefix + "-legend");
     wireLogButton(detailsEl);
@@ -905,6 +913,7 @@ nav_id: deploy-stages
     if (!runs.length) {
       document.getElementById(idPrefix + "-empty").hidden = false;
       container.hidden = true;
+      oldestBtn.disabled = olderBtn.disabled = newerBtn.disabled = latestBtn.disabled = true;
       if (onWindowChange) onWindowChange([], "");
       return;
     }
@@ -990,8 +999,8 @@ nav_id: deploy-stages
         (first && last ? " · " + fmtShort(first.timestamp) + " → " + fmtShort(last.timestamp) : "");
       windowLabel.textContent = labelText;
       windowLabel.title = first && last ? fmtDate(first.timestamp) + " → " + fmtDate(last.timestamp) : "";
-      olderBtn.disabled = windowStart <= 0;
-      newerBtn.disabled = windowStart + nBars >= runs.length;
+      oldestBtn.disabled = olderBtn.disabled = windowStart <= 0;
+      newerBtn.disabled = latestBtn.disabled = windowStart + nBars >= runs.length;
 
       if (onWindowChange) onWindowChange(vis, labelText);
     }
@@ -1066,8 +1075,10 @@ nav_id: deploy-stages
     });
 
     window.addEventListener("resize", draw);
+    oldestBtn.addEventListener("click", function () { windowStart = 0; draw(); });
     olderBtn.addEventListener("click", function () { windowStart -= 1; draw(); });
     newerBtn.addEventListener("click", function () { windowStart += 1; draw(); });
+    latestBtn.addEventListener("click", function () { windowStart = Math.max(0, runs.length - nBars); draw(); });
 
     draw();
   }
@@ -1311,8 +1322,10 @@ nav_id: deploy-stages
     var canvas = document.getElementById("gx-parallelism-canvas");
     var ctx = canvas.getContext("2d");
     var detailsEl = document.getElementById("gx-parallelism-details");
+    var oldestBtn = document.getElementById("gx-parallelism-oldest");
     var olderBtn = document.getElementById("gx-parallelism-older");
     var newerBtn = document.getElementById("gx-parallelism-newer");
+    var latestBtn = document.getElementById("gx-parallelism-latest");
     var windowLabel = document.getElementById("gx-parallelism-window");
     var legendEl = document.getElementById("gx-parallelism-legend");
     var emptyEl = document.getElementById("gx-parallelism-empty");
@@ -1348,7 +1361,7 @@ nav_id: deploy-stages
 
     if (!manifestRuns.length) {
       emptyEl.hidden = false;
-      olderBtn.disabled = newerBtn.disabled = true;
+      oldestBtn.disabled = olderBtn.disabled = newerBtn.disabled = latestBtn.disabled = true;
       return;
     }
 
@@ -1449,8 +1462,8 @@ nav_id: deploy-stages
       var m = manifestRuns[idx];
       windowLabel.textContent = "Run " + (idx + 1) + " of " + runIds.length +
         (m && m.timestamp ? " · " + fmtShort(m.timestamp) : "");
-      olderBtn.disabled = idx <= 0;
-      newerBtn.disabled = idx >= runIds.length - 1;
+      oldestBtn.disabled = olderBtn.disabled = idx <= 0;
+      newerBtn.disabled = latestBtn.disabled = idx >= runIds.length - 1;
     }
 
     // Default (nothing hovered) details view: min/max/time-weighted-average
@@ -1485,14 +1498,16 @@ nav_id: deploy-stages
         current = null;
         emptyEl.hidden = false;
         windowLabel.textContent = "";
-        olderBtn.disabled = newerBtn.disabled = true;
+        oldestBtn.disabled = olderBtn.disabled = newerBtn.disabled = latestBtn.disabled = true;
         draw();
         renderDefaultDetails();
       });
     }
 
+    oldestBtn.addEventListener("click", function () { showRun(0, 1); });
     olderBtn.addEventListener("click", function () { showRun(idx - 1, -1); });
     newerBtn.addEventListener("click", function () { showRun(idx + 1, 1); });
+    latestBtn.addEventListener("click", function () { showRun(runIds.length - 1, -1); });
     window.addEventListener("resize", draw);
 
     canvas.addEventListener("mousemove", function (evt) {
@@ -1539,8 +1554,10 @@ nav_id: deploy-stages
     var canvas = document.getElementById("gx-job-runtime-canvas");
     var ctx = canvas.getContext("2d");
     var detailsEl = document.getElementById("gx-job-runtime-details");
+    var oldestBtn = document.getElementById("gx-job-runtime-oldest");
     var olderBtn = document.getElementById("gx-job-runtime-older");
     var newerBtn = document.getElementById("gx-job-runtime-newer");
+    var latestBtn = document.getElementById("gx-job-runtime-latest");
     var windowLabel = document.getElementById("gx-job-runtime-window");
     var emptyEl = document.getElementById("gx-job-runtime-empty");
 
@@ -1550,7 +1567,7 @@ nav_id: deploy-stages
 
     if (!manifestRuns.length) {
       emptyEl.hidden = false;
-      olderBtn.disabled = newerBtn.disabled = true;
+      oldestBtn.disabled = olderBtn.disabled = newerBtn.disabled = latestBtn.disabled = true;
       return;
     }
 
@@ -1629,8 +1646,8 @@ nav_id: deploy-stages
       windowLabel.textContent = "Run " + (idx + 1) + " of " + runIds.length +
         (m && m.timestamp ? " · " + fmtShort(m.timestamp) : "") +
         (current ? " · " + n + " of " + total + " GCP Batch jobs shown" : "");
-      olderBtn.disabled = idx <= 0;
-      newerBtn.disabled = idx >= runIds.length - 1;
+      oldestBtn.disabled = olderBtn.disabled = idx <= 0;
+      newerBtn.disabled = latestBtn.disabled = idx >= runIds.length - 1;
     }
 
     // Default (nothing hovered) details view: aggregate stats across every
@@ -1674,14 +1691,16 @@ nav_id: deploy-stages
         current = null;
         emptyEl.hidden = false;
         windowLabel.textContent = "";
-        olderBtn.disabled = newerBtn.disabled = true;
+        oldestBtn.disabled = olderBtn.disabled = newerBtn.disabled = latestBtn.disabled = true;
         draw();
         renderDefaultDetails();
       });
     }
 
+    oldestBtn.addEventListener("click", function () { showRun(0, 1); });
     olderBtn.addEventListener("click", function () { showRun(idx - 1, -1); });
     newerBtn.addEventListener("click", function () { showRun(idx + 1, 1); });
+    latestBtn.addEventListener("click", function () { showRun(runIds.length - 1, -1); });
     window.addEventListener("resize", draw);
 
     canvas.addEventListener("mousemove", function (evt) {

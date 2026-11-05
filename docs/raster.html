@@ -1786,7 +1786,7 @@ nav_id: raster
           { count: errored, color: rgbStr(COLORS.error), label: "errored" },
           { count: skipped, color: COLORS.not_run, label: "skipped" }
         ]) +
-        runBarBlockHtml("Tools", toolsAffectedPct + "% of tools affected", [
+        runBarBlockHtml("Tools", stats.affected + " (" + toolsAffectedPct + "%) of tools affected", [
           { count: stats.pass, color: COLORS.pass, label: "unaffected" },
           { count: stats.fail, color: rgbStr(COLORS.fail), label: "failure-only" },
           { count: stats.error, color: rgbStr(COLORS.error), label: "error-only" },

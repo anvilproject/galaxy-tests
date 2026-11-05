@@ -45,9 +45,11 @@ nav_id: costs
 <p class="gx-prose">Each bar is a run, split between the shared deploy node and GCP Batch jobs. Click a bar to pin its details; click elsewhere to unpin.</p>
 
 <div class="gx-raster-controls">
+  <button id="gx-cost-oldest" type="button">Oldest</button>
   <button id="gx-cost-older" type="button">&larr; older</button>
   <span id="gx-cost-window"></span>
   <button id="gx-cost-newer" type="button">newer &rarr;</button>
+  <button id="gx-cost-latest" type="button">Latest</button>
 </div>
 
 <div id="gx-cost-legend" class="gx-chart-legend"></div>
@@ -67,9 +69,11 @@ nav_id: costs
 <p class="gx-prose">Overhead includes boot, idle and teardown. Its percentage uses only jobs with known phase costs; unpriced jobs are counted but never treated as free.</p>
 
 <div class="gx-raster-controls">
+  <button id="gx-jobcost-oldest" type="button">Oldest</button>
   <button id="gx-jobcost-older" type="button">&larr; older</button>
   <span id="gx-jobcost-window"></span>
   <button id="gx-jobcost-newer" type="button">newer &rarr;</button>
+  <button id="gx-jobcost-latest" type="button">Latest</button>
   <span class="gx-raster-search-wrap">
     <input id="gx-jobcost-search" type="text" placeholder="Find a tool…" class="gx-raster-search">
     <button type="button" id="gx-jobcost-search-clear" class="gx-raster-search-clear" aria-label="Clear search" hidden>&times;</button>
@@ -592,8 +596,10 @@ nav_id: costs
     var canvas = document.getElementById("gx-cost-canvas");
     var ctx = canvas.getContext("2d");
     var detailsEl = document.getElementById("gx-cost-details");
+    var oldestBtn = document.getElementById("gx-cost-oldest");
     var olderBtn = document.getElementById("gx-cost-older");
     var newerBtn = document.getElementById("gx-cost-newer");
+    var latestBtn = document.getElementById("gx-cost-latest");
     var windowLabel = document.getElementById("gx-cost-window");
     var emptyEl = document.getElementById("gx-cost-empty");
     var legendEl = document.getElementById("gx-cost-legend");
@@ -604,7 +610,7 @@ nav_id: costs
 
     if (!runs.length) {
       emptyEl.hidden = false;
-      olderBtn.disabled = newerBtn.disabled = true;
+      oldestBtn.disabled = olderBtn.disabled = newerBtn.disabled = latestBtn.disabled = true;
       return;
     }
 
@@ -612,11 +618,15 @@ nav_id: costs
     var hovered = null; // selected run
     var pinned = false;
 
-    function visibleRuns() {
+    function clampWindow() {
       var count = computeBars(container, runs.length, BAR_W, BAR_GAP, LEFT_MARGIN, RIGHT_PAD);
-      var end = Math.min(runs.length, windowStart + count);
-      var start = Math.max(0, end - count);
-      return runs.slice(start, end);
+      windowStart = Math.max(0, Math.min(windowStart, runs.length - count));
+      return count;
+    }
+
+    function visibleRuns() {
+      var count = clampWindow();
+      return runs.slice(windowStart, windowStart + count);
     }
 
     function renderDefaultDetails() {
@@ -741,8 +751,8 @@ nav_id: costs
       windowLabel.textContent = count
         ? "Runs " + (runs.indexOf(vr[0]) + 1) + "-" + (runs.indexOf(vr[vr.length - 1]) + 1) + " of " + runs.length
         : "";
-      olderBtn.disabled = windowStart <= 0;
-      newerBtn.disabled = windowStart >= runs.length - 1;
+      oldestBtn.disabled = olderBtn.disabled = windowStart <= 0;
+      newerBtn.disabled = latestBtn.disabled = windowStart + count >= runs.length;
     }
 
     function render() {
@@ -752,12 +762,20 @@ nav_id: costs
       else renderDefaultDetails();
     }
 
+    oldestBtn.addEventListener("click", function () {
+      windowStart = 0;
+      render();
+    });
     olderBtn.addEventListener("click", function () {
       windowStart = Math.max(0, windowStart - 1);
       render();
     });
     newerBtn.addEventListener("click", function () {
       windowStart = Math.min(runs.length - 1, windowStart + 1);
+      render();
+    });
+    latestBtn.addEventListener("click", function () {
+      windowStart = runs.length - 1;
       render();
     });
     window.addEventListener("resize", render);
@@ -832,8 +850,10 @@ nav_id: costs
     var canvas = document.getElementById("gx-jobcost-canvas");
     var ctx = canvas.getContext("2d");
     var detailsEl = document.getElementById("gx-jobcost-details");
+    var oldestBtn = document.getElementById("gx-jobcost-oldest");
     var olderBtn = document.getElementById("gx-jobcost-older");
     var newerBtn = document.getElementById("gx-jobcost-newer");
+    var latestBtn = document.getElementById("gx-jobcost-latest");
     var windowLabel = document.getElementById("gx-jobcost-window");
     var emptyEl = document.getElementById("gx-jobcost-empty");
     var legendEl = document.getElementById("gx-jobcost-legend");
@@ -850,7 +870,7 @@ nav_id: costs
 
     if (!manifestRuns.length) {
       emptyEl.hidden = false;
-      olderBtn.disabled = newerBtn.disabled = true;
+      oldestBtn.disabled = olderBtn.disabled = newerBtn.disabled = latestBtn.disabled = true;
       return;
     }
 
@@ -1063,8 +1083,8 @@ nav_id: costs
         (m && m.timestamp ? " · " + fmtShort(m.timestamp) : "") +
         (current ? " · " + n + " of " + total + " GCP Batch jobs priced" : "") +
         (current && searchQuery ? " · " + shown + " match" : "");
-      olderBtn.disabled = idx <= 0;
-      newerBtn.disabled = idx >= runIds.length - 1;
+      oldestBtn.disabled = olderBtn.disabled = idx <= 0;
+      newerBtn.disabled = latestBtn.disabled = idx >= runIds.length - 1;
     }
 
     // Sums Rainstone's per-job phase costs. Jobs whose phases were not
@@ -1146,7 +1166,7 @@ nav_id: costs
     }
 
     function showRun(targetIdx, step) {
-      olderBtn.disabled = newerBtn.disabled = true;
+      oldestBtn.disabled = olderBtn.disabled = newerBtn.disabled = latestBtn.disabled = true;
       loadNearest(targetIdx, step).then(function (data) {
         current = data;
         emptyEl.hidden = true;
@@ -1157,14 +1177,16 @@ nav_id: costs
         current = null;
         emptyEl.hidden = false;
         windowLabel.textContent = "";
-        olderBtn.disabled = newerBtn.disabled = true;
+        oldestBtn.disabled = olderBtn.disabled = newerBtn.disabled = latestBtn.disabled = true;
         draw();
         renderDefaultDetails();
       });
     }
 
+    oldestBtn.addEventListener("click", function () { showRun(0, 1); });
     olderBtn.addEventListener("click", function () { showRun(idx - 1, -1); });
     newerBtn.addEventListener("click", function () { showRun(idx + 1, 1); });
+    latestBtn.addEventListener("click", function () { showRun(runIds.length - 1, -1); });
     window.addEventListener("resize", draw);
 
     searchInput.addEventListener("input", function () {
@@ -1264,8 +1286,8 @@ nav_id: costs
     .catch(function () {
       document.getElementById("gx-cost-empty").hidden = false;
       document.getElementById("gx-jobcost-empty").hidden = false;
-      document.getElementById("gx-cost-older").disabled = document.getElementById("gx-cost-newer").disabled = true;
-      document.getElementById("gx-jobcost-older").disabled = document.getElementById("gx-jobcost-newer").disabled = true;
+      document.getElementById("gx-cost-oldest").disabled = document.getElementById("gx-cost-older").disabled = document.getElementById("gx-cost-newer").disabled = document.getElementById("gx-cost-latest").disabled = true;
+      document.getElementById("gx-jobcost-oldest").disabled = document.getElementById("gx-jobcost-older").disabled = document.getElementById("gx-jobcost-newer").disabled = document.getElementById("gx-jobcost-latest").disabled = true;
     });
 })();
 </script>
