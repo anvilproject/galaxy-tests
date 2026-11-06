@@ -7,9 +7,10 @@
 # deployment choices as inputs: the harness, the pinned tool list and the
 # report pipeline are the nightly's and only the deployment differs, so a run
 # here is directly comparable with a nightly run or a warm-pool run. Reports
-# land in the same dashboards, keyed by this run's instance name
-# (anvil-nobatch-ci-<timestamp>); set commit-reports to false for a run that
-# should stay out of them.
+# are never committed to main from here (commit-reports is fixed to false):
+# the dashboards track the nightly configuration, and an experiment run would
+# be read as a regression or an improvement of it. Everything the run
+# produces is in its workflow artifact (results/ and logs/) for 90 days.
 #
 # What "GCP Batch disabled" means (galaxy-k8s-boot mixins/no-batch.yml): the
 # gcp_batch TPV destination is made abstract, so no job is ever routed to it,
@@ -36,14 +37,14 @@ on:
         default: 'n2-custom-40-163840'
         required: true
       job-max-cores:
-        description: 'Most cores one job may get on the head node (integer; TPV max_cores clamp via galaxy_job_max_cores). Leave headroom for the control plane and Galaxy''s own pods.'
+        description: 'Most cores one job may get on the head node (integer; TPV max_cores clamp via galaxy_job_max_cores). Matches the k8s max_accepted_cores in mixins/no-batch.yml.'
         type: number
-        default: 16
+        default: 32
         required: true
       job-max-mem:
-        description: 'Most memory one job may get, in GB (integer; galaxy_job_max_mem). Also becomes the job pod''s memory request and limit.'
+        description: 'Most memory one job may get, in GB (integer; galaxy_job_max_mem). Also becomes the job pod''s memory request and limit. Matches the k8s max_accepted_mem in mixins/no-batch.yml.'
         type: number
-        default: 64
+        default: 128
         required: true
       boot-disk-size:
         description: 'Boot disk of the VM. With everything on one node it also holds every tool container image and every job''s working directory, which the nightly''s 200GB was not sized for.'
@@ -65,10 +66,6 @@ on:
         description: 'Repo-relative tool-ID list to test (one per line). Defaults to the nightly''s pinned list; clear it to test every tool the instance loaded.'
         default: '.github/scheduled-tool-ids.txt'
         required: false
-      commit-reports:
-        description: 'Commit reports and dashboard data to main (false: workflow artifact only)'
-        type: boolean
-        default: true
 
 jobs:
   no-batch:
@@ -92,4 +89,4 @@ jobs:
       values-files: 'values/values.yml mixins/testing.yml mixins/ci-concurrency.yml mixins/debug.yml mixins/no-batch.yml'
       extra-vars: 'galaxy_job_max_cores=${{ inputs.job-max-cores }} galaxy_job_max_mem=${{ inputs.job-max-mem }}'
       experiment-label: 'no-batch'
-      commit-reports: ${{ inputs.commit-reports }}
+      commit-reports: false

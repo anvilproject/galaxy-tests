@@ -5,7 +5,8 @@
 # tool-test suite against the same mechanism).
 #
 # Counterpart of anvil-test-no-batch.yaml; see there for how the two relate
-# to anvil-test.yaml through anvil-deploy-and-test.yaml. The pooled runner is
+# to anvil-test.yaml through anvil-deploy-and-test.yaml, and why reports are
+# never committed to main from here. The pooled runner is
 # not in the dev image yet: it ships in the anvil-test image that
 # galaxy-k8s-boot's anvil-test-mixin branch deploys through
 # mixins/anvil-test.yml (tag anvil-test-2026-09-5c4b8c7, which carries the
@@ -66,10 +67,6 @@ on:
         description: 'Repo-relative tool-ID list to test (one per line). Defaults to the nightly''s pinned list; clear it to test every tool the instance loaded.'
         default: '.github/scheduled-tool-ids.txt'
         required: false
-      commit-reports:
-        description: 'Commit reports and dashboard data to main (false: workflow artifact only)'
-        type: boolean
-        default: true
 
 jobs:
   warm-pool:
@@ -93,4 +90,4 @@ jobs:
       disable-postinstall-imports: true
       batch-pool-settings: '{"pool_enabled": ${{ inputs.pool-enabled }}, "pool_ttl_seconds": ${{ inputs.pool-ttl-seconds }}, "pool_max_size": ${{ inputs.pool-max-size }}}'
       experiment-label: ${{ inputs.pool-enabled && 'warm-pool' || 'batch-pool-off' }}
-      commit-reports: ${{ inputs.commit-reports }}
+      commit-reports: false

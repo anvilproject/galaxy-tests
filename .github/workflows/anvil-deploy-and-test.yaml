@@ -1528,6 +1528,11 @@ jobs:
           DEPLOY_START_EPOCH: ${{ steps.deploy-start.outputs.epoch }}
           RAINSTONE_API_URL: http://${{ steps.vm-ip.outputs.ip }}/galaxy/costs/api
           GITHUB_RUN_ID: ${{ github.run_id }}
+          # The script polls Rainstone for up to 600 s until it reports the
+          # run's job coverage complete. A deploy-only run has no jobs, so
+          # that state never arrives and the full wait is dead time (observed
+          # on run 42264700280); 30 s is enough to record the VM's own cost.
+          RAINSTONE_WAIT_SECONDS: ${{ inputs.run-tests && '600' || '30' }}
         run: |
           # Rainstone is not on every galaxy-k8s-boot ref (see the log-capture
           # step above); without it the script would poll its API for ten
