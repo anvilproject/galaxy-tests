@@ -1,0 +1,95 @@
+# Experiment: the nightly tool-test suite with GCP Batch switched off and
+# every tool job running on the head node's own Kubernetes cluster, on a VM
+# large enough to hold them (40 vCPUs / 160 GB by default).
+#
+# Counterpart of anvil-test-warm-pool.yaml. Both call
+# anvil-deploy-and-test.yaml, which is anvil-test.yaml's job with the
+# deployment choices as inputs: the harness, the pinned tool list and the
+# report pipeline are the nightly's and only the deployment differs, so a run
+# here is directly comparable with a nightly run or a warm-pool run. Reports
+# land in the same dashboards, keyed by this run's instance name
+# (anvil-nobatch-ci-<timestamp>); set commit-reports to false for a run that
+# should stay out of them.
+#
+# What "GCP Batch disabled" means (galaxy-k8s-boot mixins/no-batch.yml): the
+# gcp_batch TPV destination is made abstract, so no job is ever routed to it,
+# and the k8s destination accepts multi-core tools. The role's per-job clamp
+# on k8s jobs (1 core / 4 GB, from the Ansible variables galaxy_job_max_cores
+# and galaxy_job_max_mem) is lifted through launch_vm.sh --extra-var, sized by
+# the job-max-* inputs. The mixin and the flag live on the galaxy-k8s-boot ref
+# the k8s-boot default points at; move that default once they reach dev.
+#
+# Manual dispatch only. workflow_dispatch allows at most ten inputs, which is
+# why the page-size/number and random-sample selection modes are not exposed
+# here; tool-list-file covers the pinned list and any other list file.
+name: Anvil tool tests without GCP Batch (40-core VM)
+
+on:
+  workflow_dispatch:
+    inputs:
+      instance-name:
+        description: 'GCE instance name prefix (a timestamp is appended)'
+        default: 'anvil-nobatch-ci'
+        required: true
+      machine-type:
+        description: 'Machine type of the single VM that runs Galaxy and every job. Default: a custom N2 with 40 vCPUs / 160 GB (N2 is the family Batch jobs resolve to). Nearest standard shapes in us-east4-c: n2-standard-48, c3-standard-44, t2d-standard-48.'
+        default: 'n2-custom-40-163840'
+        required: true
+      job-max-cores:
+        description: 'Most cores one job may get on the head node (integer; TPV max_cores clamp via galaxy_job_max_cores). Leave headroom for the control plane and Galaxy''s own pods.'
+        type: number
+        default: 16
+        required: true
+      job-max-mem:
+        description: 'Most memory one job may get, in GB (integer; galaxy_job_max_mem). Also becomes the job pod''s memory request and limit.'
+        type: number
+        default: 64
+        required: true
+      boot-disk-size:
+        description: 'Boot disk of the VM. With everything on one node it also holds every tool container image and every job''s working directory, which the nightly''s 200GB was not sized for.'
+        default: '500GB'
+        required: true
+      k8s-boot:
+        description: 'galaxy-k8s-boot source as owner/repo@ref; must carry mixins/no-batch.yml and launch_vm.sh --extra-var'
+        default: 'ksuderman/galaxy-k8s-boot@no-batch'
+        required: true
+      parallel-tests:
+        description: 'Concurrent galaxy-tool-test processes (outer fan-out)'
+        default: '32'
+        required: true
+      run-tests:
+        description: 'Run the full tool-test suite (false = time the deploy only)'
+        type: boolean
+        default: true
+      tool-list-file:
+        description: 'Repo-relative tool-ID list to test (one per line). Defaults to the nightly''s pinned list; clear it to test every tool the instance loaded.'
+        default: '.github/scheduled-tool-ids.txt'
+        required: false
+      commit-reports:
+        description: 'Commit reports and dashboard data to main (false: workflow artifact only)'
+        type: boolean
+        default: true
+
+jobs:
+  no-batch:
+    name: Deploy without GCP Batch and run tool tests
+    uses: ./.github/workflows/anvil-deploy-and-test.yaml
+    permissions:
+      contents: read
+      id-token: write
+    secrets: inherit
+    with:
+      instance-name: ${{ inputs.instance-name }}
+      parallel-tests: ${{ inputs.parallel-tests }}
+      run-tests: ${{ inputs.run-tests }}
+      tool-list-file: ${{ inputs.tool-list-file }}
+      k8s-boot: ${{ inputs.k8s-boot }}
+      machine-type: ${{ inputs.machine-type }}
+      boot-disk-size: ${{ inputs.boot-disk-size }}
+      # The nightly's files plus mixins/no-batch.yml last, so it overrides
+      # the k8s destination limits values.yml sets and marks gcp_batch
+      # abstract.
+      values-files: 'values/values.yml mixins/testing.yml mixins/ci-concurrency.yml mixins/debug.yml mixins/no-batch.yml'
+      extra-vars: 'galaxy_job_max_cores=${{ inputs.job-max-cores }} galaxy_job_max_mem=${{ inputs.job-max-mem }}'
+      experiment-label: 'no-batch'
+      commit-reports: ${{ inputs.commit-reports }}

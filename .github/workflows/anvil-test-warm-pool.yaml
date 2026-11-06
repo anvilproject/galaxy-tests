@@ -1,0 +1,96 @@
+# Experiment: the nightly tool-test suite against the GCP Batch warm VM pool,
+# where the runner keeps a Batch VM alive after a job and hands it follow-up
+# jobs over the NFS handoff directory instead of provisioning a VM per job
+# (benchmarked by hand with ABM in anvil-gpu-benchmarks; this runs the
+# tool-test suite against the same mechanism).
+#
+# Counterpart of anvil-test-no-batch.yaml; see there for how the two relate
+# to anvil-test.yaml through anvil-deploy-and-test.yaml. The pooled runner is
+# not in the dev image yet: it ships in the anvil-test image that
+# galaxy-k8s-boot's anvil-test-mixin branch deploys through
+# mixins/anvil-test.yml (tag anvil-test-2026-09-5c4b8c7, which carries the
+# early-OK fix from anvil-gpu-benchmarks KNOWN_ISSUES.md #14). That branch is
+# behind dev: there is no Rainstone, so the in-run cost estimate is skipped
+# and this run's cost comes from the billing reconciliation only, and its
+# ci-concurrency.yml pins an incompatible image, so the CI capacity settings
+# come from mixins/anvil-test-ci.yml instead. The post-install import profile
+# is disabled for the reason mixins/anvil-test.yml gives.
+#
+# Pool parameters are saved through the AnVIL admin extension's form API once
+# Galaxy is up and before any job runs, so one workflow covers the pool-off
+# Batch baseline (pool-enabled false: per-job VMs on the same image), the
+# runner defaults (120 s / 2) and the tuned setting the D2/C2 phases used
+# (600 s / 4). The GPU destination keeps its own 180 s TTL regardless; with
+# this image image_learner and the other gpu-tagged tools in the pinned list
+# run on L4 VMs, not on the CPU destination as in the nightly.
+name: Anvil tool tests with GCP Batch warm VM pool
+
+on:
+  workflow_dispatch:
+    inputs:
+      instance-name:
+        description: 'GCE instance name prefix (a timestamp is appended)'
+        default: 'anvil-warm-ci'
+        required: true
+      machine-type:
+        description: 'Machine type of the head-node VM (the nightly uses t2d-standard-16)'
+        default: 't2d-standard-16'
+        required: true
+      pool-enabled:
+        description: 'Keep Batch VMs warm between jobs. False gives the per-job-VM Batch baseline on the same image.'
+        type: boolean
+        default: true
+      pool-ttl-seconds:
+        description: 'Idle seconds before a warm VM shuts itself down (30 to 3600; runner default 120, tuned phases used 600)'
+        type: number
+        default: 120
+        required: true
+      pool-max-size:
+        description: 'Idle VMs kept warm per machine shape, per job handler (0 to 20; runner default 2, tuned phases used 4)'
+        type: number
+        default: 2
+        required: true
+      k8s-boot:
+        description: 'galaxy-k8s-boot source as owner/repo@ref; must carry mixins/anvil-test.yml and mixins/anvil-test-ci.yml'
+        default: 'ksuderman/galaxy-k8s-boot@anvil-test-mixin'
+        required: true
+      parallel-tests:
+        description: 'Concurrent galaxy-tool-test processes (outer fan-out)'
+        default: '32'
+        required: true
+      run-tests:
+        description: 'Run the full tool-test suite (false = time the deploy only)'
+        type: boolean
+        default: true
+      tool-list-file:
+        description: 'Repo-relative tool-ID list to test (one per line). Defaults to the nightly''s pinned list; clear it to test every tool the instance loaded.'
+        default: '.github/scheduled-tool-ids.txt'
+        required: false
+      commit-reports:
+        description: 'Commit reports and dashboard data to main (false: workflow artifact only)'
+        type: boolean
+        default: true
+
+jobs:
+  warm-pool:
+    name: Deploy with the Batch warm pool and run tool tests
+    uses: ./.github/workflows/anvil-deploy-and-test.yaml
+    permissions:
+      contents: read
+      id-token: write
+    secrets: inherit
+    with:
+      instance-name: ${{ inputs.instance-name }}
+      parallel-tests: ${{ inputs.parallel-tests }}
+      run-tests: ${{ inputs.run-tests }}
+      tool-list-file: ${{ inputs.tool-list-file }}
+      k8s-boot: ${{ inputs.k8s-boot }}
+      machine-type: ${{ inputs.machine-type }}
+      # anvil-test.yml right after values.yml so its image, pooled-runner
+      # params and GPU destination win over values.yml; testing.yml and the
+      # CI capacity file after it leave those keys alone.
+      values-files: 'values/values.yml mixins/anvil-test.yml mixins/testing.yml mixins/anvil-test-ci.yml mixins/debug.yml'
+      disable-postinstall-imports: true
+      batch-pool-settings: '{"pool_enabled": ${{ inputs.pool-enabled }}, "pool_ttl_seconds": ${{ inputs.pool-ttl-seconds }}, "pool_max_size": ${{ inputs.pool-max-size }}}'
+      experiment-label: ${{ inputs.pool-enabled && 'warm-pool' || 'batch-pool-off' }}
+      commit-reports: ${{ inputs.commit-reports }}
