@@ -1,6 +1,6 @@
 # Experiment: the nightly tool-test suite with GCP Batch switched off and
 # every tool job running on the head node's own Kubernetes cluster, on a VM
-# large enough to hold them (40 vCPUs / 160 GB by default).
+# large enough to hold them (n2-standard-32, 32 vCPUs / 128 GB, by default).
 #
 # Counterpart of anvil-test-warm-pool.yaml. Both call
 # anvil-deploy-and-test.yaml, which is anvil-test.yaml's job with the
@@ -23,7 +23,7 @@
 # Manual dispatch only. workflow_dispatch allows at most ten inputs, which is
 # why the page-size/number and random-sample selection modes are not exposed
 # here; tool-list-file covers the pinned list and any other list file.
-name: Anvil tool tests without GCP Batch (40-core VM)
+name: Anvil tool tests without GCP Batch (32-core VM)
 
 on:
   workflow_dispatch:
@@ -33,18 +33,18 @@ on:
         default: 'anvil-nobatch-ci'
         required: true
       machine-type:
-        description: 'Machine type of the single VM that runs Galaxy and every job. Default: a custom N2 with 40 vCPUs / 160 GB (N2 is the family Batch jobs resolve to). Nearest standard shapes in us-east4-c: n2-standard-48, c3-standard-44, t2d-standard-48.'
-        default: 'n2-custom-40-163840'
+        description: 'Machine type of the single VM that runs Galaxy and every job. Default: n2-standard-32 (32 vCPUs / 128 GB; N2 is the family Batch jobs resolve to, and a predefined shape so Rainstone can price it, which it cannot for custom shapes).'
+        default: 'n2-standard-32'
         required: true
       job-max-cores:
-        description: 'Most cores one job may get on the head node (integer; TPV max_cores clamp via galaxy_job_max_cores). Matches the k8s max_accepted_cores in mixins/no-batch.yml.'
+        description: 'Most cores one job may get on the head node (integer; TPV max_cores clamp via galaxy_job_max_cores). 24 matches the gcp_batch max_cores clamp in mixins/anvil-test-ci.yml that the warm-pool experiment uses, so the two experiments give a job the same CPU.'
         type: number
-        default: 32
+        default: 24
         required: true
       job-max-mem:
-        description: 'Most memory one job may get, in GB (integer; galaxy_job_max_mem). Also becomes the job pod''s memory request and limit. Matches the k8s max_accepted_mem in mixins/no-batch.yml.'
+        description: 'Most memory one job may get, in GB (integer; galaxy_job_max_mem). Also becomes the job pod''s memory request and limit, so it must fit on the node next to Galaxy itself: 96 is 4 GB per core for 24 cores and leaves 32 GB of an n2-standard-32 for the platform pods.'
         type: number
-        default: 128
+        default: 96
         required: true
       boot-disk-size:
         description: 'Boot disk of the VM. With everything on one node it also holds every tool container image and every job''s working directory, which the nightly''s 200GB was not sized for.'
