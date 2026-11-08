@@ -1,0 +1,16 @@
+# The default experiment for anvil-test-benchmark.yaml: one invocation each of
+# the three 2 GB workloads on the instance the workflow just deployed. The
+# workflow launches the workloads concurrently (one `abm benchmark run` per
+# file, all with -e <name>) so the run finishes in roughly the time of the
+# slowest workflow; `abm experiment run` on this file is the sequential
+# equivalent for hand runs. Metrics land in metrics/<name>/.
+#
+# The cloud name is the abm profile the workflow creates for the instance.
+name: anvil-2g
+cloud:
+  - anvil
+runs: 1
+benchmark_confs:
+  - benchmarks/workloads/variant-2g.yml
+  - benchmarks/workloads/rnaseq-2g.yml
+  - benchmarks/workloads/chipseq-2g.yml

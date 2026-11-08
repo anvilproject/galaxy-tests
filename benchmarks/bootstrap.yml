@@ -1,0 +1,43 @@
+# Inputs for the realistic-workload benchmark (anvil-test-benchmark.yaml).
+# Applied on the freshly deployed instance with
+#
+#   abm config bootstrap anvil benchmarks/bootstrap.yml
+#
+# Everything is served from the benchmarking-inputs S3 bucket so a run never
+# depends on Zenodo, the IWC GitHub repository or the Tool Shed being up. The
+# histories are the 2 GB tier of the pulsar-vs-batch benchmark inputs; the
+# dataset and collection names inside them are what benchmarks/workloads/*.yml
+# refer to, so a history archive must not be replaced with one that renames
+# its contents without updating the workload file.
+#
+# Sizes are the archive sizes in the bucket.
+failOnImport: true
+
+histories:
+  # Variant calling: SRR24043307 WGS paired reads subsampled to 2 GB plus the
+  # GRCh38.p14 GenBank reference. Collection SRR24043307-2GB, dataset
+  # GRCh38.p14.gbff.gz. 3.2 GB RO-Crate.
+  - url: https://benchmarking-inputs.s3.amazonaws.com/Variant/Variant-calling-inputs---2GB.rocrate.zip
+    name: Variant 2GB inputs
+  # RNA-seq: SRR24043307 paired reads downsampled to 20 percent (about 0.9 GB
+  # per read file) plus the UCSC hg38 knownGene GTF. Collection SRR24043307-80,
+  # dataset ucsc.hg38.knownGene.gtf. 1.9 GB archive.
+  - url: https://benchmarking-inputs.s3.amazonaws.com/RNASeq/Galaxy-History-SRR24043307-downsampled-20.tar.gz
+    name: RNAseq 2GB inputs
+  # ChIP-seq: paired reads at 2 GB. Collection chipseq-2g. 2.0 GB archive.
+  - url: https://benchmarking-inputs.s3.us-east-1.amazonaws.com/ChiP-seq/Galaxy-History-ChiPSeq-2G.tar.gz
+    name: ChIPseq 2GB inputs
+
+# Imported with tool installation so a workflow whose pinned revision is not
+# on the instance still runs. The anvil image already carries these tools, so
+# in practice this only verifies them.
+workflows:
+  # IWC "Variant analysis on WGS PE data" (generic-variant-calling-wgs-pe).
+  - https://benchmarking-inputs.s3.amazonaws.com/Variant/Galaxy-Workflow-Variant_analysis_on_WGS_PE_data.ga
+  # IWC-derived RNAseq_PE as cached by abm for the pulsar-vs-batch runs.
+  - https://benchmarking-inputs.s3.amazonaws.com/RNASeq/Galaxy-Workflow-RNAseq_PE.ga
+  # IWC chipseq-pe release 1.4, "ChIP-seq Analysis: Paired-End Read Processing".
+  # Still read from GitHub: the bucket is owned by another AWS account and the
+  # copy to ChiP-seq/Galaxy-Workflow-ChIPseq_PE.ga needs that account's
+  # credentials. Switch this URL once the copy exists.
+  - https://raw.githubusercontent.com/iwc-workflows/chipseq-pe/main/chipseq-pe.ga

@@ -1,0 +1,17 @@
+# Variant calling on 2 GB of WGS paired reads (12 tools: fastp, bwa_mem,
+# samtools, picard, lofreq, snpEff, multiqc). The workflow builds its own
+# reference from the GenBank genome, so it needs no CVMFS indexes. Input names
+# are the contents of the "Variant 2GB inputs" history in bootstrap.yml.
+#
+#   abm anvil benchmark run benchmarks/workloads/variant-2g.yml -p "1 anvil" -e anvil-2g
+- output_history_base_name: Variant-Calling
+  workflow_id: Variant analysis on WGS PE data
+  runs:
+    - history_name: 2GB
+      inputs:
+        - name: Paired Collection
+          collection: SRR24043307-2GB
+        - name: GenBank genome
+          dataset_id: GRCh38.p14.gbff.gz
+        - name: Name for genome database
+          value: h38

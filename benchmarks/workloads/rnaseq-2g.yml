@@ -1,0 +1,23 @@
+# RNA-seq on 2 GB of paired reads (cutadapt, rna_star, cufflinks, bam filter,
+# bedtools, multiqc and parameter tools; 20 steps). Uses the instance's hg38
+# STAR index from CVMFS. Input names are the contents of the "RNAseq 2GB
+# inputs" history in bootstrap.yml.
+#
+#   abm anvil benchmark run benchmarks/workloads/rnaseq-2g.yml -p "1 anvil" -e anvil-2g
+- output_history_base_name: RNAseq-PE
+  workflow_id: RNAseq_PE
+  runs:
+    - history_name: 2GB
+      inputs:
+        - name: PE fastq input
+          collection: SRR24043307-80
+        - name: gtf
+          dataset_id: ucsc.hg38.knownGene.gtf
+        - name: forward_adapter
+          value: AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
+        - name: reverse_adapter
+          value: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
+        - name: reference_genome
+          value: hg38
+        - name: strandness
+          value: stranded - forward

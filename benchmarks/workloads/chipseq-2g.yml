@@ -1,0 +1,19 @@
+# ChIP-seq on 2 GB of paired reads (fastp, bowtie2, samtools filter, macs2,
+# wig_to_bigWig, multiqc, grep; 7 tools). Uses the instance's hg38 bowtie2
+# index from CVMFS. Input names are the contents of the "ChIPseq 2GB inputs"
+# history in bootstrap.yml.
+#
+#   abm anvil benchmark run benchmarks/workloads/chipseq-2g.yml -p "1 anvil" -e anvil-2g
+- output_history_base_name: ChIPseq-PE
+  workflow_id: "ChIP-seq Analysis: Paired-End Read Processing"
+  runs:
+    - history_name: 2GB
+      inputs:
+        - name: PE fastq input
+          collection: chipseq-2g
+        - name: Reference genome
+          value: hg38
+        - name: Effective genome size
+          value: 2913022398
+        - name: Normalize profile
+          value: true

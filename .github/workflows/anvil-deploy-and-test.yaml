@@ -91,6 +91,11 @@ on:
         description: 'Commit this run''s reports and dashboard data to main. False still uploads them as a workflow artifact.'
         type: boolean
         default: true
+      # ----- realistic-workload benchmark instead of (or as well as) tool tests -----
+      benchmark-experiment:
+        description: 'Repo-relative abm experiment file (see benchmarks/experiments/). When set, the run stages benchmarks/bootstrap.yml on the instance and runs every benchmark_confs workload concurrently per run, writing abm metrics to results/benchmark-metrics. Empty disables.'
+        type: string
+        default: ''
 
 env:
   GCP_PROJECT: anvil-and-terra-development
@@ -740,7 +745,7 @@ jobs:
       # then fetch/create their API key via bioblend (what `abm galaxy user
       # key` itself calls under the hood).
       - name: Create real API key
-        if: ${{ inputs.run-tests }}
+        if: ${{ inputs.run-tests || inputs.benchmark-experiment != '' }}
         id: api-key
         run: |
           curl -fsSL "http://${{ steps.vm-ip.outputs.ip }}/galaxy/" > /dev/null
@@ -767,7 +772,7 @@ jobs:
       # against. Fatal on failure - an experiment whose premise did not
       # apply is not worth the hours that follow.
       - name: Apply GCP Batch pool settings
-        if: ${{ inputs.run-tests && inputs.batch-pool-settings != '' }}
+        if: ${{ (inputs.run-tests || inputs.benchmark-experiment != '') && inputs.batch-pool-settings != '' }}
         env:
           GALAXY_URL: http://${{ steps.vm-ip.outputs.ip }}/galaxy/
           KEY: ${{ steps.api-key.outputs.key }}
@@ -846,6 +851,86 @@ jobs:
       # largest single loss on several runs, and the client records only its
       # own exception, so neither side of the socket is visible after the
       # fact. Sampled rather than streamed - these are counters, not events.
+      # ----- realistic-workload benchmark (inputs.benchmark-experiment) -----
+      # The tool tests above exercise every tool on its own tiny test data,
+      # which makes VM provisioning the dominant cost of a Batch job. This
+      # mode runs real IWC workflows on multi-GB inputs through abm (gxabm),
+      # the same harness pulsar-vs-batch and anvil-gpu-benchmarks used, so a
+      # deployment choice can be judged on jobs that run for minutes rather
+      # than seconds. benchmarks/bootstrap.yml stages the histories and
+      # workflows (all from the benchmarking-inputs bucket); the experiment
+      # file names the workload files and how many runs to make.
+      - name: Install abm
+        if: ${{ inputs.benchmark-experiment != '' }}
+        run: python -m pip install 'gxabm==2.15.0'
+
+      # abm addresses the instance by its Galaxy URL and the real admin key
+      # minted above; the bootstrap key cannot own histories. kube is only
+      # consulted by abm's helm/kubectl commands, which this mode never uses,
+      # but the profile field is required.
+      - name: Stage benchmark inputs and workflows
+        if: ${{ inputs.benchmark-experiment != '' }}
+        env:
+          GALAXY_URL: http://${{ steps.vm-ip.outputs.ip }}/galaxy
+          KEY: ${{ steps.api-key.outputs.key }}
+        run: |
+          abm config create anvil --url "$GALAXY_URL" --key "$KEY" --kube "$HOME/.kube/config" > /dev/null
+          abm config bootstrap anvil benchmarks/bootstrap.yml
+
+      # One `abm benchmark run` per workload file, all at once, repeated for
+      # the experiment's `runs` count: the workloads are independent and
+      # Batch scales out, so a wave takes about as long as its slowest
+      # workflow, and on a single-node deployment the concurrency is exactly
+      # the load being measured. abm waits for each invocation and then
+      # records every job's API record and job_metrics under
+      # metrics/<experiment name>/. continue-on-error so a failed workflow
+      # still leaves its metrics, logs and cost estimate; timeout-minutes
+      # keeps the teardown steps inside the job's 330-minute cap.
+      - name: Run benchmark workflows
+        if: ${{ inputs.benchmark-experiment != '' }}
+        id: benchmark
+        continue-on-error: true
+        timeout-minutes: 240
+        env:
+          EXPERIMENT_FILE: ${{ inputs.benchmark-experiment }}
+        run: |
+          mkdir -p results logs
+          NAME=$(python -c 'import sys, yaml; print(yaml.safe_load(open(sys.argv[1]))["name"])' "$EXPERIMENT_FILE")
+          RUNS=$(python -c 'import sys, yaml; print(int(yaml.safe_load(open(sys.argv[1])).get("runs", 1)))' "$EXPERIMENT_FILE")
+          mapfile -t CONFS < <(python -c 'import sys, yaml; print("\n".join(yaml.safe_load(open(sys.argv[1]))["benchmark_confs"]))' "$EXPERIMENT_FILE")
+          echo "experiment=$NAME" >> "$GITHUB_OUTPUT"
+          echo "Experiment $NAME: ${#CONFS[@]} workload(s) x $RUNS run(s)"
+          status=0
+          for n in $(seq 1 "$RUNS"); do
+            echo "[$(date -u +%FT%TZ)] run $n: launching ${CONFS[*]}"
+            pids=()
+            for conf in "${CONFS[@]}"; do
+              label="$(basename "$conf" .yml)"
+              abm anvil benchmark run "$conf" -p "$n anvil" -e "$NAME" > "logs/benchmark-$label-run$n.log" 2>&1 &
+              pids+=($!)
+            done
+            for p in "${pids[@]}"; do
+              wait "$p" || status=1
+            done
+            echo "[$(date -u +%FT%TZ)] run $n: complete (status so far $status)"
+          done
+          for label in "${CONFS[@]}"; do
+            l="$(basename "$label" .yml)"
+            echo "===== logs/benchmark-$l-run1.log (tail)"; tail -n 20 "logs/benchmark-$l-run1.log" || true
+          done
+          [ -d "metrics/$NAME" ] && cp -r "metrics/$NAME" results/benchmark-metrics
+          [ -d "invocations/$NAME" ] && cp -r "invocations/$NAME" results/benchmark-invocations
+          exit $status
+
+      - name: Summarize benchmark results
+        if: ${{ always() && inputs.benchmark-experiment != '' }}
+        run: |
+          if [ -d results/benchmark-metrics ]; then
+            python .github/scripts/anvil_benchmark_summary.py results/benchmark-metrics results/benchmark-summary.json
+          else
+            echo "::warning::No benchmark metrics were written (see logs/benchmark-*.log in the artifact)"
+          fi
+
       - name: Start runner socket-state sampling
         if: ${{ inputs.run-tests }}
         continue-on-error: true
@@ -1532,7 +1617,7 @@ jobs:
           # run's job coverage complete. A deploy-only run has no jobs, so
           # that state never arrives and the full wait is dead time (observed
           # on run 42264700280); 30 s is enough to record the VM's own cost.
-          RAINSTONE_WAIT_SECONDS: ${{ inputs.run-tests && '600' || '30' }}
+          RAINSTONE_WAIT_SECONDS: ${{ (inputs.run-tests || inputs.benchmark-experiment != '') && '600' || '30' }}
         run: |
           # Rainstone is not on every galaxy-k8s-boot ref (see the log-capture
           # step above); without it the script would poll its API for ten
