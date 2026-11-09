@@ -1,0 +1,238 @@
+# Text, tabular, collection and FASTA utilities run on reports produced by the
+# other matrix files: samtools idxstats/flagstat/coverage tables, the SnpSift
+# field extract of the freebayes VCF, the FastQC text collection and the
+# summit sequences from bedtools getfasta. Individually trivial, together they
+# are a third of the tested tool set and they exercise Galaxy's job plumbing
+# for short jobs the way the tool tests do, but on real inputs.
+history: Variant 2GB inputs
+
+tools:
+  # ---- bgruening text_processing --------------------------------------------
+  - id: sort_header
+    tool: tp_sort_header_tool
+    inputs:
+      infile: {from: idxstats, output: output}
+      header: 0
+      sortkeys_0|column: "3"
+      sortkeys_0|order: r
+      sortkeys_0|style: n
+
+  - id: cut
+    tool: tp_cut_tool
+    inputs:
+      input: {from: idxstats, output: output}
+      cut_type_options|cut_element: "-f"
+      cut_type_options|colnames_option|header: N
+      cut_type_options|colnames_option|list: ["1", "3"]
+
+  - id: grep
+    tool: tp_grep_tool
+    inputs:
+      infile: {from: extract_fields, output: output}
+      regex_type: "-P"
+      url_paste: "^chr20\t"
+
+  - id: awk
+    tool: tp_awk_tool
+    inputs:
+      infile: {from: idxstats, output: output}
+      code: "{s+=$3} END {print s}"
+
+  - id: sed
+    tool: tp_sed_tool
+    inputs:
+      infile: {from: idxstats, output: output}
+      code: "s/^chr//"
+
+  - id: cat
+    tool: tp_cat
+    inputs:
+      inputs:
+        - {from: idxstats, output: output}
+        - {from: flagstat, output: output1}
+
+  - id: tac
+    tool: tp_tac
+    inputs:
+      infile: {from: idxstats, output: output}
+
+  - id: sort_rows
+    tool: tp_sort_rows
+    inputs:
+      infile: {from: idxstats, output: output}
+
+  - id: find_replace
+    tool: tp_find_and_replace
+    inputs:
+      infile: {from: idxstats, output: output}
+      find_and_replace_0|find_pattern: chr
+      find_and_replace_0|replace_pattern: ""
+      find_and_replace_0|global: true
+      find_and_replace_0|searchwhere|searchwhere_select: line
+
+  - id: replace_in_line
+    tool: tp_replace_in_line
+    inputs:
+      infile: {from: idxstats, output: output}
+      replacements_0|find_pattern: "^chr"
+      replacements_0|replace_pattern: ""
+
+  - id: unfold
+    tool: tp_unfold_column_tool
+    inputs:
+      infile: {from: idxstats, output: output}
+      column: "1"
+      delimiter: "_"
+
+  - id: easyjoin
+    tool: tp_easyjoin_tool
+    inputs:
+      infile1: {from: idxstats, output: output}
+      column1: "1"
+      infile2: {from: coverage, output: output}
+      column2: "1"
+
+  - id: multijoin
+    tool: tp_multijoin_tool
+    inputs:
+      first_file: {from: idxstats, output: output}
+      files: [{from: idxstats2, output: output}]
+      key_column: 1
+      value_columns: ["3"]
+
+  # ---- Galaxy built-in text tools -------------------------------------------
+  - id: filter1
+    tool: Filter1
+    inputs:
+      input: {from: idxstats, output: output}
+      cond: "c3>1000"
+      header_lines: 0
+
+  - id: grep1
+    tool: Grep1
+    inputs:
+      input: {from: idxstats, output: output}
+      pattern: "^chr[0-9]+\t"
+
+  - id: count1
+    tool: Count1
+    inputs:
+      input: {from: extract_fields, output: output}
+      column: ["1"]
+      delim: T
+
+  - id: add_column
+    tool: Add_a_column1
+    inputs:
+      input: {from: idxstats, output: output}
+      ops|header_lines_select: "no"
+      ops|expressions_0|cond: "c3+c4"
+      ops|expressions_0|add_column|mode: ""
+
+  - id: join
+    tool: comp1
+    inputs:
+      input1: {from: idxstats, output: output}
+      field1: "1"
+      input2: {from: idxstats2, output: output}
+      field2: "1"
+      mode: N
+
+  - id: concatenate
+    tool: cat1
+    inputs:
+      input1: {from: idxstats, output: output}
+      queries_0|input2: {from: flagstat, output: output1}
+
+  - id: wc
+    tool: wc_gnu
+    inputs:
+      input1: {from: extract_fields, output: output}
+
+  - id: regex
+    tool: regex1
+    inputs:
+      input: {from: idxstats, output: output}
+      checks_0|pattern: "^chr"
+      checks_0|replacement: ""
+
+  - id: datamash
+    tool: datamash_ops
+    inputs:
+      in_file: {from: idxstats, output: output}
+      operations_0|op_name: sum
+      operations_0|op_column: "3"
+
+  - id: datamash_reverse
+    tool: datamash_reverse
+    inputs:
+      in_file: {from: idxstats, output: output}
+
+  - id: add_line
+    tool: add_line_to_file
+    inputs:
+      infile: {from: idxstats, output: output}
+      text_input: "#chrom\tlength\tmapped\tunmapped"
+      options: header
+
+  - id: melt
+    tool: melt
+    inputs:
+      input: {from: idxstats, output: output}
+
+  - id: rolling_window
+    tool: pandas_rolling_window
+    inputs:
+      infile: {from: coverage, output: output}
+      group_column: "1"
+      value_column: "7"
+      statistics: mean
+      window_len: 3
+
+  # ---- collection operations ------------------------------------------------
+  - id: collapse
+    tool: collapse_dataset
+    inputs:
+      input_list: {from: fastqc, collection: text_file}
+
+  - id: split_to_collection
+    tool: split_file_to_collection
+    inputs:
+      split_parms|select_ftype: tabular
+      split_parms|input: {from: idxstats, output: output}
+      split_parms|split_by|select_split_by: row
+      split_parms|split_by|select_mode|mode: numnew
+      split_parms|split_by|select_mode|numnew: 4
+      split_parms|split_by|newfilenames: idxstats_part
+      split_parms|split_by|select_allocate|allocate: byrow
+
+  - id: sortlist
+    tool: __SORTLIST__
+    inputs:
+      input: {from: fastqc, collection: text_file}
+      sort_type|sort_type: alpha
+
+  # ---- FASTA utilities on the summit sequences ------------------------------
+  - id: tab2fasta
+    tool: tab2fasta
+    inputs:
+      input: {from: extract_fields, output: output}
+      title_col: ["1", "2"]
+      seq_col: "3"
+
+  - id: fasta2tab
+    tool: fasta2tab
+    inputs:
+      input: {from: getfasta, output: output}
+
+  - id: filter_fasta
+    tool: filter_by_fasta_ids
+    inputs:
+      input: {from: getfasta, output: output}
+      sequence_criteria|sequence_criteria_select: seq_length
+      sequence_criteria|min_length: 20
+
+  - id: fasta_decoy
+    tool: fasta_cli
+    inputs:
+      input_database: {from: getfasta, output: output}

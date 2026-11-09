@@ -1,0 +1,138 @@
+# Variant calling and VCF handling on the duplicate-marked bwa_mem BAM from
+# bam.yml. lofreq and bcftools mpileup run genome-wide; freebayes is limited to
+# chr20 because single-threaded whole-genome freebayes would dominate the run.
+history: Variant 2GB inputs
+
+tools:
+  # ---- callers --------------------------------------------------------------
+  - id: freebayes
+    tool: freebayes
+    inputs:
+      reference_source|reference_source_selector: cached
+      reference_source|ref_file: hg38
+      reference_source|batchmode|processmode: individual
+      reference_source|batchmode|input_bams: [{from: markdup, output: outFile}]
+      target_limit_type|target_limit_type_selector: limit_by_region
+      target_limit_type|region_chromosome: chr20
+      target_limit_type|region_start: 1
+      target_limit_type|region_end: 64444167
+      options_type|options_type_selector: simple
+      output_options|flavor: vcf
+
+  - id: mpileup
+    tool: bcftools_mpileup
+    inputs:
+      input|input_number: single
+      input|input_bam: {from: markdup, output: outFile}
+      reference_source|reference_source_selector: cached
+      reference_source|ref_file: hg38
+      output_type: v
+
+  - id: viterbi
+    tool: lofreq_viterbi
+    inputs:
+      reads: {from: markdup, output: outFile}
+      reference_source|ref_selector: cached
+      reference_source|ref: hg38
+
+  - id: lofreq_call
+    tool: lofreq_call
+    inputs:
+      reads: {from: viterbi, output: realigned}
+      reference_source|ref_selector: cached
+      reference_source|ref: hg38
+      variant_types: "--call-indels"
+      call_control|set_call_options: "no"
+
+  - id: lofreq_filter
+    tool: lofreq_filter
+    inputs:
+      invcf: {from: lofreq_call, output: variants}
+
+  # ---- bcftools on the freebayes VCF ---------------------------------------
+  - id: bcf_norm
+    tool: bcftools_norm
+    inputs:
+      input_file: {from: freebayes, output: output_vcf}
+      reference_source|reference_source_selector: cached
+      reference_source|fasta_ref: hg38
+      output_type: v
+
+  - id: bcf_view
+    tool: bcftools_view
+    inputs:
+      input_file: {from: freebayes, output: output_vcf}
+      output_type: v
+
+  - id: bcf_query
+    tool: bcftools_query
+    inputs:
+      input_files: [{from: freebayes, output: output_vcf}]
+      sec_query|format: "%CHROM\t%POS\t%REF\t%ALT\t%QUAL\n"
+
+  - id: bcf_concat
+    tool: bcftools_concat
+    inputs:
+      input_files:
+        - {from: bcf_norm, output: output_file}
+        - {from: bcf_view, output: output_file}
+      output_type: v
+
+  - id: fill_an_ac
+    tool: bcftools_plugin_fill_an_ac
+    inputs:
+      input_file: {from: freebayes, output: output_vcf}
+      output_type: v
+
+  - id: fixploidy
+    tool: bcftools_plugin_fixploidy
+    inputs:
+      input_file: {from: freebayes, output: output_vcf}
+      output_type: v
+
+  - id: missing2ref
+    tool: bcftools_plugin_missing2ref
+    inputs:
+      input_file: {from: freebayes, output: output_vcf}
+      output_type: v
+
+  - id: setgt
+    tool: bcftools_plugin_setgt
+    inputs:
+      input_file: {from: freebayes, output: output_vcf}
+      sec_plugin|target_gt: "./."
+      sec_plugin|new_gt: "0"
+      output_type: v
+
+  - id: tag2tag
+    tool: bcftools_plugin_tag2tag
+    inputs:
+      input_file: {from: freebayes, output: output_vcf}
+      sec_plugin|conversion: "--gl-to-pl"
+      output_type: v
+
+  # ---- SnpSift, vcflib, snpEff ---------------------------------------------
+  - id: snpsift_filter
+    tool: snpSift_filter
+    inputs:
+      input: {from: freebayes, output: output_vcf}
+      filter_expression|type: simple
+      filter_expression|expr: "( QUAL >= 30 )"
+      filtering|mode: entries
+
+  - id: extract_fields
+    tool: snpSift_extractFields
+    inputs:
+      input: {from: freebayes, output: output_vcf}
+      extract: "CHROM POS REF ALT QUAL DP"
+
+  - id: vcfaddinfo
+    tool: vcfaddinfo
+    inputs:
+      input1: {from: freebayes, output: output_vcf}
+      input2: {from: lofreq_filter, output: outvcf}
+
+  - id: snpeff_databases
+    tool: snpEff_databases
+    inputs:
+      include_pattern: GRCh38

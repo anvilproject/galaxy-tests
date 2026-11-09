@@ -1,0 +1,128 @@
+# Peak calling and interval tools on the bowtie2 ChIP-seq alignment from
+# reads.yml. Gene annotations come from the GTF in the RNA-seq history.
+history: RNAseq 2GB inputs
+
+tools:
+  - id: macs2
+    tool: macs2_callpeak
+    inputs:
+      treatment|t_multi_select: "No"
+      treatment|input_treatment_file: [{from: bowtie2, output: output}]
+      control|c_select: "No"
+      format: BAMPE
+      effective_genome_size_options|effective_genome_size_options_selector: "2700000000"
+      nomodel_type|nomodel_type_selector: nomodel
+      nomodel_type|extsize: 200
+      cutoff_options|cutoff_options_selector: qvalue
+      cutoff_options|qvalue: 0.05
+      outputs: [peaks_tabular, summits, bdg]
+
+  - id: bdgdiff
+    tool: macs2_bdgdiff
+    inputs:
+      t1: {from: macs2, output: output_treat_pileup}
+      c1: {from: macs2, output: output_control_lambda}
+      t2: {from: macs2, output: output_treat_pileup}
+      c2: {from: macs2, output: output_control_lambda}
+
+  - id: bamcov_chip
+    tool: deeptools_bam_coverage
+    inputs:
+      bamInput: {from: bowtie2, output: output}
+      binSize: 50
+      scaling|type: 1x
+      scaling|effectiveGenomeSize|effectiveGenomeSize_opt: "2701495761"
+      outFileFormat: bigwig
+
+  - id: bigwig_compare
+    tool: deeptools_bigwig_compare
+    inputs:
+      bigwigFile1: {from: bamcov_chip, output: outFileName}
+      bigwigFile2: {from: bamcov, output: outFileName}
+      comparison|comparison_select: log2
+      outFileFormat: bigwig
+
+  - id: compute_matrix
+    tool: deeptools_compute_matrix
+    inputs:
+      regionsFiles_0|regionsFile: {dataset: ucsc.hg38.knownGene.gtf}
+      multibigwig_conditional|orderMatters: "No"
+      multibigwig_conditional|bigwigfiles: [{from: bamcov_chip, output: outFileName}]
+      mode|mode_select: reference-point
+      mode|referencePoint: TSS
+      mode|beforeRegionStartLength: 2000
+      mode|afterRegionStartLength: 2000
+
+  - id: plot_heatmap
+    tool: deeptools_plot_heatmap
+    inputs:
+      matrixFile: {from: compute_matrix, output: outFileName}
+
+  - id: plot_enrichment
+    tool: deeptools_plot_enrichment
+    inputs:
+      multibam_conditional|orderMatters: "No"
+      multibam_conditional|bamfiles: [{from: bowtie2, output: output}]
+      BED: [{from: macs2, output: output_narrowpeaks}]
+
+  # ---- bedtools on the peak calls ------------------------------------------
+  - id: intersect
+    tool: bedtools_intersectbed
+    inputs:
+      inputA: {from: macs2, output: output_narrowpeaks}
+      reduce_or_iterate|reduce_or_iterate_selector: iterate
+      reduce_or_iterate|inputB: [{dataset: ucsc.hg38.knownGene.gtf}]
+      overlap_mode: ["-wa"]
+
+  - id: window
+    tool: bedtools_windowbed
+    inputs:
+      inputA: {from: macs2, output: output_narrowpeaks}
+      inputB: {dataset: ucsc.hg38.knownGene.gtf}
+      addition|addition_select: window
+      addition|w: 5000
+
+  - id: complement
+    tool: bedtools_complementbed
+    inputs:
+      input: {from: macs2, output: output_narrowpeaks}
+      genome_file_opts|genome_file_opts_selector: loc
+      genome_file_opts|genome: hg38
+
+  - id: getfasta
+    tool: bedtools_getfastabed
+    inputs:
+      input: {from: macs2, output: output_summits}
+      fasta_source|fasta_source_selector: preloaded
+      fasta_source|fasta_id: hg38
+
+  - id: shuffle
+    tool: bedtools_shufflebed
+    inputs:
+      inputA: {from: macs2, output: output_narrowpeaks}
+      genome_file_opts|genome_file_opts_selector: loc
+      genome_file_opts|genome: hg38
+      chrom: true
+      seed: 42
+
+  - id: fisher
+    tool: bedtools_fisher
+    inputs:
+      inputA: {from: macs2, output: output_narrowpeaks}
+      inputB: {from: macs2, output: output_summits}
+      genome_file_opts|genome_file_opts_selector: loc
+      genome_file_opts|genome: hg38
+
+  - id: bedtoigv
+    tool: bedtools_bedtoigv
+    inputs:
+      input: {from: macs2, output: output_summits}
+
+  - id: extract_dna
+    tool: Extract genomic DNA 1
+    inputs:
+      input: {from: macs2, output: output_summits}
+      interpret_features: "no"
+      reference_genome_cond|reference_genome_source: cached
+      reference_genome_cond|reference_genome: hg38
+      output_format_cond|output_format: fasta

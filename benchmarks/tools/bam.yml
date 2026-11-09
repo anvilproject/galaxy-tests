@@ -1,0 +1,180 @@
+# BAM handling on the bwa_mem alignment from reads.yml: samtools, picard,
+# bamtools, qualimap, bedtools BAM converters and deeptools coverage.
+history: Variant 2GB inputs
+
+tools:
+  # ---- samtools -------------------------------------------------------------
+  - id: sort_by_name
+    tool: samtools_sort
+    inputs:
+      input1: {from: bwa, output: bam_output}
+      prim_key_cond|prim_key_select: "-n"
+
+  - id: fixmate
+    tool: samtools_fixmate
+    inputs:
+      bamfile: {from: sort_by_name, output: output1}
+      addms: true
+
+  - id: samtools_view
+    tool: samtools_view
+    inputs:
+      input: {from: bwa, output: bam_output}
+      mode|outtype: all_reads
+
+  - id: samtools_stats
+    tool: samtools_stats
+    inputs:
+      input: {from: bwa, output: bam_output}
+
+  - id: flagstat
+    tool: samtools_flagstat
+    inputs:
+      input1: {from: bwa, output: bam_output}
+      output_fmt: txt
+
+  - id: idxstats
+    tool: samtools_idxstats
+    inputs:
+      input: {from: bwa, output: bam_output}
+
+  - id: idxstats2
+    tool: samtools_idxstats
+    inputs:
+      input: {from: bwa2, output: bam_output}
+
+  - id: coverage
+    tool: samtools_coverage
+    inputs:
+      condition_input|input_pooling: "No"
+      condition_input|input: {from: bwa, output: bam_output}
+
+  - id: merge
+    tool: samtools_merge
+    inputs:
+      bamfiles:
+        - {from: bwa, output: bam_output}
+        - {from: markdup, output: outFile}
+
+  - id: reheader
+    tool: samtools_reheader
+    inputs:
+      input_file: {from: bwa, output: bam_output}
+      job|job_type: copy_header
+      job|input_header: {from: bwa2, output: bam_output}
+
+  - id: filter_mapq
+    tool: samtool_filter2
+    inputs:
+      input1: {from: bwa, output: bam_output}
+      mapq: 20
+      flag|filter: "no"
+      outputtype: bam
+
+  - id: bam_to_fastq
+    tool: samtools_fastx
+    inputs:
+      input: {from: bwa, output: bam_output}
+      output_fmt_cond|output_fmt_select: fastqsanger.gz
+      outputs: [r1, r2]
+
+  # ---- picard ---------------------------------------------------------------
+  - id: markdup
+    tool: picard_MarkDuplicates
+    inputs:
+      inputFile: {from: bwa, output: bam_output}
+      remove_duplicates: false
+      assume_sorted: true
+      validation_stringency: LENIENT
+
+  - id: cleansam
+    tool: picard_CleanSam
+    inputs:
+      inputFile: {from: bwa, output: bam_output}
+
+  - id: base_distribution
+    tool: picard_CollectBaseDistributionByCycle
+    inputs:
+      inputFile: {from: bwa, output: bam_output}
+      reference_source|reference_source_selector: cached
+      reference_source|ref_file: hg38
+
+  - id: reorder
+    tool: picard_ReorderSam
+    inputs:
+      inputFile: {from: bwa, output: bam_output}
+      reference_source|reference_source_selector: cached
+      reference_source|ref_file: hg38
+
+  - id: sam_to_fastq
+    tool: picard_SamToFastq
+    inputs:
+      inputFile: {from: sort_by_name, output: output1}
+      single_or_paired: pe_sep
+
+  # ---- QC and filtering -----------------------------------------------------
+  - id: qualimap
+    tool: qualimap_bamqc
+    inputs:
+      input1: {from: markdup, output: outFile}
+      stats_regions|region_select: all
+      duplicate_skipping: ["0"]
+
+  - id: bamtools_split
+    tool: bamtools_split
+    inputs:
+      input_bams: [{from: bwa, output: bam_output}]
+      analysis_type|analysis_type_selector: "-mapped"
+
+  - id: split_mapped
+    tool: bamtools_split_mapped
+    inputs:
+      input_bam: {from: bwa, output: bam_output}
+
+  - id: leftalign
+    tool: bamleftalign
+    inputs:
+      reference_source|reference_source_selector: cached
+      reference_source|input_bam: {from: markdup, output: outFile}
+      reference_source|ref_file: hg38
+
+  - id: bamfilter
+    tool: bamFilter
+    inputs:
+      input_bam: {from: bwa, output: bam_output}
+      conditions_0|filters_0|bam_property|bam_property_selector: mapQuality
+      conditions_0|filters_0|bam_property|bam_property_value: ">=20"
+      rule_configuration|rules_selector: "false"
+
+  # ---- coverage -------------------------------------------------------------
+  - id: bamtobed
+    tool: bedtools_bamtobed
+    inputs:
+      input: {from: bwa, output: bam_output}
+
+  - id: genomecov
+    tool: bedtools_genomecoveragebed
+    inputs:
+      input_type|input_type_select: bam
+      input_type|input: {from: markdup, output: outFile}
+      report|report_select: bg
+
+  - id: bamcov
+    tool: deeptools_bam_coverage
+    inputs:
+      bamInput: {from: markdup, output: outFile}
+      binSize: 50
+      scaling|type: 1x
+      scaling|effectiveGenomeSize|effectiveGenomeSize_opt: "2701495761"
+      outFileFormat: bigwig
+
+  - id: multibam_summary
+    tool: deeptools_multi_bam_summary
+    inputs:
+      multibam_conditional|orderMatters: "No"
+      multibam_conditional|bamfiles:
+        - {from: bwa, output: bam_output}
+        - {from: markdup, output: outFile}
+      mode|modeOpt: bins
+      mode|binSize: 10000
+      outRawCounts: true

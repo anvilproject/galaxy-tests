@@ -1,0 +1,48 @@
+# Quantification on the HISAT2 RNA-seq alignment from reads.yml, plus the
+# MultiQC report that gathers QC output from every pipeline in the matrix.
+history: RNAseq 2GB inputs
+
+tools:
+  - id: featurecounts
+    tool: featurecounts
+    inputs:
+      alignment: {from: hisat2, output: output_alignments}
+      anno|anno_select: history
+      anno|reference_gene_sets: {dataset: ucsc.hg38.knownGene.gtf}
+      strand_specificity: "1"
+      pe_parameters|paired_end_status: PE_fragments
+      format: tabdel_short
+
+  - id: stringtie
+    tool: stringtie
+    inputs:
+      input_options|input_mode: short_reads
+      input_options|input_bam: {from: hisat2, output: output_alignments}
+      rna_strandness: "--fr"
+      guide|use_guide: "yes"
+      guide|guide_source|guide_gff_select: history
+      guide|guide_source|ref_hist: {dataset: ucsc.hg38.knownGene.gtf}
+
+  - id: multiqc
+    tool: multiqc
+    inputs:
+      results_0|software_cond|software: fastqc
+      results_0|software_cond|output_0|type: data
+      results_0|software_cond|output_0|input: {from: fastqc, collection: text_file}
+      results_1|software_cond|software: fastp
+      results_1|software_cond|input: {from: fastp, output: report_json}
+      results_2|software_cond|software: samtools
+      results_2|software_cond|output_0|type|type: stats
+      results_2|software_cond|output_0|type|input: {from: samtools_stats, output: output}
+      results_3|software_cond|software: picard
+      results_3|software_cond|output_0|type: markdups
+      results_3|software_cond|output_0|input: {from: markdup, output: metrics_file}
+      results_4|software_cond|software: bowtie2
+      results_4|software_cond|input: {from: bowtie2, output: mapping_stats}
+      results_5|software_cond|software: featureCounts
+      results_5|software_cond|input: {from: featurecounts, output: output_summary}
+      results_6|software_cond|software: cutadapt
+      results_6|software_cond|input: {from: cutadapt, output: report}
+      results_7|software_cond|software: hisat2
+      results_7|software_cond|input: {from: hisat2, output: summary_file}
+      title: anvil tool matrix

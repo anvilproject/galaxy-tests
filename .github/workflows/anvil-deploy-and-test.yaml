@@ -96,6 +96,10 @@ on:
         description: 'Repo-relative abm experiment file (see benchmarks/experiments/). When set, the run stages benchmarks/bootstrap.yml on the instance and runs every benchmark_confs workload concurrently per run, writing abm metrics to results/benchmark-metrics. Empty disables.'
         type: string
         default: ''
+      benchmark-scale:
+        description: 'Comma-separated replica counts for the single-tool matrix under benchmarks/tools/, e.g. "1,4,16". Each level runs the whole matrix K times concurrently against the staged inputs, after the workflows if any, writing metrics to results/tool-matrix/x<K>. Empty disables.'
+        type: string
+        default: ''
 
 env:
   GCP_PROJECT: anvil-and-terra-development
@@ -745,7 +749,7 @@ jobs:
       # then fetch/create their API key via bioblend (what `abm galaxy user
       # key` itself calls under the hood).
       - name: Create real API key
-        if: ${{ inputs.run-tests || inputs.benchmark-experiment != '' }}
+        if: ${{ inputs.run-tests || inputs.benchmark-experiment != '' || inputs.benchmark-scale != '' }}
         id: api-key
         run: |
           curl -fsSL "http://${{ steps.vm-ip.outputs.ip }}/galaxy/" > /dev/null
@@ -772,7 +776,7 @@ jobs:
       # against. Fatal on failure - an experiment whose premise did not
       # apply is not worth the hours that follow.
       - name: Apply GCP Batch pool settings
-        if: ${{ (inputs.run-tests || inputs.benchmark-experiment != '') && inputs.batch-pool-settings != '' }}
+        if: ${{ (inputs.run-tests || inputs.benchmark-experiment != '' || inputs.benchmark-scale != '') && inputs.batch-pool-settings != '' }}
         env:
           GALAXY_URL: http://${{ steps.vm-ip.outputs.ip }}/galaxy/
           KEY: ${{ steps.api-key.outputs.key }}
@@ -861,15 +865,15 @@ jobs:
       # workflows (all from the benchmarking-inputs bucket); the experiment
       # file names the workload files and how many runs to make.
       - name: Install abm
-        if: ${{ inputs.benchmark-experiment != '' }}
-        run: python -m pip install 'gxabm==2.15.0'
+        if: ${{ inputs.benchmark-experiment != '' || inputs.benchmark-scale != '' }}
+        run: python -m pip install 'gxabm==2.15.0' bioblend pyyaml
 
       # abm addresses the instance by its Galaxy URL and the real admin key
       # minted above; the bootstrap key cannot own histories. kube is only
       # consulted by abm's helm/kubectl commands, which this mode never uses,
       # but the profile field is required.
       - name: Stage benchmark inputs and workflows
-        if: ${{ inputs.benchmark-experiment != '' }}
+        if: ${{ inputs.benchmark-experiment != '' || inputs.benchmark-scale != '' }}
         env:
           GALAXY_URL: http://${{ steps.vm-ip.outputs.ip }}/galaxy
           KEY: ${{ steps.api-key.outputs.key }}
@@ -921,6 +925,49 @@ jobs:
           [ -d "metrics/$NAME" ] && cp -r "metrics/$NAME" results/benchmark-metrics
           [ -d "invocations/$NAME" ] && cp -r "invocations/$NAME" results/benchmark-invocations
           exit $status
+
+      # Single-tool matrix at increasing concurrency. anvil_tool_matrix.py
+      # submits every entry of benchmarks/tools/*.yml as soon as its inputs
+      # exist, K replicas at once (one history each), so K is the number of
+      # simultaneous users the deployment is asked to serve, and the levels
+      # run in turn so each level's queue waits and VM counts are its own.
+      # Every job's record and job_metrics land in results/tool-matrix/x<K>,
+      # the same per-job shape abm writes, and the level's histories are then
+      # purged so its outputs (about 25 GB of BAM per replica) do not fill
+      # the head node's disk. always() so the matrix still runs when a
+      # workflow above failed: the two measure different things.
+      - name: Run tool matrix
+        if: ${{ always() && inputs.benchmark-scale != '' && steps.api-key.outcome == 'success' }}
+        id: tool-matrix
+        continue-on-error: true
+        timeout-minutes: 280
+        env:
+          GALAXY_URL: http://${{ steps.vm-ip.outputs.ip }}/galaxy
+          GALAXY_API_KEY: ${{ steps.api-key.outputs.key }}
+          SCALE: ${{ inputs.benchmark-scale }}
+        run: |
+          set -o pipefail
+          mkdir -p results/tool-matrix logs
+          # Informational: an entry whose tool is missing on this image is
+          # reported here and again as a submit failure in the metrics.
+          python .github/scripts/anvil_tool_matrix.py validate benchmarks/tools/*.yml 2>&1 | tee logs/tool-matrix-validate.log || true
+          status=0
+          for k in $(echo "$SCALE" | tr ',' ' '); do
+            echo "[$(date -u +%FT%TZ)] tool matrix x$k"
+            python .github/scripts/anvil_tool_matrix.py run benchmarks/tools/*.yml \
+              --replicas "$k" --run-label "matrix-x$k" --history-prefix "matrix-x$k" \
+              --output-dir "results/tool-matrix/x$k" --purge-histories 2>&1 | tee "logs/tool-matrix-x$k.log" || status=1
+          done
+          exit $status
+
+      - name: Summarize tool matrix scaling
+        if: ${{ always() && inputs.benchmark-scale != '' }}
+        run: |
+          if [ -d results/tool-matrix ]; then
+            python .github/scripts/anvil_matrix_scaling.py results/tool-matrix results/tool-matrix-summary.json
+          else
+            echo "::warning::No tool-matrix results were written (see logs/tool-matrix-*.log in the artifact)"
+          fi
 
       - name: Summarize benchmark results
         if: ${{ always() && inputs.benchmark-experiment != '' }}
@@ -1617,7 +1664,7 @@ jobs:
           # run's job coverage complete. A deploy-only run has no jobs, so
           # that state never arrives and the full wait is dead time (observed
           # on run 42264700280); 30 s is enough to record the VM's own cost.
-          RAINSTONE_WAIT_SECONDS: ${{ (inputs.run-tests || inputs.benchmark-experiment != '') && '600' || '30' }}
+          RAINSTONE_WAIT_SECONDS: ${{ (inputs.run-tests || inputs.benchmark-experiment != '' || inputs.benchmark-scale != '') && '600' || '30' }}
         run: |
           # Rainstone is not on every galaxy-k8s-boot ref (see the log-capture
           # step above); without it the script would poll its API for ten

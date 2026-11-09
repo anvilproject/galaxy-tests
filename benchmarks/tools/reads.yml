@@ -1,0 +1,129 @@
+# Read-level QC, trimming and alignment on the staged 2 GB inputs. Everything
+# downstream (bam.yml, variants.yml, chipseq.yml, rnaseq.yml, text.yml) hangs
+# off the BAMs produced here. Input names are the contents of the histories
+# that benchmarks/bootstrap.yml imports. Validate with
+#
+#   .github/scripts/anvil_tool_matrix.py validate benchmarks/tools/*.yml
+#
+# {batch: ...} maps a single-dataset tool over every read file of the paired
+# collection, so one entry becomes two jobs per replica.
+history: Variant 2GB inputs
+
+tools:
+  # ---- per-read-file QC (two jobs each) ------------------------------------
+  - id: fastqc
+    tool: fastqc
+    inputs:
+      input_file: {batch: {collection: SRR24043307-2GB}}
+
+  - id: falco
+    tool: falco
+    inputs:
+      input_file: {batch: {collection: SRR24043307-2GB}}
+
+  - id: fastq_groomer
+    tool: fastq_groomer
+    inputs:
+      input_file: {batch: {collection: SRR24043307-2GB}}
+      input_type: sanger
+      options_type|output_type: sanger.gz
+
+  - id: fastq_to_fasta
+    tool: fastq_to_fasta_python
+    inputs:
+      input_file: {batch: {collection: SRR24043307-2GB}}
+
+  - id: seqtk_sample
+    tool: seqtk_sample
+    inputs:
+      in_file: {batch: {collection: SRR24043307-2GB}}
+      subsample_size: 0.1
+      s: 4
+
+  - id: seqtk_comp
+    tool: seqtk_comp
+    inputs:
+      in_file: {batch: {collection: SRR24043307-2GB}}
+
+  # ---- paired trimmers ------------------------------------------------------
+  - id: fastp
+    tool: fastp
+    inputs:
+      single_paired|single_paired_selector: paired_collection
+      single_paired|paired_input: {collection: SRR24043307-2GB}
+
+  - id: trimmomatic
+    tool: trimmomatic
+    inputs:
+      readtype|single_or_paired: collection
+      readtype|fastq_pair: {collection: SRR24043307-2GB}
+      illuminaclip|do_illuminaclip: "no"
+      operations_0|operation|name: SLIDINGWINDOW
+      operations_0|operation|window_size: 4
+      operations_0|operation|required_quality: 20
+
+  - id: trim_galore
+    tool: trim_galore
+    inputs:
+      singlePaired|sPaired: paired_collection
+      singlePaired|input_mate_pairs: {collection: SRR24043307-2GB}
+      params|settingsType: default
+
+  - id: cutadapt
+    tool: cutadapt
+    inputs:
+      library|type: paired_collection
+      library|input_1: {collection: SRR24043307-2GB}
+      library|r1|adapters_0|adapter_source|adapter_source_list: user
+      library|r1|adapters_0|adapter_source|adapter: AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
+      output_selector: [report, json_stats]
+
+  # ---- aligners against the CVMFS hg38 indexes ------------------------------
+  - id: bwa
+    tool: bwa_mem
+    inputs:
+      reference_source|reference_source_selector: cached
+      reference_source|ref_file: hg38
+      fastq_input|fastq_input_selector: paired_collection
+      fastq_input|fastq_input1: {collection: SRR24043307-2GB}
+      output_sort: coordinate
+
+  - id: bwa2
+    tool: bwa_mem2
+    inputs:
+      reference_source|reference_source_selector: cached
+      reference_source|ref_file: hg38
+      fastq_input|fastq_input_selector: paired_collection
+      fastq_input|fastq_input1: {collection: SRR24043307-2GB}
+      output_sort: coordinate
+
+  - id: minimap2
+    tool: minimap2
+    inputs:
+      reference_source|reference_source_selector: cached
+      reference_source|ref_file: hg38
+      fastq_input|fastq_input_selector: paired_collection
+      fastq_input|fastq_input1: {collection: SRR24043307-2GB}
+      fastq_input|analysis_type_selector: sr
+
+  - id: bowtie2
+    tool: bowtie2
+    history: ChIPseq 2GB inputs
+    inputs:
+      library|type: paired_collection
+      library|input_1: {collection: chipseq-2g}
+      reference_genome|source: indexed
+      reference_genome|index: hg38
+      save_mapping_stats: true
+
+  - id: hisat2
+    tool: hisat2
+    history: RNAseq 2GB inputs
+    inputs:
+      reference_genome|source: indexed
+      reference_genome|index: hg38
+      library|type: paired_collection
+      library|input_1: {collection: SRR24043307-80}
+      library|rna_strandness: FR
+      sum|new_summary: true
+      sum|summary_file: true

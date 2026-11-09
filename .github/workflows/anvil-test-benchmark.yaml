@@ -20,18 +20,29 @@
 #              disable-postinstall-imports true, batch-pool-settings
 #              {"pool_enabled": true, "pool_ttl_seconds": 600, "pool_max_size": 4}
 #
-# What runs: the abm experiment file names workload files under
-# benchmarks/workloads/ (one IWC workflow and its inputs each) and a run
-# count; benchmarks/bootstrap.yml stages the input histories and workflows
-# from the benchmarking-inputs bucket. The default experiment is one
-# invocation each of variant calling, RNA-seq and ChIP-seq on 2 GB of reads.
-# The workloads of a run are launched concurrently. Results are the abm
-# per-job metrics plus a summary under results/ in the workflow artifact,
-# and the Rainstone cost estimate the reusable workflow records for every
-# run. Reports are never committed to main from here.
+# What runs: two layers over the same staged inputs (benchmarks/bootstrap.yml
+# imports the histories and workflows from the benchmarking-inputs bucket).
 #
-# Manual dispatch only; workflow_dispatch allows at most ten inputs.
-name: Anvil workflow benchmark (2 GB inputs)
+#   1. Workflows. The abm experiment file names workload files under
+#      benchmarks/workloads/ (one IWC workflow and its inputs each) and a run
+#      count; the default is one invocation each of variant calling, RNA-seq
+#      and ChIP-seq on 2 GB of reads, launched concurrently. This measures a
+#      user's turnaround.
+#   2. Tool matrix. benchmarks/tools/*.yml define 108 single-tool jobs (QC,
+#      aligners, samtools/picard, variant callers, peak calling, bedtools,
+#      deeptools, quantification, and the text utilities on their outputs)
+#      that anvil_tool_matrix.py submits as a dependency graph, K replicas at
+#      once for each K in `scale`. This measures throughput and how queue
+#      wait, VM count and cost grow with concurrent users.
+#
+# Results are the per-job metrics for both layers plus summaries under
+# results/ in the workflow artifact (benchmark-summary.json and
+# tool-matrix-summary.json), and the Rainstone cost estimate the reusable
+# workflow records for every run. Reports are never committed to main here.
+#
+# Manual dispatch only; workflow_dispatch allows at most ten inputs, so the
+# billing label is fixed to experiment=benchmark-2g.
+name: Anvil workflow and tool-matrix benchmark (2 GB inputs)
 
 on:
   workflow_dispatch:
@@ -41,9 +52,13 @@ on:
         default: 'anvil-bench-ci'
         required: true
       experiment:
-        description: 'Repo-relative abm experiment file naming the workloads and run count'
+        description: 'Repo-relative abm experiment file naming the workflows and run count. Empty skips the workflows.'
         default: 'benchmarks/experiments/anvil-2g.yml'
-        required: true
+        required: false
+      scale:
+        description: 'Replica counts for the single-tool matrix (benchmarks/tools/): each level runs all 108 tools K times at once, levels in turn. "1,4,16" is the full ladder but 16 can exceed the step timeout on a single node. Empty skips the matrix.'
+        default: '1,4'
+        required: false
       machine-type:
         description: 'Machine type of the head-node VM (the nightly uses t2d-standard-16; without Batch it runs every job too)'
         default: 't2d-standard-16'
@@ -72,10 +87,6 @@ on:
         description: 'JSON saved to the AnVIL admin extension''s GCP Batch Settings form before the workflows start, e.g. {"pool_enabled": true, "pool_ttl_seconds": 600, "pool_max_size": 4}. Empty leaves the deployment''s values.'
         default: ''
         required: false
-      experiment-label:
-        description: 'GCE label experiment=<value> on the VM for billing attribution'
-        default: 'benchmark-2g'
-        required: false
 
 jobs:
   benchmark:
@@ -89,6 +100,7 @@ jobs:
       instance-name: ${{ inputs.instance-name }}
       run-tests: false
       benchmark-experiment: ${{ inputs.experiment }}
+      benchmark-scale: ${{ inputs.scale }}
       k8s-boot: ${{ inputs.k8s-boot }}
       machine-type: ${{ inputs.machine-type }}
       boot-disk-size: ${{ inputs.boot-disk-size }}
@@ -96,5 +108,5 @@ jobs:
       extra-vars: ${{ inputs.extra-vars }}
       disable-postinstall-imports: ${{ inputs.disable-postinstall-imports }}
       batch-pool-settings: ${{ inputs.batch-pool-settings }}
-      experiment-label: ${{ inputs.experiment-label }}
+      experiment-label: benchmark-2g
       commit-reports: false
