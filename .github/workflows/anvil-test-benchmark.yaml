@@ -12,8 +12,7 @@
 #   nightly-style (default):  leave every input at its default
 #   no Batch:  k8s-boot ksuderman/galaxy-k8s-boot@no-batch, machine-type
 #              n2-standard-32, values-files with mixins/no-batch.yml last,
-#              extra-vars galaxy_job_max_cores=24 galaxy_job_max_mem=96,
-#              boot-disk-size 500GB
+#              extra-vars galaxy_job_max_cores=24 galaxy_job_max_mem=96
 #   warm pool: k8s-boot ksuderman/galaxy-k8s-boot@anvil-test-mixin,
 #              values-files 'values/values.yml mixins/anvil-test.yml
 #              mixins/testing.yml mixins/anvil-test-ci.yml mixins/debug.yml',
@@ -64,8 +63,8 @@ on:
         default: 't2d-standard-16'
         required: true
       boot-disk-size:
-        description: 'Boot disk of the VM. Without Batch it also holds every job working directory, so use 500GB there.'
-        default: '200GB'
+        description: 'Boot disk of the VM. 500GB always: the matrix writes about 25 GB of BAM per replica and without Batch the disk also holds every job working directory.'
+        default: '500GB'
         required: true
       k8s-boot:
         description: 'galaxy-k8s-boot source as owner/repo@ref; every values file below must exist on it'
