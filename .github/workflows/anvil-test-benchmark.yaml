@@ -51,7 +51,7 @@ on:
         default: 'anvil-bench-ci'
         required: true
       experiment:
-        description: 'Repo-relative abm experiment file naming the workflows and run count. Empty skips the workflows.'
+        description: 'Repo-relative abm experiment file naming the workflows and run count. Pass "none" to skip the workflows (an empty value is replaced by this default).'
         default: 'benchmarks/experiments/anvil-2g.yml'
         required: false
       scale:
@@ -98,7 +98,7 @@ jobs:
     with:
       instance-name: ${{ inputs.instance-name }}
       run-tests: false
-      benchmark-experiment: ${{ inputs.experiment }}
+      benchmark-experiment: ${{ inputs.experiment != 'none' && inputs.experiment || '' }}
       benchmark-scale: ${{ inputs.scale }}
       k8s-boot: ${{ inputs.k8s-boot }}
       machine-type: ${{ inputs.machine-type }}
