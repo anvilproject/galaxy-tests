@@ -14,49 +14,49 @@ tools:
   - id: fastqc
     tool: fastqc
     inputs:
-      input_file: {batch: {collection: SRR24043307-2GB}}
+      input_file: {batch: {collection: Subsample of reads from SRR24043307}}
 
   - id: falco
     tool: falco
     inputs:
-      input_file: {batch: {collection: SRR24043307-2GB}}
+      input_file: {batch: {collection: Subsample of reads from SRR24043307}}
 
   - id: fastq_groomer
     tool: fastq_groomer
     inputs:
-      input_file: {batch: {collection: SRR24043307-2GB}}
+      input_file: {batch: {collection: Subsample of reads from SRR24043307}}
       input_type: sanger
       options_type|output_type: sanger.gz
 
   - id: fastq_to_fasta
     tool: fastq_to_fasta_python
     inputs:
-      input_file: {batch: {collection: SRR24043307-2GB}}
+      input_file: {batch: {collection: Subsample of reads from SRR24043307}}
 
   - id: seqtk_sample
     tool: seqtk_sample
     inputs:
-      in_file: {batch: {collection: SRR24043307-2GB}}
+      in_file: {batch: {collection: Subsample of reads from SRR24043307}}
       subsample_size: 0.1
       s: 4
 
   - id: seqtk_comp
     tool: seqtk_comp
     inputs:
-      in_file: {batch: {collection: SRR24043307-2GB}}
+      in_file: {batch: {collection: Subsample of reads from SRR24043307}}
 
   # ---- paired trimmers ------------------------------------------------------
   - id: fastp
     tool: fastp
     inputs:
       single_paired|single_paired_selector: paired_collection
-      single_paired|paired_input: {collection: SRR24043307-2GB}
+      single_paired|paired_input: {collection: Subsample of reads from SRR24043307}
 
   - id: trimmomatic
     tool: trimmomatic
     inputs:
       readtype|single_or_paired: collection
-      readtype|fastq_pair: {collection: SRR24043307-2GB}
+      readtype|fastq_pair: {collection: Subsample of reads from SRR24043307}
       illuminaclip|do_illuminaclip: "no"
       operations_0|operation|name: SLIDINGWINDOW
       operations_0|operation|window_size: 4
@@ -66,14 +66,14 @@ tools:
     tool: trim_galore
     inputs:
       singlePaired|sPaired: paired_collection
-      singlePaired|input_mate_pairs: {collection: SRR24043307-2GB}
+      singlePaired|input_mate_pairs: {collection: Subsample of reads from SRR24043307}
       params|settingsType: default
 
   - id: cutadapt
     tool: cutadapt
     inputs:
       library|type: paired_collection
-      library|input_1: {collection: SRR24043307-2GB}
+      library|input_1: {collection: Subsample of reads from SRR24043307}
       library|r1|adapters_0|adapter_source|adapter_source_list: user
       library|r1|adapters_0|adapter_source|adapter: AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
       output_selector: [report, json_stats]
@@ -85,7 +85,7 @@ tools:
       reference_source|reference_source_selector: cached
       reference_source|ref_file: hg38
       fastq_input|fastq_input_selector: paired_collection
-      fastq_input|fastq_input1: {collection: SRR24043307-2GB}
+      fastq_input|fastq_input1: {collection: Subsample of reads from SRR24043307}
       output_sort: coordinate
 
   - id: bwa2
@@ -94,7 +94,7 @@ tools:
       reference_source|reference_source_selector: cached
       reference_source|ref_file: hg38
       fastq_input|fastq_input_selector: paired_collection
-      fastq_input|fastq_input1: {collection: SRR24043307-2GB}
+      fastq_input|fastq_input1: {collection: Subsample of reads from SRR24043307}
       output_sort: coordinate
 
   - id: minimap2
@@ -103,7 +103,7 @@ tools:
       reference_source|reference_source_selector: cached
       reference_source|ref_file: hg38
       fastq_input|fastq_input_selector: paired_collection
-      fastq_input|fastq_input1: {collection: SRR24043307-2GB}
+      fastq_input|fastq_input1: {collection: Subsample of reads from SRR24043307}
       fastq_input|analysis_type_selector: sr
 
   - id: bowtie2
@@ -123,7 +123,7 @@ tools:
       reference_genome|source: indexed
       reference_genome|index: hg38
       library|type: paired_collection
-      library|input_1: {collection: SRR24043307-80}
+      library|input_1: {collection: SRR24043307}
       library|rna_strandness: FR
       sum|new_summary: true
       sum|summary_file: true

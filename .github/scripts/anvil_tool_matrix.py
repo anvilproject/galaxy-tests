@@ -252,6 +252,8 @@ def check_value(key: str, value, p: dict) -> str | None:
 
 def validate_entry(entry: dict, schema: dict, tool_id: str) -> list[str]:
     problems: list[str] = []
+    if not schema:
+        return problems  # schema unavailable; the run will report submit errors instead
     flat = flatten_schema(schema.get("inputs") or [])
     for key, value in entry["inputs"].items():
         skey = normalize_key(key, flat)
@@ -313,10 +315,15 @@ class SchemaSource:
         return self._ids
 
     def schema(self, tool_id: str) -> dict:
+        """The tool's io_details document, or {} when the server cannot produce it."""
         if tool_id not in self._cache:
             if self.gi is None:
                 raise MatrixError(f"no cached schema for {tool_id}")
-            self._cache[tool_id] = self.gi.tools.show_tool(tool_id, io_details=True)
+            try:
+                self._cache[tool_id] = self.gi.tools.show_tool(tool_id, io_details=True)
+            except Exception as exc:  # noqa: BLE001 - some tools 500 on io_details
+                print(f"warning: no schema for {tool_id}: {str(exc)[:120]}", file=sys.stderr)
+                self._cache[tool_id] = {}
         return self._cache[tool_id]
 
 
@@ -376,6 +383,7 @@ class Runner:
         self.src_histories: dict[str, str] = {}
         self.dataset_ids: dict[tuple[str, str], str] = {}
         self.collection_ids: dict[tuple[str, str], str] = {}
+        self._contents_cache: dict[tuple[str, str], list[dict]] = {}
         # per replica state
         self.histories: dict[int, str] = {}
         self.state: dict[tuple[int, str], str] = {}        # pending/submitted/ok/failed/skipped
@@ -400,26 +408,47 @@ class Runner:
             self.src_histories[name] = matches[0]["id"]
         return self.src_histories[name]
 
+    def _contents(self, hid: str, ctype: str) -> list[dict]:
+        key = (hid, ctype)
+        if key not in self._contents_cache:
+            self._contents_cache[key] = [
+                c for c in self.gi.histories.show_history(hid, contents=True, deleted=False, types=[ctype])
+                if not c.get("deleted")]
+        return self._contents_cache[key]
+
+    @staticmethod
+    def _match(items: list[dict], name: str) -> list[dict]:
+        """Exact match on the stripped name, else a unique case-insensitive substring match."""
+        want = name.strip()
+        hits = [i for i in items if (i.get("name") or "").strip() == want]
+        if not hits:
+            loose = [i for i in items if want.lower() in (i.get("name") or "").strip().lower()]
+            if len(loose) == 1:
+                hits = loose
+        return hits
+
     def lookup(self, history: str, ref: dict) -> dict:
         hid = self.history_id(history)
         if "dataset" in ref:
             key = (hid, ref["dataset"])
             if key not in self.dataset_ids:
-                hits = [d for d in self.gi.histories.show_history(hid, contents=True, deleted=False,
-                                                                     visible=True, types=["dataset"])
-                        if d.get("name") == ref["dataset"] and d.get("state") == "ok"]
+                items = [d for d in self._contents(hid, "dataset") if d.get("state") == "ok"]
+                hits = self._match(items, ref["dataset"])
                 if not hits:
-                    raise MatrixError(f"dataset {ref['dataset']!r} not found (state ok) in history {history!r}")
+                    names = sorted({(d.get("name") or "").strip() for d in items if d.get("visible")})
+                    raise MatrixError(f"dataset {ref['dataset']!r} not found (state ok) in history {history!r}; "
+                                      f"visible datasets: {names}")
                 self.dataset_ids[key] = hits[-1]["id"]
             return {"src": "hda", "id": self.dataset_ids[key]}
         if "collection" in ref:
             key = (hid, ref["collection"])
             if key not in self.collection_ids:
-                hits = [c for c in self.gi.histories.show_history(hid, contents=True, deleted=False,
-                                                                     visible=True, types=["dataset_collection"])
-                        if c.get("name") == ref["collection"]]
+                items = self._contents(hid, "dataset_collection")
+                hits = self._match(items, ref["collection"])
                 if not hits:
-                    raise MatrixError(f"collection {ref['collection']!r} not found in history {history!r}")
+                    names = sorted({(c.get("name") or "").strip() for c in items})
+                    raise MatrixError(f"collection {ref['collection']!r} not found in history {history!r}; "
+                                      f"collections: {names}")
                 self.collection_ids[key] = hits[-1]["id"]
             return {"src": "hdca", "id": self.collection_ids[key]}
         raise MatrixError(f"bad reference {ref!r}")
@@ -720,6 +749,10 @@ def cmd_run(args) -> int:
 
 
 def main(argv=None) -> int:
+    try:
+        sys.stdout.reconfigure(line_buffering=True)
+    except (AttributeError, ValueError):
+        pass
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--url")
     ap.add_argument("--key")
