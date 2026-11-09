@@ -972,12 +972,24 @@ jobs:
           # Informational: an entry whose tool is missing on this image is
           # reported here and again as a submit failure in the metrics.
           python .github/scripts/anvil_tool_matrix.py validate benchmarks/tools/*.yml 2>&1 | tee logs/tool-matrix-validate.log || true
+          # Each level gets the time left in this step minus a margin, so the
+          # last level stops waiting, records every finished job and purges
+          # its histories before the step timeout would discard all of it.
+          step_start=$(date +%s)
+          step_budget=$(( 280 * 60 - 15 * 60 ))
           status=0
           for k in $(echo "$SCALE" | tr ',' ' '); do
-            echo "[$(date -u +%FT%TZ)] tool matrix x$k"
+            remaining=$(( step_budget - ( $(date +%s) - step_start ) ))
+            if [ "$remaining" -lt 600 ]; then
+              echo "::warning::Skipping tool matrix x$k: only ${remaining}s of the step budget left"
+              status=1
+              continue
+            fi
+            echo "[$(date -u +%FT%TZ)] tool matrix x$k (timeout ${remaining}s)"
             python .github/scripts/anvil_tool_matrix.py run benchmarks/tools/*.yml \
               --replicas "$k" --run-label "matrix-x$k" --history-prefix "matrix-x$k" \
-              --output-dir "results/tool-matrix/x$k" --purge-histories 2>&1 | tee "logs/tool-matrix-x$k.log" || status=1
+              --output-dir "results/tool-matrix/x$k" --purge-histories --timeout "$remaining" \
+              2>&1 | tee "logs/tool-matrix-x$k.log" || status=1
           done
           exit $status
 

@@ -617,12 +617,18 @@ class Runner:
                 counts[s] += 1
             if time.time() - last_report > 60 or submitted:
                 self.log(f"  [{int(time.time() - start):5d}s] " + " ".join(
-                    f"{k}={counts[k]}" for k in ("pending", "submitted", "ok", "failed", "skipped")))
+                    f"{k}={counts[k]}" for k in ("pending", "submitted", "ok", "failed", "skipped", "timeout")))
                 last_report = time.time()
             if not counts["pending"] and not counts["submitted"]:
                 break
             if time.time() - start > self.timeout:
-                self.log("  timeout reached; leaving remaining jobs running")
+                unfinished = [k for k, v in self.state.items() if v in ("pending", "submitted")]
+                self.log(f"  timeout reached after {int(time.time() - start)}s with {len(unfinished)} entries "
+                         "unfinished; recording what completed")
+                self.errors.append({"phase": "timeout", "unfinished": [f"r{r}:{e}" for r, e in sorted(unfinished)],
+                                    "time": now_iso()})
+                for k in unfinished:
+                    self.state[k] = "timeout"
                 break
             time.sleep(self.poll)
         return time.time() - start
