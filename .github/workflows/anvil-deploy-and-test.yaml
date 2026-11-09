@@ -1385,22 +1385,46 @@ jobs:
       # anvil_generate_job_runtime_data.py's is_gcp_batch()), and deleted
       # via the Batch API rather than the raw VM so Batch's own job state
       # stays consistent.
+      # Scoped to this instance: Galaxy records each Batch job's name as the
+      # job's external id, so only Batch jobs that this instance's Galaxy
+      # still lists as queued or running are deleted. The earlier form
+      # deleted every active Batch job in the project created after this
+      # run's deploy start, which destroyed the jobs of other runs deploying
+      # in the same window (2026-11-09: three finishing runs killed level
+      # one of two concurrent tool-matrix runs). If Galaxy cannot be asked,
+      # nothing is deleted and a warning names the jobs left behind.
       - name: Clean up orphaned GCP Batch jobs
         if: always()
         continue-on-error: true
+        env:
+          GALAXY_URL: http://${{ steps.vm-ip.outputs.ip }}/galaxy
         run: |
           RUN_START="$(date -u -d "@${{ steps.deploy-start.outputs.epoch }}" +%Y-%m-%dT%H:%M:%SZ)"
-          STUCK=$(gcloud batch jobs list --project="$GCP_PROJECT" --location=us-east4 \
+          ACTIVE=$(gcloud batch jobs list --project="$GCP_PROJECT" --location=us-east4 \
             --filter="createTime>=$RUN_START AND (status.state=RUNNING OR status.state=QUEUED OR status.state=SCHEDULED)" \
-            --format="value(name)" 2>/dev/null)
-          if [ -z "$STUCK" ]; then
-            echo "No orphaned GCP Batch jobs from this run."
-          else
-            echo "$STUCK" | while IFS= read -r job; do
-              echo "Deleting orphaned Batch job: $job"
-              gcloud batch jobs delete "$job" --quiet || true
-            done
+            --format="value(name.basename())" 2>/dev/null)
+          if [ -z "$ACTIVE" ]; then
+            echo "No active GCP Batch jobs created since this run started."
+            exit 0
           fi
+          OURS=$(curl -fsS --max-time 60 "$GALAXY_URL/api/jobs?key=galaxypassword&view=collection&limit=5000" 2>/dev/null \
+            | python3 -c 'import json,sys
+          for j in json.load(sys.stdin):
+              if j.get("state") in ("new","queued","running","waiting","upload") and j.get("external_id"):
+                  print(j["external_id"].rsplit("/",1)[-1])' 2>/dev/null || true)
+          if [ -z "$OURS" ]; then
+            echo "::warning::Galaxy listed no active Batch jobs (or could not be reached); leaving these active Batch jobs alone:"
+            echo "$ACTIVE"
+            exit 0
+          fi
+          echo "$ACTIVE" | while IFS= read -r job; do
+            if echo "$OURS" | grep -qx "$job"; then
+              echo "Deleting this instance's orphaned Batch job: $job"
+              gcloud batch jobs delete "$job" --project="$GCP_PROJECT" --location=us-east4 --quiet || true
+            else
+              echo "Not ours, left alone: $job"
+            fi
+          done
 
       # Preserve raw test evidence independently of rendering or earlier failures.
       - name: Save raw results under reports/anvil
