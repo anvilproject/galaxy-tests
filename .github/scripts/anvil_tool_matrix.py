@@ -52,7 +52,9 @@ Input value forms:
   {from: ENTRY, output: NAME}   output dataset NAME of another entry (NAME
                                 may be omitted when the tool has one output)
   {from: ENTRY, collection: NAME}  output collection NAME of another entry
-  {batch: <any dataset/collection form>}  map the tool over the collection
+  {batch: <any dataset/collection form>}  map the tool over the collection's
+                                datasets; add map_over: paired to map a
+                                list:paired onto a paired-collection input
   [ref, ref, ...]               several datasets for a multiple="true" input
 """
 
@@ -384,6 +386,7 @@ class Runner:
         self.dataset_ids: dict[tuple[str, str], str] = {}
         self.collection_ids: dict[tuple[str, str], str] = {}
         self._contents_cache: dict[tuple[str, str], list[dict]] = {}
+        self._element_cache: dict[tuple[int, str], dict | None] = {}
         # per replica state
         self.histories: dict[int, str] = {}
         self.state: dict[tuple[int, str], str] = {}        # pending/submitted/ok/failed/skipped
@@ -467,6 +470,10 @@ class Runner:
         if isinstance(value, dict) and is_ref(value):
             if "batch" in value:
                 inner = self.materialize(replica, entry, value["batch"])
+                if value.get("map_over"):
+                    # Map a nested collection (list:paired) onto a collection
+                    # input of the inner type instead of onto its leaf datasets.
+                    inner = dict(inner, map_over_type=value["map_over"])
                 return {"batch": True, "values": [inner]}
             if "from" in value:
                 outs = self.outputs.get((replica, value["from"])) or {}
@@ -476,17 +483,45 @@ class Runner:
                 else:
                     want = value.get("output")
                     cands = {k: v for k, v in outs.items() if v["src"] == "hda"}
+                    # A batch-mapped producer yields implicit collections. When
+                    # the mapped-over list had one element (the staged
+                    # list:paired collections hold a single pair), unwrap the
+                    # single output dataset so plain-dataset consumers work.
+                    for k, v in outs.items():
+                        if v["src"] == "hdca" and k not in cands:
+                            single = self.single_element(replica, v["id"])
+                            if single is not None:
+                                cands[k] = single
                 if want is None:
                     if len(cands) != 1:
                         raise MatrixError(f"{entry['id']}: entry {value['from']!r} has outputs {sorted(outs)}; name one")
                     return next(iter(cands.values()))
                 if want not in cands:
-                    raise MatrixError(f"{entry['id']}: entry {value['from']!r} has no output {want!r}; has {sorted(outs)}")
+                    raise MatrixError(f"{entry['id']}: entry {value['from']!r} has no dataset output {want!r}; "
+                                      f"has {sorted(outs)} (a multi-element collection needs batch: or collection:)")
                 return cands[want]
             return self.lookup(entry["history"], value)
         if isinstance(value, list):
             return [self.materialize(replica, entry, v) for v in value]
         return value
+
+    def single_element(self, replica: int, hdca_id: str) -> dict | None:
+        """{"src": "hda", "id": ...} for a one-element collection of datasets, else None."""
+        key = (replica, hdca_id)
+        if key not in self._element_cache:
+            try:
+                coll = self.gi.histories.show_dataset_collection(self.histories[replica], hdca_id)
+            except Exception as exc:  # noqa: BLE001
+                self.log(f"  could not inspect collection {hdca_id}: {str(exc)[:120]}")
+                coll = {}
+            elements = coll.get("elements") or []
+            result = None
+            if len(elements) == 1:
+                obj = elements[0].get("object") or {}
+                if obj.get("model_class") == "HistoryDatasetAssociation" or obj.get("history_content_type") == "dataset":
+                    result = {"src": "hda", "id": obj["id"]}
+            self._element_cache[key] = result
+        return self._element_cache[key]
 
     def flatten_inputs(self, tree: dict, replica: int, entry: dict) -> dict:
         flat = {}
