@@ -394,6 +394,8 @@ class Runner:
         self.outputs: dict[tuple[int, str], dict] = {}     # name -> {"src", "id"}
         self.timeline: list[dict] = []
         self.errors: list[dict] = []
+        self.api_failures = 0
+        self.api_failure_limit = 40  # consecutive polls, i.e. ten minutes at the default 15 s
 
     # ---- resolution -------------------------------------------------------
 
@@ -568,11 +570,25 @@ class Runner:
         self.timeline.append({"replica": r, "entry": e["id"], "tool": self.tool_ids[e["id"]],
                               "history_id": self.histories[r], "submitted": now_iso(), "jobs": jobs})
 
-    def refresh(self) -> dict[str, str]:
+    def refresh(self) -> dict[str, str] | None:
+        """Job states for every replica history, or None if Galaxy could not be asked.
+
+        A head node under heavy load can refuse connections for a while
+        (2026-11-09: the no-Batch node went unreachable mid-level and the
+        driver died with every record unwritten). The caller treats None as
+        "no change" and keeps polling; it only gives up after api_failure_limit
+        consecutive failures.
+        """
         states: dict[str, str] = {}
-        for hid in self.histories.values():
-            for j in self.gi.jobs.get_jobs(history_id=hid):
-                states[j["id"]] = j["state"]
+        try:
+            for hid in self.histories.values():
+                for j in self.gi.jobs.get_jobs(history_id=hid):
+                    states[j["id"]] = j["state"]
+        except Exception as exc:  # noqa: BLE001 - bioblend.ConnectionError, timeouts
+            self.api_failures += 1
+            self.log(f"  Galaxy API unavailable ({self.api_failures}/{self.api_failure_limit}): {str(exc)[:160]}")
+            return None
+        self.api_failures = 0
         return states
 
     def run(self):
@@ -595,6 +611,13 @@ class Runner:
             # settle states
             if any(s == "submitted" for s in self.state.values()):
                 job_states = self.refresh()
+                if job_states is None:
+                    if self.api_failures >= self.api_failure_limit:
+                        self.log("  giving up on the Galaxy API; recording what completed")
+                        self.errors.append({"phase": "api", "failures": self.api_failures, "time": now_iso()})
+                        break
+                    time.sleep(self.poll)
+                    continue
                 for key, jobs in self.jobs.items():
                     if self.state[key] != "submitted":
                         continue
@@ -643,7 +666,12 @@ class Runner:
                 tool_of_job[j] = (r, eid)
         written = 0
         for r, hid in self.histories.items():
-            for j in self.gi.jobs.get_jobs(history_id=hid):
+            try:
+                listing = self.gi.jobs.get_jobs(history_id=hid)
+            except Exception as exc:  # noqa: BLE001
+                self.log(f"  could not list jobs of history {hid}: {str(exc)[:120]}")
+                listing = [{"id": j} for jobs in self.jobs.items() if jobs[0][0] == r for j in jobs[1]]
+            for j in listing:
                 try:
                     job = self.gi.jobs.show_job(j["id"], full_details=True)
                     job["job_metrics"] = self.gi.jobs.get_metrics(j["id"])
