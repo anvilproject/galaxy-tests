@@ -82,12 +82,57 @@ tools:
       addition|addition_select: window
       addition|w: 5000
 
+  # bedtools complement and fisher insist that the intervals and the genome
+  # file share one sort order, and MACS2 peaks are not in the order of the
+  # built-in hg38 genome file. Sort the peaks and summits lexicographically
+  # and build a genome file in the same order from the alignment's idxstats.
+  - id: idxstats_chip
+    tool: samtools_idxstats
+    inputs:
+      input: {from: bowtie2, output: output}
+
+  - id: genome_file
+    tool: tp_cut_tool
+    inputs:
+      input: {from: idxstats_chip, output: output}
+      cut_type_options|cut_element: "-f"
+      cut_type_options|colnames_option|header: N
+      cut_type_options|colnames_option|list: ["1", "2"]
+
+  - id: genome_sorted
+    tool: tp_sort_header_tool
+    inputs:
+      infile: {from: genome_file, output: output}
+      header: 0
+      sortkeys_0|column: "1"
+      sortkeys_0|style: ""
+
+  - id: peaks_sorted
+    tool: tp_sort_header_tool
+    inputs:
+      infile: {from: macs2, output: output_narrowpeaks}
+      header: 0
+      sortkeys_0|column: "1"
+      sortkeys_0|style: ""
+      sortkeys_1|column: "2"
+      sortkeys_1|style: n
+
+  - id: summits_sorted
+    tool: tp_sort_header_tool
+    inputs:
+      infile: {from: macs2, output: output_summits}
+      header: 0
+      sortkeys_0|column: "1"
+      sortkeys_0|style: ""
+      sortkeys_1|column: "2"
+      sortkeys_1|style: n
+
   - id: complement
     tool: bedtools_complementbed
     inputs:
-      input: {from: macs2, output: output_narrowpeaks}
-      genome_file_opts|genome_file_opts_selector: loc
-      genome_file_opts|genome: hg38
+      input: {from: peaks_sorted, output: outfile}
+      genome_file_opts|genome_file_opts_selector: hist
+      genome_file_opts|genome: {from: genome_sorted, output: outfile}
 
   - id: getfasta
     tool: bedtools_getfastabed
@@ -108,10 +153,10 @@ tools:
   - id: fisher
     tool: bedtools_fisher
     inputs:
-      inputA: {from: macs2, output: output_narrowpeaks}
-      inputB: {from: macs2, output: output_summits}
-      genome_file_opts|genome_file_opts_selector: loc
-      genome_file_opts|genome: hg38
+      inputA: {from: peaks_sorted, output: outfile}
+      inputB: {from: summits_sorted, output: outfile}
+      genome_file_opts|genome_file_opts_selector: hist
+      genome_file_opts|genome: {from: genome_sorted, output: outfile}
 
   - id: bedtoigv
     tool: bedtools_bedtoigv
