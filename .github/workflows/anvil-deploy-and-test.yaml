@@ -954,10 +954,11 @@ jobs:
       # Every job's record and job_metrics land in results/tool-matrix/x<K>,
       # the same per-job shape abm writes, and the level's histories are then
       # purged so its outputs (about 25 GB of BAM per replica) do not fill
-      # the head node's disk. always() so the matrix still runs when a
-      # workflow above failed: the two measure different things.
+      # the head node's disk. !cancelled() so the matrix still runs when a
+      # workflow above failed (the two measure different things) but never
+      # starts on a cancelled run, where it would outlive the cleanup steps.
       - name: Run tool matrix
-        if: ${{ always() && inputs.benchmark-scale != '' && steps.api-key.outcome == 'success' }}
+        if: ${{ !cancelled() && inputs.benchmark-scale != '' && steps.api-key.outcome == 'success' }}
         id: tool-matrix
         continue-on-error: true
         timeout-minutes: 280
@@ -981,7 +982,7 @@ jobs:
           exit $status
 
       - name: Summarize tool matrix scaling
-        if: ${{ always() && inputs.benchmark-scale != '' }}
+        if: ${{ !cancelled() && inputs.benchmark-scale != '' }}
         run: |
           if [ -d results/tool-matrix ]; then
             python .github/scripts/anvil_matrix_scaling.py results/tool-matrix results/tool-matrix-summary.json
@@ -990,7 +991,7 @@ jobs:
           fi
 
       - name: Summarize benchmark results
-        if: ${{ always() && inputs.benchmark-experiment != '' }}
+        if: ${{ !cancelled() && inputs.benchmark-experiment != '' }}
         run: |
           if [ -d results/benchmark-metrics ]; then
             python .github/scripts/anvil_benchmark_summary.py results/benchmark-metrics results/benchmark-summary.json
