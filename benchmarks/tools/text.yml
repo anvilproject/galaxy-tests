@@ -183,9 +183,11 @@ tools:
   - id: rolling_window
     tool: pandas_rolling_window
     inputs:
-      infile: {from: coverage, output: output}
+      # idxstats, not samtools coverage: the coverage table's "#rname" header
+      # row makes pandas read the depth column as strings and the tool fails.
+      infile: {from: idxstats, output: output}
       group_column: "1"
-      value_column: "7"
+      value_column: "3"
       statistics: mean
       window_len: 3
 
