@@ -99,10 +99,20 @@ tools:
       cut_type_options|colnames_option|header: N
       cut_type_options|colnames_option|list: ["1", "2"]
 
+  # idxstats ends with the unmapped-reads row "*  0  0  N"; bedtools rejects a
+  # genome file with a zero-length chromosome, so drop it before sorting.
+  - id: genome_nostar
+    tool: tp_grep_tool
+    inputs:
+      infile: {from: genome_file, output: output}
+      invert: "-v"
+      regex_type: "-P"
+      url_paste: "^\\*\\t"
+
   - id: genome_sorted
     tool: tp_sort_header_tool
     inputs:
-      infile: {from: genome_file, output: output}
+      infile: {from: genome_nostar, output: output}
       header: 0
       sortkeys_0|column: "1"
       sortkeys_0|style: ""
