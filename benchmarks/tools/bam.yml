@@ -41,7 +41,7 @@ tools:
   - id: idxstats2
     tool: samtools_idxstats
     inputs:
-      input: {from: bwa2, output: bam_output}
+      input: {from: minimap2, output: alignment_output}
 
   - id: coverage
     tool: samtools_coverage
@@ -61,7 +61,7 @@ tools:
     inputs:
       input_file: {from: bwa, output: bam_output}
       job|job_type: copy_header
-      job|input_header: {from: bwa2, output: bam_output}
+      job|input_header: {from: minimap2, output: alignment_output}
 
   - id: filter_mapq
     tool: samtool_filter2

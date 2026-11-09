@@ -92,14 +92,8 @@ tools:
       fastq_input|fastq_input1: {batch: {collection: Subsample of reads from SRR24043307}, map_over: paired}
       output_sort: coordinate
 
-  - id: bwa2
-    tool: bwa_mem2
-    inputs:
-      reference_source|reference_source_selector: cached
-      reference_source|ref_file: hg38
-      fastq_input|fastq_input_selector: paired_collection
-      fastq_input|fastq_input1: {batch: {collection: Subsample of reads from SRR24043307}, map_over: paired}
-      output_sort: coordinate
+  # bwa_mem2 is not here: the CVMFS data has no human bwa-mem2 index (only
+  # Arabidopsis_thaliana_TAIR10 and mm39), so it fails at submission.
 
   - id: minimap2
     tool: minimap2
