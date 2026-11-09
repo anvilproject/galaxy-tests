@@ -872,6 +872,26 @@ jobs:
       # minted above; the bootstrap key cannot own histories. kube is only
       # consulted by abm's helm/kubectl commands, which this mode never uses,
       # but the profile field is required.
+      # The images ship a default per-user disk quota sized for the tool tests
+      # (19.3 GB on the nightly values). Three 2 GB input histories plus the
+      # first aligner outputs exceed it, after which Galaxy pauses every job
+      # as it becomes ready, so every quota is raised to fit the 500 GB disk
+      # before anything is imported. Uses the bootstrap admin key, which the
+      # quota API accepts.
+      - name: Raise disk quota for benchmark data
+        if: ${{ inputs.benchmark-experiment != '' || inputs.benchmark-scale != '' }}
+        env:
+          GALAXY_URL: http://${{ steps.vm-ip.outputs.ip }}/galaxy
+        run: |
+          python - <<'PY'
+          import os
+          from bioblend import galaxy
+          gi = galaxy.GalaxyInstance(url=os.environ["GALAXY_URL"] + "/", key="galaxypassword")
+          for q in gi.quotas.get_quotas():
+              gi.quotas.update_quota(q["id"], amount="400 GB", operation="=")
+              print(q["name"], "->", gi.quotas.show_quota(q["id"])["display_amount"])
+          PY
+
       - name: Stage benchmark inputs and workflows
         if: ${{ inputs.benchmark-experiment != '' || inputs.benchmark-scale != '' }}
         env:
