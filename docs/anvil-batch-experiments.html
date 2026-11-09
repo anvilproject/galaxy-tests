@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AnVIL Batch Experiments</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
+<style>
+/* Layout: one reading column with charts that span it; a sticky summary band up top. */
+:root {
+  --bg: #f7f7f4; --surface: #fcfcfb; --fg: #16181a; --fg-2: #4f5559; --fg-3: #7a8187;
+  --rule: #dcdfd9; --grid: #e7e9e3; --accent: #1c5cab;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --neutral: #b9bfc4; --warn: #c98500;
+  --display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141515; --surface: #1a1a19; --fg: #eceeea; --fg-2: #b9bfc4; --fg-3: #8d949a;
+  --rule: #33363a; --grid: #272a2d; --accent: #6da7ec;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --neutral: #5a6167; --warn: #eda100; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #141515; --surface: #1a1a19; --fg: #eceeea; --fg-2: #b9bfc4; --fg-3: #8d949a;
+  --rule: #33363a; --grid: #272a2d; --accent: #6da7ec;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --neutral: #5a6167; --warn: #eda100; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px; }
+main { max-width: 860px; margin: 0 auto; }
+header { padding-block: 40px 20px; border-bottom: 1px solid var(--rule); }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3); }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 5vw, 44px); line-height: 1.1; margin: 8px 0 12px; text-wrap: balance; }
+h2 { font-family: var(--display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 48px 0 12px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 28px 0 8px; }
+p, li { max-width: 68ch; }
+p.lede { font-size: 19px; color: var(--fg-2); margin: 0; }
+ul { padding-left: 20px; } li { margin: 4px 0; }
+.runs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 20px 0 0; }
+.run { border-top: 3px solid var(--c); padding: 10px 0 0; min-width: 0; }
+.run b { display: block; font-size: 15px; }
+.run span { display: block; font-size: 13px; color: var(--fg-2); }
+.run code { font-family: var(--mono); font-size: 12px; color: var(--fg-3); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 20px 0; }
+.stat { background: var(--surface); border: 1px solid var(--rule); padding: 12px 14px; min-width: 0; }
+.stat .v { font-family: var(--mono); font-size: 26px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.stat .l { font-size: 13px; color: var(--fg-2); margin-top: 4px; }
+figure { margin: 20px 0 8px; background: var(--surface); border: 1px solid var(--rule); padding: 16px 16px 10px; }
+figure h4 { margin: 0 0 2px; font-size: 15px; font-weight: 600; }
+figure .sub { font-size: 13px; color: var(--fg-2); margin: 0 0 10px; }
+figcaption { font-size: 13px; color: var(--fg-2); margin-top: 8px; max-width: 72ch; }
+svg { display: block; width: 100%; height: auto; max-width: 100%; font-family: var(--body); }
+svg text { fill: var(--fg-2); font-size: 12px; }
+svg text.val { fill: var(--fg); font-family: var(--mono); font-variant-numeric: tabular-nums; }
+svg text.axis { fill: var(--fg-3); font-size: 11px; }
+svg line.grid { stroke: var(--grid); stroke-width: 1; }
+svg line.base { stroke: var(--rule); stroke-width: 1; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--fg-2); margin: 0 0 10px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; background: var(--c); }
+.legend i.tex { background: repeating-linear-gradient(135deg, var(--c) 0 2px, transparent 2px 5px); }
+.tip { position: fixed; pointer-events: none; background: var(--fg); color: var(--bg); font-size: 12px; padding: 6px 9px; border-radius: 4px; opacity: 0; transition: opacity .12s; max-width: 260px; z-index: 5; font-variant-numeric: tabular-nums; }
+.tip b { font-family: var(--mono); font-weight: 500; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+.tw { overflow-x: auto; margin: 16px 0; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--fg-3); font-weight: 500; }
+td.n, th.n { text-align: right; font-family: var(--mono); font-size: 13px; }
+td.k { font-weight: 500; }
+.note { border-left: 3px solid var(--warn); padding: 8px 14px; color: var(--fg-2); font-size: 15px; margin: 18px 0; background: var(--surface); }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.two figure { margin: 0; }
+.rec { counter-reset: r; padding-left: 0; list-style: none; }
+.rec li { counter-increment: r; position: relative; padding-left: 34px; margin: 12px 0; }
+.rec li::before { content: counter(r); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--bg); font-family: var(--mono); font-size: 13px; display: grid; place-items: center; }
+footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--fg-3); }
+footer code { font-family: var(--mono); }
+@media (max-width: 560px) { .runs { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .tip { transition: none; } }
+</style>
+
+</head>
+<body>
+<main>
+<header>
+  <div class="eyebrow">anvilproject/galaxy-tests · experiment runs of 7 and 9 November 2026</div>
+  <h1>Running the AnVIL tool tests with and without GCP Batch</h1>
+  <p class="lede">Three ways to run Galaxy jobs were compared: the nightly configuration (one Batch VM per job), everything on a single 32-vCPU head node, and Batch with a warm pool of reusable VMs. First on the 1433 tool tests, then on 108 real tools over 2 GB of sequencing data, submitted as one user and as four at once. The single node is the cheapest and, for one user, the fastest. Batch is what scales: four users cost it 10% more wall-clock, where the single node needed 60% more and its Galaxy buckled. The warm pool costs more in every experiment without making anything faster.</p>
+  <div class="runs">
+    <div class="run" style="--c: var(--s1)"><b>Nightly</b><span>t2d-standard-16 head node, one Batch VM per tool job</span><code>run 42370283555</code></div>
+    <div class="run" style="--c: var(--s2)"><b>No Batch</b><span>n2-standard-32 head node, all jobs on its Kubernetes, 24 cores / 96 GB per job</span><code>run 42396725476</code></div>
+    <div class="run" style="--c: var(--s3)"><b>Warm pool</b><span>t2d-standard-16 head node, pooled Batch VMs, TTL 120 s, 2 idle per shape</span><code>run 42412724601</code></div>
+  </div>
+</header>
+
+<h2>Executive summary</h2>
+<p class="sub" style="color:var(--fg-2);margin:0 0 10px">Two experiments. The tool tests (7 November) run 1433 tiny jobs; the tool matrix (9 November) runs 108 real tools on 2 GB inputs, once as a single user and once as four users at the same time.</p>
+<ul>
+  <li><b>With real jobs and one user, the single node wins on both time and money.</b> The 108-tool matrix took 77 minutes and $2.24 on the no-Batch node against 99 minutes and $3.41 on Batch and 94 minutes and $5.37 on the warm pool. Half of the gap is the NFS tax below.</li>
+  <li><b>With four users at once, only Batch holds its pace.</b> Batch finished four copies of the matrix in 110 minutes, 10% longer than one copy, for 3.4 times the money. The single node had completed 90% of the work after 179 minutes when its Galaxy became unreachable, and its queue wait tail reached 45 minutes against 7 on Batch. Per user, the node is still cheaper: $1.30 against $2.90.</li>
+  <li><b>Batch jobs pay an NFS tax that grows with load.</b> Every Batch VM reads its inputs from the head node over NFS. CPU-bound aligners run as fast there as on the node, but tools that stream a 2 GB file run 1.7 to 4 times slower, and slow a further 1.5 times when four users share the head node: fastqc takes 110 s on the node, 414 s on a Batch VM, 608 s on a Batch VM with four users.</li>
+  <li><b>A single node is the cheapest way to run the suite.</b> The no-Batch run cost $5.51 against $12.77 for the nightly and $16.52 for the warm pool, and the model keeps it at 45 to 60% of the nightly's cost as tool runtimes grow by up to 100 times.</li>
+  <li><b>Batch is the faster option once tools run long.</b> The single node is bounded by its slowest test and takes 8.6 hours at 10 times today's runtimes against 4.6 for the nightly. At today's runtimes it was 45 minutes slower than the nightly.</li>
+  <li><b>Tool execution is 10 to 12% of Batch VM time.</b> About four hours of tools ran inside 24 to 34 VM-hours; the rest is boot, idle and teardown. Half the tool jobs finish in a second or less.</li>
+  <li><b>The warm pool costs 40 to 57% more than plain Batch on real jobs too.</b> At TTL 600 s with 4 idle VMs it reused a third of the matrix jobs and cut the median queue wait by 15 to 20 s, while idle VMs added 5 to 10 VM-hours per level. Same wall-clock, more money.</li>
+  <li><b>On the tool tests, the warm pool cannot save money and at its current settings does not save time either.</b> Jobs are shorter than a VM boot, so idle VMs cost more than they avoid. TTL 600 s with 4 idle VMs would reuse about 73% of jobs and shorten the test step by roughly 20 minutes for about $12.50 more per run.</li>
+  <li><b>Two operational problems surfaced.</b> GPU tests on the warm pool hung for 110 minutes because g2-standard-32 capacity was exhausted in both us-east4 zones, and the orphan-cleanup step will delete another run's Batch VMs if two runs overlap.</li>
+  <li><b>Test coverage held.</b> Each configuration ran the same 1433 tests, with 5 new flye failures on the single node from its memory limit and a net 11 fewer failures on the warm pool's image.</li>
+</ul>
+
+<h2>Cost and turnaround</h2>
+<div class="stats">
+  <div class="stat"><div class="v">$5.51</div><div class="l">No Batch, whole run. Cheapest by half.</div></div>
+  <div class="stat"><div class="v">$12.77</div><div class="l">Nightly, head node plus Batch VMs</div></div>
+  <div class="stat"><div class="v">$16.52</div><div class="l">Warm pool, head node plus Batch VMs</div></div>
+  <div class="stat"><div class="v">130 min</div><div class="l">Nightly test step. No Batch took 175, warm pool 150.</div></div>
+</div>
+
+<figure>
+  <h4>Where the money went</h4>
+  <p class="sub">USD at us-east4 on-demand list prices. Batch VMs priced from the Batch job list, SCHEDULED to terminal, which runs about 14% above Rainstone's figures.</p>
+  <div class="legend"><span><i style="--c: var(--neutral)"></i>Head node</span><span><i style="--c: var(--s1)"></i>Batch VMs</span></div>
+  <div id="costChart"></div>
+  <figcaption>Rainstone reported $9.57 for the nightly's Batch jobs and $1.84 for its head node. The warm pool's five GPU VMs were deleted before the listing and are not priced.</figcaption>
+</figure>
+
+<figure>
+  <h4>Wall-clock by phase</h4>
+  <p class="sub">Minutes from workflow start. The test step dominates every run.</p>
+  <div class="legend"><span><i style="--c: var(--neutral)"></i>Deploy to API ready</span><span><i style="--c: var(--s1)"></i>Tool tests</span><span><i style="--c: var(--fg-3)"></i>Cleanup, cost and reports, delete VM</span></div>
+  <div id="wallChart"></div>
+  <figcaption>Nightly test steps over the preceding week ranged from 130 to 171 minutes, so the same-day nightly is the baseline throughout.</figcaption>
+</figure>
+
+<p>Both experiments kept the nightly's test coverage. The no-Batch run had the same five flye tests fail as its first attempt, OOM-killed under the Kubernetes memory limit, and nothing else new. The warm pool run had ten extra non-passing tests, but 21 nightly failures passed on its image, all qiime2 tools that crash in the nightly with a q2galaxy KeyError.</p>
+
+<div class="tw"><table>
+  <tr><th>Run</th><th class="n">Tests</th><th class="n">Failures</th><th class="n">Errors</th><th class="n">Skips</th><th class="n">Median test</th><th class="n">Median k8s job</th><th class="n">Median Batch job</th></tr>
+  <tr><td class="k">Nightly</td><td class="n">1433</td><td class="n">23</td><td class="n">10</td><td class="n">98</td><td class="n">478 s</td><td class="n">214 s</td><td class="n">314 s</td></tr>
+  <tr><td class="k">No Batch</td><td class="n">1433</td><td class="n">28</td><td class="n">9</td><td class="n">98</td><td class="n">711 s</td><td class="n">339 s</td><td class="n">none</td></tr>
+  <tr><td class="k">Warm pool</td><td class="n">1432</td><td class="n">12</td><td class="n">10</td><td class="n">97</td><td class="n">505 s</td><td class="n">222 s</td><td class="n">300 s</td></tr>
+</table></div>
+<p style="font-size:13px;color:var(--fg-2)">Job times are from Galaxy's job creation to completion. Test times are the harness's, from input upload to output check.</p>
+
+<h2>Tool execution is a small part of the bill</h2>
+<p>Excluding the GPU learner tools, each run spent about four hours executing tool containers, spread over roughly 1300 jobs. Half of the jobs finish in a second or less. The longest tools in either Batch run were pepquery2 at 13 to 15 minutes and repeatmodeler at 12 to 13 minutes.</p>
+
+<figure>
+  <h4>What a Batch VM-hour is spent on</h4>
+  <p class="sub">VM-hours from SCHEDULED to terminal, learner tools excluded.</p>
+  <div class="legend"><span><i style="--c: var(--s1)"></i>Tool runtime</span><span><i class="tex" style="--c: var(--s1)"></i>Boot, idle and teardown</span></div>
+  <div id="vmChart"></div>
+  <figcaption>A fresh Batch VM takes about 78 s from submit to running. The median job then holds it for 44 s. The warm pool adds idle time on top of that boot overhead.</figcaption>
+</figure>
+
+<div class="stats">
+  <div class="stat"><div class="v">1 s</div><div class="l">Median container runtime, both Batch runs</div></div>
+  <div class="stat"><div class="v">692 / 650</div><div class="l">Jobs at 1 s or less, nightly / warm pool, of about 1300</div></div>
+  <div class="stat"><div class="v">42 / 64</div><div class="l">Jobs over a minute</div></div>
+  <div class="stat"><div class="v">3.9 h / 4.4 h</div><div class="l">Total tool execution time</div></div>
+</div>
+
+<h2>If the tools ran longer</h2>
+<p>To see how the configurations compare for real workloads, only the container runtimes were scaled by 2, 10 and 100. Each Batch VM keeps its observed boot, idle and teardown time. The head node keeps its observed lifetime plus the extra wall-clock the longer tools force, bounded by the longest single test, by total tool time across the 32 test slots, and on the single node by its CPU and memory.</p>
+
+<figure>
+  <h4>Projected cost per run as tool runtime scales</h4>
+  <p class="sub">Both axes logarithmic. Learner tools excluded, so the factor-1 points differ slightly from the observed totals above.</p>
+  <div class="legend"><span><i style="--c: var(--s1)"></i>Nightly</span><span><i style="--c: var(--s2)"></i>No Batch</span><span><i style="--c: var(--s3)"></i>Warm pool</span></div>
+  <div id="scaleChart"></div>
+  <figcaption>The single node stays cheapest at every factor, at 45 to 60% of the nightly's cost. The gap narrows as Batch's fixed per-job overhead becomes a smaller share.</figcaption>
+</figure>
+
+<figure>
+  <h4>Projected wall-clock per run as tool runtime scales</h4>
+  <p class="sub">Hours from workflow start to finish, both axes logarithmic.</p>
+  <div class="legend"><span><i style="--c: var(--s1)"></i>Nightly</span><span><i style="--c: var(--s2)"></i>No Batch</span><span><i style="--c: var(--s3)"></i>Warm pool</span></div>
+  <div id="wallScaleChart"></div>
+  <figcaption>From factor 2 upward the single node's wall-clock is set by its slowest test, which already ran twice as long there as on its own Batch VM. The two Batch configurations stay within 10% of each other throughout.</figcaption>
+</figure>
+
+<div class="tw"><table>
+  <tr><th>Runtime factor</th><th class="n">Nightly</th><th class="n">Nightly wall</th><th class="n">Warm pool</th><th class="n">Warm wall</th><th class="n">No Batch</th><th class="n">No Batch wall</th></tr>
+  <tr><td class="k">1 (observed)</td><td class="n">$12.09</td><td class="n">2.5 h</td><td class="n">$16.44</td><td class="n">2.9 h</td><td class="n">$5.70</td><td class="n">3.3 h</td></tr>
+  <tr><td class="k">2</td><td class="n">$13.88</td><td class="n">2.7 h</td><td class="n">$18.34</td><td class="n">3.1 h</td><td class="n">$6.73</td><td class="n">3.8 h</td></tr>
+  <tr><td class="k">10</td><td class="n">$28.20</td><td class="n">4.6 h</td><td class="n">$33.55</td><td class="n">5.1 h</td><td class="n">$15.03</td><td class="n">8.6 h</td></tr>
+  <tr><td class="k">100</td><td class="n">$189.36</td><td class="n">25.3 h</td><td class="n">$204.58</td><td class="n">27.9 h</td><td class="n">$108.35</td><td class="n">61.9 h</td></tr>
+</table></div>
+
+<p>The single node pays for its savings in turnaround. From factor 2 upward its wall-clock is set by the single longest test, pepquery2, which ran 2133 s there against 912 s on its own Batch VM. At factor 10 the node takes 8.6 hours against 4.6 for the nightly. At factor 100 memory demand nearly becomes the binding constraint as well.</p>
+<div class="note">At factor 100 pepquery2 and repeatmodeler would run for 23 to 25 hours, past Batch's 12 hour max_run_duration and the pool's 24 hour VM lifetime. Those jobs would be killed rather than priced.</div>
+
+<h2>Real jobs: 108 tools on 2 GB inputs</h2>
+<p>The tool tests measure Galaxy's scheduling and Batch's VM boot, because half of their jobs finish in a second. To see the configurations on work a user would actually submit, 114 single-tool jobs covering 108 of the 260 tested tools were run as a dependency graph over the 2 GB tier of the benchmarking inputs: paired reads from a whole-genome, an RNA-seq and a ChIP-seq experiment. Five aligners, the samtools and picard chains, five variant callers and the bcftools suite, peak calling, deeptools, quantification, and the text utilities on everything's reports. The whole graph was submitted once (one user) and then four times at once (four users), on each configuration, on fresh instances.</p>
+<div class="runs">
+  <div class="run" style="--c: var(--s1)"><b>Batch, no pool</b><span>t2d-standard-16 head node, one Batch VM per job</span><code>runs 42612282215 · 42575335117</code></div>
+  <div class="run" style="--c: var(--s2)"><b>No Batch</b><span>n2-standard-32 head node, every job a Kubernetes pod, 24 cores / 96 GB cap</span><code>run 42612292919</code></div>
+  <div class="run" style="--c: var(--s3)"><b>Warm pool</b><span>t2d-standard-16 head node, pooled Batch VMs, TTL 600 s, 4 idle per shape</span><code>runs 42612287257 · 42575342975</code></div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="v">77 min</div><div class="l">One user on the single node. Batch 99, warm pool 94.</div></div>
+  <div class="stat"><div class="v">110 min</div><div class="l">Four users on Batch. The single node had 90% done at 179.</div></div>
+  <div class="stat"><div class="v">$2.24</div><div class="l">One user on the single node. Batch $3.41, warm pool $5.37.</div></div>
+  <div class="stat"><div class="v">29 h</div><div class="l">Tool execution for four users, every configuration</div></div>
+</div>
+
+<figure>
+  <h4>Cost of the matrix, one user and four users</h4>
+  <p class="sub">USD at us-east4 on-demand list prices. Head node for the level's wall-clock; Batch VMs from job creation to completion.</p>
+  <div class="legend"><span><i style="--c: var(--neutral)"></i>Head node</span><span><i style="--c: var(--s1)"></i>Batch VMs</span></div>
+  <div id="mxCost"></div>
+  <figcaption>Four users cost Batch 3.4 times one user and the warm pool 3.0 times. The single node's four-user figure is for the 179 minutes it ran before its Galaxy stopped answering, with about 10% of the work unfinished.</figcaption>
+</figure>
+
+<figure>
+  <h4>Wall-clock of the matrix</h4>
+  <p class="sub">Minutes from the first job's creation to the last job's end. Four users run the whole graph four times, concurrently.</p>
+  <div id="mxWall"></div>
+  <figcaption>Batch absorbs four times the work in 10% more time. The single node, capped at 24 job cores, serialises the aligners: its four-user level is incomplete and would have needed about 3.5 hours.</figcaption>
+</figure>
+
+<div class="tw"><table>
+  <tr><th>Level</th><th>Configuration</th><th class="n">Jobs</th><th class="n">Entries ok</th><th class="n">Wall</th><th class="n">Tool time</th><th class="n">Wait median</th><th class="n">Wait p95</th><th class="n">Batch VMs</th><th class="n">VM-hours</th><th class="n">Cost</th><th class="n">Per user</th></tr>
+  <tr><td class="k">1 user</td><td>Batch, no pool</td><td class="n">121</td><td class="n">111 / 114</td><td class="n">99 min</td><td class="n">5.9 h</td><td class="n">29 s</td><td class="n">192 s</td><td class="n">49</td><td class="n">6.8</td><td class="n">$3.41</td><td class="n">$3.41</td></tr>
+  <tr><td class="k">1 user</td><td>Warm pool</td><td class="n">121</td><td class="n">111 / 114</td><td class="n">94 min</td><td class="n">5.9 h</td><td class="n">14 s</td><td class="n">198 s</td><td class="n">34</td><td class="n">12.0</td><td class="n">$5.37</td><td class="n">$5.37</td></tr>
+  <tr><td class="k">1 user</td><td>No Batch</td><td class="n">121</td><td class="n">111 / 114</td><td class="n">77 min</td><td class="n">5.6 h</td><td class="n">27 s</td><td class="n">219 s</td><td class="n">0</td><td class="n">0</td><td class="n">$2.24</td><td class="n">$2.24</td></tr>
+  <tr><td class="k">4 users</td><td>Batch, no pool</td><td class="n">448</td><td class="n">403 / 440</td><td class="n">110 min</td><td class="n">28.6 h</td><td class="n">112 s</td><td class="n">415 s</td><td class="n">181</td><td class="n">30.9</td><td class="n">$11.61</td><td class="n">$2.90</td></tr>
+  <tr><td class="k">4 users</td><td>Warm pool</td><td class="n">435</td><td class="n">391 / 440</td><td class="n">108 min</td><td class="n">29.4 h</td><td class="n">91 s</td><td class="n">615 s</td><td class="n">125</td><td class="n">41.2</td><td class="n">$16.09</td><td class="n">$4.02</td></tr>
+  <tr><td class="k">4 users</td><td>No Batch</td><td class="n">440</td><td class="n">386 / 428 *</td><td class="n">179 min *</td><td class="n">21.9 h *</td><td class="n">90 s</td><td class="n">2686 s</td><td class="n">0</td><td class="n">0</td><td class="n">$5.22 *</td><td class="n">$1.30 *</td></tr>
+</table></div>
+<p style="font-size:13px;color:var(--fg-2)">Entries are tool invocations in the graph; the three that fail everywhere are bedtools complement and fisher (sort order of the peak files) and deeptools plotEnrichment (a command-build race), all since fixed in the matrix. Queue wait is from job creation to the start of execution. * The single node's four-user level was cut off when Galaxy on that node stopped answering after 179 minutes; the figures cover the 440 jobs that finished by then, 90% of the graph, with the longest variant-calling chains still running.</p>
+
+<figure>
+  <h4>Where the time goes for one user</h4>
+  <p class="sub">Median container runtime in seconds for the longest tools, one user, same cores on every configuration.</p>
+  <div class="legend"><span><i style="--c: var(--s1)"></i>Batch, no pool</span><span><i style="--c: var(--s3)"></i>Warm pool</span><span><i style="--c: var(--s2)"></i>No Batch</span></div>
+  <div id="mxTools"></div>
+  <figcaption>bwa_mem and bowtie2 are CPU-bound and run the same everywhere. hisat2, minimap2, lofreq_call, fastqc and deeptools computeMatrix stream their inputs and run 1.7 to 4 times longer on a Batch VM, which reads them from the head node over NFS. The single node reads local disk.</figcaption>
+</figure>
+
+<figure>
+  <h4>The NFS tax grows with load</h4>
+  <p class="sub">Median runtime on Batch VMs, one user against four, for tools that read their input more than they compute.</p>
+  <div class="legend"><span><i style="--c: var(--s1)"></i>One user</span><span><i class="tex" style="--c: var(--s1)"></i>Four users</span></div>
+  <div id="mxNfs"></div>
+  <figcaption>With four users, 180 Batch VMs pull data from one t2d-standard-16 head node. Single-threaded I/O tools slow by 1.5 to 2.3 times; on the single node the same tools ran at one-user speed under four users. The head node's disk and network, not the Batch service, is where this configuration saturates.</figcaption>
+</figure>
+
+<h3>Two things the matrix exposed</h3>
+<p><b>The single node had been running with a quarter of its cores.</b> The nightly values give Kubernetes jobs a CPU request of a quarter core per TPV core so that small jobs fit on the head node's spare CPU, and Galaxy's Kubernetes runner sets a tool's thread count from that request. On the no-Batch branch every tool runs as a Kubernetes job, so bwa_mem had been running with 2 threads instead of 8, STAR and freebayes with 3 instead of 10. Every no-Batch number before 9 November 12:00 UTC, including the 7 November tool-test run and the first 2 GB workflow run, carries that handicap; bowtie2 took 125 minutes there against 32 on Batch. The no-batch mixin now requests the full core count, and the matrix figures above are from runs with it.</p>
+<p><b>Galaxy on the single node stopped answering under four users.</b> After 179 minutes of the four-user level, with about 30 jobs still queued behind the core cap, the head node's Galaxy web process lost its message-queue connection and refused API connections for several minutes. It recovered on its own, but the experiment driver gave up in the meantime. Batch head nodes carry the same Galaxy on a smaller VM and never faltered, because their job execution, and its memory and I/O, happens elsewhere.</p>
+
+<h2>What broke on the way, and what changed</h2>
+<p>Getting these numbers took four rounds of runs on 9 November. Each round found a defect in the test harness or the deployment that is now fixed in galaxy-tests or the galaxy-k8s-boot branches.</p>
+<ul>
+  <li><b>A 19.3 GB default disk quota</b> on every image paused all jobs once the 2 GB inputs and the first alignments exceeded it. The benchmark workflow raises it to 400 GB before staging.</li>
+  <li><b>The orphan-cleanup step deleted other runs' Batch jobs.</b> It removed every active Batch job in the project created after its own run began. Three finishing runs wiped out level one of two runs deployed 30 minutes later. It now deletes only Batch jobs that the instance's own Galaxy lists as queued or running.</li>
+  <li><b>Cancelling a run orphaned its VM and Batch jobs.</b> GitHub cancelled the workflow step but an <code>always()</code>-gated step started the matrix, and the run was then killed before cleanup. Head node and about 30 Batch jobs had to be removed by hand. Matrix and summary steps are gated on <code>!cancelled()</code> now, and runs are left to fail rather than cancelled.</li>
+  <li><b>An empty workflow input is not empty.</b> GitHub substitutes the default, so a run meant to skip the workflows ran them. The benchmark caller takes an explicit <code>none</code>.</li>
+  <li><b>A GitHub incident</b> at 05:59 UTC returned 504 on release downloads and slowed the container registry; three deployments failed fetching the NFS provisioner chart. Transient, nothing to fix.</li>
+  <li><b>Tool-level failures that count as findings:</b> MultiQC 1.35 exits 0 but prints a temp-directory traceback that Galaxy's stderr rule marks fatal, on every image; bwa_mem2 has no human index in the CVMFS data; two of 435 warm-pool jobs lost their stdout file on a reused VM; one of four samtools fastx pods died at its 4 GB memory limit name-sorting a 2 GB BAM.</li>
+</ul>
+
+<h2>GPU tests never ran on the warm pool</h2>
+<p>All five image_learner tests hung for 110 minutes and then failed. Cloud audit logs show why: creating the g2-standard-32 VM failed with ZONE_RESOURCE_POOL_EXHAUSTED in both us-east4-a and us-east4-c, 18 attempts over the whole period. Batch never reported the VM as running, so the pool's claim timeout never fired and the harness waited until its own limit. The same tests pass in the nightly on the CPU destination in 13 to 26 minutes. The GPU tail added about 25 minutes to the warm pool's test step; its last non-GPU test finished 12 minutes before the step ended.</p>
+
+<h2>Warm pool settings</h2>
+<p>The run used TTL 120 s and 2 idle VMs per machine shape per handler. 141 of 751 Batch jobs reused a VM, 19%, with reused jobs finishing in 38 s median against 125 s fresh. To find better settings, the run's actual job arrivals were replayed through a pool model at other TTLs and sizes. The model reproduces the observed cost at the current settings within a cent, though it is optimistic on reuse (29% against 19%), so the reuse figures are upper bounds.</p>
+
+<div class="two">
+<figure>
+  <h4>Reuse rate by TTL</h4>
+  <p class="sub">Share of Batch jobs that found a warm VM.</p>
+  <div class="legend"><span><i style="--c: var(--s1)"></i>2 idle VMs</span><span><i style="--c: var(--s2)"></i>4 idle VMs</span><span><i style="--c: var(--s3)"></i>8 idle VMs</span></div>
+  <div id="poolReuse"></div>
+</figure>
+<figure>
+  <h4>Batch cost by TTL</h4>
+  <p class="sub">USD per run. No pool is $12.50.</p>
+  <div class="legend"><span><i style="--c: var(--s1)"></i>2 idle VMs</span><span><i style="--c: var(--s2)"></i>4 idle VMs</span><span><i style="--c: var(--s3)"></i>8 idle VMs</span></div>
+  <div id="poolCost"></div>
+</figure>
+</div>
+<figcaption style="margin-top:8px">Cost rises monotonically with TTL and pool size. Keeping a VM idle longer than the 78 s it would take to boot a new one always costs more than booting.</figcaption>
+
+<p style="margin-top:20px">The pool cannot save money on this workload because the jobs are shorter than a VM boot. What it buys is latency: each reused job skips about 78 s. At TTL 600 s and size 4 the model reuses 73% of jobs and avoids 12 boot-hours, worth roughly 20 minutes off a 150 minute test step across 32 slots, for about $12.50 more per run. Beyond that point reuse barely improves while cost keeps climbing. Pool size is per shape and this run spread jobs over 11 shapes, so size 4 can mean up to 44 idle VMs at a peak.</p>
+
+<div class="tw"><table>
+  <tr><th>TTL</th><th class="n">Idle size</th><th class="n">Reuse</th><th class="n">VMs created</th><th class="n">VM-hours</th><th class="n">Batch cost</th><th class="n">Boot time avoided</th></tr>
+  <tr><td class="k">no pool</td><td class="n">0</td><td class="n">0%</td><td class="n">751</td><td class="n">30.3</td><td class="n">$12.50</td><td class="n">0 h</td></tr>
+  <tr><td class="k">60 s</td><td class="n">2</td><td class="n">21%</td><td class="n">596</td><td class="n">31.6</td><td class="n">$13.34</td><td class="n">3.3 h</td></tr>
+  <tr><td class="k">120 s (current)</td><td class="n">2</td><td class="n">29%</td><td class="n">530</td><td class="n">33.7</td><td class="n">$14.42</td><td class="n">4.8 h</td></tr>
+  <tr><td class="k">300 s</td><td class="n">4</td><td class="n">55%</td><td class="n">337</td><td class="n">47.3</td><td class="n">$20.56</td><td class="n">9.0 h</td></tr>
+  <tr><td class="k">600 s</td><td class="n">4</td><td class="n">73%</td><td class="n">202</td><td class="n">55.7</td><td class="n">$25.04</td><td class="n">11.9 h</td></tr>
+  <tr><td class="k">900 s</td><td class="n">8</td><td class="n">82%</td><td class="n">136</td><td class="n">74.5</td><td class="n">$33.47</td><td class="n">13.3 h</td></tr>
+  <tr><td class="k">1800 s</td><td class="n">8</td><td class="n">84%</td><td class="n">119</td><td class="n">100.2</td><td class="n">$47.20</td><td class="n">13.7 h</td></tr>
+</table></div>
+
+<h2>Recommendations</h2>
+<ol class="rec">
+  <li><b>For one user, or for cost, run on a single node.</b> It is the cheapest configuration in every experiment and, once its jobs get their full cores, the fastest for a single user on real data: 77 minutes against 99 for the 108-tool matrix. Its limits are the 24-core cap, which serialises concurrent users, and Galaxy sharing the node with the jobs, which failed under four users. Give flye and similar tools enough memory to avoid the OOM kills.</li>
+  <li><b>For several concurrent users, use Batch without a pool, and move the data off the head node.</b> Batch held four users to a 10% wall-clock increase. Its cost per user falls from $3.41 to $2.90 and its remaining inefficiency is the NFS tax: I/O-bound tools run 1.7 to 4 times slower on a Batch VM than on local disk and slow further as users are added. An object store or a faster shared filesystem for job inputs is the single largest improvement available to the Batch configuration.</li>
+  <li><b>Turn the warm pool off.</b> On the tool tests the current 120 s and 2 pays about $2 over no pool for no gain. On real jobs the recommended 600 s and 4 reused a third of jobs and saved 15 to 20 s of median wait while adding 40 to 57% to the Batch bill, with the same wall-clock. There is no setting at which it paid for itself.</li>
+  <li><b>Raise the local runner's worker count.</b> Uploads queue behind 12 workers in every configuration and that queue, not tool execution, sets the pace of the test step.</li>
+  <li><b>Give GPU jobs a fallback.</b> When g2 capacity is exhausted the pooled runner waits indefinitely. A claim timeout that also covers VMs that never reach running, or a fallback to the CPU destination, would have saved 25 minutes and five failures.</li>
+  <li><b>Check the core allocation of any destination before comparing it.</b> The quarter-core CPU request on the Kubernetes destination silently gave the no-Batch configuration a quarter of its threads for two days of experiments. The galaxy_slots job metric shows what a job really got; compare it across destinations before trusting a timing.</li>
+</ol>
+
+<footer>
+Tool-test runs: nightly <code>42370283555</code>, no Batch <code>42396725476</code>, warm pool <code>42412724601</code>, 7 November 2026. Tool-matrix runs, 9 November: one user <code>42612282215</code> (Batch), <code>42612287257</code> (warm pool), <code>42612292919</code> (no Batch, both levels); four users <code>42575335117</code> (Batch), <code>42575342975</code> (warm pool). All in anvilproject/galaxy-tests. Timings from the workflow step logs and Galaxy's job handler log; per-job runtimes from Galaxy job metrics; Batch VM lifetimes from the Batch job list; prices from Rainstone's us-east4 on-demand catalog. Cost projections and the pool simulation are models built on that data, not measurements.
+</footer>
+</main>
+<div class="tip" id="tip"></div>
+
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const tip = document.getElementById("tip");
+  function el(n, a, parent) { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (parent) parent.appendChild(e); return e; }
+  function hover(node, html) {
+    node.addEventListener("mousemove", ev => { tip.innerHTML = html; tip.style.opacity = 1; tip.style.left = Math.min(ev.clientX + 12, window.innerWidth - 270) + "px"; tip.style.top = (ev.clientY + 14) + "px"; });
+    node.addEventListener("mouseleave", () => tip.style.opacity = 0);
+  }
+  function css(v) { return `var(${v})`; }
+
+  // Horizontal stacked bars. rows: [{label, parts:[{v, c, name, tex}]}]
+  function stacked(id, rows, opts) {
+    const W = 760, labW = opts.labW || 90, rowH = 34, gap = 14, top = 6, bottom = 26;
+    const H = top + rows.length * (rowH + gap) + bottom;
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opts.aria || "" });
+    const max = opts.max || Math.max(...rows.map(r => r.parts.reduce((s, p) => s + p.v, 0)));
+    const x0 = labW, x1 = W - 70, sx = v => x0 + (x1 - x0) * v / max;
+    const defs = el("defs", {}, svg);
+    const pat = el("pattern", { id: id + "tex", width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(135)" }, defs);
+    el("rect", { width: 6, height: 6, fill: css("--surface") }, pat);
+    el("rect", { width: 2.2, height: 6, fill: css("--s1") }, pat);
+    const ticks = opts.ticks || 4;
+    for (let i = 0; i <= ticks; i++) {
+      const v = max * i / ticks, x = sx(v);
+      el("line", { x1: x, x2: x, y1: top, y2: H - bottom + 4, class: "grid" }, svg);
+      const t = el("text", { x, y: H - 8, "text-anchor": "middle", class: "axis" }, svg); t.textContent = opts.fmt(v);
+    }
+    rows.forEach((r, i) => {
+      const y = top + i * (rowH + gap);
+      const lab = el("text", { x: x0 - 10, y: y + rowH / 2 + 4, "text-anchor": "end" }, svg); lab.textContent = r.label;
+      let acc = 0;
+      r.parts.forEach((p, j) => {
+        const xa = sx(acc), xb = sx(acc + p.v);
+        const w = Math.max(0, xb - xa - (j < r.parts.length - 1 ? 2 : 0));
+        const rect = el("rect", { x: xa, y, width: w, height: rowH, fill: p.tex ? `url(#${id}tex)` : css(p.c), rx: 0 }, svg);
+        if (p.tex) el("rect", { x: xa, y, width: w, height: rowH, fill: "none", stroke: css("--s1"), "stroke-width": 1 }, svg);
+        hover(rect, `<b>${r.label}</b><br>${p.name}: <b>${opts.fmt(p.v)}</b>` + (p.extra ? `<br>${p.extra}` : ""));
+        acc += p.v;
+      });
+      const total = el("text", { x: sx(acc) + 8, y: y + rowH / 2 + 4, class: "val" }, svg); total.textContent = opts.fmt(acc);
+    });
+    document.getElementById(id).appendChild(svg);
+  }
+
+  stacked("costChart", [
+    { label: "Nightly", parts: [{ v: 1.84, c: "--neutral", name: "Head node, t2d-standard-16, 2.4 h" }, { v: 10.93, c: "--s1", name: "Batch VMs, 754 jobs", extra: "Rainstone: $9.57" }] },
+    { label: "No Batch", parts: [{ v: 5.51, c: "--neutral", name: "Head node, n2-standard-32, 3.15 h" }] },
+    { label: "Warm pool", parts: [{ v: 2.12, c: "--neutral", name: "Head node, t2d-standard-16, 2.8 h" }, { v: 14.40, c: "--s1", name: "Batch VMs, 610 CPU VMs", extra: "GPU VMs not priced" }] },
+  ], { fmt: v => "$" + v.toFixed(2), max: 18, ticks: 6, aria: "Cost per run split into head node and Batch VMs" });
+
+  stacked("wallChart", [
+    { label: "Nightly", parts: [{ v: 9.4, c: "--neutral", name: "Deploy to API ready" }, { v: 129.9, c: "--s1", name: "Tool tests" }, { v: 10.9, c: "--fg-3", name: "Wrap-up" }] },
+    { label: "No Batch", parts: [{ v: 9.4, c: "--neutral", name: "Deploy to API ready" }, { v: 175.5, c: "--s1", name: "Tool tests" }, { v: 10.4, c: "--fg-3", name: "Wrap-up" }] },
+    { label: "Warm pool", parts: [{ v: 9.3, c: "--neutral", name: "Deploy to API ready" }, { v: 149.7, c: "--s1", name: "Tool tests" }, { v: 11.9, c: "--fg-3", name: "Wrap-up" }] },
+  ], { fmt: v => Math.round(v) + " min", max: 200, ticks: 4, aria: "Wall-clock per run split into deploy, tests and wrap-up" });
+
+  stacked("vmChart", [
+    { label: "Nightly", parts: [{ v: 3.0, c: "--s1", name: "Tool runtime", extra: "12% of VM time" }, { v: 21.5, c: "--s1", tex: true, name: "Boot, idle and teardown" }] },
+    { label: "Warm pool", parts: [{ v: 3.3, c: "--s1", name: "Tool runtime", extra: "10% of VM time" }, { v: 30.2, c: "--s1", tex: true, name: "Boot, idle and teardown" }] },
+  ], { fmt: v => v.toFixed(1) + " VM-h", max: 36, ticks: 6, aria: "Batch VM-hours split into tool runtime and overhead" });
+
+  // Line chart on log-log axes: x is the runtime factor 1..100
+  function loglog(id, series, yLo, yHi, yTicks, fmt, what, aria) {
+    const W = 760, H = 320, L = 64, R = 90, T = 12, B = 40;
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": aria });
+    const lx = Math.log10, sx = v => L + (W - L - R) * lx(v) / 2, sy = v => T + (H - T - B) * (1 - (lx(v) - lx(yLo)) / (lx(yHi) - lx(yLo)));
+    yTicks.forEach(v => { el("line", { x1: L, x2: W - R, y1: sy(v), y2: sy(v), class: "grid" }, svg); const t = el("text", { x: L - 8, y: sy(v) + 4, "text-anchor": "end", class: "axis" }, svg); t.textContent = fmt(v); });
+    [1, 2, 10, 100].forEach(v => { el("line", { x1: sx(v), x2: sx(v), y1: T, y2: H - B + 4, class: "grid" }, svg); const t = el("text", { x: sx(v), y: H - 16, "text-anchor": "middle", class: "axis" }, svg); t.textContent = v + "×"; });
+    const xl = el("text", { x: (L + W - R) / 2, y: H - 2, "text-anchor": "middle", class: "axis" }, svg); xl.textContent = "tool runtime factor";
+    series.forEach(s => {
+      const d = s.pts.map((p, i) => (i ? "L" : "M") + sx(p[0]) + " " + sy(p[1])).join(" ");
+      el("path", { d, fill: "none", stroke: css(s.c), "stroke-width": 2, "stroke-linejoin": "round" }, svg);
+      s.pts.forEach(p => {
+        const dot = el("circle", { cx: sx(p[0]), cy: sy(p[1]), r: 5, fill: css(s.c), stroke: css("--surface"), "stroke-width": 2 }, svg);
+        hover(dot, `<b>${s.name}</b> at ${p[0]}× runtime<br>${what} <b>${fmt(p[1])}</b>`);
+      });
+      const last = s.pts[s.pts.length - 1];
+      const t = el("text", { x: sx(last[0]) + 10, y: sy(last[1]) + 4, class: "val", "font-size": 12 }, svg); t.textContent = s.name;
+    });
+    document.getElementById(id).appendChild(svg);
+  }
+  loglog("scaleChart", [
+    { name: "Nightly", c: "--s1", pts: [[1, 12.09], [2, 13.88], [10, 28.20], [100, 189.36]] },
+    { name: "No Batch", c: "--s2", pts: [[1, 5.70], [2, 6.73], [10, 15.03], [100, 108.35]] },
+    { name: "Warm pool", c: "--s3", pts: [[1, 16.44], [2, 18.34], [10, 33.55], [100, 204.58]] },
+  ], 4, 300, [5, 10, 20, 50, 100, 200], v => "$" + (v < 10 ? v.toFixed(2) : Math.round(v)), "cost", "Projected cost per run versus tool runtime factor");
+  loglog("wallScaleChart", [
+    { name: "Nightly", c: "--s1", pts: [[1, 2.5], [2, 2.7], [10, 4.6], [100, 25.3]] },
+    { name: "No Batch", c: "--s2", pts: [[1, 3.3], [2, 3.8], [10, 8.6], [100, 61.9]] },
+    { name: "Warm pool", c: "--s3", pts: [[1, 2.9], [2, 3.1], [10, 5.1], [100, 27.9]] },
+  ], 2, 80, [2, 3, 5, 10, 20, 50], v => v.toFixed(1).replace(/\.0$/, "") + " h", "wall-clock", "Projected wall-clock per run versus tool runtime factor");
+
+  // Tool matrix: cost and wall per configuration and level
+  stacked("mxCost", [
+    { label: "1 user, Batch", parts: [{ v: 1.26, c: "--neutral", name: "Head node, 99 min" }, { v: 2.16, c: "--s1", name: "Batch VMs, 49 VMs, 6.8 VM-h" }] },
+    { label: "1 user, pool", parts: [{ v: 1.20, c: "--neutral", name: "Head node, 94 min" }, { v: 4.17, c: "--s1", name: "Batch VMs, 34 VMs, 12.0 VM-h", extra: "31% of jobs reused a VM" }] },
+    { label: "1 user, node", parts: [{ v: 2.24, c: "--neutral", name: "Head node, n2-standard-32, 77 min" }] },
+    { label: "4 users, Batch", parts: [{ v: 1.39, c: "--neutral", name: "Head node, 110 min" }, { v: 10.22, c: "--s1", name: "Batch VMs, 181 VMs, 30.9 VM-h" }] },
+    { label: "4 users, pool", parts: [{ v: 1.38, c: "--neutral", name: "Head node, 108 min" }, { v: 14.71, c: "--s1", name: "Batch VMs, 125 VMs, 41.2 VM-h", extra: "31% of jobs reused a VM" }] },
+    { label: "4 users, node", parts: [{ v: 5.22, c: "--neutral", name: "Head node, 179 min, 90% of the work" }] },
+  ], { fmt: v => "$" + v.toFixed(2), max: 18, ticks: 6, labW: 120, aria: "Matrix cost per configuration and level split into head node and Batch VMs" });
+
+  stacked("mxWall", [
+    { label: "1 user, Batch", parts: [{ v: 99, c: "--s1", name: "Wall-clock" }] },
+    { label: "1 user, pool", parts: [{ v: 94, c: "--s3", name: "Wall-clock" }] },
+    { label: "1 user, node", parts: [{ v: 77, c: "--s2", name: "Wall-clock" }] },
+    { label: "4 users, Batch", parts: [{ v: 110, c: "--s1", name: "Wall-clock" }] },
+    { label: "4 users, pool", parts: [{ v: 108, c: "--s3", name: "Wall-clock" }] },
+    { label: "4 users, node", parts: [{ v: 179, c: "--s2", name: "Wall-clock until Galaxy stopped answering", extra: "90% of the graph complete" }] },
+  ], { fmt: v => Math.round(v) + " min", max: 200, ticks: 4, labW: 120, aria: "Matrix wall-clock per configuration and level" });
+
+  // Grouped horizontal bars: rows = tools, series = configurations
+  function grouped(id, rows, series, opts) {
+    const W = 760, labW = opts.labW || 150, barH = 10, gap = 3, rowGap = 12, top = 6, bottom = 26;
+    const rowH = series.length * (barH + gap) - gap;
+    const H = top + rows.length * (rowH + rowGap) + bottom;
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opts.aria || "" });
+    const max = opts.max, x0 = labW, x1 = W - 60, sx = v => x0 + (x1 - x0) * v / max;
+    const defs = el("defs", {}, svg);
+    const pat = el("pattern", { id: id + "tex", width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(135)" }, defs);
+    el("rect", { width: 6, height: 6, fill: css("--surface") }, pat);
+    el("rect", { width: 2.2, height: 6, fill: css("--s1") }, pat);
+    for (let i = 0; i <= opts.ticks; i++) {
+      const v = max * i / opts.ticks, x = sx(v);
+      el("line", { x1: x, x2: x, y1: top, y2: H - bottom + 4, class: "grid" }, svg);
+      const t = el("text", { x, y: H - 8, "text-anchor": "middle", class: "axis" }, svg); t.textContent = opts.fmt(v);
+    }
+    rows.forEach((r, i) => {
+      const y = top + i * (rowH + rowGap);
+      const lab = el("text", { x: x0 - 10, y: y + rowH / 2 + 4, "text-anchor": "end" }, svg); lab.textContent = r.label;
+      series.forEach((sname, k) => {
+        const v = r.v[k]; if (v == null) return;
+        const yy = y + k * (barH + gap);
+        const rect = el("rect", { x: x0, y: yy, width: Math.max(1, sx(v) - x0), height: barH, fill: opts.tex && opts.tex[k] ? `url(#${id}tex)` : css(opts.colors[k]) }, svg);
+        if (opts.tex && opts.tex[k]) el("rect", { x: x0, y: yy, width: Math.max(1, sx(v) - x0), height: barH, fill: "none", stroke: css("--s1"), "stroke-width": 1 }, svg);
+        hover(rect, `<b>${r.label}</b><br>${sname}: <b>${opts.fmt(v)}</b>` + (r.extra ? `<br>${r.extra}` : ""));
+        if (k === series.length - 1 || opts.labelAll) { const t = el("text", { x: sx(v) + 6, y: yy + barH - 1, class: "val", "font-size": 11 }, svg); t.textContent = opts.fmt(v); }
+      });
+    });
+    document.getElementById(id).appendChild(svg);
+  }
+  grouped("mxTools", [
+    { label: "bowtie2, 8 cores", v: [2282, 2325, 2211] },
+    { label: "lofreq_call, 2 cores", v: [2253, 2202, 1351] },
+    { label: "bwa_mem, 8 cores", v: [1616, 1666, 1710] },
+    { label: "fastq_groomer, 1 core", v: [1331, 1370, 1689] },
+    { label: "hisat2, 8 cores", v: [1326, 1375, 732] },
+    { label: "minimap2, 8 cores", v: [670, 683, 485] },
+    { label: "picard MarkDuplicates, 3", v: [574, 561, 559] },
+    { label: "trimmomatic, 6 cores", v: [482, 476, 490] },
+    { label: "fastqc, 3 cores", v: [414, 412, 110] },
+    { label: "deeptools computeMatrix, 10", v: [281, 256, 67] },
+  ], ["Batch, no pool", "Warm pool", "No Batch"], { colors: ["--s1", "--s3", "--s2"], max: 2500, ticks: 5, labW: 190, labelAll: true, fmt: v => Math.round(v) + " s", aria: "Median runtime of the longest tools per configuration, one user" });
+
+  grouped("mxNfs", [
+    { label: "fastqc", v: [414, 608] },
+    { label: "picard CleanSam", v: [312, 582] },
+    { label: "picard MarkDuplicates", v: [574, 886] },
+    { label: "cutadapt", v: [73, 171] },
+    { label: "deeptools computeMatrix", v: [281, 581] },
+    { label: "falco", v: [100, 199] },
+    { label: "trim_galore", v: [96, 198] },
+    { label: "bwa_mem", v: [1616, 1919], extra: "CPU-bound: 19% slower" },
+    { label: "bowtie2", v: [2282, 2604], extra: "CPU-bound: 14% slower" },
+  ], ["One user", "Four users"], { colors: ["--s1", "--s1"], tex: [false, true], max: 2800, ticks: 7, labW: 170, labelAll: true, fmt: v => Math.round(v) + " s", aria: "Median runtime on Batch VMs with one user versus four users" });
+
+  // Pool simulation small multiples: x = TTL (log), lines per size
+  function poolChart(id, data, yMax, fmt, aria) {
+    const W = 380, H = 240, L = 48, R = 16, T = 10, B = 36;
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": aria });
+    const ttls = [60, 120, 300, 600, 900, 1800];
+    const sx = v => L + (W - L - R) * (Math.log10(v) - Math.log10(60)) / (Math.log10(1800) - Math.log10(60));
+    const sy = v => T + (H - T - B) * (1 - v / yMax);
+    for (let i = 0; i <= 4; i++) { const v = yMax * i / 4; el("line", { x1: L, x2: W - R, y1: sy(v), y2: sy(v), class: "grid" }, svg); const t = el("text", { x: L - 6, y: sy(v) + 4, "text-anchor": "end", class: "axis" }, svg); t.textContent = fmt(v); }
+    ttls.forEach(v => { const t = el("text", { x: sx(v), y: H - 16, "text-anchor": "middle", class: "axis" }, svg); t.textContent = v; });
+    const xl = el("text", { x: (L + W - R) / 2, y: H - 3, "text-anchor": "middle", class: "axis" }, svg); xl.textContent = "TTL, seconds";
+    data.forEach(s => {
+      const pts = s.pts.filter(p => p[1] != null);
+      el("path", { d: pts.map((p, i) => (i ? "L" : "M") + sx(p[0]) + " " + sy(p[1])).join(" "), fill: "none", stroke: css(s.c), "stroke-width": 2, "stroke-linejoin": "round" }, svg);
+      pts.forEach(p => { const dot = el("circle", { cx: sx(p[0]), cy: sy(p[1]), r: 4.5, fill: css(s.c), stroke: css("--surface"), "stroke-width": 2 }, svg); hover(dot, `<b>${s.name}</b>, TTL ${p[0]} s<br>${fmt(p[1])}`); });
+    });
+    document.getElementById(id).appendChild(svg);
+  }
+  poolChart("poolReuse", [
+    { name: "2 idle VMs", c: "--s1", pts: [[60, 21], [120, 29], [300, 44], [600, 54]] },
+    { name: "4 idle VMs", c: "--s2", pts: [[60, 26], [120, 36], [300, 55], [600, 73], [900, 76], [1800, 78]] },
+    { name: "8 idle VMs", c: "--s3", pts: [[300, 59], [600, 77], [900, 82], [1800, 84]] },
+  ], 100, v => Math.round(v) + "%", "Modeled reuse rate by TTL and pool size");
+  poolChart("poolCost", [
+    { name: "2 idle VMs", c: "--s1", pts: [[60, 13.34], [120, 14.42], [300, 16.92], [600, 19.27]] },
+    { name: "4 idle VMs", c: "--s2", pts: [[60, 14.07], [120, 16.01], [300, 20.56], [600, 25.04], [900, 28.62], [1800, 38.35]] },
+    { name: "8 idle VMs", c: "--s3", pts: [[300, 22.99], [600, 28.70], [900, 33.47], [1800, 47.20]] },
+  ], 50, v => "$" + Math.round(v), "Modeled Batch cost by TTL and pool size");
+})();
+</script>
+</body>
+</html>

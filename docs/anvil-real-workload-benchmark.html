@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AnVIL Real Workload Benchmark</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
+<style>
+/* Layout: one reading column with charts that span it. Measured runs only. */
+:root {
+  --bg: #f7f7f4; --surface: #fcfcfb; --fg: #16181a; --fg-2: #4f5559; --fg-3: #7a8187;
+  --rule: #dcdfd9; --grid: #e7e9e3; --accent: #1c5cab;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --neutral: #b9bfc4; --warn: #c98500;
+  --display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "IBM Plex Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141515; --surface: #1a1a19; --fg: #eceeea; --fg-2: #b9bfc4; --fg-3: #8d949a;
+  --rule: #33363a; --grid: #272a2d; --accent: #6da7ec;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --neutral: #5a6167; --warn: #eda100; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #141515; --surface: #1a1a19; --fg: #eceeea; --fg-2: #b9bfc4; --fg-3: #8d949a;
+  --rule: #33363a; --grid: #272a2d; --accent: #6da7ec;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --neutral: #5a6167; --warn: #eda100; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px; }
+main { max-width: 860px; margin: 0 auto; }
+header { padding-block: 40px 20px; border-bottom: 1px solid var(--rule); }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-3); }
+h1 { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 5vw, 44px); line-height: 1.1; margin: 8px 0 12px; text-wrap: balance; }
+h2 { font-family: var(--display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 48px 0 12px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 28px 0 8px; }
+p, li { max-width: 68ch; }
+p.lede { font-size: 19px; color: var(--fg-2); margin: 0; }
+ul { padding-left: 20px; } li { margin: 4px 0; }
+.runs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 20px 0 0; }
+.run { border-top: 3px solid var(--c); padding: 10px 0 0; min-width: 0; }
+.run b { display: block; font-size: 15px; }
+.run span { display: block; font-size: 13px; color: var(--fg-2); }
+.run code { font-family: var(--mono); font-size: 12px; color: var(--fg-3); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 20px 0; }
+.stat { background: var(--surface); border: 1px solid var(--rule); padding: 12px 14px; min-width: 0; }
+.stat .v { font-family: var(--mono); font-size: 26px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.stat .l { font-size: 13px; color: var(--fg-2); margin-top: 4px; }
+figure { margin: 20px 0 8px; background: var(--surface); border: 1px solid var(--rule); padding: 16px 16px 10px; }
+figure h4 { margin: 0 0 2px; font-size: 15px; font-weight: 600; }
+figure .sub { font-size: 13px; color: var(--fg-2); margin: 0 0 10px; }
+figcaption { font-size: 13px; color: var(--fg-2); margin-top: 8px; max-width: 72ch; }
+svg { display: block; width: 100%; height: auto; max-width: 100%; font-family: var(--body); }
+svg text { fill: var(--fg-2); font-size: 12px; }
+svg text.val { fill: var(--fg); font-family: var(--mono); font-variant-numeric: tabular-nums; }
+svg text.axis { fill: var(--fg-3); font-size: 11px; }
+svg line.grid { stroke: var(--grid); stroke-width: 1; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--fg-2); margin: 0 0 10px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; background: var(--c); }
+.legend i.tex { background: repeating-linear-gradient(135deg, var(--c) 0 2px, transparent 2px 5px); }
+.tip { position: fixed; pointer-events: none; background: var(--fg); color: var(--bg); font-size: 12px; padding: 6px 9px; border-radius: 4px; opacity: 0; transition: opacity .12s; max-width: 260px; z-index: 5; font-variant-numeric: tabular-nums; }
+.tip b { font-family: var(--mono); font-weight: 500; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; font-variant-numeric: tabular-nums; }
+.tw { overflow-x: auto; margin: 16px 0; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--fg-3); font-weight: 500; }
+td.n, th.n { text-align: right; font-family: var(--mono); font-size: 13px; }
+td.k { font-weight: 500; }
+.note { border-left: 3px solid var(--warn); padding: 8px 14px; color: var(--fg-2); font-size: 15px; margin: 18px 0; background: var(--surface); }
+.rec { counter-reset: r; padding-left: 0; list-style: none; }
+.rec li { counter-increment: r; position: relative; padding-left: 34px; margin: 12px 0; }
+.rec li::before { content: counter(r); position: absolute; left: 0; top: 1px; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--bg); font-family: var(--mono); font-size: 13px; display: grid; place-items: center; }
+footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--fg-3); }
+footer code { font-family: var(--mono); }
+.small { font-size: 13px; color: var(--fg-2); }
+@media (max-width: 560px) { .runs { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .tip { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="eyebrow">anvilproject/galaxy-tests · measured runs of 9 November 2026</div>
+  <h1>Galaxy on AnVIL with real jobs: Batch, a single node, and a warm pool</h1>
+  <p class="lede">Three ways of running Galaxy jobs were measured on the same 2 GB sequencing inputs: GCP Batch with one VM per job, everything on a single 32-vCPU node, and Batch with a warm pool of reusable VMs. The work was 108 real tools submitted as one user and as four users at once, plus three IWC workflows. Every number on this page is from a run that happened; nothing is projected.</p>
+  <div class="runs">
+    <div class="run" style="--c: var(--s1)"><b>Batch, no pool</b><span>t2d-standard-16 head node, one Batch VM per job; small tools run as pods on the head node</span><code>runs 42612282215 · 42575335117</code></div>
+    <div class="run" style="--c: var(--s2)"><b>No Batch</b><span>n2-standard-32 head node, every job a Kubernetes pod on it, 24 cores / 96 GB cap</span><code>run 42612292919</code></div>
+    <div class="run" style="--c: var(--s3)"><b>Warm pool</b><span>t2d-standard-16 head node, Batch VMs kept 600 s after a job, 4 idle per shape</span><code>runs 42612287257 · 42575342975</code></div>
+  </div>
+</header>
+
+<h2>Executive summary</h2>
+<ul>
+  <li><b>For one user, the single node is fastest and cheapest.</b> The 108-tool matrix took 77 minutes and $2.24 on the no-Batch node, 99 minutes and $3.41 on Batch, and 94 minutes and $5.37 on the warm pool. The node reads its data from local disk; Batch VMs read it from the head node over NFS, which is where most of the difference comes from.</li>
+  <li><b>For four users at once, only Batch holds its pace.</b> Batch ran four copies of the matrix in 110 minutes, 10% longer than one copy, for 3.4 times the money. The single node had 90% of the work done after 179 minutes when its Galaxy stopped answering; its queue-wait tail reached 45 minutes against 7 on Batch. Per user the node was still cheaper, $1.30 against $2.90.</li>
+  <li><b>Batch pays an NFS tax that grows with load.</b> CPU-bound aligners run as fast on a Batch VM as on the node. Tools that stream their 2 GB input run 1.7 to 4 times slower on Batch, and 1.5 to 2.3 times slower again when four users share one head node. fastqc: 110 s on the node, 414 s on a Batch VM, 608 s on a Batch VM with four users.</li>
+  <li><b>The warm pool costs 40 to 57% more than plain Batch for the same wall-clock.</b> At TTL 600 s with 4 idle VMs it reused a third of the jobs and cut the median queue wait by 15 to 20 s, while idle VMs added 5 to 10 VM-hours per level.</li>
+  <li><b>Two confounds were found and corrected during the day.</b> The no-Batch configuration had been giving every tool a quarter of its cores, which is fixed and excluded from the matrix figures. A default 19 GB disk quota paused the workflow runs for up to 40 minutes, so the workflow wall-clocks below are upper bounds.</li>
+</ul>
+
+<h2>What was run</h2>
+<p>The inputs are the 2 GB tier of the benchmarking-inputs bucket: paired whole-genome reads with a GenBank reference, paired RNA-seq reads with the hg38 gene annotation, and paired ChIP-seq reads. Two kinds of work ran on them.</p>
+<p><b>The tool matrix</b> is 114 single-tool jobs covering 108 of the 260 tools in AnVIL's tool set, arranged as a dependency graph: five aligners on the reads; samtools, picard, bamtools and deeptools on the alignments; freebayes, lofreq and bcftools on the variants; MACS2 and bedtools on the peaks; featureCounts and StringTie on the RNA-seq alignment; and the text and collection utilities on everything's reports. Submitting the graph once is one user's worth of work. Submitting it four times at once, each in its own history, is four users. Each level ran on a freshly deployed instance of each configuration.</p>
+<p><b>The workflows</b> are three IWC workflows run as a user would run them: variant calling on the whole-genome reads (12 tools), the RNA-seq paired-end workflow (20 steps) and ChIP-seq paired-end peak calling (7 tools), launched together on each configuration.</p>
+
+<h2>The tool matrix</h2>
+<div class="stats">
+  <div class="stat"><div class="v">77 min</div><div class="l">One user on the single node. Batch 99, warm pool 94.</div></div>
+  <div class="stat"><div class="v">110 min</div><div class="l">Four users on Batch. The single node had 90% done at 179.</div></div>
+  <div class="stat"><div class="v">$2.24</div><div class="l">One user on the single node. Batch $3.41, warm pool $5.37.</div></div>
+  <div class="stat"><div class="v">29 h</div><div class="l">Tool execution for four users on either Batch configuration</div></div>
+</div>
+
+<figure>
+  <h4>Cost of the matrix, one user and four users</h4>
+  <p class="sub">USD at us-east4 on-demand list prices. Head node for the level's wall-clock; Batch VMs from job creation to completion.</p>
+  <div class="legend"><span><i style="--c: var(--neutral)"></i>Head node</span><span><i style="--c: var(--s1)"></i>Batch VMs</span></div>
+  <div id="mxCost"></div>
+  <figcaption>Four users cost Batch 3.4 times one user and the warm pool 3.0 times. The single node's four-user figure covers the 179 minutes before its Galaxy stopped answering, with about 10% of the work unfinished.</figcaption>
+</figure>
+
+<figure>
+  <h4>Wall-clock of the matrix</h4>
+  <p class="sub">Minutes from the first job's creation to the last job's end. Four users run the whole graph four times, concurrently.</p>
+  <div id="mxWall"></div>
+  <figcaption>Batch absorbs four times the work in 10% more time. The single node, capped at 24 job cores, serialises the aligners; its four-user level was unfinished at 179 minutes.</figcaption>
+</figure>
+
+<div class="tw"><table>
+  <tr><th>Level</th><th>Configuration</th><th class="n">Jobs</th><th class="n">Entries ok</th><th class="n">Wall</th><th class="n">Tool time</th><th class="n">Wait median</th><th class="n">Wait p95</th><th class="n">Batch VMs</th><th class="n">VM-hours</th><th class="n">Cost</th><th class="n">Per user</th></tr>
+  <tr><td class="k">1 user</td><td>Batch, no pool</td><td class="n">121</td><td class="n">111 / 114</td><td class="n">99 min</td><td class="n">5.9 h</td><td class="n">29 s</td><td class="n">192 s</td><td class="n">49</td><td class="n">6.8</td><td class="n">$3.41</td><td class="n">$3.41</td></tr>
+  <tr><td class="k">1 user</td><td>Warm pool</td><td class="n">121</td><td class="n">111 / 114</td><td class="n">94 min</td><td class="n">5.9 h</td><td class="n">14 s</td><td class="n">198 s</td><td class="n">34</td><td class="n">12.0</td><td class="n">$5.37</td><td class="n">$5.37</td></tr>
+  <tr><td class="k">1 user</td><td>No Batch</td><td class="n">121</td><td class="n">111 / 114</td><td class="n">77 min</td><td class="n">5.6 h</td><td class="n">27 s</td><td class="n">219 s</td><td class="n">0</td><td class="n">0</td><td class="n">$2.24</td><td class="n">$2.24</td></tr>
+  <tr><td class="k">4 users</td><td>Batch, no pool</td><td class="n">448</td><td class="n">403 / 440</td><td class="n">110 min</td><td class="n">28.6 h</td><td class="n">112 s</td><td class="n">415 s</td><td class="n">181</td><td class="n">30.9</td><td class="n">$11.61</td><td class="n">$2.90</td></tr>
+  <tr><td class="k">4 users</td><td>Warm pool</td><td class="n">435</td><td class="n">391 / 440</td><td class="n">108 min</td><td class="n">29.4 h</td><td class="n">91 s</td><td class="n">615 s</td><td class="n">125</td><td class="n">41.2</td><td class="n">$16.09</td><td class="n">$4.02</td></tr>
+  <tr><td class="k">4 users</td><td>No Batch</td><td class="n">440</td><td class="n">386 / 428 *</td><td class="n">179 min *</td><td class="n">21.9 h *</td><td class="n">90 s</td><td class="n">2686 s</td><td class="n">0</td><td class="n">0</td><td class="n">$5.22 *</td><td class="n">$1.30 *</td></tr>
+</table></div>
+<p class="small">Entries are tool invocations in the graph. The three that fail on every configuration are bedtools complement and fisher, whose peak files were not in the genome file's sort order, and deeptools plotEnrichment, which fails while Galaxy builds its command line; all three are fixed in the matrix for future runs. Queue wait is from job creation to the start of execution. * The single node's four-user level was cut off when Galaxy on that node stopped answering after 179 minutes; the figures cover the 440 jobs that had finished, 90% of the graph, with the longest variant-calling chains still running.</p>
+
+<h3>Where the time goes</h3>
+<figure>
+  <h4>Median runtime of the longest tools, one user</h4>
+  <p class="sub">Seconds inside the container, same core count on every configuration.</p>
+  <div class="legend"><span><i style="--c: var(--s1)"></i>Batch, no pool</span><span><i style="--c: var(--s3)"></i>Warm pool</span><span><i style="--c: var(--s2)"></i>No Batch</span></div>
+  <div id="mxTools"></div>
+  <figcaption>bwa_mem, bowtie2, trimmomatic and MarkDuplicates are CPU-bound and run the same everywhere. hisat2, minimap2, lofreq_call, fastqc and deeptools computeMatrix stream their inputs and run 1.7 to 4 times longer on a Batch VM, which reads them from the head node over NFS. The single node reads local disk. fastq_groomer is the one tool slower on the node: single-threaded Python competing with 23 other cores of work.</figcaption>
+</figure>
+
+<figure>
+  <h4>The NFS tax grows with load</h4>
+  <p class="sub">Median runtime on Batch VMs, one user against four, for tools that read their input more than they compute.</p>
+  <div class="legend"><span><i style="--c: var(--s1)"></i>One user</span><span><i class="tex" style="--c: var(--s1)"></i>Four users</span></div>
+  <div id="mxNfs"></div>
+  <figcaption>With four users, 180 Batch VMs pull data from one t2d-standard-16 head node. Single-threaded I/O tools slow by 1.5 to 2.3 times; the CPU-bound aligners by 14 to 19%. On the single node the same tools ran at one-user speed under four users. The head node's disk and network is where the Batch configuration saturates.</figcaption>
+</figure>
+
+<h3>Queue wait</h3>
+<p>Queue wait is the time between Galaxy creating a job and the job starting to execute. For one user it is dominated by the Batch VM boot: a median of 29 s on Batch, where 70 of the 121 jobs ran as pods on the head node and the rest waited about 80 s for a VM, against 27 s on the node, where every job is a pod and the wait is Kubernetes scheduling. The warm pool's 14 s is the effect of reusing a VM for a third of the jobs. For four users the picture inverts: Batch's median rises to 112 s and its 95th percentile to 7 minutes as VMs are provisioned in bulk, while the node's median stays at 90 s but its 95th percentile reaches 45 minutes, which is the aligners queuing behind the 24-core cap.</p>
+
+<h3>What the warm pool did</h3>
+<div class="stats">
+  <div class="stat"><div class="v">31%</div><div class="l">Batch jobs that reused a pooled VM, both levels</div></div>
+  <div class="stat"><div class="v">34 vs 49</div><div class="l">VMs created for one user, pool vs no pool</div></div>
+  <div class="stat"><div class="v">12.0 vs 6.8</div><div class="l">VM-hours for one user, pool vs no pool</div></div>
+  <div class="stat"><div class="v">-15 s</div><div class="l">Change in median queue wait, one user</div></div>
+</div>
+<p>The pool creates fewer VMs and keeps each one longer. A VM held for its 600 s TTL after every job, four of them per machine shape, is paid for whether or not another job arrives, and in this workload one did only a third of the time. Wall-clock was within 5 minutes of plain Batch at both levels, so the extra VM-hours bought nothing a user would notice.</p>
+
+<h2>The workflows</h2>
+<p>The three IWC workflows ran once on each configuration, launched together, before the matrix. Two caveats apply to their timings and keep them out of the headline figures. A default 19.3 GB disk quota on every image paused jobs for up to 40 minutes mid-run before it was found and raised, so each wall-clock is an upper bound. And the no-Batch run predates the core fix described below: its tools ran with a quarter of their threads, which is why bowtie2 took 125 minutes there against 32 on Batch.</p>
+<div class="tw"><table>
+  <tr><th>Workflow</th><th>Configuration</th><th class="n">Jobs</th><th class="n">Failed</th><th class="n">Wall</th><th class="n">Tool time</th></tr>
+  <tr><td class="k" rowspan="3">Variant calling, WGS PE</td><td>Batch, no pool</td><td class="n">13</td><td class="n">1</td><td class="n">196 min</td><td class="n">2.9 h</td></tr>
+  <tr><td>Warm pool</td><td class="n">12</td><td class="n">0</td><td class="n">189 min</td><td class="n">2.9 h</td></tr>
+  <tr><td>No Batch, quarter cores</td><td class="n">12</td><td class="n">0</td><td class="n">225 min</td><td class="n">3.7 h</td></tr>
+  <tr><td class="k" rowspan="3">RNA-seq PE</td><td>Batch, no pool</td><td class="n">14</td><td class="n">0</td><td class="n">121 min</td><td class="n">1.8 h</td></tr>
+  <tr><td>Warm pool</td><td class="n">20</td><td class="n">0</td><td class="n">104 min</td><td class="n">2.0 h</td></tr>
+  <tr><td>No Batch, quarter cores</td><td class="n">20</td><td class="n">0</td><td class="n">152 min</td><td class="n">2.8 h</td></tr>
+  <tr><td class="k" rowspan="3">ChIP-seq PE</td><td>Batch, no pool</td><td class="n">9</td><td class="n">3</td><td class="n">91 min</td><td class="n">0.8 h</td></tr>
+  <tr><td>Warm pool</td><td class="n">9</td><td class="n">3</td><td class="n">54 min</td><td class="n">0.7 h</td></tr>
+  <tr><td>No Batch, quarter cores</td><td class="n">9</td><td class="n">3</td><td class="n">142 min</td><td class="n">2.3 h</td></tr>
+</table></div>
+<p class="small">Wall is from the first job's creation to the last job's completion and includes the quota pause, which fell mainly on the ChIP-seq and RNA-seq histories of the Batch run. The three ChIP-seq failures on every configuration are MultiQC 1.35, which exits 0 but prints a Python traceback that Galaxy's stderr rule treats as fatal. The Batch run's variant-calling failure is one snpEff job. Whole-genome lofreq_call is the longest step in every run, 37 minutes on Batch.</p>
+
+<h2>Two things the runs exposed</h2>
+<p><b>The single node had been running with a quarter of its cores.</b> The deployment's values give Kubernetes jobs a CPU request of a quarter core per TPV core so that small jobs fit on the head node's spare CPU, and Galaxy's Kubernetes runner sets a tool's thread count from that request. On the no-Batch branch every tool runs as a Kubernetes job, so bwa_mem had been running with 2 threads instead of 8, STAR and freebayes with 3 instead of 10. The no-batch mixin now requests the full core count. The matrix figures on this page are from runs with that fix; the workflow figures are not.</p>
+<p><b>Galaxy on the single node stopped answering under four users.</b> After 179 minutes of the four-user level, with about 30 jobs queued behind the core cap, the head node's Galaxy web process lost its message-queue connection and refused API connections for several minutes. It recovered on its own, but the driver collecting results gave up in the meantime, which is why that level is reported from a snapshot taken shortly before. The Batch head nodes, a smaller VM carrying the same Galaxy, never faltered, because their job execution and its memory and I/O happen elsewhere.</p>
+
+<h2>What broke on the way</h2>
+<p>Getting these numbers took four rounds of runs. Each round found a defect in the harness or the deployment, all since fixed in galaxy-tests or on the galaxy-k8s-boot branches.</p>
+<ul>
+  <li>A 19.3 GB default disk quota paused every job once the 2 GB inputs and the first alignments exceeded it. The benchmark now raises it to 400 GB before staging.</li>
+  <li>The run cleanup step deleted every active Batch job in the project created after its own run began, so three finishing runs wiped out the first level of two runs deployed 30 minutes later. It now deletes only the Batch jobs its own Galaxy lists as active.</li>
+  <li>Cancelling a run left its head node and about 30 Batch jobs running. Runs are now left to fail rather than cancelled, and the steps that could start work after a cancel no longer do.</li>
+  <li>Staged collections were not named what the workload files assumed, and a paired-collection input needs the list mapped over it with the paired type named; both are handled in the matrix definitions and driver.</li>
+  <li>A GitHub incident returned 504 on release downloads for an hour, failing three deployments while they fetched the NFS provisioner chart.</li>
+  <li>Tool-level: bwa_mem2 has no human index in the CVMFS data; two of 435 warm-pool jobs lost their stdout on a reused VM; one of four samtools fastx pods died at its 4 GB memory limit sorting a 2 GB BAM.</li>
+</ul>
+
+<h2>Recommendations</h2>
+<ol class="rec">
+  <li><b>For one user, or for cost, run on a single node.</b> It was the fastest and cheapest configuration for one user's work, 77 minutes and $2.24 against Batch's 99 and $3.41, and the cheapest per user at four. Its limits are the 24-core cap, which serialises concurrent users, and Galaxy sharing the node with the jobs, which failed under four users.</li>
+  <li><b>For several concurrent users, use Batch without a pool.</b> It held four users to a 10% wall-clock increase at $2.90 per user. Its remaining inefficiency is the NFS tax: I/O-bound tools run 1.7 to 4 times slower on a Batch VM than on local disk, and slower still as users are added. Moving job inputs off the head node, to an object store or a faster shared filesystem, is the largest improvement available to this configuration.</li>
+  <li><b>Turn the warm pool off.</b> At the settings most favourable to it, 600 s and 4 idle VMs, it reused a third of jobs and saved 15 to 20 s of median wait while adding 40 to 57% to the Batch bill, with the same wall-clock.</li>
+  <li><b>Check core allocation before comparing destinations.</b> The quarter-core CPU request silently gave the no-Batch configuration a quarter of its threads for two days of experiments. The galaxy_slots job metric shows what a job really got.</li>
+  <li><b>Fix the three failing tools before the next matrix run.</b> MultiQC 1.35's stderr rule, bwa_mem2's missing index and the deeptools plotEnrichment command-build failure each cost the same entries on every configuration.</li>
+</ol>
+
+<footer>
+Runs in anvilproject/galaxy-tests, 9 November 2026. Matrix, one user: <code>42612282215</code> (Batch), <code>42612287257</code> (warm pool), <code>42612292919</code> (no Batch, both levels). Matrix, four users: <code>42575335117</code> (Batch), <code>42575342975</code> (warm pool). Workflows: <code>42549750389</code> (Batch), <code>42549758434</code> (warm pool), <code>42549754624</code> (no Batch). Per-job runtimes and queue waits from Galaxy job metrics; Batch VM lifetimes from the Batch job list; prices from the us-east4 on-demand list. The no-Batch four-user level is from job records read from the instance before its teardown.
+</footer>
+</main>
+<div class="tip" id="tip"></div>
+
+<script>
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  const tip = document.getElementById("tip");
+  function el(n, a, parent) { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (parent) parent.appendChild(e); return e; }
+  function hover(node, html) {
+    node.addEventListener("mousemove", ev => { tip.innerHTML = html; tip.style.opacity = 1; tip.style.left = Math.min(ev.clientX + 12, window.innerWidth - 270) + "px"; tip.style.top = (ev.clientY + 14) + "px"; });
+    node.addEventListener("mouseleave", () => tip.style.opacity = 0);
+  }
+  function css(v) { return `var(${v})`; }
+
+  // Horizontal stacked bars. rows: [{label, parts:[{v, c, name, extra}]}]
+  function stacked(id, rows, opts) {
+    const W = 760, labW = opts.labW || 90, rowH = 30, gap = 12, top = 6, bottom = 26;
+    const H = top + rows.length * (rowH + gap) + bottom;
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opts.aria || "" });
+    const max = opts.max, x0 = labW, x1 = W - 70, sx = v => x0 + (x1 - x0) * v / max;
+    for (let i = 0; i <= opts.ticks; i++) {
+      const v = max * i / opts.ticks, x = sx(v);
+      el("line", { x1: x, x2: x, y1: top, y2: H - bottom + 4, class: "grid" }, svg);
+      const t = el("text", { x, y: H - 8, "text-anchor": "middle", class: "axis" }, svg); t.textContent = opts.fmt(v);
+    }
+    rows.forEach((r, i) => {
+      const y = top + i * (rowH + gap);
+      const lab = el("text", { x: x0 - 10, y: y + rowH / 2 + 4, "text-anchor": "end" }, svg); lab.textContent = r.label;
+      let acc = 0;
+      r.parts.forEach((p, j) => {
+        const xa = sx(acc), xb = sx(acc + p.v);
+        const w = Math.max(0, xb - xa - (j < r.parts.length - 1 ? 2 : 0));
+        const rect = el("rect", { x: xa, y, width: w, height: rowH, fill: css(p.c) }, svg);
+        hover(rect, `<b>${r.label}</b><br>${p.name}: <b>${opts.fmt(p.v)}</b>` + (p.extra ? `<br>${p.extra}` : ""));
+        acc += p.v;
+      });
+      const total = el("text", { x: sx(acc) + 8, y: y + rowH / 2 + 4, class: "val" }, svg); total.textContent = opts.fmt(acc);
+    });
+    document.getElementById(id).appendChild(svg);
+  }
+
+  // Grouped horizontal bars: rows = tools, series = configurations
+  function grouped(id, rows, series, opts) {
+    const W = 760, labW = opts.labW || 150, barH = 10, gap = 3, rowGap = 12, top = 6, bottom = 26;
+    const rowH = series.length * (barH + gap) - gap;
+    const H = top + rows.length * (rowH + rowGap) + bottom;
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opts.aria || "" });
+    const max = opts.max, x0 = labW, x1 = W - 60, sx = v => x0 + (x1 - x0) * v / max;
+    const defs = el("defs", {}, svg);
+    const pat = el("pattern", { id: id + "tex", width: 6, height: 6, patternUnits: "userSpaceOnUse", patternTransform: "rotate(135)" }, defs);
+    el("rect", { width: 6, height: 6, fill: css("--surface") }, pat);
+    el("rect", { width: 2.2, height: 6, fill: css("--s1") }, pat);
+    for (let i = 0; i <= opts.ticks; i++) {
+      const v = max * i / opts.ticks, x = sx(v);
+      el("line", { x1: x, x2: x, y1: top, y2: H - bottom + 4, class: "grid" }, svg);
+      const t = el("text", { x, y: H - 8, "text-anchor": "middle", class: "axis" }, svg); t.textContent = opts.fmt(v);
+    }
+    rows.forEach((r, i) => {
+      const y = top + i * (rowH + rowGap);
+      const lab = el("text", { x: x0 - 10, y: y + rowH / 2 + 4, "text-anchor": "end" }, svg); lab.textContent = r.label;
+      series.forEach((sname, k) => {
+        const v = r.v[k]; if (v == null) return;
+        const yy = y + k * (barH + gap);
+        const tex = opts.tex && opts.tex[k];
+        const rect = el("rect", { x: x0, y: yy, width: Math.max(1, sx(v) - x0), height: barH, fill: tex ? `url(#${id}tex)` : css(opts.colors[k]) }, svg);
+        if (tex) el("rect", { x: x0, y: yy, width: Math.max(1, sx(v) - x0), height: barH, fill: "none", stroke: css("--s1"), "stroke-width": 1 }, svg);
+        hover(rect, `<b>${r.label}</b><br>${sname}: <b>${opts.fmt(v)}</b>` + (r.extra ? `<br>${r.extra}` : ""));
+        const t = el("text", { x: sx(v) + 6, y: yy + barH - 1, class: "val", "font-size": 11 }, svg); t.textContent = opts.fmt(v);
+      });
+    });
+    document.getElementById(id).appendChild(svg);
+  }
+
+  stacked("mxCost", [
+    { label: "1 user, Batch", parts: [{ v: 1.26, c: "--neutral", name: "Head node, 99 min" }, { v: 2.16, c: "--s1", name: "Batch VMs, 49 VMs, 6.8 VM-h" }] },
+    { label: "1 user, pool", parts: [{ v: 1.20, c: "--neutral", name: "Head node, 94 min" }, { v: 4.17, c: "--s1", name: "Batch VMs, 34 VMs, 12.0 VM-h", extra: "31% of jobs reused a VM" }] },
+    { label: "1 user, node", parts: [{ v: 2.24, c: "--neutral", name: "Head node, n2-standard-32, 77 min" }] },
+    { label: "4 users, Batch", parts: [{ v: 1.39, c: "--neutral", name: "Head node, 110 min" }, { v: 10.22, c: "--s1", name: "Batch VMs, 181 VMs, 30.9 VM-h" }] },
+    { label: "4 users, pool", parts: [{ v: 1.38, c: "--neutral", name: "Head node, 108 min" }, { v: 14.71, c: "--s1", name: "Batch VMs, 125 VMs, 41.2 VM-h", extra: "31% of jobs reused a VM" }] },
+    { label: "4 users, node", parts: [{ v: 5.22, c: "--neutral", name: "Head node, 179 min, 90% of the work" }] },
+  ], { fmt: v => "$" + v.toFixed(2), max: 18, ticks: 6, labW: 120, aria: "Matrix cost per configuration and level split into head node and Batch VMs" });
+
+  stacked("mxWall", [
+    { label: "1 user, Batch", parts: [{ v: 99, c: "--s1", name: "Wall-clock" }] },
+    { label: "1 user, pool", parts: [{ v: 94, c: "--s3", name: "Wall-clock" }] },
+    { label: "1 user, node", parts: [{ v: 77, c: "--s2", name: "Wall-clock" }] },
+    { label: "4 users, Batch", parts: [{ v: 110, c: "--s1", name: "Wall-clock" }] },
+    { label: "4 users, pool", parts: [{ v: 108, c: "--s3", name: "Wall-clock" }] },
+    { label: "4 users, node", parts: [{ v: 179, c: "--s2", name: "Wall-clock until Galaxy stopped answering", extra: "90% of the graph complete" }] },
+  ], { fmt: v => Math.round(v) + " min", max: 200, ticks: 4, labW: 120, aria: "Matrix wall-clock per configuration and level" });
+
+  grouped("mxTools", [
+    { label: "bowtie2, 8 cores", v: [2282, 2325, 2211] },
+    { label: "lofreq_call, 2 cores", v: [2253, 2202, 1351] },
+    { label: "bwa_mem, 8 cores", v: [1616, 1666, 1710] },
+    { label: "fastq_groomer, 1 core", v: [1331, 1370, 1689] },
+    { label: "hisat2, 8 cores", v: [1326, 1375, 732] },
+    { label: "minimap2, 8 cores", v: [670, 683, 485] },
+    { label: "picard MarkDuplicates, 3", v: [574, 561, 559] },
+    { label: "trimmomatic, 6 cores", v: [482, 476, 490] },
+    { label: "fastqc, 3 cores", v: [414, 412, 110] },
+    { label: "deeptools computeMatrix, 10", v: [281, 256, 67] },
+  ], ["Batch, no pool", "Warm pool", "No Batch"], { colors: ["--s1", "--s3", "--s2"], max: 2500, ticks: 5, labW: 190, fmt: v => Math.round(v) + " s", aria: "Median runtime of the longest tools per configuration, one user" });
+
+  grouped("mxNfs", [
+    { label: "fastqc", v: [414, 608] },
+    { label: "picard CleanSam", v: [312, 582] },
+    { label: "picard MarkDuplicates", v: [574, 886] },
+    { label: "cutadapt", v: [73, 171] },
+    { label: "deeptools computeMatrix", v: [281, 581] },
+    { label: "falco", v: [100, 199] },
+    { label: "trim_galore", v: [96, 198] },
+    { label: "bwa_mem", v: [1616, 1919], extra: "CPU-bound: 19% slower" },
+    { label: "bowtie2", v: [2282, 2604], extra: "CPU-bound: 14% slower" },
+  ], ["One user", "Four users"], { colors: ["--s1", "--s1"], tex: [false, true], max: 2800, ticks: 7, labW: 170, fmt: v => Math.round(v) + " s", aria: "Median runtime on Batch VMs with one user versus four users" });
+})();
+</script>
+</body>
+</html>
