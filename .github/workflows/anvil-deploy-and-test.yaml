@@ -1905,3 +1905,13 @@ jobs:
         run: |
           gcloud compute instances delete "${{ steps.instance.outputs.name }}" \
             --project="$GCP_PROJECT" --zone="$GCP_ZONE" --quiet || echo "VM already gone"
+
+  # A lost hosted runner cannot execute its own always() teardown steps.
+  # Use a fresh runner after the deployment job ends, including on failure.
+  cleanup-vm:
+    needs: deploy-and-test
+    if: ${{ always() }}
+    permissions:
+      contents: read
+      id-token: write
+    uses: ./.github/workflows/anvil-cleanup.yaml

@@ -1,0 +1,42 @@
+name: Clean up AnVIL CI VM
+
+on:
+  workflow_call:
+
+jobs:
+  cleanup:
+    name: Delete any remaining VM for this run
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/526897014808/locations/global/workloadIdentityPools/galaxy-tests-identity-pool/providers/gxy-tests-provider'
+          service_account: 'galaxy-tests-repo-actions-sa@anvil-and-terra-development.iam.gserviceaccount.com'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Delete leftover VM
+        env:
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          # Both labels are applied by Launch Galaxy VM. Never select by a
+          # name prefix or creation time: other runs may still be testing.
+          # Keep listing separate from mapfile so an API/auth failure fails
+          # the job instead of looking like an empty (successful) cleanup.
+          instances=$(gcloud compute instances list \
+            --project=anvil-and-terra-development --zones=us-east4-c \
+            --filter="labels.managed-by=galaxy-tests-ci AND labels.github-run-id=$RUN_ID" \
+            --format='value(name)')
+          if [ -z "$instances" ]; then
+            echo "No VM remains for run $RUN_ID."
+            exit 0
+          fi
+          mapfile -t names <<< "$instances"
+          gcloud compute instances delete "${names[@]}" \
+            --project=anvil-and-terra-development --zone=us-east4-c --quiet
