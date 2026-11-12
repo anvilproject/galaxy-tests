@@ -401,6 +401,12 @@
       "generated_at": "2026-11-10T16:26:39+00:00",
       "model": "gemini-4-argon",
       "summary": "No new issues emerged in this run. Known persistent issues\u2014including the shared infrastructure problem with unavailable test input data on the server (9 tests across 5 tools, now at an 80-run streak), the `scanpy_parameter_iterator` test expectation failure, and several long-running `qiime2` tool/runtime errors\u2014are stable, no action needed, though the four issues introduced in the previous run have now carried over into the continuing total."
+    },
+    "anvil-test-ci-261112-140451": {
+      "run_id": "anvil-test-ci-261112-140451",
+      "generated_at": "2026-11-12T16:28:22+00:00",
+      "model": "gemini-4-argon",
+      "summary": "Two new shared HTTP 500 Internal Server Error incidents warrant investigation: one affecting 23 tests across 19 tools during input staging, and another affecting 8 tests across 6 tools on Galaxy API calls to 136.90.62.53. The first incident's traceback during job waiting while staging data in a history likely reflects a transient Galaxy server failure while handling upload jobs rather than a bug in the tools themselves. The second incident's 500 errors on the jobs endpoint alongside 409 Conflict errors when displaying history contents likewise point to a plausible server-side state or concurrency failure on the Galaxy host during test execution. Meanwhile, the shared unavailable test input data incident (9 tests across 5 tools) and the persistent tool-specific issues in scanpy_parameter_iterator and the qiime2 suite are stable, no action needed, while four test-expectation issues in trim_galore recovered.\n\nBoth of the new HTTP 500 signatures are being seen for the first time in this run, and the server log recorded 31 database connection-pool exhaustion errors (queuepool_timeout_count) elsewhere during the run. That high count is direct evidence that the Galaxy server itself was overloaded, which strongly favors a server-overload explanation for these new staging and API errors over an external network or tool-level problem."
     }
   }
 }
