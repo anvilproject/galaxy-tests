@@ -455,6 +455,25 @@ zebrafishmine
 # --- Outdated ---------------------------------------------------------
 # JBrowse1 is superseded by JBrowse2, which is selected for nightly tests.
 /repos/iuc/jbrowse/jbrowse/
+#
+# EBI single-cell scanpy and sceasy wrappers (added 2026-11-17).
+# Unmaintained: ebi-gene-expression-group/container-galaxy-sc-tertiary has
+# had no push since 2025-06-26. The iuc scanpy_* suite covers the same
+# functions, is actively maintained and passes here; it is pinned instead.
+# Not covered by IUC: scanpy_parameter_iterator (workflow helper) and
+# find_cluster's Louvain mode (IUC dropped tl.louvain as deprecated).
+#
+# scanpy_*: upstream's publish workflow deletes a source directory's whole
+#   test-data when one file exceeds ~1 MB, so no published changeset ships
+#   fixtures. container-galaxy-sc-tertiary#350 (opened 2026-09-21, no
+#   response) deletes only the oversized files instead. Revisit if it is
+#   merged AND the affected repositories are republished.
+# sceasy_convert: its source directory has no test-data at all, so #350
+#   does not help. iuc/sceasy/sceasy_convert (9 tests) is the replacement,
+#   but it is not in usegalaxy-tools' cloud toolset yet
+#   (usegalaxy-tools#1836).
+/repos/ebi-gxa/scanpy_
+/repos/ebi-gxa/sceasy_convert/
 
 
 # --- Deliberately NOT excluded (recorded so nobody adds them) ----------
