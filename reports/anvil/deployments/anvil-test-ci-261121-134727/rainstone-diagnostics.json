@@ -11,9 +11,9 @@
       "detail": "Schema revision 0001.",
       "facts": {
         "alembic_revision": "0001",
-        "calculation_version": "resource-phases-v1",
-        "latest_revision_at": "2026-10-22T13:05:25.410346+00:00",
-        "latest_revision_version": "resource-phases-v1"
+        "calculation_version": "observed-batch-v1",
+        "latest_revision_at": "2026-11-21T16:34:21.444162+00:00",
+        "latest_revision_version": "observed-batch-v1"
       },
       "name": "migration_state",
       "status": "pass"
@@ -27,13 +27,13 @@
           "region": "us-east4",
           "release": "rainstone",
           "resolved_by": "chart values",
-          "resource_uid": "4292253154574358061",
+          "resource_uid": "1036010792755666461",
           "zone": "us-east4-c"
         },
-        "enrollment_uuid": "ca88efae-1008-4e4a-8fb3-c4263b7fc4e1",
-        "instance_uuid": "fe65195a-8042-469d-915f-702d4b26171b",
+        "enrollment_uuid": "db99b4ac-f81f-418a-b734-b8626e045287",
+        "instance_uuid": "7bf07105-1e2d-4f08-9f88-06170c1b7254",
         "source_endpoint": "galaxy-postgres-rw:5432/galaxy",
-        "source_version": "64d49ad328d4",
+        "source_version": "b9467a8c12de",
         "tenant": "galaxy-galaxy"
       },
       "name": "instance_identity",
@@ -58,19 +58,19 @@
         ],
         "machine_type": "t2d-standard-16",
         "region": "us-east4",
-        "resource_uid": "4292253154574358061",
+        "resource_uid": "1036010792755666461",
         "runners": [
           "local"
         ],
-        "version": "host-4292253154574358061"
+        "version": "host-1036010792755666461"
       },
       "name": "baseline_policy",
       "status": "pass"
     },
     {
-      "detail": "Baseline assumptions apply from 2026-10-22T10:43:14.903000+00:00 to open.",
+      "detail": "Baseline assumptions apply from 2026-11-21T13:47:30.669000+00:00 to open.",
       "facts": {
-        "effective_from": "2026-10-22T10:43:14.903000+00:00",
+        "effective_from": "2026-11-21T13:47:30.669000+00:00",
         "effective_to": null,
         "saved": true
       },
@@ -78,26 +78,26 @@
       "status": "pass"
     },
     {
-      "detail": "The baseline profile covers 2478 recorded jobs.",
+      "detail": "The baseline profile covers 2601 recorded jobs.",
       "facts": {
-        "covered_jobs": 2478,
+        "covered_jobs": 2601,
         "placements": [
           {
             "covered": false,
             "destination": "gcp_batch",
-            "jobs": 737,
+            "jobs": 794,
             "runner": "gcp_batch"
           },
           {
             "covered": false,
             "destination": "k8s",
-            "jobs": 546,
+            "jobs": 555,
             "runner": "k8s"
           },
           {
             "covered": true,
             "destination": "local",
-            "jobs": 2478,
+            "jobs": 2601,
             "runner": "local"
           }
         ]
@@ -106,22 +106,22 @@
       "status": "pass"
     },
     {
-      "detail": "Active catalog gcp-compute-20261001T131743Z has 450 rates, observed 20 days ago. Across 450 retained rates from all catalog versions, 450 distinct shape, region and purchase-model combinations can be priced.",
+      "detail": "Active catalog gcp-compute-20261101T132620Z has 450 rates, observed 20 days ago. Across 450 retained rates from all catalog versions, 450 distinct shape, region and purchase-model combinations can be priced.",
       "facts": {
-        "active_catalog_id": "gcp-compute-20261001T131743Z",
+        "active_catalog_id": "gcp-compute-20261101T132620Z",
         "active_rate_count": 450,
         "distinct_combinations": 450,
         "feed": {
           "consecutive_failures": 0,
           "error": null,
-          "last_attempt_at": "2026-10-22T10:52:52.569389+00:00",
-          "last_success_at": "2026-10-22T10:52:52.569389+00:00",
+          "last_attempt_at": "2026-11-21T13:56:45.797642+00:00",
+          "last_success_at": "2026-11-21T13:56:45.797642+00:00",
           "status": "healthy"
         },
-        "imported_at": "2026-10-22T10:52:52.245564+00:00",
-        "observed_at": "2026-10-01T13:17:43.447899+00:00",
+        "imported_at": "2026-11-21T13:56:45.477776+00:00",
+        "observed_at": "2026-11-01T13:26:20.510095+00:00",
         "provenance": {
-          "artifact_digest": "9b8c0b1e66e0f68be3396b4083acc34287f09b12eddbc5e919d2fbb28b29131f",
+          "artifact_digest": "2af26951b0103baf6833225c959dae811f44b1f2cc4c6a23c2b97eb6fcf621b9",
           "historical_effective_time_available": true,
           "kind": "official_catalog_api",
           "notes": null,
@@ -153,30 +153,30 @@
       "status": "warn"
     },
     {
-      "detail": "Source galaxy_db is healthy, last success 38s ago.",
+      "detail": "Source galaxy_db is healthy, last success 33s ago.",
       "facts": {
         "consecutive_failures": 0,
         "cursor": {
           "backfill_ceiling": 8,
           "backfill_id_after": 8,
-          "id_after": 3764,
+          "id_after": 3954,
           "phase": "incremental",
-          "sweep_id_after": 500,
-          "updated_after": "2026-10-22T13:00:41.041935+00:00"
+          "sweep_id_after": 2000,
+          "updated_after": "2026-11-21T16:29:49.976595+00:00"
         },
         "error_type": null,
-        "lag_seconds": 38,
+        "lag_seconds": 33,
         "metrics": {
           "contract_version": 6,
           "gaps": 0,
           "held_attempts": 0,
-          "observed_at": "2026-10-22T13:04:50.833843+00:00",
+          "observed_at": "2026-11-21T16:34:01.622714+00:00",
           "pending_applied": 0,
           "pending_expired": 0,
           "phase": "incremental",
           "reconciled": 1000,
           "replay_overlap_seconds": 300,
-          "rows": 48,
+          "rows": 11,
           "withdrawn": 4
         }
       },
@@ -184,71 +184,71 @@
       "status": "pass"
     },
     {
-      "detail": "Source galaxy_server is healthy, last success 12s ago.",
+      "detail": "Source galaxy_server is healthy, last success 22s ago.",
       "facts": {
         "consecutive_failures": 0,
         "cursor": {},
         "error_type": null,
-        "lag_seconds": 12,
+        "lag_seconds": 22,
         "metrics": {
           "contract_version": 6,
           "gaps": 0,
           "held_attempts": 0,
           "launch_known": true,
-          "observed_at": "2026-10-22T13:05:18.198611+00:00",
+          "observed_at": "2026-11-21T16:34:16.579308+00:00",
           "pending_applied": 0,
           "pending_expired": 0,
-          "resource_uid": "4292253154574358061"
+          "resource_uid": "1036010792755666461"
         }
       },
       "name": "collection:galaxy_server",
       "status": "pass"
     },
     {
-      "detail": "Source gcp_batch is healthy, last success 21s ago.",
+      "detail": "Source gcp_batch is healthy, last success 31s ago.",
       "facts": {
         "consecutive_failures": 0,
         "cursor": {
           "active_offset": 0,
           "terminal_due": false,
-          "terminal_offset": 528
+          "terminal_offset": 633
         },
         "error_type": null,
-        "lag_seconds": 21,
+        "lag_seconds": 31,
         "metrics": {
           "active_offset": 0,
-          "active_targets": 2,
-          "attempts": 27,
+          "active_targets": 0,
+          "attempts": 25,
           "budget_exhausted": false,
           "contract_version": 6,
           "gaps": 0,
           "held_attempts": 0,
           "observed": 25,
-          "observed_at": "2026-10-22T13:05:11.825163+00:00",
+          "observed_at": "2026-11-21T16:34:07.595272+00:00",
           "pending_applied": 0,
           "pending_expired": 0,
           "requests": {
             "batch.jobs.get": {
               "count": 25,
-              "total_ms": 1858.1
+              "total_ms": 1657.7
             },
             "batch.tasks.list": {
               "count": 25,
-              "total_ms": 2173.6
+              "total_ms": 1332.1
             },
             "compute.instances.get": {
-              "count": 2,
-              "total_ms": 233.0
+              "count": 5,
+              "total_ms": 528.1
             },
             "logging.logEntries.list": {
-              "count": 2,
-              "total_ms": 840.1
+              "count": 5,
+              "total_ms": 1839.1
             }
           },
-          "targets": 736,
-          "terminal_offset": 528,
+          "targets": 793,
+          "terminal_offset": 633,
           "terminal_sweep_wrapped": false,
-          "terminal_targets": 734,
+          "terminal_targets": 793,
           "unresolved": 0
         }
       },
@@ -256,17 +256,17 @@
       "status": "pass"
     },
     {
-      "detail": "Source kubernetes is healthy, last success 32s ago.",
+      "detail": "Source kubernetes is healthy, last success 17s ago.",
       "facts": {
         "consecutive_failures": 0,
         "cursor": {
           "continue": null,
-          "relisted_at": "2026-10-22T10:52:51.749690+00:00",
-          "resource_version": "66125",
-          "watch_ended_at": "2026-10-22T13:05:06.007978+00:00"
+          "relisted_at": "2026-11-21T13:56:44.803894+00:00",
+          "resource_version": "77184",
+          "watch_ended_at": "2026-11-21T16:34:27.015099+00:00"
         },
         "error_type": null,
-        "lag_seconds": 32,
+        "lag_seconds": 17,
         "metrics": {
           "contract_version": 6,
           "deletions": 0,
@@ -275,7 +275,7 @@
           "held_attempts": 0,
           "mode": "watch",
           "nodes": 1,
-          "observed_at": "2026-10-22T13:04:40.997486+00:00",
+          "observed_at": "2026-11-21T16:34:02.002687+00:00",
           "pending_applied": 0,
           "pending_expired": 0
         }
@@ -284,9 +284,78 @@
       "status": "pass"
     },
     {
+      "detail": "10 recent observation gaps are recorded.",
+      "facts": {
+        "gaps": [
+          {
+            "detected_at": "2026-11-21T16:33:30.776412+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:33:30.776412+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:33:30.776412+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:32:58.022267+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:17:13.591298+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:17:13.591298+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:16:40.414512+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:16:40.414512+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:15:33.819820+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:15:00.194644+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          }
+        ]
+      },
+      "name": "observation_gaps",
+      "status": "warn"
+    },
+    {
       "detail": "Rainstone database is reachable.",
       "facts": {
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -297,10 +366,10 @@
       "detail": "Schema revision 0001.",
       "facts": {
         "alembic_revision": "0001",
-        "calculation_version": "resource-phases-v1",
-        "latest_revision_at": "2026-10-22T13:01:46.532646+00:00",
-        "latest_revision_version": "resource-phases-v1",
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "calculation_version": "observed-batch-v1",
+        "latest_revision_at": "2026-11-21T16:30:30.679835+00:00",
+        "latest_revision_version": "observed-batch-v1",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -316,15 +385,15 @@
           "region": "us-east4",
           "release": "rainstone",
           "resolved_by": "chart values",
-          "resource_uid": "4292253154574358061",
+          "resource_uid": "1036010792755666461",
           "zone": "us-east4-c"
         },
-        "enrollment_uuid": "ca88efae-1008-4e4a-8fb3-c4263b7fc4e1",
-        "instance_uuid": "fe65195a-8042-469d-915f-702d4b26171b",
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "enrollment_uuid": "db99b4ac-f81f-418a-b734-b8626e045287",
+        "instance_uuid": "7bf07105-1e2d-4f08-9f88-06170c1b7254",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "source_endpoint": "galaxy-postgres-rw:5432/galaxy",
-        "source_version": "64d49ad328d4",
+        "source_version": "b9467a8c12de",
         "stale": false,
         "tenant": "galaxy-galaxy"
       },
@@ -338,7 +407,7 @@
         "infrastructure_visible": true,
         "owner_label": "default-user",
         "owner_source_id": "1",
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -350,9 +419,9 @@
       "facts": {
         "endpoint": "galaxy-postgres-rw:5432/galaxy",
         "missing": [],
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
-        "source_version": "64d49ad328d4",
+        "source_version": "b9467a8c12de",
         "stale": false
       },
       "name": "collector:galaxy_source",
@@ -362,7 +431,7 @@
       "detail": "Reads use Galaxy's own application credential. Read-only transactions, allowlisted statements, a statement timeout and a bounded pool are enforced by Rainstone, not by the database: this credential retains Galaxy's write privileges.",
       "facts": {
         "mode": "application-credential",
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -373,7 +442,7 @@
       "detail": "Source evidence: the source's corroborating fingerprint is readable. Enrollment identity lives in Rainstone's own database; this is corroboration, not proof of which database answered.",
       "facts": {
         "fingerprint_status": "present",
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -388,7 +457,7 @@
         "nodes": 1,
         "nodes_with_provider_id": 0,
         "note": "Nodes without a provider ID give no verified VM identity; placement stays qualified.",
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -401,7 +470,7 @@
         "location": "us-east4",
         "probe_result": "ok",
         "project": "anvil-and-terra-development",
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -414,7 +483,7 @@
         "location": "us-east4",
         "probe_result": "ok",
         "project": "anvil-and-terra-development",
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -427,7 +496,7 @@
         "location": "us-east4",
         "probe_result": "ok",
         "project": "anvil-and-terra-development",
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -440,7 +509,7 @@
         "location": "us-east4",
         "probe_result": "ok",
         "project": "anvil-and-terra-development",
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -453,7 +522,7 @@
         "location": "us-east4",
         "probe_result": "ok",
         "project": "anvil-and-terra-development",
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -466,7 +535,7 @@
         "location": "us-east4",
         "probe_result": "ok",
         "project": "anvil-and-terra-development",
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -480,25 +549,25 @@
           "local"
         ],
         "machine_type": "t2d-standard-16",
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "region": "us-east4",
-        "resource_uid": "4292253154574358061",
+        "resource_uid": "1036010792755666461",
         "runners": [
           "local"
         ],
         "stale": false,
-        "version": "host-4292253154574358061"
+        "version": "host-1036010792755666461"
       },
       "name": "collector:baseline_policy",
       "status": "pass"
     },
     {
-      "detail": "Baseline assumptions apply from 2026-10-22T10:43:14.903000+00:00 to open.",
+      "detail": "Baseline assumptions apply from 2026-11-21T13:47:30.669000+00:00 to open.",
       "facts": {
-        "effective_from": "2026-10-22T10:43:14.903000+00:00",
+        "effective_from": "2026-11-21T13:47:30.669000+00:00",
         "effective_to": null,
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "saved": true,
         "stale": false
@@ -507,30 +576,30 @@
       "status": "pass"
     },
     {
-      "detail": "The baseline profile covers 2478 recorded jobs.",
+      "detail": "The baseline profile covers 2601 recorded jobs.",
       "facts": {
-        "covered_jobs": 2478,
+        "covered_jobs": 2601,
         "placements": [
           {
             "covered": false,
             "destination": "gcp_batch",
-            "jobs": 737,
+            "jobs": 794,
             "runner": "gcp_batch"
           },
           {
             "covered": false,
             "destination": "k8s",
-            "jobs": 546,
+            "jobs": 555,
             "runner": "k8s"
           },
           {
             "covered": true,
             "destination": "local",
-            "jobs": 2478,
+            "jobs": 2601,
             "runner": "local"
           }
         ],
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -538,22 +607,22 @@
       "status": "pass"
     },
     {
-      "detail": "Active catalog gcp-compute-20261001T131743Z has 450 rates, observed 20 days ago. Across 450 retained rates from all catalog versions, 450 distinct shape, region and purchase-model combinations can be priced.",
+      "detail": "Active catalog gcp-compute-20261101T132620Z has 450 rates, observed 20 days ago. Across 450 retained rates from all catalog versions, 450 distinct shape, region and purchase-model combinations can be priced.",
       "facts": {
-        "active_catalog_id": "gcp-compute-20261001T131743Z",
+        "active_catalog_id": "gcp-compute-20261101T132620Z",
         "active_rate_count": 450,
         "distinct_combinations": 450,
         "feed": {
           "consecutive_failures": 0,
           "error": null,
-          "last_attempt_at": "2026-10-22T10:52:52.569389+00:00",
-          "last_success_at": "2026-10-22T10:52:52.569389+00:00",
+          "last_attempt_at": "2026-11-21T13:56:45.797642+00:00",
+          "last_success_at": "2026-11-21T13:56:45.797642+00:00",
           "status": "healthy"
         },
-        "imported_at": "2026-10-22T10:52:52.245564+00:00",
-        "observed_at": "2026-10-01T13:17:43.447899+00:00",
+        "imported_at": "2026-11-21T13:56:45.477776+00:00",
+        "observed_at": "2026-11-01T13:26:20.510095+00:00",
         "provenance": {
-          "artifact_digest": "9b8c0b1e66e0f68be3396b4083acc34287f09b12eddbc5e919d2fbb28b29131f",
+          "artifact_digest": "2af26951b0103baf6833225c959dae811f44b1f2cc4c6a23c2b97eb6fcf621b9",
           "historical_effective_time_available": true,
           "kind": "official_catalog_api",
           "notes": null,
@@ -565,7 +634,7 @@
             "https://docs.cloud.google.com/compute/docs/accelerator-optimized-machines"
           ]
         },
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "regions": [
           "us-central1",
@@ -588,33 +657,33 @@
       "status": "warn"
     },
     {
-      "detail": "Source galaxy_db is healthy, last success 25s ago.",
+      "detail": "Source galaxy_db is healthy, last success 12s ago.",
       "facts": {
         "consecutive_failures": 0,
         "cursor": {
           "backfill_ceiling": 8,
           "backfill_id_after": 8,
-          "id_after": 3764,
+          "id_after": 3954,
           "phase": "incremental",
-          "sweep_id_after": 3000,
-          "updated_after": "2026-10-22T13:00:41.041935+00:00"
+          "sweep_id_after": 500,
+          "updated_after": "2026-11-21T16:29:49.976595+00:00"
         },
         "error_type": null,
-        "lag_seconds": 25,
+        "lag_seconds": 12,
         "metrics": {
           "contract_version": 6,
           "gaps": 0,
           "held_attempts": 0,
-          "observed_at": "2026-10-22T13:02:56.127930+00:00",
+          "observed_at": "2026-11-21T16:32:05.196631+00:00",
           "pending_applied": 0,
           "pending_expired": 0,
           "phase": "incremental",
-          "reconciled": 1002,
+          "reconciled": 1000,
           "replay_overlap_seconds": 300,
-          "rows": 48,
+          "rows": 11,
           "withdrawn": 4
         },
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -622,23 +691,23 @@
       "status": "pass"
     },
     {
-      "detail": "Source galaxy_server is healthy, last success 12s ago.",
+      "detail": "Source galaxy_server is healthy, last success 9s ago.",
       "facts": {
         "consecutive_failures": 0,
         "cursor": {},
         "error_type": null,
-        "lag_seconds": 12,
+        "lag_seconds": 9,
         "metrics": {
           "contract_version": 6,
           "gaps": 0,
           "held_attempts": 0,
           "launch_known": true,
-          "observed_at": "2026-10-22T13:03:17.857979+00:00",
+          "observed_at": "2026-11-21T16:32:16.187020+00:00",
           "pending_applied": 0,
           "pending_expired": 0,
-          "resource_uid": "4292253154574358061"
+          "resource_uid": "1036010792755666461"
         },
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -646,49 +715,45 @@
       "status": "pass"
     },
     {
-      "detail": "Source gcp_batch is healthy, last success 24s ago.",
+      "detail": "Source gcp_batch is healthy, last success 30s ago.",
       "facts": {
         "consecutive_failures": 0,
         "cursor": {
           "active_offset": 0,
           "terminal_due": false,
-          "terminal_offset": 436
+          "terminal_offset": 533
         },
         "error_type": null,
-        "lag_seconds": 24,
+        "lag_seconds": 30,
         "metrics": {
           "active_offset": 0,
-          "active_targets": 2,
+          "active_targets": 0,
           "attempts": 25,
           "budget_exhausted": false,
           "contract_version": 6,
           "gaps": 0,
           "held_attempts": 0,
           "observed": 25,
-          "observed_at": "2026-10-22T13:02:57.572157+00:00",
+          "observed_at": "2026-11-21T16:31:52.230654+00:00",
           "pending_applied": 0,
           "pending_expired": 0,
           "requests": {
             "batch.jobs.get": {
               "count": 25,
-              "total_ms": 1962.6
+              "total_ms": 1452.2
             },
             "batch.tasks.list": {
               "count": 25,
-              "total_ms": 1402.1
-            },
-            "compute.instances.get": {
-              "count": 2,
-              "total_ms": 270.9
+              "total_ms": 1335.9
             }
           },
-          "targets": 736,
-          "terminal_offset": 436,
+          "targets": 793,
+          "terminal_offset": 533,
           "terminal_sweep_wrapped": false,
-          "terminal_targets": 734,
+          "terminal_targets": 793,
           "unresolved": 0
         },
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -696,17 +761,17 @@
       "status": "pass"
     },
     {
-      "detail": "Source kubernetes is healthy, last success 4s ago.",
+      "detail": "Source kubernetes is healthy, last success 3s ago.",
       "facts": {
         "consecutive_failures": 0,
         "cursor": {
           "continue": null,
-          "relisted_at": "2026-10-22T10:52:51.749690+00:00",
-          "resource_version": "65517",
-          "watch_ended_at": "2026-10-22T13:03:25.965011+00:00"
+          "relisted_at": "2026-11-21T13:56:44.803894+00:00",
+          "resource_version": "76436",
+          "watch_ended_at": "2026-11-21T16:32:21.958276+00:00"
         },
         "error_type": null,
-        "lag_seconds": 4,
+        "lag_seconds": 3,
         "metrics": {
           "contract_version": 6,
           "deletions": 0,
@@ -715,11 +780,11 @@
           "held_attempts": 0,
           "mode": "watch",
           "nodes": 1,
-          "observed_at": "2026-10-22T13:03:00.949041+00:00",
+          "observed_at": "2026-11-21T16:31:56.948155+00:00",
           "pending_applied": 0,
           "pending_expired": 0
         },
-        "recorded_at": "2026-10-22T13:03:30.749884+00:00",
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
         "recorded_by": "collector",
         "stale": false
       },
@@ -727,10 +792,70 @@
       "status": "pass"
     },
     {
-      "detail": "GCP Batch observation is disabled. (recorded during installation 7971s ago)",
+      "detail": "8 recent observation gaps are recorded.",
+      "facts": {
+        "gaps": [
+          {
+            "detected_at": "2026-11-21T16:17:13.591298+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:17:13.591298+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:16:40.414512+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:16:40.414512+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:15:33.819820+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:15:00.194644+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:15:00.194644+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          },
+          {
+            "detected_at": "2026-11-21T16:14:25.370728+00:00",
+            "kind": "batch_resource_unavailable",
+            "recoverable": true,
+            "source": "gcp_batch"
+          }
+        ],
+        "recorded_at": "2026-11-21T16:32:25.932471+00:00",
+        "recorded_by": "collector",
+        "stale": false
+      },
+      "name": "collector:observation_gaps",
+      "status": "warn"
+    },
+    {
+      "detail": "GCP Batch observation is disabled. (recorded during installation 9484s ago)",
       "facts": {
         "history": true,
-        "recorded_at": "2026-10-22T10:52:46.832721+00:00",
+        "recorded_at": "2026-11-21T13:56:39.707213+00:00",
         "recorded_by": "installation"
       },
       "history": true,
@@ -738,10 +863,10 @@
       "status": "skip"
     },
     {
-      "detail": "No source has reported a collection cycle yet. (recorded during installation 7971s ago)",
+      "detail": "No source has reported a collection cycle yet. (recorded during installation 9484s ago)",
       "facts": {
         "history": true,
-        "recorded_at": "2026-10-22T10:52:46.832721+00:00",
+        "recorded_at": "2026-11-21T13:56:39.707213+00:00",
         "recorded_by": "installation"
       },
       "history": true,
@@ -752,25 +877,27 @@
   "context": "web",
   "failed_capabilities": [
     "price_catalog",
+    "observation_gaps",
     "collector:source_privilege",
     "collector:price_catalog",
+    "collector:observation_gaps",
     "installation:collection"
   ],
-  "generated_at": "2026-10-22T13:05:38.364253+00:00",
+  "generated_at": "2026-11-21T16:34:44.229824+00:00",
   "overall_status": "warn",
   "recorded_reports": [
     {
-      "age_seconds": 127,
+      "age_seconds": 138,
       "context": "collector",
-      "generated_at": "2026-10-22T13:03:30.749884+00:00",
+      "generated_at": "2026-11-21T16:32:25.932471+00:00",
       "kind": "current",
       "overall_status": "warn",
       "stale": false
     },
     {
-      "age_seconds": 7971,
+      "age_seconds": 9484,
       "context": "installation",
-      "generated_at": "2026-10-22T10:52:46.832721+00:00",
+      "generated_at": "2026-11-21T13:56:39.707213+00:00",
       "kind": "history",
       "overall_status": "warn",
       "stale": false
