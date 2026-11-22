@@ -461,6 +461,12 @@
       "generated_at": "2026-11-21T16:33:12+00:00",
       "model": "gemini-4-argon",
       "summary": "Two isolated tests failed this run due to upstream HTTP errors when fetching data from Zenodo: sylph_profile hit a 502 Bad Gateway error and raceid_inspectclusters hit a 500 Internal Server Error. The long-standing persistent issues\u2014primarily Tool/runtime job errors across several qiime2 tools at a 35-run streak and unavailable test input data for ip_threshold at 77 runs\u2014remain stable, no action needed."
+    },
+    "anvil-test-ci-261122-134214": {
+      "run_id": "anvil-test-ci-261122-134214",
+      "generated_at": "2026-11-22T16:21:07+00:00",
+      "model": "gemini-4-argon",
+      "summary": "Two new tool/runtime failures appeared in this run: `scanpy_filter` (3 tests affected) and `scanpy_remove_confounders` (2 tests affected). The `scanpy_filter` error reports `Unable to synchronously open file (file signature not found)` with empty output, which likely reflects a corrupt, empty, or incompatible HDF5/AnnData input file rather than a broader infrastructure failure. Known persistent issues\u2014mainly the long-running `qiime2` tool/runtime failures and unavailable test data for `ip_threshold`\u2014are stable, no action needed, while four recent failures including the Zenodo fetch errors on `sylph_profile` and `raceid_inspectclusters` as well as job errors on `snpEff_databases` and `multiqc` have recovered."
     }
   }
 }
