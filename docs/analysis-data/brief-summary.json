@@ -467,6 +467,12 @@
       "generated_at": "2026-11-22T16:21:07+00:00",
       "model": "gemini-4-argon",
       "summary": "Two new tool/runtime failures appeared in this run: `scanpy_filter` (3 tests affected) and `scanpy_remove_confounders` (2 tests affected). The `scanpy_filter` error reports `Unable to synchronously open file (file signature not found)` with empty output, which likely reflects a corrupt, empty, or incompatible HDF5/AnnData input file rather than a broader infrastructure failure. Known persistent issues\u2014mainly the long-running `qiime2` tool/runtime failures and unavailable test data for `ip_threshold`\u2014are stable, no action needed, while four recent failures including the Zenodo fetch errors on `sylph_profile` and `raceid_inspectclusters` as well as job errors on `snpEff_databases` and `multiqc` have recovered."
+    },
+    "anvil-test-ci-261123-163758": {
+      "run_id": "anvil-test-ci-261123-163758",
+      "generated_at": "2026-11-23T19:30:38+00:00",
+      "model": "gemini-4-argon",
+      "summary": "Two new shared HTTP 500 Internal Server Error incidents dominated this run, alongside a single new isolated execution error on salmon and an intermittent empty stdout/stderr issue across 3 tests on 2 tools. The first shared 500 error affected 18 tests across 10 tools during input staging while waiting for jobs, likely indicating a server-side failure or overload in the Galaxy API during data staging rather than a bug in the tools themselves. The second shared 500 error affected 15 tests across 10 tools on requests to http://35.245.239.88/galaxy/api (paired with 409 Conflict errors when fetching history contents), which similarly points to the Galaxy server struggling to process job and history state transitions rather than an issue with the underlying tools. Long-running persistent issues\u2014primarily the qiime2 tool suite failures and unavailable test input data for ip_threshold\u2014are stable, no action needed.\n\nBoth of the new shared HTTP 500 signatures were seen for the first time in this run. The presence of 39 database connection-pool exhaustion errors in the server log during this same run provides direct evidence that the Galaxy server was overloaded, strongly favoring server-side capacity exhaustion over an external network issue as the underlying driver for these staging and API failures."
     }
   }
 }
